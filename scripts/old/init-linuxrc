@@ -1,0 +1,358 @@
+#!/bin/sh
+
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+export PATH
+
+EXPECTED_LABEL="lfslivecd-x86_64-6.3-r2160"
+EXPECTED_LABEL="$EXPECTED_LABEL                                "
+EXPECTED_LABEL=${EXPECTED_LABEL:0:32}
+PATA=0
+NEW_FIREWIRE=0
+
+init=/sbin/init
+root=
+rootdelay=
+rootfstype=auto
+ro="ro"
+rootflags=
+noresume=0
+resume=
+all_generic_ide=0
+toram=0
+nodhcp=0
+cdtype=
+
+find_cd() {
+	for SYS in /sys/block/hd* /sys/block/sr* ; do
+		[ ! -d "$SYS" ] && continue
+		[ -f "$SYS/media" ] && read MEDIA <"$SYS/media" && [ "$MEDIA" != "cdrom" ] && continue
+		DEV=/dev/${SYS##*/}
+		LABEL=`dd if=$DEV bs=1 skip=32808 count=32 2>/dev/null`
+		[ "$LABEL" = "$EXPECTED_LABEL" ] && ln -s "$DEV" /dev/lfs-cd && break
+	done
+}
+
+problem() {
+	cat <<"EOF"
+problem
+EOF
+	sh
+}
+
+do_resume() {
+	case "$resume" in
+	*:*)
+		echo "$resume" >/sys/power/resume
+		;;
+	/dev/*)
+		if [ -b ${resume} ] ; then
+			eval echo $( stat -L -c '$(( 0x%t )):$(( 0x%T ))' ${resume} ) >/sys/power/resume
+			# MC syntax highlighting is buggy '
+		else
+			cat <<EOF
+EOF
+			problem
+			# Retry
+			if [ -b ${resume} ] ; then
+				eval echo $( stat -L -c '$(( 0x%t )):$(( 0x%T ))' ${resume} ) >/sys/power/resume
+				# MC syntax highlighting is buggy '
+			else
+				cat <<EOF
+EOF
+			fi
+		fi
+		;;
+	esac
+}
+
+
+detect_cd_type() {
+	mount -n -t iso9660 -o ro /dev/lfs-cd /.tmpfs/.cdrom
+	if [ -d /.tmpfs/.cdrom/lfs-sources ] ; then
+		if [ "$toram" = 1 ] ; then
+			cdtype=toram
+		else
+			cdtype=fullcd
+		fi
+	else
+		cdtype=nosrc
+	fi
+	umount -n /.tmpfs/.cdrom
+}
+
+
+do_mount_cd() {
+	while [ ! -b /dev/lfs-cd ] ; do
+		find_cd
+
+		if [ ! -b /dev/lfs-cd ] ; then
+			cat <<"EOF"
+EOF
+			problem
+		fi
+	done
+	mkdir /.tmpfs/.cdrom
+
+	detect_cd_type
+	if [ "$toram" = 1 ] ; then copy_cd_to_ram ; fi
+
+	mount -n -t iso9660 -o ro /dev/lfs-cd /.tmpfs/.cdrom
+	losetup /dev/loop0 /.tmpfs/.cdrom/root.ext2
+	SIZE=`blockdev --getsize /dev/loop0`
+	OVERHEAD=$(( 0x1000 + $SIZE * 2 ))
+	OVLSIZE=$(( $SIZE + ( $OVERHEAD + 511 ) / 512 ))
+	dd if=/dev/null of=/.tmpfs/.overlay bs=512 seek=$OVLSIZE 2>/dev/null
+	losetup /dev/loop1 /.tmpfs/.overlay
+	echo "0 $SIZE snapshot /dev/loop0 /dev/loop1 p 8" | dmsetup create lfs-cd
+	mount -n -t ext2 /dev/mapper/lfs-cd /.root
+	mount -n --move /.tmpfs /.root/dev/shm
+	if [ "$toram" != 1 ] && [ ! -d /.root/dev/shm/.partition ] ; then
+		cp -a /dev/lfs-cd /.root/dev/lfs-cd
+	fi
+	if [ "$toram" != 1 ] ; then
+		ln -sf /dev/shm/.cdrom/drivers /.root/drivers
+	fi
+	cat /etc/modprobe.conf >>/.root/etc/modprobe.conf
+	ln -sf issue.$cdtype /.root/etc/issue
+	if [ "$cdtype" = "fullcd" ] ; then
+		ln -sf /dev/shm/.cdrom/lfs-sources /.root/lfs-sources
+	fi
+	if [ "$nodhcp" = "1" ] ; then
+		rm -f /.root/etc/udev/rules.d/76-network.rules
+	fi
+	( IFS="," ; for module in $load ; do
+		echo "$module" >>/.root/etc/sysconfig/modules
+	done )
+
+}
+
+do_mount_iso() {
+	DEVICE=${root#iso:}
+	FILE=${DEVICE#*:}
+	DEVICE=${DEVICE%%:*}
+	mkdir /.tmpfs/.partition
+	while [ ! -b "$DEVICE" ] ; do
+		cat <<EOF
+EOF
+		problem
+	done
+	if ! mount -n -t "$rootfstype" -o "$rootflags" "$DEVICE" /.tmpfs/.partition ; then
+		cat <<EOF
+Could not mount device ${DEVICE}
+Available partitions:
+EOF
+		cat /proc/partitions
+		while true ; do sleep 10000 ; done
+	fi
+	if [ ! -f "/.tmpfs/.partition/$FILE" ] ; then
+		cat <<EOF
+The file ${FILE} does not exist on the device ${DEVICE}.
+EOF
+		( cd /.tmpfs/.partition ; ls )
+		umount -n /.tmpfs/.partition
+		while true ; do sleep 10000 ; done
+	fi
+	losetup /dev/loop3 "/.tmpfs/.partition/$FILE"
+	ln -sf /dev/loop3 /dev/lfs-cd
+	do_mount_cd
+}
+
+do_mount_root() {
+	mkdir /.root
+	[ -n "$rootflags" ] && rootflags="$rootflags,"
+	rootflags="$rootflags$ro"
+	case "$root" in
+	iso:*)
+		mkdir /.tmpfs
+		mount -n -t tmpfs -o size=90% tmpfs /.tmpfs
+		do_mount_iso
+		;;
+	/dev/*)
+		while [ ! -b "$root" ] ; do
+			cat <<EOF
+The device ${root}, does not exist.
+EOF
+			problem	
+		done
+		if ! mount -n -t "$rootfstype" -o "$rootflags" "$root" /.root ; then
+			cat <<EOF
+Could not mount device ${root}
+Available partitions:
+EOF
+			cat /proc/partitions
+			while true ; do sleep 10000 ; done
+		fi
+		;;
+	*:*)
+		( IFS=":" ; mknod /dev/root b $root )
+		if ! mount -n -t "$rootfstype" -o "$rootflags" /dev/root /.root ; then
+			cat <<EOF
+Could not mount device $root
+Available partitions:
+EOF
+			cat /proc/partitions
+			while true ; do sleep 10000 ; done
+		fi
+		;;
+	"")
+		mkdir /.tmpfs
+		mount -n -t tmpfs -o size=90% tmpfs /.tmpfs
+		do_mount_cd
+		;;
+	esac
+}
+
+##
+## main() begins
+##
+
+mount -n -t proc proc /proc
+mount -n -t sysfs sysfs /sys
+
+read -r cmdline </proc/cmdline
+
+( IFS="," ; for module in $blacklist ; do
+	echo "blacklist $module" >>/etc/modprobe.conf
+done )
+
+for param in $cmdline ; do
+	case $param in
+	*.*=*)
+		module=${param%%.*}
+		option=${param#*.}
+		echo "options $module $option" >>/etc/modprobe.conf
+		;;
+	ide=*|idebus=*|ide[0123]=*|hd[a-z]=*)
+		ide_core_opts="$ide_core_opts $param"
+		;;
+	pata)
+		PATA=1
+		;;
+	new_firewire)
+		NEW_FIREWIRE=1
+		;;
+	all_generic_ide|all-generic-ide)
+		all_generic_ide=1
+		;;
+	init=*)
+		init=${param#init=}
+		;;
+	root=*)
+		root=${param#root=}
+		;;
+	rootdelay=*)
+		rootdelay=${param#rootdelay=}
+		;;
+	rootfstype=*)
+		rootfstype=${param#rootfstype=}
+		;;
+	rootflags=*)
+		rootflags=${param#rootflags=}
+		;;
+	ro)
+		ro="ro"
+		;;
+	rw)
+		ro="rw"
+		;;
+	noresume)
+		noresume=1
+		;;
+	resume=*)
+		resume=${param#resume=}
+		;;
+	toram)
+		toram=1
+		;;
+	nodhcp)
+		nodhcp=1
+		;;
+	esac
+done
+
+if [ -n "$ide_core_opts" ] ; then
+	# remove the extra space from the beginning
+	ide_core_opts="${ide_core_opts# }"
+	echo "options ide_core options=\"$ide_core_opts\"" >>/etc/modprobe.conf
+fi
+
+case "$PATA" in
+	0)
+		for driver in /lib/modules/`uname -r`/kernel/drivers/ata/pata_*.ko ; do
+			drv=${driver##*/}
+			drv=${drv%.ko}
+			echo "blacklist $drv" >>/etc/modprobe.conf
+		done
+		echo "install ata_piix /sbin/modprobe piix ; /sbin/modprobe -i ata_piix" >>/etc/modprobe.conf
+		;;
+	1)
+		for driver in /lib/modules/`uname -r`/kernel/drivers/ide/pci/*.ko ; do
+			drv=${driver##*/}
+			drv=${drv%.ko}
+			echo "blacklist $drv" >>/etc/modprobe.conf
+		done
+		echo "blacklist ide-cs" >>/etc/modprobe.conf
+		;;
+esac
+
+case "$NEW_FIREWIRE" in
+	0)
+		for driver in /lib/modules/`uname -r`/kernel/drivers/firewire/*.ko ; do
+			drv=${driver##*/}
+			drv=${drv%.ko}
+			echo "blacklist $drv" >>/etc/modprobe.conf
+		done
+		;;
+	1)
+		for driver in /lib/modules/`uname -r`/kernel/drivers/ieee1394/*.ko ; do
+			drv=${driver##*/}
+			drv=${drv%.ko}
+			echo "blacklist $drv" >>/etc/modprobe.conf
+		done
+		;;
+esac
+
+if [ "$all_generic_ide" = 1 ] ; then
+	echo "options generic all_generic_ide=1" >>/etc/modprobe.conf
+	echo "options ata-generic all_generic_ide=1" >>/etc/modprobe.conf
+fi
+
+udevd --daemon
+
+( IFS="," ; for module in $load ; do
+	# Some modules exist only on the main CD filesystem.
+	# Suppress the error about them not being found.
+	modprobe -q "$module"
+done )
+
+udevtrigger
+udevsettle
+if [ "$all_generic_ide" = 1 ] ; then
+	if [ "$PATA" = 0 ] ; then
+		modprobe generic
+	else
+		modprobe ata_generic
+	fi
+	udevsettle
+fi
+
+if [ -n "$rootdelay" ] ; then sleep "$rootdelay" ; fi
+
+[ "$noresume" = 0 ] && do_resume
+
+##
+## do_mount_root
+##
+
+do_mount_root
+
+killall -w /sbin/udevd
+
+umount /sys
+umount /proc
+cd /.root
+
+# Clean up and free some memory
+rm -rf /bin /sbin /lib /sys /proc /dev /.tmpfs /init /fakecd.iso.head
+./lib/ld-linux-x86-64.so.2 --library-path ./lib ./bin/mount -n --move . /
+exec ../lib/ld-linux-x86-64.so.2 --library-path ./lib ./usr/sbin/chroot . "$init" "$@"

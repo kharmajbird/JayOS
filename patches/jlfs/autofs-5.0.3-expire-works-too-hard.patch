@@ -1,0 +1,59 @@
+diff --git a/CHANGELOG b/CHANGELOG
+index 033923d..eb4cce1 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -6,6 +6,7 @@
+ - avoid using UDP for probing NFSv4 mount requests.
+ - use libldap instead of libldap_r (Guillaume Rousse).
+ - another fix for don't fail on empty master map.
++- fix expire working harder than needed.
+  
+ 14/01/2008 autofs-5.0.3
+ -----------------------
+diff --git a/daemon/direct.c b/daemon/direct.c
+index 529f143..760fbd4 100644
+--- a/daemon/direct.c
++++ b/daemon/direct.c
+@@ -824,11 +824,16 @@ static int expire_direct(int ioctlfd, const char *path, unsigned int when, unsig
+ 			if (errno == EBADF || errno == EINVAL)
+ 				return 1;
+ 
+-			/* Other than need to wait for the kernel ? */
+-			if (errno != EAGAIN)
+-				return 0;
++			/*
++			 * Other than EAGAIN is an expire error so continue.
++			 * Kernel try the same mount again, limited by
++			 * retries (ie. number of mounts directly under
++			 * mount point, should always be one for direct
++			 * mounts).
++			 */
++			if (errno == EAGAIN)
++				break;
+ 		}
+-
+ 		nanosleep(&tm, NULL);
+ 	}
+ 
+diff --git a/daemon/indirect.c b/daemon/indirect.c
+index fd94e59..39b42da 100644
+--- a/daemon/indirect.c
++++ b/daemon/indirect.c
+@@ -344,11 +344,13 @@ static int expire_indirect(struct autofs_point *ap, int ioctlfd, const char *pat
+ 			if (errno == EBADF || errno == EINVAL)
+ 				return 1;
+ 
+-			/* Other than need to wait for the kernel ? */
+-			if (errno != EAGAIN)
+-				return 0;
++			/*
++			 * Other than EAGAIN is an expire error so continue.
++			 * Kernel will try the next mount.
++			 */
++			if (errno == EAGAIN)
++				break;
+ 		}
+-
+ 		nanosleep(&tm, NULL);
+ 	}
+ 

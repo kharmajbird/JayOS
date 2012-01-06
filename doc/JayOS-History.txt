@@ -1,0 +1,39 @@
+
+DESIGN CONSIDERATIONS (or why)
+MultiOS is designed to allow advanced systems administrators access to
+their data from any computer.  I wanted to create a mobile environment
+for accessing the web and email regardless of what was already installed
+on a computer.  Instead of having my data and configurations tied to
+a single machine, like a typical desktop user, I wanted the freedom to
+use anyone's computer and still have my familiar programs available.
+
+I think projects like these have a lot of potential when one realizes
+the flexibility and modular strengths loopback filesystems have over
+ordinary filesystems. MultiOS could be used as a full-blown computing
+environment, or as a customized loader for a game or application. Entire
+operating systems could be held in flash memory without the need for a
+conventional hard drive.
+
+Most consumers, even though they might run the same OS, have different
+programs installed on their computer's hard drive. This makes it hard
+to share files if their cohort doesn't have that specialized windows
+driver program to read it. MultiOS could ultimately ease this pain by
+literally putting both the OS and user files into the consumer's pocket.
+A one gigabyte CompactFlash card, completely blank, sells for about $300 
+today, and will go for even less tomorrow. It won't be too long before 
+someone starts selling them with operating systems preinstalled. Think
+about it.
+
+So what's the difference, you ask, between MultiOS and other embedded
+distributions?  One major difference is, I use a CompactFlash card
+instead of a floppy to store the OS, your configuration changes, and
+your data.  My boot procedure is a little different than most because
+of the compressed loopback filesystems used for / and /usr. Other than
+that, nothing earth-shattering. 
+
+The main thing that sets MultiOS apart is the simple fact that I put
+it together from scratch, and it works well for me :) I wrote all of the
+scripts in /root/bin, /etc/rc.sysinit. /etc/init.d/fs, and linuxrc.c. That
+C program controls all the low-level aspects of booting encrypted and
+unencrypted loopback filesystems. 
+

@@ -1,0 +1,25 @@
+diff -Naur graphviz-2.28.0.orig/configure graphviz-2.28.0/configure
+--- graphviz-2.28.0.orig/configure	2011-05-06 20:27:36.000000000 -0700
++++ graphviz-2.28.0/configure	2011-11-06 14:22:36.000000000 -0800
+@@ -1286,7 +1286,6 @@
+ with_gts
+ with_glade
+ with_ming
+-with_qt
+ with_quartz
+ with_platformsdkincludedir
+ with_platformsdklibdir
+@@ -24734,13 +24733,6 @@
+ 
+ 
+ 
+-# Check whether --with-qt was given.
+-if test "${with_qt+set}" = set; then :
+-  withval=$with_qt;
+-else
+-  with_qt=yes
+-fi
+-
+ 
+ if test "x$with_qt" != "xyes"; then
+   use_qt="No (disabled)"

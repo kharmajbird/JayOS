@@ -1,0 +1,27 @@
+#!/bin/bash
+
+[ "x$ACTION" = "xadd" \
+    -a "x$DEVTYPE" = "xpartition" \
+    -a "x$ID_BUS" = "xusb" \
+] || exit 0
+
+DEVICE=/dev/disk/by-uuid/$ID_FS_UUID_ENC
+
+grep -q ":$DEVICE\$" /etc/auto.usb && exit 0
+grep -q "^$DEVNAME" /etc/fstab && exit 0
+grep -q "^$DEVICE" /etc/fstab && exit 0
+grep -q "^label:$ID_FS_LABEL_ENC" /etc/fstab && exit 0
+
+seq=0
+LABEL=$(echo "$ID_FS_LABEL_ENC" |sed 's, ,_,g')
+MNTDIR="$LABEL"
+
+while ( grep -q "^/j/$MNTDIR " /etc/auto.usb ); do
+    seq=$(expr $seq + 1)
+    MNTDIR="$LABEL-$seq"
+done
+
+echo "$MNTDIR -fstype=auto,ro :$DEVICE" >> /etc/auto.usb
+
+/lib/udev/usb_automount_clean
+

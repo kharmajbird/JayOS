@@ -1,0 +1,5 @@
+#!/bin/sh
+if [ "$USEPEERDNS" = "1" ] && [ -s /etc/ppp/resolv.conf ]
+then
+        install -m 644 /etc/ppp/resolv.conf /etc/resolv.conf
+fi

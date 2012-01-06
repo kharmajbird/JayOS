@@ -1,0 +1,12 @@
+diff -Naur dsniff-2.4b2/Makefile.in dsniff-2.4b2-new/Makefile.in
+--- dsniff-2.4b2/Makefile.in	2000-07-30 20:40:10.000000000 -0700
++++ dsniff-2.4b2-new/Makefile.in	2004-07-04 15:45:26.119591760 -0700
+@@ -68,7 +68,7 @@
+ 
+ LIBOBJS	= dummy.o @LIBOBJS@
+ 
+-PROGS	= arpspoof dnsspoof dsniff filesnarf macof mailsnarf msgsnarf \
++PROGS	= dnsspoof dsniff filesnarf macof mailsnarf msgsnarf \
+ 	  sshmitm sshow tcpkill tcpnice @TCPHIJACK@ urlsnarf filenamesnarf webmitm @WEBSPY@ 
+ 
+ CONFIGS	= dsniff.magic dsniff.services dnsspoof.hosts

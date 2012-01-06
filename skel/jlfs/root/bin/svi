@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# smart vi
+
+EXTRA=/etc/X11/xinit:/etc/rc.d
+SEARCH=`echo $PATH $EXTRA| sed "s/:/ /g"`
+
+while [ $# != 0 ]; do
+
+  for i in $SEARCH; do
+    if [ -f $i/$1 ]; then
+      list="$list $i/$1"
+    fi
+
+  done
+
+  shift
+done
+
+exec vi $list

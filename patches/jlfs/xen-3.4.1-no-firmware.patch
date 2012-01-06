@@ -1,0 +1,10 @@
+--- xen-3.4.1/tools/Makefile.orig	2009-08-06 08:57:24.000000000 -0500
++++ xen-3.4.1/tools/Makefile	2009-11-12 19:36:32.000000000 -0600
+@@ -12,7 +12,6 @@
+ SUBDIRS-y += hotplug
+ SUBDIRS-y += xentrace
+ SUBDIRS-$(CONFIG_XCUTILS) += xcutils
+-SUBDIRS-$(CONFIG_X86) += firmware
+ SUBDIRS-$(ACM_SECURITY) += security
+ SUBDIRS-y += console
+ SUBDIRS-y += xenmon

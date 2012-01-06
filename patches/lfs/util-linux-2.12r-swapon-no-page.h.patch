@@ -1,0 +1,11 @@
+diff -Naur util-linux-2.12r.orig/mount/swapon.c util-linux-2.12r/mount/swapon.c
+--- util-linux-2.12r.orig/mount/swapon.c	2008-05-11 12:43:41.000000000 -0500
++++ util-linux-2.12r/mount/swapon.c	2008-05-11 12:44:23.000000000 -0500
+@@ -29,7 +29,6 @@
+ #include <sys/ioctl.h>
+ #include <sys/utsname.h>
+ #include <sys/time.h>
+-#include <asm/page.h>
+ #include "xmalloc.h"
+ #include "swap_constants.h"
+ #include "swapargs.h"

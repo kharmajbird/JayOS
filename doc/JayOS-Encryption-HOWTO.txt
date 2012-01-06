@@ -1,0 +1,89 @@
+This is a brief explanation of how to use encryption under the most
+recent release of JayOS. It will walk you through the steps of creating
+and booting an encrypted root filesystem, and how to insert and extract
+hidden data into a filesystem.
+
+
+
+This procedure was tested with:
+	JayOS-iMac-20060824, JayOS-iMac-20060818
+	JayOS-x86-20060824, JayOS-x86-20060818 
+
+
+--- already done for you, see /cd/boot/root.alt
+After booting normally, run the script /root/bin/mklo to create an
+encrypted copy of your currently-mounted root filesystem. The following
+command will create 64MB encrypted ext2 filesystem (journal doesn't
+work on loopback devices),
+
+mklo -e -t ext2 -s 64 -f /mnt/boot/root.alt
+---
+
+
+
+The next time you boot, give pass the kernel the "alt" parameter. This
+will tell /initrd/linuxrc that you want to load boot/root.alt instead
+of boot/root.gz. It will copy into memory the above file, assume
+it is encrypted, and pause for the passphrase. You can type in the
+password after dd prints its message. If you give the wrong password,
+the unencrypted root filesystem is loaded instead, and control passes
+to /sbin/init as usual. Within the root filesystem, losetup has been
+patched so that the Password: prompt is not displayed, but this is not
+the case for the losetup in initrd. 
+
+The password for root.alt on the livecd is "jay-zareasonabledoubt".
+Once you have successfully booted, look in root's home directory for the
+password to use when prompted in the steps below.
+
+
+
+
+Q) How do you know root is encrypted?
+
+Do an losetup on /dev/loop7, where root is mounted. You'll see it points
+to /dev/ram1, and is encrypted with aes128.  Use dd to copy the first
+megabyte of /dev/ram1 to a file, then run file against the newly created
+file and note its file type: data. Do the same for /dev/loop7 and see
+that the filesystem type is recognized.
+
+
+
+How to pull encrypted data from a filesystem
+
+For this example, I have chosen to use the current root filesystem ramdisk 
+as the storage location. 
+
+mkdir /tmp/j
+
+/initrd/bin/busybox rune /dev/ram1| \
+    aespipe -d -e aes128 > \
+        /tmp/small.fs.gz
+
+gzip -d /tmp/small.fs.gz
+mount -o loop /tmp/small.fs /tmp/j
+ls -l /tmp/j
+
+
+
+
+
+How to hide encrypted data in a filesystem
+
+There is a patch in /cd/src/jlfs named runefs-initrd.patch. During the
+JayOS build process, before running "make boot", patch the source tree
+with this command:
+
+patch -Np3 < runefs-initrd.patch
+
+A small file will be created named small.fs.gz. It is a compressed ext2
+filesystem containing a single file. It could easily be anything you want
+it to be. Now when "make boot" is run, code in the Makefile will insert
+small.fs.gz into either the root filesystem, or the initial ramdisk 
+where it cannot be readily found.
+
+
+
+
+All sources and patches used to make this happen are provided on the
+source CD, but not necessarily compiled during the normal build process.
+Happy hunting!

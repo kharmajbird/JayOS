@@ -1,0 +1,47 @@
+#!/bin/sh
+
+#
+# script to create loopback devices for use with swap or other filesystems
+#
+
+# Where to place the filesystem
+FS=/usb/boot/root.alt
+
+# Size in megabytes
+SIZE=60
+
+CRYPT=" -e aes "
+
+##
+## No more to edit...
+##
+
+if [ ! -d `dirname $FS` ]; then mkdir -p `dirname $FS`; fi
+
+# find a free loop device
+loop=NONE
+for l in $(echo /dev/loop[0-9]); do
+    if [ $loop == NONE ] && ! grep -q $l /proc/mounts && \
+	! { losetup $l &> /dev/null; }; then
+        loop=$l
+    fi
+done
+
+
+echo "Building filesystem..."
+dd if=/dev/zero of=$FS bs=1024k count=$SIZE
+
+echo "Enter random noise..."
+losetup $CRYPT $loop $FS
+mke2fs -m0 -b 1024 $loop
+mkdir -p /tmp/new
+mount $loop /tmp/new
+
+echo "Copying root filesystem..."
+cp -ax / /tmp/new
+
+echo "Closing up shop..."
+umount $loop
+e2fsck -fy $loop
+losetup -d $loop
+rm -rf /tmp/new

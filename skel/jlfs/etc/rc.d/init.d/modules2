@@ -1,0 +1,20 @@
+#!/bin/sh
+
+#
+# eth0 prevents wlan0 from coming up in a timely fashion
+# will load from rc.local if "dhcp" given on kernel command line
+#
+#j# echo "blacklist sky2" >> /etc/modprobe.d/sky2.conf
+
+if [ ! -f /proc/xen/capabilities ]; then
+
+#
+# is this even needed anymore? obsolete?
+#
+
+    # for vanilla kernel, who won't have loop loaded from initrd
+    modprobe loop 2>/dev/null
+fi
+
+# try to load all but framebuffer drivers (especially ethernet)
+#for i in `pcimodules| grep -v fb`; do modprobe $i; done

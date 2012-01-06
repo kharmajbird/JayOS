@@ -1,0 +1,8 @@
+#!/bin/bash
+
+[ "x$ACTION" = "xremove" -a \
+    "x$DEVTYPE" = "xpartition" -a \
+    "x$ID_BUS" = "xusb" \
+] || exit 0
+
+/lib/udev/usb_automount_clean

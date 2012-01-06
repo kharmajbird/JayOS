@@ -1,0 +1,24 @@
+default=0
+timeout7
+#splashimage=/boot/grub/splash.xpm.gz
+splashimage=/boot/grub/JayOS-Laptop-14.xpm.gz
+
+title JayOS-x86
+	root (hd0,0)
+	kernel rw /boot/vmlinuz.x86 load_ramdisk=1 initrd_archive=ext2 \
+            ramdisk_size=755000 root=/dev/ram1 \
+            rootdev=/dev/hda1 usrram
+	initrd /boot/initrd.gz
+
+#title JayOS-xen
+#	root (hd0,0)
+#	kernel /boot/xen-3.3.gz console=vga
+#	module /boot/vmlinuz.xen root=/dev/ram1 ro console=tty0
+#	module /boot/initrd.gz
+
+title JayOS-vz
+	root (hd0,0)
+	kernel rw /boot/vmlinuz.vz load_ramdisk=1 initrd_archive=ext2 \
+            ramdisk_size=755000 root=/dev/ram1 \
+            rootfs=fs/rootvz.gz rootdev=/dev/hda1
+	initrd /boot/initrdz.gz

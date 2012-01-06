@@ -1,0 +1,45 @@
+This assumes you have booted either the Live CD or USB sticks, and you
+have at least 12 GB of free storage space available, hopefully a little
+more. The GUI interface is not strictly necessary for a successful build,
+but of course it will make the wait more interesting.
+
+The build script is (aptly) named build.sh, and is located in /root on the
+live system. In the source, it is /lfs/build/JayOS/scripts/build.sh. Within
+it are a few variables you may wish to change.
+
+
+LFS
+I would leave this one alone. No harm, no foul.
+
+SCRATCH
+This is the directory that holds the loopback filesystem mounted on /lfs.
+
+You will need at least 12 GB available for a successful build. Feel free
+to adjust the dd count values in the script for a more roomy environment.
+
+vaio:/fs/fs# ls -l
+total 12595216
+-rw-r--r-- 1 root root 12884901888 Jan  4 17:14 lfs.fs
+
+
+If you have a 1 GB of RAM or less, you may also want to configure a swap
+space at this time. SeaMonkey is known to want *tons* of RAM during it's
+linking stage.
+
+
+Now the system is ready to build!
+
+
+It is safe to run build.sh from your home directory; it will not write
+to anywhere but /lfs.  When it completes (in seconds) it will ask for
+a shell source command to be run in the terminal.
+
+After running the command, the shell prompt will change from # to $. This
+means that the environment has been properly cleared and set up for
+cross compilation.
+
+Finally, run build.sh *again* to launch the automated build of LFS,
+BLFS, and JLFS. Images for ISOs and USB sticks will also be built.
+
+Total compile time is hovering around 16 hours on a core duo 1.66 Ghz
+box with 2GB of RAM and 1GB swap. Time enough for several sandwiches :)

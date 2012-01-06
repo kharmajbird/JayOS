@@ -1,0 +1,29 @@
+diff -Naur pygobject-2.21.5.orig/gi/pygi-info.c pygobject-2.21.5/gi/pygi-info.c
+--- pygobject-2.21.5.orig/gi/pygi-info.c	2010-07-12 01:34:16.000000000 -0700
++++ pygobject-2.21.5/gi/pygi-info.c	2011-11-25 21:54:23.718058331 -0800
+@@ -200,9 +200,6 @@
+         case GI_INFO_TYPE_CONSTANT:
+             type = &PyGIConstantInfo_Type;
+             break;
+-        case GI_INFO_TYPE_ERROR_DOMAIN:
+-            PyErr_SetString (PyExc_NotImplementedError, "GIErrorDomainInfo bindings not implemented");
+-            return NULL;
+         case GI_INFO_TYPE_UNION:
+             type = &PyGIUnionInfo_Type;
+             break;
+@@ -428,7 +425,6 @@
+                 case GI_INFO_TYPE_INVALID:
+                 case GI_INFO_TYPE_FUNCTION:
+                 case GI_INFO_TYPE_CONSTANT:
+-                case GI_INFO_TYPE_ERROR_DOMAIN:
+                 case GI_INFO_TYPE_VALUE:
+                 case GI_INFO_TYPE_SIGNAL:
+                 case GI_INFO_TYPE_PROPERTY:
+@@ -807,7 +803,6 @@
+                     case GI_INFO_TYPE_INVALID:
+                     case GI_INFO_TYPE_FUNCTION:
+                     case GI_INFO_TYPE_CONSTANT:
+-                    case GI_INFO_TYPE_ERROR_DOMAIN:
+                     case GI_INFO_TYPE_VALUE:
+                     case GI_INFO_TYPE_SIGNAL:
+                     case GI_INFO_TYPE_PROPERTY:

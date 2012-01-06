@@ -1,0 +1,35 @@
+diff -Naur openexr-1.6.1/IlmImf/b44ExpLogTable.cpp openexr-1.6.1.orig/IlmImf/b44ExpLogTable.cpp
+--- openexr-1.6.1/IlmImf/b44ExpLogTable.cpp	2006-08-31 16:58:14.000000000 -0700
++++ openexr-1.6.1.orig/IlmImf/b44ExpLogTable.cpp	2011-11-07 21:28:02.000000000 -0800
+@@ -49,7 +49,7 @@
+ //
+ //---------------------------------------------------------------------------
+ 
+-#include <half.h>
++#include <OpenEXR/half.h>
+ #include <math.h>
+ #include <iostream>
+ #include <iomanip>
+diff -Naur openexr-1.6.1/exrenvmap/main.cpp openexr-1.6.1.orig/exrenvmap/main.cpp
+--- openexr-1.6.1/exrenvmap/main.cpp	2007-04-24 18:07:51.000000000 -0700
++++ openexr-1.6.1.orig/exrenvmap/main.cpp	2011-11-07 21:32:52.000000000 -0800
+@@ -45,6 +45,7 @@
+ #include <iostream>
+ #include <exception>
+ #include <stdlib.h>
++#include <string.h>
+ 
+ using namespace Imf;
+ using namespace std;
+diff -Naur openexr-1.6.1/exrmaketiled/main.cpp openexr-1.6.1.orig/exrmaketiled/main.cpp
+--- openexr-1.6.1/exrmaketiled/main.cpp	2007-04-24 18:08:45.000000000 -0700
++++ openexr-1.6.1.orig/exrmaketiled/main.cpp	2011-11-07 21:28:53.000000000 -0800
+@@ -44,7 +44,7 @@
+ 
+ #include <iostream>
+ #include <exception>
+-#include <string>
++#include <string.h>
+ #include <stdlib.h>
+ 
+ using namespace Imf;

@@ -1,0 +1,25 @@
+diff --git a/CHANGELOG b/CHANGELOG
+index b172579..5a85a8e 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -3,6 +3,7 @@
+ - correct configure test for ldapr page control functions.
+ - catch "-xfn" map type and issue "no supported" message.
+ - correction for handling of LDAP base dns with spaces.
++- avoid using UDP for probing NFSv4 mount requests.
+  
+ 14/01/2008 autofs-5.0.3
+ -----------------------
+diff --git a/modules/mount_nfs.c b/modules/mount_nfs.c
+index 0e7aebe..df01fd6 100644
+--- a/modules/mount_nfs.c
++++ b/modules/mount_nfs.c
+@@ -129,7 +129,7 @@ int mount_mount(struct autofs_point *ap, const char *root, const char *name, int
+ 	}
+ 
+ 	if (strcmp(fstype, "nfs4") == 0)
+-		vers = NFS4_VERS_MASK | NFS_PROTO_MASK;
++		vers = NFS4_VERS_MASK | TCP_SUPPORTED;
+ 	else
+ 		vers = NFS_VERS_MASK | NFS_PROTO_MASK;
+ 

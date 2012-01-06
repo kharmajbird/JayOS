@@ -1,0 +1,47 @@
+diff --git a/CHANGELOG b/CHANGELOG
+index 40ac2f8..dd66e95 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -9,6 +9,7 @@
+ - fix expire working harder than needed.
+ - fix unlink of mount tree incorrectly causing autofs mount fail.
+ - update kernel header file linux/auto_fs4.h.
++- update fix expire working harder than needed.
+  
+ 14/01/2008 autofs-5.0.3
+ -----------------------
+diff --git a/daemon/direct.c b/daemon/direct.c
+index 8d1e9c6..0c9a648 100644
+--- a/daemon/direct.c
++++ b/daemon/direct.c
+@@ -808,7 +808,7 @@ static int expire_direct(int ioctlfd, const char *path, unsigned int when, unsig
+ 
+ 	if (fstat(ioctlfd, &st) == -1) {
+ 		char *estr = strerror_r(errno, buf, MAX_ERR_BUF);
+-		error(logopt, "fstat failed: %s", estr);
++		debug(logopt, "fstat failed: %s", estr);
+ 		return 0;
+ 	}
+ 
+diff --git a/daemon/indirect.c b/daemon/indirect.c
+index f0409ac..de37d16 100644
+--- a/daemon/indirect.c
++++ b/daemon/indirect.c
+@@ -328,7 +328,7 @@ static int expire_indirect(struct autofs_point *ap, int ioctlfd, const char *pat
+ 
+ 	if (fstat(ioctlfd, &st) == -1) {
+ 		char *estr = strerror_r(errno, buf, MAX_ERR_BUF);
+-		error(ap->logopt, "fstat failed: %s", estr);
++		debug(ap->logopt, "fstat failed: %s", estr);
+ 		return 0;
+ 	}
+ 
+@@ -420,8 +420,6 @@ void *expire_proc_indirect(void *arg)
+ 			if (strstr(next->opts, "indirect"))
+ 				master_notify_submount(ap, next->path, ap->state);
+ 			pthread_setcancelstate(cur_state, NULL);
+-
+-			continue;
+ 		}
+ 
+ 		if (ap->state == ST_EXPIRE || ap->state == ST_PRUNE)

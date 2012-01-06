@@ -1,0 +1,69 @@
+[SETTINGS]
+selforecolor = 4294967295
+forecolor = 4278190080
+selbackcolor = 4286578688
+backcolor = 4294967295
+bordercolor = 4278190080
+basecolor = 4291677901
+
+[LEFT PANEL]
+attr_size = 100
+name_size = 411
+type_size = 100
+size_size = 143
+modd_size = 150
+lastdir = /
+grou_size = 50
+user_size = 50
+liststyle = 33554432
+
+[OPTIONS]
+confirm_overwrite = 1
+confirm_quit = 0
+root_warn = 0
+status = 1
+width = 881
+height = 570
+toolbar = 1
+copy_in_bg = 0
+tree_width = 180
+confirm_delete = 1
+ask_before_copy = 1
+show_tree = 1
+new_style_buttons = 1
+two_panels = 0
+
+[HISTORY]
+run = 
+open = vlc:gqview:xine:gmplayer:lpr:
+
+[bookmarks]
+
+[RIGHT PANEL]
+attr_size = 100
+name_size = 200
+type_size = 100
+size_size = 60
+modd_size = 150
+lastdir = /
+grou_size = 50
+user_size = 50
+liststyle = 0
+
+[FILETYPES]
+ = ";;;;;"
+xls = "scalc;Excel Document;class_32x32.gif;class_16x16.gif;;"
+html = "firefox,textview,textedit;Hyper Text;html_32x32.gif;html_16x16.gif;;"
+doc = "soffice;Word Document;class_32x32.gif;class_16x16.gif;;"
+mpg = "vlc,mplayer,xine;MPEG Video;video_32x32.gif;video_16x16.gif;;"
+avi = "vlc,mplayer,xine;MPEG Video;video_32x32.gif;video_16x16.gif;;"
+pdf = "gsview,gpdf;PDF File;pdf_32x32.gif;pdf_16x16.gif;;"
+gif = "gqview,gimp;GIF Image;gif_32x32.gif;gif_16x16.gif;;"
+sxw = "soffice;OpenOffice Document;class_32x32.gif;class_16x16.gif;;"
+jpeg = "gqview,gimp;JPEG Image;jpeg_32x32.gif;jpeg_16x16.gif;;"
+JPG = "gqview,gimp;JPEG Image;jpeg_32x32.gif;jpeg_16x16.gif;;"
+mpeg = "vlc,mplayer,xine;MPEG Video;video_32x32.gif;video_16x16.gif;;"
+jpg = "gqview,gimp;JPEG Image;jpeg_32x32.gif;jpeg_16x16.gif;;"
+wmv = "vlc,mplayer,xine;Windows Media Video;video_32x32.gif;video_16x16.gif;;"
+ppt = "simpress;PowerPoint Document;class_32x32.gif;class_16x16.gif;;"
+

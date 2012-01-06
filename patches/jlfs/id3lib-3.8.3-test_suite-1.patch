@@ -1,0 +1,93 @@
+Submitted By:            Randy McMurchy <randy_at_linuxfromscratch_dot_org>
+Date:                    2005-08-27
+Initial Package Version: 3.8.3
+Upstream Status:         Not submitted
+Origin:                  Randy McMurchy and Gentoo CVS
+                         (http://www.gentoo.org/cgi-bin/viewcvs.cgi/media-libs/\
+                         id3lib/files/id3lib-3.8.3-test_io.patch?view=markup)
+Description:             Fixes a problem with one of the test suite source files
+                         and adds a few things to actually do some tests
+
+$LastChangedBy: randy $
+$Date: 2005-08-27 19:54:44 -0500 (Sat, 27 Aug 2005) $
+
+
+diff -Naur id3lib-3.8.3-orig/examples/Makefile.in id3lib-3.8.3/examples/Makefile.in
+--- id3lib-3.8.3-orig/examples/Makefile.in	2003-03-02 00:23:00.000000000 +0000
++++ id3lib-3.8.3/examples/Makefile.in	2005-08-28 00:15:42.000000000 +0000
+@@ -895,6 +895,8 @@
+ 	done
+ check-am: all-am
+ 	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
++	chmod 755 run_tests
++	./run_tests
+ check: check-am
+ all-am: Makefile $(PROGRAMS)
+ 
+
+diff -Naur id3lib-3.8.3-orig/examples/run_tests id3lib-3.8.3/examples/run_tests
+--- id3lib-3.8.3-orig/examples/run_tests	1970-01-01 00:00:00.000000000 +0000
++++ id3lib-3.8.3/examples/run_tests	2005-08-28 00:15:42.000000000 +0000
+@@ -0,0 +1,50 @@
++#!/bin/sh
++
++echo
++echo "Running tests..."
++echo
++
++./testremove
++
++if [ $? ]; then
++    echo
++    echo "----------------------------"
++    echo "Tag remove test:      PASSED"
++    echo "----------------------------"
++else
++    echo
++    echo "----------------------------"
++    echo "Tag remove test:      FAILED"
++    echo "----------------------------"
++fi
++
++./testcompression
++cmp 230-compressed.tag test-230-compressed.tag >/dev/null 2>&1
++
++if [ $? ]; then
++    echo
++    echo "----------------------------"
++    echo "Tag compression test: PASSED"
++    echo "----------------------------"
++else
++    echo
++    echo "----------------------------"
++    echo "Tag compression test: FAILED"
++    echo "----------------------------"
++fi
++
++./testpic
++cmp 230-picture.tag test-230-picture.tag >/dev/null 2>&1
++
++if [ $? ]; then
++    echo
++    echo "----------------------------"
++    echo "Picture test:         PASSED"
++    echo "----------------------------"
++else
++    echo
++    echo "----------------------------"
++    echo "Picture test:         FAILED"
++    echo "----------------------------"
++fi
++
+
+diff -Naur id3lib-3.8.3-orig/examples/test_io.cpp id3lib-3.8.3/examples/test_io.cpp
+--- id3lib-3.8.3-orig/examples/test_io.cpp	2003-03-02 00:23:00.000000000 +0000
++++ id3lib-3.8.3/examples/test_io.cpp	2005-08-28 00:15:42.000000000 +0000
+@@ -16,6 +16,7 @@
+ using std::cerr;
+ 
+ using namespace dami;
++using namespace std;
+ 
+ int
+ main(size_t argc, const char** argv)

@@ -1,0 +1,12 @@
+/dev/ram1     /            ext2     defaults 	    0     0
+
+#j#/cd/fs/swap01.fs           swap	    swap     encrypted	   0	 0
+/cd/fs/usr.fs /usr         squashfs defaults,loop,noauto   0     0
+/cd/fs/opt.fs /opt         squashfs defaults,loop    0     0
+/cd/fs/modules.fs /lib/modules         squashfs defaults,loop,noauto   0     0
+
+tmpfs         /tmp         tmpfs    defaults        0     0 
+proc          /proc        proc     defaults        0     0
+sysfs         /sys         sysfs    defaults        0     0
+devpts        /dev/pts     devpts   gid=4,mode=620  0     0
+shm           /dev/shm     tmpfs    defaults        0     0

@@ -1,0 +1,359 @@
+Submitted By: DJ Lucas <dj_AT_linuxfromscratch_DOT_org>
+Date: 2004-12-19
+Initial Package Version: 3.3.3
+Origin: gcc-3.4.1-linkonce-1.patch
+Upstream Status: Applied
+Description: Fixes linkone/comdat issue
+             Details of this patch can be found on the following link
+             http://gcc.gnu.org/ml/gcc-patches/2004-08/msg00653.html
+
+$LastChangedBy: randy $
+$Date: 2005-08-17 11:33:20 -0500 (Wed, 17 Aug 2005) $
+
+diff -Naur gcc-3.3.3-orig/gcc/config/alpha/alpha.c gcc-3.3.3/gcc/config/alpha/alpha.c
+--- gcc-3.3.3-orig/gcc/config/alpha/alpha.c	2004-01-11 17:53:17.000000000 -0600
++++ gcc-3.3.3/gcc/config/alpha/alpha.c	2004-12-19 22:51:55.974168040 -0600
+@@ -250,6 +250,8 @@
+ # define TARGET_SECTION_TYPE_FLAGS unicosmk_section_type_flags
+ # undef TARGET_ASM_UNIQUE_SECTION
+ # define TARGET_ASM_UNIQUE_SECTION unicosmk_unique_section
++#undef TARGET_ASM_FUNCTION_RODATA_SECTION
++#define TARGET_ASM_FUNCTION_RODATA_SECTION default_no_function_rodata_section
+ # undef TARGET_ASM_GLOBALIZE_LABEL
+ # define TARGET_ASM_GLOBALIZE_LABEL hook_FILEptr_constcharptr_void
+ #endif
+diff -Naur gcc-3.3.3-orig/gcc/config/arm/pe.h gcc-3.3.3/gcc/config/arm/pe.h
+--- gcc-3.3.3-orig/gcc/config/arm/pe.h	2002-05-19 00:23:00.000000000 -0500
++++ gcc-3.3.3/gcc/config/arm/pe.h	2004-12-19 22:51:56.018161352 -0600
+@@ -101,6 +101,7 @@
+ #define MULTIPLE_SYMBOL_SPACES
+ 
+ #define TARGET_ASM_UNIQUE_SECTION arm_pe_unique_section
++#define TARGET_ASM_FUNCTION_RODATA_SECTION default_no_function_rodata_section
+ 
+ #define SUPPORTS_ONE_ONLY 1
+ 
+diff -Naur gcc-3.3.3-orig/gcc/config/avr/avr.c gcc-3.3.3/gcc/config/avr/avr.c
+--- gcc-3.3.3-orig/gcc/config/avr/avr.c	2002-10-24 15:07:21.000000000 -0500
++++ gcc-3.3.3/gcc/config/avr/avr.c	2004-12-19 22:51:56.042157704 -0600
+@@ -221,6 +221,8 @@
+ #define TARGET_ATTRIBUTE_TABLE avr_attribute_table
+ #undef TARGET_ASM_UNIQUE_SECTION
+ #define TARGET_ASM_UNIQUE_SECTION avr_unique_section
++#undef TARGET_ASM_FUNCTION_RODATA_SECTION
++#define TARGET_ASM_FUNCTION_RODATA_SECTION default_no_function_rodata_section
+ #undef TARGET_ENCODE_SECTION_INFO
+ #define TARGET_ENCODE_SECTION_INFO avr_encode_section_info
+ #undef TARGET_SECTION_TYPE_FLAGS
+diff -Naur gcc-3.3.3-orig/gcc/config/darwin.h gcc-3.3.3/gcc/config/darwin.h
+--- gcc-3.3.3-orig/gcc/config/darwin.h	2003-08-08 16:17:57.000000000 -0500
++++ gcc-3.3.3/gcc/config/darwin.h	2004-12-19 22:51:56.091150256 -0600
+@@ -677,6 +677,9 @@
+ #undef	TARGET_ASM_SELECT_RTX_SECTION
+ #define TARGET_ASM_SELECT_RTX_SECTION machopic_select_rtx_section
+ 
++#undef  TARGET_ASM_FUNCTION_RODATA_SECTION
++#define TARGET_ASM_FUNCTION_RODATA_SECTION default_no_function_rodata_section
++
+ #define ASM_DECLARE_UNRESOLVED_REFERENCE(FILE,NAME)			\
+     do { 								\
+ 	 if (FILE) {							\
+diff -Naur gcc-3.3.3-orig/gcc/config/i386/cygwin.h gcc-3.3.3/gcc/config/i386/cygwin.h
+--- gcc-3.3.3-orig/gcc/config/i386/cygwin.h	2003-04-29 08:56:28.000000000 -0500
++++ gcc-3.3.3/gcc/config/i386/cygwin.h	2004-12-19 22:51:56.112147064 -0600
+@@ -331,6 +331,7 @@
+ 
+ extern void i386_pe_unique_section PARAMS ((TREE, int));
+ #define TARGET_ASM_UNIQUE_SECTION i386_pe_unique_section
++#define TARGET_ASM_FUNCTION_RODATA_SECTION default_no_function_rodata_section
+ 
+ #define SUPPORTS_ONE_ONLY 1
+ 
+diff -Naur gcc-3.3.3-orig/gcc/config/i386/i386-interix.h gcc-3.3.3/gcc/config/i386/i386-interix.h
+--- gcc-3.3.3-orig/gcc/config/i386/i386-interix.h	2002-11-25 22:54:48.000000000 -0600
++++ gcc-3.3.3/gcc/config/i386/i386-interix.h	2004-12-19 22:51:56.113146912 -0600
+@@ -330,6 +330,7 @@
+ 
+ extern void i386_pe_unique_section PARAMS ((tree, int));
+ #define TARGET_ASM_UNIQUE_SECTION i386_pe_unique_section
++#define TARGET_ASM_FUNCTION_RODATA_SECTION default_no_function_rodata_section
+ 
+ #define SUPPORTS_ONE_ONLY 1
+ #endif /* 0 */
+diff -Naur gcc-3.3.3-orig/gcc/config/ip2k/ip2k.c gcc-3.3.3/gcc/config/ip2k/ip2k.c
+--- gcc-3.3.3-orig/gcc/config/ip2k/ip2k.c	2003-01-14 14:13:45.000000000 -0600
++++ gcc-3.3.3/gcc/config/ip2k/ip2k.c	2004-12-19 22:51:56.167138704 -0600
+@@ -95,6 +95,9 @@
+ #undef TARGET_ENCODE_SECTION_INFO
+ #define TARGET_ENCODE_SECTION_INFO encode_section_info
+ 
++#undef TARGET_ASM_FUNCTION_RODATA_SECTION
++#define TARGET_ASM_FUNCTION_RODATA_SECTION default_no_function_rodata_section
++
+ #undef TARGET_ATTRIBUTE_TABLE
+ #define TARGET_ATTRIBUTE_TABLE ip2k_attribute_table
+ 
+diff -Naur gcc-3.3.3-orig/gcc/config/mcore/mcore.c gcc-3.3.3/gcc/config/mcore/mcore.c
+--- gcc-3.3.3-orig/gcc/config/mcore/mcore.c	2003-12-31 18:24:24.000000000 -0600
++++ gcc-3.3.3/gcc/config/mcore/mcore.c	2004-12-19 22:51:56.199133840 -0600
+@@ -157,6 +157,8 @@
+ #define TARGET_ATTRIBUTE_TABLE mcore_attribute_table
+ #undef TARGET_ASM_UNIQUE_SECTION
+ #define TARGET_ASM_UNIQUE_SECTION mcore_unique_section
++#undef  TARGET_ASM_FUNCTION_RODATA_SECTION
++#define TARGET_ASM_FUNCTION_RODATA_SECTION default_no_function_rodata_section
+ #undef TARGET_ENCODE_SECTION_INFO
+ #define TARGET_ENCODE_SECTION_INFO mcore_encode_section_info
+ #undef TARGET_STRIP_NAME_ENCODING
+diff -Naur gcc-3.3.3-orig/gcc/config/rs6000/xcoff.h gcc-3.3.3/gcc/config/rs6000/xcoff.h
+--- gcc-3.3.3-orig/gcc/config/rs6000/xcoff.h	2002-10-22 18:05:22.000000000 -0500
++++ gcc-3.3.3/gcc/config/rs6000/xcoff.h	2004-12-19 22:51:56.246126696 -0600
+@@ -164,6 +164,7 @@
+ #define TARGET_ASM_SELECT_SECTION  rs6000_xcoff_select_section
+ #define TARGET_ASM_SELECT_RTX_SECTION  rs6000_xcoff_select_rtx_section
+ #define TARGET_ASM_UNIQUE_SECTION  rs6000_xcoff_unique_section
++#define TARGET_ASM_FUNCTION_RODATA_SECTION default_no_function_rodata_section
+ #define TARGET_ENCODE_SECTION_INFO  rs6000_xcoff_encode_section_info
+ #define TARGET_STRIP_NAME_ENCODING  rs6000_xcoff_strip_name_encoding
+ #define TARGET_SECTION_TYPE_FLAGS  rs6000_xcoff_section_type_flags
+diff -Naur gcc-3.3.3-orig/gcc/doc/tm.texi gcc-3.3.3/gcc/doc/tm.texi
+--- gcc-3.3.3-orig/gcc/doc/tm.texi	2003-12-12 10:10:09.000000000 -0600
++++ gcc-3.3.3/gcc/doc/tm.texi	2004-12-19 22:51:56.317115904 -0600
+@@ -5902,6 +5902,15 @@
+ Whatever the actual target object format, this is often good enough.
+ @end deftypefn
+ 
++@deftypefn {Target Hook} void TARGET_ASM_FUNCTION_RODATA_SECTION (tree @var{decl})
++Switches to a readonly data section associated with
++@samp{DECL_SECTION_NAME (@var{decl})}.
++The default version of this function switches to @code{.gnu.linkonce.r.name}
++section if function's section is @code{.gnu.linkonce.t.name}, to
++@code{.rodata.name} if function is in @code{.text.name} section
++and otherwise switches to the normal readonly data section.
++@end deftypefn
++
+ @deftypefn {Target Hook} void TARGET_ASM_SELECT_RTX_SECTION (enum machine_mode @var{mode}, rtx @var{x}, unsigned HOST_WIDE_INT @var{align})
+ Switches to the appropriate section for output of constant pool entry
+ @var{x} in @var{mode}.  You can assume that @var{x} is some kind of
+diff -Naur gcc-3.3.3-orig/gcc/final.c gcc-3.3.3/gcc/final.c
+--- gcc-3.3.3-orig/gcc/final.c	2003-12-01 02:18:36.000000000 -0600
++++ gcc-3.3.3/gcc/final.c	2004-12-19 22:51:56.373107392 -0600
+@@ -2258,7 +2258,7 @@
+ 		{
+ 		  int log_align;
+ 
+-		  readonly_data_section ();
++		  targetm.asm_out.function_rodata_section (current_function_decl);
+ 
+ #ifdef ADDR_VEC_ALIGN
+ 		  log_align = ADDR_VEC_ALIGN (NEXT_INSN (insn));
+diff -Naur gcc-3.3.3-orig/gcc/output.h gcc-3.3.3/gcc/output.h
+--- gcc-3.3.3-orig/gcc/output.h	2002-12-12 18:17:20.000000000 -0600
++++ gcc-3.3.3/gcc/output.h	2004-12-19 22:51:56.420100248 -0600
+@@ -525,6 +525,8 @@
+ 						  unsigned HOST_WIDE_INT, int));
+ extern void default_unique_section PARAMS ((tree, int));
+ extern void default_unique_section_1 PARAMS ((tree, int, int));
++extern void default_function_rodata_section (tree);
++extern void default_no_function_rodata_section (tree);
+ extern void default_select_rtx_section PARAMS ((enum machine_mode, rtx,
+ 						unsigned HOST_WIDE_INT));
+ extern void default_elf_select_rtx_section PARAMS ((enum machine_mode, rtx,
+diff -Naur gcc-3.3.3-orig/gcc/target-def.h gcc-3.3.3/gcc/target-def.h
+--- gcc-3.3.3-orig/gcc/target-def.h	2002-12-09 17:53:59.000000000 -0600
++++ gcc-3.3.3/gcc/target-def.h	2004-12-19 22:51:56.443096752 -0600
+@@ -75,6 +75,10 @@
+ #define TARGET_ASM_UNIQUE_SECTION default_unique_section
+ #endif
+ 
++#ifndef TARGET_ASM_FUNCTION_RODATA_SECTION
++#define TARGET_ASM_FUNCTION_RODATA_SECTION default_function_rodata_section
++#endif
++
+ #ifndef TARGET_ASM_SELECT_RTX_SECTION
+ #define TARGET_ASM_SELECT_RTX_SECTION default_select_rtx_section
+ #endif
+@@ -175,6 +179,7 @@
+ 			TARGET_ASM_SELECT_SECTION,		\
+ 			TARGET_ASM_SELECT_RTX_SECTION,		\
+ 			TARGET_ASM_UNIQUE_SECTION,		\
++			TARGET_ASM_FUNCTION_RODATA_SECTION,	\
+ 			TARGET_ASM_CONSTRUCTOR,			\
+ 			TARGET_ASM_DESTRUCTOR,                  \
+                         TARGET_ASM_OUTPUT_MI_THUNK,             \
+diff -Naur gcc-3.3.3-orig/gcc/target.h gcc-3.3.3/gcc/target.h
+--- gcc-3.3.3-orig/gcc/target.h	2002-12-09 17:53:59.000000000 -0600
++++ gcc-3.3.3/gcc/target.h	2004-12-19 22:51:56.463093712 -0600
+@@ -114,6 +114,10 @@
+        for SELECT_SECTION.  */
+     void (* unique_section) PARAMS ((tree, int));
+ 
++    /* Tell assembler to switch to the readonly data section associated
++       with function DECL.  */
++    void (* function_rodata_section) (tree); 
++
+     /* Output a constructor for a symbol with a given priority.  */
+     void (* constructor) PARAMS ((rtx, int));
+ 
+diff -Naur gcc-3.3.3-orig/gcc/testsuite/g++.old-deja/g++.other/comdat4-aux.cc gcc-3.3.3/gcc/testsuite/g++.old-deja/g++.other/comdat4-aux.cc
+--- gcc-3.3.3-orig/gcc/testsuite/g++.old-deja/g++.other/comdat4-aux.cc	1969-12-31 18:00:00.000000000 -0600
++++ gcc-3.3.3/gcc/testsuite/g++.old-deja/g++.other/comdat4-aux.cc	2004-12-19 22:51:56.484090520 -0600
+@@ -0,0 +1,40 @@
++extern void
++bar (int x);
++
++inline void
++foo (int i)
++{
++  switch (i)
++    {
++    case 3:
++    case 5:
++    case 6:
++    case 9:
++    case 15:
++      bar (1);
++      break;
++    case 2:
++    case 4:
++    case 7:
++    case 10:
++    case 11:
++    case 12:
++      bar (2);
++      break;
++    case 0:
++    case 1:
++    case 8:
++    case 13:
++    case 16:
++      bar (3);
++      break;
++    case 14:
++      bar (4);
++      break;
++    default:
++      bar (5);
++      break;
++    }
++}
++
++void *fooaddr2 = (void *) foo;
+diff -Naur gcc-3.3.3-orig/gcc/testsuite/g++.old-deja/g++.other/comdat4.C gcc-3.3.3/gcc/testsuite/g++.old-deja/g++.other/comdat4.C
+--- gcc-3.3.3-orig/gcc/testsuite/g++.old-deja/g++.other/comdat4.C	1969-12-31 18:00:00.000000000 -0600
++++ gcc-3.3.3/gcc/testsuite/g++.old-deja/g++.other/comdat4.C	2004-12-19 22:51:56.485090368 -0600
+@@ -0,0 +1,57 @@
++// PR c++/16276
++// { dg-do link }
++// { dg-additional-sources " comdat4-aux.cc" }
++// { dg-options "-O2" }
++
++extern void
++bar (int x);
++
++inline void
++foo (int i)
++{
++  switch (i)
++    {
++    case 3:
++    case 5:
++    case 6:
++    case 9:
++    case 15:
++      bar (1);
++      break;
++    case 2:
++    case 4:
++    case 7:
++    case 10:
++    case 11:
++    case 12:
++      bar (2);
++      break;
++    case 0:
++    case 1:
++    case 8:
++    case 13:
++    case 16:
++      bar (3);
++      break;
++    case 14:
++      bar (4);
++      break;
++    default:
++      bar (5);
++      break;
++    }
++}
++
++void *fooaddr = (void *) foo;
++
++void
++bar (int x)
++{
++  __asm __volatile ("" : : "r" (x));
++}
++
++int
++main (void)
++{
++  return 0;
++}
+diff -Naur gcc-3.3.3-orig/gcc/varasm.c gcc-3.3.3/gcc/varasm.c
+--- gcc-3.3.3-orig/gcc/varasm.c	2004-01-12 12:23:08.000000000 -0600
++++ gcc-3.3.3/gcc/varasm.c	2004-12-19 22:51:56.528083832 -0600
+@@ -568,6 +568,53 @@
+     text_section ();
+ }
+ 
++/* Switch to read-only data section associated with function DECL.  */
++
++void
++default_function_rodata_section (tree decl)
++{
++  if (decl != NULL_TREE && DECL_SECTION_NAME (decl))
++    {
++      const char *name = TREE_STRING_POINTER (DECL_SECTION_NAME (decl));
++
++      /* For .gnu.linkonce.t.foo we want to use .gnu.linkonce.r.foo.  */
++      if (DECL_ONE_ONLY (decl) && strncmp (name, ".gnu.linkonce.t.", 16) == 0)
++	{
++	  size_t len = strlen (name) + 1;
++	  char *rname = alloca (len);
++
++	  memcpy (rname, name, len);
++	  rname[14] = 'r';
++	  named_section_flags (rname, SECTION_LINKONCE);
++	  return;
++	}
++      /* For .text.foo we want to use .rodata.foo.  */
++      else if (flag_function_sections && flag_data_sections
++	       && strncmp (name, ".text.", 6) == 0)
++	{
++	  size_t len = strlen (name) + 1;
++	  char *rname = alloca (len + 2);
++
++	  memcpy (rname, ".rodata", 7);
++	  memcpy (rname + 7, name + 5, len - 5);
++	  named_section_flags (rname, 0);
++	  return;
++	}
++    }
++
++  readonly_data_section ();
++}
++
++/* Switch to read-only data section associated with function DECL
++   for targets where that section should be always the single
++   readonly data section.  */
++
++void
++default_no_function_rodata_section (tree decl ATTRIBUTE_UNUSED)
++{
++  readonly_data_section ();
++}
++
+ /* Switch to section for variable DECL.  RELOC is the same as the
+    argument to SELECT_SECTION.  */
+ 

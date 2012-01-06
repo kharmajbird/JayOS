@@ -1,0 +1,304 @@
+commit b69b46ff2a770621c85516dbe626a0c45b459983
+
+From: Nicolas Boichat <nicolas@boichat.ch>
+
+AppleSMC: use interrupts to protect a block device.
+---
+
+ drivers/hwmon/Kconfig    |    7 ++
+ drivers/hwmon/Makefile   |    4 +
+ drivers/hwmon/applesmc.c |  155 +++++++++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 156 insertions(+), 10 deletions(-)
+
+
+diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+index 4dc76bc..f066348 100644
+--- a/drivers/hwmon/Kconfig
++++ b/drivers/hwmon/Kconfig
+@@ -785,6 +785,13 @@ config SENSORS_APPLESMC
+ 	  Say Y here if you have an applicable laptop and want to experience
+ 	  the awesome power of applesmc.
+ 
++config SENSORS_APPLESMC_PROTECT
++	bool "Apple SMC - Protect block devices on shock/free fall"
++	depends on SENSORS_APPLESMC
++	default n
++	help
++	  Fill in......
++
+ config HWMON_DEBUG_CHIP
+ 	bool "Hardware Monitoring Chip debugging messages"
+ 	default n
+diff --git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
+index 3bdb05a..d535e14 100644
+--- a/drivers/hwmon/Makefile
++++ b/drivers/hwmon/Makefile
+@@ -76,3 +76,7 @@ ifeq ($(CONFIG_HWMON_DEBUG_CHIP),y)
+ EXTRA_CFLAGS += -DDEBUG
+ endif
+ 
++ifeq ($(CONFIG_SENSORS_APPLESMC_PROTECT),y)
++EXTRA_CFLAGS += -DAPPLESMC_PROTECT
++endif
++
+diff --git a/drivers/hwmon/applesmc.c b/drivers/hwmon/applesmc.c
+index 4980338..4c8ea4c 100644
+--- a/drivers/hwmon/applesmc.c
++++ b/drivers/hwmon/applesmc.c
+@@ -40,6 +40,12 @@
+ #include <linux/hwmon.h>
+ #include <linux/workqueue.h>
+ #include <linux/interrupt.h>
++#ifdef APPLESMC_PROTECT
++#include <linux/fs.h>
++#include <linux/blkdev.h>
++#include <linux/namei.h>
++#include <linux/mount.h>
++#endif
+ 
+ /* data port used by Apple SMC */
+ #define APPLESMC_DATA_PORT	0x300
+@@ -171,6 +177,11 @@ static unsigned int applesmc_light;
+ /* Indicates which temperature sensors set to use. */
+ static unsigned int applesmc_temperature_set;
+ 
++#ifdef APPLESMC_PROTECT
++/* Device to protect in case of shock or free fall. */
++struct block_device *bdev_protect;
++#endif
++
+ static DEFINE_MUTEX(applesmc_lock);
+ 
+ /*
+@@ -446,6 +457,35 @@ static int applesmc_init_check_key_value(const char *key, u8 *buffer, u8 len)
+ 		return -EIO;
+ }
+ 
++#ifdef APPLESMC_PROTECT
++static void protect_callback(struct work_struct *ignored) {
++	char b[BDEVNAME_SIZE];
++	/* This code comes from queue_protect_store (block/ll_rw_blk.c) */
++	if (bdev_protect && bdev_protect->bd_disk &&
++			bdev_protect->bd_disk->queue &&
++			bdev_protect->bd_disk->queue->issue_protect_fn) {
++		struct request_queue *q = bdev_protect->bd_disk->queue;
++
++		printk(KERN_INFO "applesmc: protecting the device (%s)\n",
++						bdevname(bdev_protect, b));
++
++		/* Park and freeze */
++		if (!blk_queue_stopped(q))
++			q->issue_protect_fn(q);
++
++		/* freeze for 2 seconds (we will receive interrupt often
++		 * enough to reenable this if needed) */
++		spin_lock_irq(q->queue_lock);
++		blk_freeze_queue(q, 2);
++		spin_unlock_irq(q->queue_lock);
++
++		printk(KERN_INFO "applesmc: device protected\n");
++	}
++}
++
++static DECLARE_WORK(protect_work, protect_callback);
++#endif
++
+ irqreturn_t applesmc_irq_handler(int irq, void *dev_id)
+ {
+ 	u8 int_type = inb(APPLESMC_INT_PORT);
+@@ -467,14 +507,24 @@ irqreturn_t applesmc_irq_handler(int irq, void *dev_id)
+ 			int_type);
+ 	}
+ 
++#ifdef APPLESMC_PROTECT
++	if (bdev_protect && bdev_protect->bd_disk &&
++			bdev_protect->bd_disk->queue &&
++			bdev_protect->bd_disk->queue->issue_protect_fn) {
++		schedule_work(&protect_work);
++	}
++#endif
++
+ 	return IRQ_HANDLED;
+ }
+ 
+ /*
+  * applesmc_device_init - initialize the accelerometer.  Returns zero on success
+  * and negative error code on failure.  Can sleep.
++ *  - resume is true if we are waking up from a resume, so we don't need
++ *    to setup interrupt handling again, and probe for a device to protect.
+  */
+-static int applesmc_device_init(void)
++static int applesmc_device_init(int resume)
+ {
+ 	int total;
+ 	int ret = -ENXIO;
+@@ -549,17 +599,21 @@ static int applesmc_device_init(void)
+ 		goto out;
+ 	}
+ 
+-	ret1 = request_irq(APPLESMC_IRQ, applesmc_irq_handler, IRQF_DISABLED,
+-						"applesmc_irq_handler", NULL);
++	if (!resume) {
++		ret1 = request_irq(APPLESMC_IRQ, applesmc_irq_handler,
++					IRQF_DISABLED, "applesmc_irq_handler",
++					NULL);
+ 
+-	if (ret1) {
+-		printk(KERN_WARNING "applesmc: cannot setup irq handler\n");
+-	}
++		if (ret1) {
++			printk(KERN_WARNING "applesmc: cannot setup "
++							"irq handler\n");
++		}
+ 
+-	printk(KERN_DEBUG "applesmc: accelerometer "
++		printk(KERN_DEBUG "applesmc: accelerometer "
+ 						"successfully initialized.\n");
+-	ret = 0;
++	}
+ 
++	ret = 0;
+ out:
+ 	mutex_unlock(&applesmc_lock);
+ 	return ret;
+@@ -590,7 +644,7 @@ static int applesmc_probe(struct platform_device *dev)
+ {
+ 	int ret;
+ 
+-	ret = applesmc_device_init();
++	ret = applesmc_device_init(0);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -600,7 +654,7 @@ static int applesmc_probe(struct platform_device *dev)
+ 
+ static int applesmc_resume(struct platform_device *dev)
+ {
+-	return applesmc_device_init();
++	return applesmc_device_init(1);
+ }
+ 
+ static int applesmc_remove(struct platform_device *dev)
+@@ -897,6 +951,46 @@ static ssize_t applesmc_calibrate_store(struct device *dev,
+ 	return count;
+ }
+ 
++#ifdef APPLESMC_PROTECT
++static ssize_t applesmc_protect_device_show(struct device *dev,
++				struct device_attribute *attr, char *sysfsbuf)
++{
++	char b[BDEVNAME_SIZE];
++
++	return snprintf(sysfsbuf, PAGE_SIZE, "%s\n", bdevname(bdev_protect, b));
++}
++
++static ssize_t applesmc_protect_device_store(struct device *dev,
++	struct device_attribute *attr, const char *sysfsbuf, size_t count)
++{
++	char b[BDEVNAME_SIZE];
++	struct block_device *bdev;
++
++	if (bdev_protect)
++		bdput(bdev_protect);
++
++	bdev = lookup_bdev(sysfsbuf);
++
++	if (IS_ERR(bdev)) {
++		bdev_protect = NULL;
++		return -EIO; /* Could be more precise? */
++	}
++
++	if (bdev->bd_disk && bdev->bd_disk->queue
++		&& bdev->bd_disk->queue->issue_protect_fn) {
++		bdev_protect = bdev;
++		printk(KERN_INFO "applesmc: accelerometer will now "
++				"protect %s.\n", bdevname(bdev, b));
++		return count;
++	}
++	else {
++		bdput(bdev);
++		bdev_protect = NULL;
++		return -EIO; /* Could be more precise? */
++	}
++}
++#endif
++
+ /* Store the next backlight value to be written by the work */
+ static unsigned int backlight_value;
+ 
+@@ -1201,6 +1295,10 @@ static DEVICE_ATTR(name, 0444, applesmc_name_show, NULL);
+ static DEVICE_ATTR(position, 0444, applesmc_position_show, NULL);
+ static DEVICE_ATTR(calibrate, 0644,
+ 			applesmc_calibrate_show, applesmc_calibrate_store);
++#ifdef APPLESMC_PROTECT
++static DEVICE_ATTR(protect_device, 0644,
++			applesmc_protect_device_show, applesmc_protect_device_store);
++#endif
+ static SENSOR_DEVICE_ATTR(low_norm_trigger_interval, 0644,
+ 		applesmc_accelerometer_show, applesmc_accelerometer_store, 0);
+ static SENSOR_DEVICE_ATTR(high_norm_trigger_interval, 0644,
+@@ -1213,6 +1311,9 @@ static SENSOR_DEVICE_ATTR(high_norm_trigger, 0644,
+ static struct attribute *accelerometer_attributes[] = {
+ 	&dev_attr_position.attr,
+ 	&dev_attr_calibrate.attr,
++#ifdef APPLESMC_PROTECT
++	&dev_attr_protect_device.attr,
++#endif
+ 	&sensor_dev_attr_low_norm_trigger.dev_attr.attr,
+ 	&sensor_dev_attr_high_norm_trigger.dev_attr.attr,
+ 	&sensor_dev_attr_low_norm_trigger_interval.dev_attr.attr,
+@@ -1453,6 +1554,10 @@ static int applesmc_create_accelerometer(void)
+ {
+ 	struct input_dev *idev;
+ 	int ret;
++#ifdef APPLESMC_PROTECT
++	char b[BDEVNAME_SIZE];
++	int major, minor;
++#endif
+ 
+ 	ret = sysfs_create_group(&pdev->dev.kobj,
+ 					&accelerometer_attributes_group);
+@@ -1486,6 +1591,30 @@ static int applesmc_create_accelerometer(void)
+ 	if (ret)
+ 		goto out_idev;
+ 
++#ifdef APPLESMC_PROTECT
++	/* Try to find a suitable block device to protect */
++	bdev_protect = NULL;
++	major = SCSI_DISK0_MAJOR;
++
++	/* Iterate over a maximum of 16 SCSI devices to find one that
++	 * can be protected. 
++	 * Note: other devices could also be protected. */
++	for (minor = 0; minor < 256; minor += 16) {
++		dev_t dev = MKDEV(major, minor);
++		struct block_device *bdev = bdget(dev);
++		if (bdev->bd_disk && bdev->bd_disk->queue
++			&& bdev->bd_disk->queue->issue_protect_fn) {
++			bdev_protect = bdev;
++			printk(KERN_INFO "applesmc: accelerometer "
++					"will protect %s (%d:%d).\n",
++					bdevname(bdev, b),
++					major, minor);
++			break;
++		}
++		bdput(bdev);
++	}
++#endif
++
+ 	return 0;
+ 
+ out_idev:
+@@ -1505,6 +1634,12 @@ static void applesmc_release_accelerometer(void)
+ 	input_unregister_polled_device(applesmc_idev);
+ 	input_free_polled_device(applesmc_idev);
+ 	sysfs_remove_group(&pdev->dev.kobj, &accelerometer_attributes_group);
++#ifdef APPLESMC_PROTECT
++	if (bdev_protect) {
++		bdput(bdev_protect);
++		bdev_protect = NULL;
++	}
++#endif
+ }
+ 
+ static __initdata struct dmi_match_data applesmc_dmi_data[] = {

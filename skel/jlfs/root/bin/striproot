@@ -1,0 +1,45 @@
+#!/bin/sh
+
+#
+# script to place into a tarball all files modified in / since installation
+#
+# called by root/bin/saveroot or can be run directly
+# by default will leave tarball and not copy
+#
+
+XCLIST=/tmp/xcl
+FLAG=/etc/lfs-release
+BALL=/tmp/root-deltas.tbz
+DEST=/usb/boot
+
+
+cat << EOF > $XCLIST
+/root/bin
+/etc/rc.d/init.d
+/lib/modules
+/root/build.sh
+/root/.addons
+/tmp
+/var/log
+/var/run
+EOF
+
+for i in $*; do
+    case $i in
+        -f)  FORCE=1 ;;
+        -95) echo "/root/.fvwm95rc" >> $XCLIST ;;
+    esac
+done
+
+find / -xdev -newer $FLAG > $XCLIST-in
+
+for i in `cat $XCLIST-in`; do
+    if [ ! -d $i ]; then
+        echo $i >> $XCLIST-out
+    fi
+done
+	
+tar jvcf $BALL -X $XCLIST `cat $XCLIST-out`
+rm -f $XCLIST $XCLIST-in $XCLIST-out
+
+if [ $FORCE ]; then mv $BALL $DEST; fi

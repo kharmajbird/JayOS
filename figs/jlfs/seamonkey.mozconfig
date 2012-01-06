@@ -1,0 +1,41 @@
+# If you have a multicore machine you can speed up the build by running
+# several jobs at once, but if you have a single core, delete this line:
+mk_add_options MOZ_MAKE_FLAGS="-j2"
+
+# If you have installed Yasm delete this option:
+#ac_add_options --disable-webm
+
+# If you have installed DBus-Glib delete this option:
+#ac_add_options --disable-dbus
+
+# If you have installed wireless-tools delete this option:
+#ac_add_options --disable-necko-wifi
+
+# If you have installed libnotify delete this option:
+#ac_add_options --disable-libnotify
+
+# If you have installed nss and nspr uncomment these two lines:
+ac_add_options --with-system-nspr
+ac_add_options --with-system-nss
+
+# Uncomment these if you have installed them:
+ac_add_options --enable-system-sqlite
+ac_add_options --enable-system-lcms
+ac_add_options --with-system-libvpx
+ac_add_options --enable-startup-notification
+
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/moz-build-dir
+ac_add_options --enable-application=suite
+ac_add_options --enable-pthreads
+ac_add_options --enable-system-ffi
+ac_add_options --enable-system-jpeg
+ac_add_options --enable-system-png
+ac_add_options --enable-system-cairo
+ac_add_options --enable-system-zlib
+ac_add_options --enable-shared
+ac_add_options --disable-static
+ac_add_options --disable-debug
+ac_add_options --disable-crashreporter
+ac_add_options --disable-installer
+ac_add_options --disable-updater
+ac_add_options --disable-tests

@@ -1,0 +1,141 @@
+diff --git a/CHANGELOG b/CHANGELOG
+index c221c13..af5a1b0 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -11,6 +11,7 @@
+ - update kernel header file linux/auto_fs4.h.
+ - update fix expire working harder than needed.
+ - add missing check for zero length NIS key (Wengang Wang).
++- init SASL callbacks on every ldap lookup library load.
+  
+ 14/01/2008 autofs-5.0.3
+ -----------------------
+diff --git a/include/lookup_ldap.h b/include/lookup_ldap.h
+index d6a754d..908ed09 100644
+--- a/include/lookup_ldap.h
++++ b/include/lookup_ldap.h
+@@ -99,10 +99,12 @@ int unbind_ldap_connection(unsigned logopt, LDAP *ldap, struct lookup_context *c
+ int authtype_requires_creds(const char *authtype);
+ 
+ /* cyrus-sasl.c */
++int autofs_sasl_client_init(unsigned logopt);
+ int autofs_sasl_init(unsigned logopt, LDAP *ldap, struct lookup_context *ctxt);
+ int autofs_sasl_bind(unsigned logopt, LDAP *ldap, struct lookup_context *ctxt);
+ void autofs_sasl_unbind(struct lookup_context *ctxt);
+-void autofs_sasl_done(struct lookup_context *ctxt);
++void autofs_sasl_dispose(struct lookup_context *ctxt);
++void autofs_sasl_done(void);
+ #endif
+ 
+ #endif
+diff --git a/modules/cyrus-sasl.c b/modules/cyrus-sasl.c
+index f24f46b..902d9aa 100644
+--- a/modules/cyrus-sasl.c
++++ b/modules/cyrus-sasl.c
+@@ -76,7 +76,6 @@ static const char *default_client = "autofsclient";
+ static pthread_mutex_t krb5cc_mutex = PTHREAD_MUTEX_INITIALIZER;
+ static unsigned int krb5cc_in_use = 0;
+ 
+-static unsigned int init_callbacks = 1;
+ static int sasl_log_func(void *, int, const char *);
+ static int getpass_func(sasl_conn_t *, void *, int, sasl_secret_t **);
+ static int getuser_func(void *, int, const char **, unsigned *);
+@@ -878,13 +877,6 @@ autofs_sasl_init(unsigned logopt, LDAP *ldap, struct lookup_context *ctxt)
+ {
+ 	sasl_conn_t *conn;
+ 
+-	/* Start up Cyrus SASL--only needs to be done once. */
+-	if (init_callbacks && sasl_client_init(callbacks) != SASL_OK) {
+-		error(logopt, "sasl_client_init failed");
+-		return -1;
+-	}
+-	init_callbacks = 0;
+-
+ 	sasl_auth_id = ctxt->user;
+ 	sasl_auth_secret = ctxt->secret;
+ 
+@@ -916,8 +908,7 @@ autofs_sasl_init(unsigned logopt, LDAP *ldap, struct lookup_context *ctxt)
+  *  Destructor routine.  This should be called when finished with an ldap
+  *  session.
+  */
+-void
+-autofs_sasl_done(struct lookup_context *ctxt)
++void autofs_sasl_dispose(struct lookup_context *ctxt)
+ {
+ 	int status, ret;
+ 
+@@ -953,3 +944,28 @@ autofs_sasl_done(struct lookup_context *ctxt)
+ 		ctxt->kinit_successful = 0;
+ 	}
+ }
++
++/*
++ * Initialize the sasl callbacks, which increments the global
++ * use counter.
++ */
++int autofs_sasl_client_init(unsigned logopt)
++{
++	/* Start up Cyrus SASL--only needs to be done at library load. */
++	if (sasl_client_init(callbacks) != SASL_OK) {
++		error(logopt, "sasl_client_init failed");
++		return 0;
++	}
++	return 1;
++}
++
++/*
++ * Decrement the library reference count and free resources if
++ * we are the last to close the library.
++ */
++void autofs_sasl_done(void)
++{
++	sasl_done();
++	return;
++}
++
+diff --git a/modules/lookup_ldap.c b/modules/lookup_ldap.c
+index e8530f6..ded26f7 100644
+--- a/modules/lookup_ldap.c
++++ b/modules/lookup_ldap.c
+@@ -599,7 +599,7 @@ static LDAP *connect_to_server(unsigned logopt, const char *uri, struct lookup_c
+ 
+ 		if (!do_bind(logopt, ldap, ctxt)) {
+ 			unbind_ldap_connection(logopt, ldap, ctxt);
+-			autofs_sasl_done(ctxt);
++			autofs_sasl_dispose(ctxt);
+ 			error(logopt, MODPREFIX "cannot bind to server");
+ 			return NULL;
+ 		}
+@@ -672,7 +672,7 @@ static LDAP *do_reconnect(unsigned logopt, struct lookup_context *ctxt)
+ 	list_add_tail(&this->list, ctxt->uri);
+ 
+ #ifdef WITH_SASL
+-	autofs_sasl_done(ctxt);
++	autofs_sasl_dispose(ctxt);
+ #endif
+ 
+ 	/* Current server failed connect, try the rest */
+@@ -1330,6 +1330,13 @@ int lookup_init(const char *mapfmt, int argc, const char *const *argv, void **co
+ 		free_context(ctxt);
+ 		return 1;
+ 	}
++
++	/* Init the sasl callbacks */
++	if (!autofs_sasl_client_init(LOGOPT_NONE)) {
++		error(LOGOPT_ANY, "failed to init sasl client");
++		free_context(ctxt);
++		return 1;
++	}
+ #endif
+ 
+ 	if (ctxt->server || !ctxt->uri) {
+@@ -2640,7 +2647,8 @@ int lookup_done(void *context)
+ 	struct lookup_context *ctxt = (struct lookup_context *) context;
+ 	int rv = close_parse(ctxt->parse);
+ #ifdef WITH_SASL
+-	autofs_sasl_done(ctxt);
++	autofs_sasl_dispose(ctxt);
++	autofs_sasl_done();
+ #endif
+ 	free_context(ctxt);
+ 	return rv;

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+#sed -i -e 's/\(tar xvf \$\)/\1(BLFS-TARBALLS)\/\$/' Makefile.filt
+#sed -i -e 's/\(tar jxvf \$\)/\1(BLFS-TARBALLS)\/\$/' Makefile.filt

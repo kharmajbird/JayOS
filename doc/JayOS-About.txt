@@ -1,0 +1,30 @@
+Open sourced, yet darkly illuminated
+
+IMO, one problem with many large distros, Fedora and Ubuntu included,
+is they are very complex and aren't good examples for someone who wants
+to create a fully-functional but stripped-down customized distro.
+
+(I define fully-functional as having a boot loader, kernel, initial
+ramdisk, linuxrc, root filesystem, and an automatic rebuild method
+available for modification. By stripped down, I mean not having to not
+include behemoths like X11, Gnome, KDE, OpenOffice and Mozilla :)
+
+I know people who would like to make a specialized distro (gaming,
+security, whatever), but don't want to take on the daunting task of
+pulling out all the bells and whistles from a Knoppix or a Gentoo. They
+don't want to start from scratch either, because that is even *more*
+work. What they want is someone who has done the work already, and what
+they *need* is work that is easily understood. The four above-mentioned
+distros are nothing short of breath-taking, but they are put together
+such that even the expert finds it difficult, if not impossible to
+quickly glean their inner workings for their own project.
+
+My approach is simple, and done in a straight-forward educational style.
+Some of the things I did could have been done slicker and more efficiently
+(the non-nALFS Makefile for BLFS comes to mind), but the clear advantage
+is it's easy to understand and easy to modify. Plus it does what I want ;)
+Things could be better, but they're Good Enough for now.
+
+I have populated this website with bootable ISO and DVD images, source
+code, patches, and enough documentation for you to get JayOS running on
+your own system.

@@ -1,0 +1,2 @@
+SUBSYSTEMS=="usb", ATTRS{modalias}=="usb:v0637p0003d0100dc00dsc00dp00ic03isc01ip02", ENV{ID_CLASS}="joystick"
+SUBSYSTEM=="input", ATTRS{name}=="GUNZE USB Touch Panel", KERNEL=="event*", SYMLINK+="input/gunze"

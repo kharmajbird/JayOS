@@ -1,0 +1,599 @@
+[ 20111225 ]
+
+	Upgraded to the latest glib2 and friends to compile the latest 
+	versions of SeaMonkey/Firefox.
+
+	Upgraded core Gnome libraries and associated programs.  Added
+	gst-ffmpeg for totem plugin support of mp4.
+
+	New programs:
+		Balsa
+		Celestia
+		Dupe Guru
+		phpMyAdmin
+		Q DVD-Author
+		SeaMonkey
+		Virtualbricks
+
+		Video Editors: Avidemux, Cinelerra, and Openshot 
+
+        Created a new git repository at https://github.com/kharmajbird/JayOS
+
+
+[ 20110225 ]
+	Upgraded the core to the latest 6.7 LinuxFromScratch project, and 
+	the development version of the BeyondLinuxFromScratch project.
+
+	Corrected a major bug which prevented the Live CD from booting
+	reliably under emulation or with external USB CDROM drives.
+
+	Added support for creating bootable USB sticks for the Intel Apple
+	Mac Mini.
+
+	Updated the build docs to include (and feature) the Mac Mini.
+	The instructions now more accurately reflect the author's own 
+	successful build process.
+
+
+[ 20110214 ]
+	Released two USB drive images capable of booting 20100601.
+
+
+[ 20100601 ]
+	Many, Many Updates! 
+
+	Jay's Linux From Scratch (JayOS | JLFS) now sits on top of
+	the current stable LFS-6.6 and the development version of BLFS.
+
+	Highlights include:
+
+	* linux-2.6.32	
+	* Xorg-7.5
+	* Apple wireless support
+	* fledgling x86_64 support
+	* a healthy smattering of blackhat security tools and libraries
+
+	After the dust from this release settles, I intend to also
+	distribute an image of my working USB stick, which boots JayOS on 
+	Intel-based Apple hardware (with a little help from rEFIt, 
+	grub and friends :)
+
+
+[ 20060922 ]
+
+	Upgraded to kernel 2.6.17.13. Added vlc and recompiled mplayer
+	to recognize additional codecs. Updated wine. Added baobab, an
+	application for disk usage analysis and fast file searches. The
+	source tarball tree was cleaned of duplicates and unreferenced
+	items. Access to the internet from within a JayOS-hosted QEMU
+	guest now works, and documentation has been updated.
+
+	Added new kernel parameter "usrram", which will load the /usr
+	image into RAM. If you have 400MB of RAM to spare, use this
+	parameter to experience what might be the fastest desktop
+	environment around!
+
+
+	Version 20060922 introduces the implementation of "skins" or root
+	deltas, as I like to call them.  This is nothing more than a
+	tarball of files changed on a system relative to its birthdate
+	timestamped on /etc/lfs-release.
+
+	This tarball is created indirectly by the saveroot script. Each
+	time the root filesystem is saved, any new files are compressed
+	into a tarball and saved as /usb/fs/root-deltas.tbz.
+
+	During the boot process, the script /etc/init.d/mountfs looks
+	for the kernel parm uproot=[device]. If found, it extracts the
+	delta tarball from that device onto the root filesystem. This
+	makes for a painless upgrade when moving from one release to the
+	next.
+
+[ 20060824 ]
+
+	Added a full-featured 2.6.9 kernel with the same drivers as
+	Redhat's Enterprise Linux. It should boot damn near anything. Try
+	this kernel at the boot prompt if the bleeding-edge kernel is 
+	not configured for your hardware. Also, Mplayer was mysteriously 
+	missing from the last build; it has returned. XFree86 was 
+	completely dumped in favor of Xorg.  Audio works for Intel Macs now.
+	JayOS-Building.txt was updated, and JayOS-KernelBootOptions.txt 
+	was introduced. Documentation on CD was updated. Booting under QEMU 
+	has improved, and the Windows demo CD has been brought up to date.
+	Many cleanups in the Makefile and root scripts.
+
+	For those of you who found 0824 ISOs prior to the official release
+	on Freshmeat (9/2/6), you retrieved beta copies, so you may want
+	the latest. 
+
+	FYI, the reason versions generally aren't dated with the day of
+	their release is because I do a lot of testing on all the ISOs
+	to make sure everything is as it should be. Sometimes it only
+	takes a couple of days; this time I took a full week because
+	this date holds a particular significance for me :)
+
+
+[ iMac-20060818  x86-20060818 ]
+
+	Audio update: To get sound working, edit /etc/init.d/alsa and 
+	add these amixer commands:
+
+	/usr/bin/amixer set Front 100 unmute
+	/usr/bin/amixer set Surround 100 unmute
+	/usr/bin/amixer set Capture 100 unmute
+	/usr/bin/amixer set Mux 100 unmute
+
+	Upgraded to kernel 2.6.17.4. Also upgraded firefox, sylpheed,
+	gtkpod, xine, and mplayer. Networking works again. As
+	promised, information is disclosed on how encrypted filesystems
+	are managed under JayOS. See Encryption-HOWTO.txt and the
+	Makefile.  The x86 build has been brought up to date and
+	is incorporated into the iMac build. Both sources will build
+	an ISO that is directly bootable on x86 hardware. Building
+	for Intel Macs is less straight-forward in that the ISO
+	created first needs to be mounted under OS X and copied to
+	scratch space before the BurnFromOSX.sh script can be run.
+	Make targets have been updated for x86 / iMac and simplified.
+
+	This is the "Emancipation from OS X" release, and signals
+	that Linux has taken overtaken OS X as my primary operating
+	system on Apple hardware. The only thing I need OS X for
+	now is to burn bootable discs. (You can guess what will
+	happen next when I figure out how to do that under Linux.)
+	Although I still can't get audio to work, overall I am quite
+	pleased with this release.
+
+	Currently, there are two separate kernels (one for x86, one
+	for iMac) but only because the iMac patches have not been
+	modularized into the kernel. The imacfb driver is forced
+	to load on boot, and doesn't give the correct drivers a
+	chance to load. Once the kernel stabilizes, this should go
+	away, and one kernel will rule them all.
+
+	The PowerPC port of JayOS is severely depreciated. I never
+	figured out what prevented X11 from starting, and now that
+	the x86 and iMac ports are doing so well, I really have no
+	desire to mess with the PowerPC. Apparently, neither does
+	Apple, so there's no love lost between me and the PowerPC.
+
+	This is also a "Capture the flag" release :)
+
+	Read Encryption-HOWTO.txt to find out where the flag is and 
+	how to get it. If you're still not mad at me when you see how
+	cheesy the flag is, leave a comment in the forum so I can
+	see if anyone actually reads this stuff.
+
+	Happy hunting!
+
+
+[ iMac-20060714 ]
+
+	This release is a clean build, from start to finish. I only had to 
+	reboot into OS X to create the bootable ISO. It fixes X11 kbd 
+	issues, and re-includes video players that were left out of the beta 
+	release. Network and audio issues still remain. These could be
+	iMac-related or not, I'm not yet sure. However, the next release will
+	include kernel version 2.6.17. Bleeding-edge kernels are known to 
+	fix bleeding-edge problems :)
+
+	The script used to create the ISO under OS X is named BurnFromOSX.sh
+	and is located online in the /iso directory.
+
+	Thanks to the folks at mactel-linux.org for their patch repository!
+
+
+	Errata:
+
+	I haven't yet explained how to use the encrypted aspects of JayOS
+	in practice. Soon, I will release instructions for the scripts in 
+	/root/bin, and give techniques for booting an encrypted root disk.
+	Properly configured, a JayOS setup can appear to be partition after 
+	partition of random data. I'll show how. 
+
+	I'll also give examples on how to store data so when a system is 
+	booted without authorization, sensitive data stays hidden away 
+	without advertising its presence.
+	
+
+
+[ iMac-20060706-beta ]
+
+	So I bought another one of those Mac Minis (this time one
+	of the Intel-based jobs) thinking that my JayOS x86 CD would
+	boot right up.
+
+	Silly me.
+
+	I learned that one of the better changes the Intel platform
+	brings to the Mac Mini is a new boot firmware known as EFI.
+	It obsoletes the old BIOS method with a more flexible
+	implementation.
+
+	The x86 version of JayOS bootstraps using good ol' isolinux.
+	So in order to boot from the new architecture, I needed to
+	change boot loaders, upgrade from XFree86 to Xorg, and patch
+	the kernel to support the framebuffer and other new devices.
+	Not to mention learn a whole new boat-load of seemingly
+	arcane abstracts and voodoo incantations necessary to burn
+	a CD that would actually boot.
+
+	After much blood, sweat, and the digging of my Stacy Adams into 
+	the shoulders of giants, I have posted the result:
+
+
+	JayOS-iMac-20060706-beta.iso
+
+
+	What you will need:
+		an Intel-based Mac Mini. Others models may work; YMMV.
+
+		the ability to press and hold the 'c' key when rebooting.
+
+
+	What you MIGHT need:
+		The default framebuffer mode is set for "mini". The iMac 
+		patch claims this can be changed at bootup (haven't tried)
+		by passing one of the following parameters to the kernel
+		via elilo:
+
+			video=imacfb:i17
+			video=imacfb:i20
+			video=imacfb:macbook
+
+		Press tab at the ELILO prompt, then enter the kernel label
+		and any other options. Ex: "JayOS video=imacfb:mini"
+		
+		The default resolution within X11 is 1600x1200. Edit 
+		/etc/X11/xorg.conf after booting to fiddle with that.
+
+
+	What works:
+		X11
+
+		networking (run dhclient to establish routing)
+
+		firewire / USB
+
+		everything else JayOS-x86 has
+
+
+	What does NOT work:
+		networking (hangs on long xfers; need to adjust kernel)
+
+		audio drivers load, but ALSA freaks when you adjust mixer
+
+		video players (mplayer not included; xine req's mplayer)
+
+
+	What has NOT been tested:
+		bluetooth
+
+		wireless networking
+
+		dialup networking
+
+
+	Known irritants to my soul:
+		Within X11, kbd is misconfigured somehow. A message is
+		displayed when X11 first comes up, but if you click on it,
+		it goes away. Certain keyboard sequences such as ctrl-alt-F1
+		and friends don't work, but ctrl-alt-backspace does 
+		(fortunately, because you need it to get out of X11).
+
+		When compiling Xorg by itself, I get numerous errors relating
+		to freetype, fontconfig, libiconv and friends. The problem
+		it a missing libXft.so, normally built by XFree86. The
+		ugly solution is to install Xorg after Xfree86. Deal with
+		it, or shoot me some ideas ;)
+
+		Because of the Xorg issue, another version of libXaw is not
+		built. I copied the working XFree86 version of xterm into 
+		this release. However, because of that missing library, a
+		few programs in /usr/X11R6/bin don't work. Run ldd against
+		them to find out which ones. This will hopefully resolve
+		itself in the upcoming non-beta clean build. Riiight.
+
+		Iptables, iproute, and the kernel are having a massive
+		disagreement amongst themselves, refusing to carry packets
+		that are "too heavy" (see /root/rule). For instance, 
+		You can reach Google, and even have results for a query 
+		returned, but most links you follow timeout. This is fixed
+		in the non-beta build, but it isn't ready for release yet.
+		
+
+[ ppc-20060301 ]
+
+	This is essentially the x86 branch of JayOS "heavily encouraged"
+	to run on the PowerPC. I have upgraded, patched, threatened, or 
+	out-right commented anything from JayOS-x86-20051026 that refused 
+	to compile cleanly on the new architecture. Many thanks to the 
+	authors of the 6.1 LFS book for providing some of the documentation 
+	I needed to make this all happen.  PPC-specific information is still 
+	hard to come by in the wild, though, which is why this I consider 
+	this a development release.
+
+	The major differences I see between JayOS and the Official LFS 
+	livecd, should some of you be familiar with that, is although the 
+	official livecd contains some sources, it requires an internet
+	connection and plenty of know-how to retrieve enough software to 
+	transform the default install into a desktop workstation.
+
+	In contrast, JayOS boots into a ready-to-use desktop environment,
+	including all sources for a developer to inspect. Plus, one can
+	boot a JayOS source CD and generate a duplicate (or customized)
+	build for their own use.
+
+
+What you should expect from this release:
+
+	If you have a Mac Mini (or Mini Mac as I like to call 'em :)
+	the ISOs will boot completely and drop you into into a root shell.
+	The X server then tries to run, but dies a horrible, meaningless
+	death (see nagging issues below). I haven't tested this on any 
+	other PowerPC-based hardware, so YMMV.
+
+	Also, the jlfs build is untested. I made a bunch of major 
+	changes to the Makefile and retrieved/created many patches 
+	since the last release, so you may need to rerun "make" or 
+	"./build.sh" several times during the build process should any 
+	packages fail. (I know now that I forgot to make a patch
+	for the "Xchips.1.html" error during the xorg build).
+
+	FINALLY and REGRETTABLY, you should expect a late arrival.
+	As in, however long it takes to upload 2gigs over dialup :p
+
+
+Nagging issues:
+
+a) For some reason, agetty doesn't work as compiled and hangs. Until I
+	can figure out why, I've placed a YDL PPC binary into skel-ppc/sbin,
+	which will get copied over to the LFS root by "make root".
+
+b) Multiple weird messages are being written to the console during bootup:
+
+	stty: standard input: no size information for this device
+
+c) This build skips the packages below because they don't compile cleanly.
+	However, none of them are *extremely* important for the overall 
+	build, so I will address them after upgrading the LFS base from
+	5.x to 6.1.1. 
+
+	svgalib-1.9.21 tightvnc-1.2.9 gimageview-0.2.25 
+	xwc-0.91.5a
+	ext2resize-1.1.17 
+	strace-4.4.98  sleuthkit-1.70 dosfstools-2.10 gps-1.1.0 
+	pyxf86config-0.3.19 3ddesktop-0.2.8 3ddeskfx-0.2.4 
+	buffer-1.19
+	gpart-0.1h tcc-0.9.20 qemu-0.8.0  gdb-6.3  
+	ImageMagick-6.2.2 gnozip-0.1.3
+	gnome-python-2.0.2
+	Gtk2-1.080 Gtk2-GladeXML-1.004 
+
+d) X11 won't start up. It cranks, but won't turn over. It almost looks
+	like fvwm95 is crapping out, but why? Messages in /var/log indicate 
+	some vesa and framebuffer modules are missing. Are they important? 
+	That's the question. 
+
+	I've since upgraded/switched over/whatever from XFree86 to Xorg, 
+	hoping for improved driver support, but I get the same error whenever
+	any X11 app runs.
+
+	At least the LFS splash screen displays :) 
+
+e) Devices aren't been created in /dev. I think udev is subtly broken. We'll
+	use a static /dev until it's apparent what is wrong.
+
+
+f) FedEX kiosk computers suck.
+
+
+[ Feb 13 2005 ]
+
+The PPC booting problem described below has been pinpointed to an
+errant x86 /etc/ld.so.cache file in the configuration skeleton
+directory for the PPC build.
+
+I initially thought the problem was with /sbin/init. The alt-sysreq-T
+key sequence showed the init task waiting, so I compiled it statically.
+After that, the boot process hung on the next executable, /sbin/agetty.
+That indicated a problem with a library or loader. I tried booting
+a pristine root filesystem (without skel-ppc/* added) and behold!
+No more hanging! That told me that something in skel-ppc/* was
+causing the problem. Starting from /etc, I systematically renamed
+every file, rebooting in between each change, until I got to ld.so.conf.
+
+To tell you the truth, I suspected a while ago that the system might
+be hanging on a program not compiled for the PPC architecture, but
+I didn't pursue it far enough. In /root/bin, there is autologin.c
+and autologin. The latter is referenced in /etc/inittab, so I first
+thought that was the problem. Recompiling autologin and/or
+commenting the line in /etc/inittab made no difference, so instead
+of looking for other non-PPC binaries, I changed directions.
+
+What I finally discovered is, when /sbin/init is loaded by ld, it
+checks a cache file in /etc/ld.so.cache that was created by ldconfig.
+If that cache file is corrupted, believe you me, your system will
+hang like a clemency-denied convict.
+
+
+So if you want to hack around and make the currently available ppc.iso
+work, you'll need to do the following: uncompress and mount root.gz,
+remove /etc/ld.so.cache, unmount and recompress, and finally recreate
+the iso with the new root.gz. It might be easier for some to wait
+until I have a working one uploaded :)
+
+
+[ upcoming fixes ]
+
+ppc
+	* This PPC problem is ancient. Should probably expend a large
+	  amount of energy figuring it out so I can move that branch
+	  forward....
+
+	* PPC kernel hangs when passing control from initial ramdisk to 
+	  /sbin/init on real root device. The last messages written on the 
+	  console are:
+
+	pivot_root: pivot_root:  No such file or directory
+	chroot:  cannot exec /sbin/init:  no such file or directory
+	Freeing unused kernel memory:  180k init 4k chrp 8k prep
+
+
+
+[ Bleeding Edge: http://jayos.lfs-matrix.net/jayos/vader/x86/boot ]
+
+
+
+
+Official Releases:
+[ x86-20051026 ]
+
+	* Booting via QEMU under windows works. No arguments required!
+
+	  Host to JayOS networking is out of whack, though :p You should
+	  be able to ssh into JayOS (after setting root's password,
+	  disabling firewalling and activating dhcp--boot options
+	  "qemu nofw dhcp") with the following command, but it times out
+	  on my system:
+
+	  ssh2 -l root -p 5555 localhost
+
+
+	* Added documentation to LiveCD.
+
+	* Changed isolinux boot target from vmlinuz to qemu and jayos.
+	  This means, to boot under emulation, type "qemu" at the boot
+	  prompt. This is the default. Otherwise, if you are booting on
+	  real hardware, enter "jayos". Additional arguments (on F1 page)
+	  can be appended.
+
+	* Fixed problem with release x86-20051015.
+
+	* So this is what I get for being in a hurry ;) Release x86-20051015
+	  is flawed in that running \qemu-win.bat fails not only because
+	  because of an improper path, but because QEMU apparently needs 
+	  write access to its working directory. (Actually, the latter is
+	  not true; my CD-RW media was faulty.)
+
+	  I am especially disappointed that no one alerted me to the
+	  problem even though I've set up a public forum to address issues
+	  like this. I'm only one man, I can't test *everything*...it took
+	  me a while to realize there was a problem, and meanwhile you let
+	  me walk around with a booger in my nose and didn't say anything
+	  at all. Shame on you ;)
+
+[ x86-20051015 ]
+
+	* Forum now located at http://jayos.lfs-matrix.net/jayos/forum/index.php
+
+	* JayOS is now distributed as an ISO within an ISO. I still
+	  think it's a stupid idea (see my TODO list) but it does have the
+	  advantage of making the system more approachable (and even useable)
+	  by windows users. This should make up for the temporary lack of an
+	  install process. Thanks to QEMU-Puppy for the idea.
+
+	  The LiveCD ISO uses QEMU as a "boot loader" to boot jlfs.iso, the
+	  actual bootable image. The source ISO is the same as jlfs.iso with
+	  the addition of over 800MB of source code.  To boot under QEMU,
+	  do the following: 
+
+	  1) run qemu-win.bat
+	  2) enter "vmlinuz qemu" at the boot: prompt
+
+	  QEMU runs much slower under windows than under Linux because the
+	  accelerator module code is only available for Linux. The boot time
+	  seems excruciatingly slow under windows compared to the same under
+	  Linux, but once it is loaded, the system is snappy and responsive.
+	  Personally, I recommend issuing the "savevm" command from the QEMU
+	  console once the boot is complete. This state can be subsequently
+	  restored with "loadvm" faster than a reboot.
+
+	  Networking is disabled by default (add "dhcp nofw" on boot prompt) 
+	  since QEMU fails when told to use a network that is not there.
+	  Change -dummy-net to -user-net in qemu-win.bat for network support.
+	  You will need to set a root password for ssh to work.
+
+	* New build target "make winiso"
+
+	* Bug fixed in /root/bin/mklo that wouldn't allow the creation of
+	  non-encrypted filesystems.
+
+	* Corrected bug in the initial ramdisk creation that neglected to
+	  create hard links during the build process (Doh!) 
+
+
+[ x86-20050930 ]
+
+	* added more kernel parameters:
+
+	  qemu  (for a pre-configured 1024x768 display when running under QEMU)
+	  dhcp  (start dhcp services)
+	  nofw  (don't start firewall; dubious, but sometimes necessary)
+
+	* added three new docs; updated Q&A
+
+	  JayOS-Building.txt
+	  JayOS-Install.txt
+	  JayOS-Encryption.txt
+	  JayOS-QuestionsAnswers.txt
+
+
+	* root filesystem encryption is working (again). Use "alt" parm.
+
+	  boot: vmlinuz alt framebuf
+
+	  (framebuf option skips video configuration and starts framebuffer)
+
+	* fixed non-booting src ISO by touching file vader/x86/JayOS
+	  
+
+	* fixed following error generated when inserting kqemu module:
+	  kqemu: Unknown symbol __PAGE_KERNEL_EXEC
+
+	  with a patched version of kqemu.ko 
+
+	* unionfs.ko was is missing from root filesystem on latest ISO; 
+	  updated to latest version which should support encrypted rootfs.
+
+	* updated /linuxrc in initial ramdisk (initrd.gz)
+
+
+
+[ x86-20050916 ]
+
+	* More changes to /linuxrc; new rootdev= command line option
+	  (for complete list, see http://jayos.lfs-matrix.net/jayos/vader/x86/boot/isolinux.dp2)
+
+	* Rewrite of /root/bin/mklo for robustness and support of ext2/3 
+	  and vfat filesytems
+
+
+[ x86-20050910 ]
+
+	* Updated /linuxrc to allow booting from encrypted filesystems.
+	  Pass cmdline option "alt" to the kernel, default password is:
+	  "thequickbrownfoxjumpsoverthelazydog". See /root/bin/mklo on
+	  how to encrypt your own.
+
+	* Bug fixes to build.sh; minor updates to x86 Makefile
+
+	* More robust probing of devices at boot time from within /linuxrc
+
+	* Upgraded hotplug, udev, kernel headers
+
+	* New kernel command line options for mounting filesystems from 
+	  external storage devices, including USB SCSI drives. Each option
+	  requires a device name as an argument, but will default to the
+	  boot device.
+
+	  usrdev=
+	  localdev=
+	  optdev=
+
+	* Introduced "shell" cmdline option for debugging the boot process.
+	  Scripts in /etc/init.d aware of /proc/cmdline will drop into 
+	  a shell when finding that option.
+
+[ x86-20050827 ]
+
+	* Initial public release

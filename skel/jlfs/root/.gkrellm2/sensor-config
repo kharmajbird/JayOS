@@ -1,0 +1,10 @@
+sensor sensor_config_version 1
+sensor sensor_sysdep_private 0
+sensor sensor_float_factor 10000
+sensor gkrellm_float_factor 1000
+sensor sysdep_option use_nvclock 0
+sensor "ATF0" "thermal_zone/ATF0" 10000 0 1 0
+sensor "DTS0" "thermal_zone/DTS0" 10000 0 0 0
+sensor "DTS1" "thermal_zone/DTS1" 10000 0 0 0
+sensor units_fahrenheit 1
+sensor volt_display_mode 0

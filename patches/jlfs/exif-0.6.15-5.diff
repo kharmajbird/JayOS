@@ -1,0 +1,619 @@
+--- exif-0.6.15.orig/debian/patches/03_manpage_improvements
++++ exif-0.6.15/debian/patches/03_manpage_improvements
+@@ -0,0 +1,28 @@
++--- a/exif.1
+++++ b/exif.1
++@@ -19,7 +19,7 @@
++ .SH "NAME"
++ exif \- shows EXIF information in JPEG files
++ .SH "SYNOPSIS"
++-.BI "exif [ " "OPTION" " ] " "file"
+++.BI "exif [ " "OPTION" " ] " "file..."
++ .SH DESCRIPTION
++ .B "exif"
++ is a small command-line utility to show and change EXIF information in JPEG files.
++@@ -84,6 +84,16 @@
++ .TP
++ .BI "\-\-usage"
++ Display brief usage message
+++.SH "EXAMPLES"
+++.IX Header "EXAMPLES"
+++Here are some examples of the use of \fBexif\fR:
+++.IP "exif \-e picture.jpg"
+++Extract thumbnail from picture.jpg to picture.jpg.modified.jpg
+++.IP "exif \-t 0x9003 picture.jpg"
+++Display EXIF tag 0x9003 (DateTimeOriginal)
+++.IP "exif \-\-ifd=EXIF \-\-tag 0x9003 \-\-set\-value='2007:09:17 09:30:55' picture.jpg"
+++Set EXIF tag 0x9003 (DateTimeOriginal) to the given value, writing the new
+++file to picture.jpg.modified.jpg
++ .SH "AUTHOR"
++ Written by Lutz Mueller <lutz@users.sourceforge.net>
++ .SH "SEE ALSO"
+--- exif-0.6.15.orig/debian/patches/01_swedish_translation
++++ exif-0.6.15/debian/patches/01_swedish_translation
+@@ -0,0 +1,267 @@
++--- /dev/null
+++++ b/po/sv.po
++@@ -0,0 +1,264 @@
+++# Swedish translation for exif
+++# Copyright (c) (c) 2006 Canonical Ltd, and Rosetta Contributors 2006
+++# This file is distributed under the same license as the exif package.
+++# FIRST AUTHOR <EMAIL@ADDRESS>, 2006.
+++#
+++msgid ""
+++msgstr ""
+++"Project-Id-Version: exif\n"
+++"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+++"POT-Creation-Date: 2004-05-27 19:45+0200\n"
+++"PO-Revision-Date: 2006-11-06 22:36+0100\n"
+++"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
+++"Language-Team: Swedish <sv@li.org>\n"
+++"MIME-Version: 1.0\n"
+++"Content-Type: text/plain; charset=UTF-8\n"
+++"Content-Transfer-Encoding: 8bit\n"
+++
+++#: exif/actions.c:43
+++#, c-format
+++msgid "EXIF tags in '%s':"
+++msgstr "EXIF-taggar i \"%s\":"
+++
+++#: exif/actions.c:109
+++#, c-format
+++msgid "Unknown MakerNote format."
+++msgstr "Okänt MakerNote-format."
+++
+++#: exif/actions.c:116
+++#, c-format
+++msgid "MakerNote does not contain any value.\n"
+++msgstr "MakerNote innehåller inget värdet.\n"
+++
+++#: exif/actions.c:119
+++#, c-format
+++msgid "MakerNote contains 1 value:\n"
+++msgstr "MakerNote innehåller ett värde:\n"
+++
+++#: exif/actions.c:122
+++#, c-format
+++msgid "MakerNote contains %i values:\n"
+++msgstr "MakerNote innehåller %i värden:\n"
+++
+++#: exif/actions.c:139
+++#, c-format
+++msgid "EXIF tags in '%s' ('%s' byte order):"
+++msgstr "EXIF-taggar i \"%s\" (\"%s\" byteordning):"
+++
+++#: exif/actions.c:144
+++#: exif/actions.c:146
+++msgid "Tag"
+++msgstr "Tagg"
+++
+++#: exif/actions.c:149
+++#: exif/actions.c:151
+++#: exif/main.c:282
+++msgid "Value"
+++msgstr "Värde"
+++
+++#: exif/actions.c:157
+++#, c-format
+++msgid "EXIF data contains a thumbnail (%i bytes)."
+++msgstr "EXIF-data innehåller en miniatyrbild (%i byte)."
+++
+++#: exif/actions.c:189
+++#, c-format
+++msgid "ThumbnailSize\t%i\n"
+++msgstr "MiniatyrbildStorlek\t%i\n"
+++
+++#: exif/main.c:51
+++#, c-format
+++msgid "Internal error. Please contact <libexif-devel@lists.sourceforge.net>."
+++msgstr "Internt fel. Kontakta <libexif-devel@lists.sourceforge.net>."
+++
+++#: exif/main.c:61
+++#, c-format
+++msgid "EXIF entry '%s' (0x%x, '%s') exists in IFD '%s':"
+++msgstr "EXIF-posten \"%s\" (0x%x, \"%s\") finns i IFD \"%s\"."
+++
+++#: exif/main.c:98
+++#, c-format
+++msgid "Not enough memory."
+++msgstr "Inte tillräckligt med minne."
+++
+++#: exif/main.c:116
+++#, c-format
+++msgid "Too few components specified!"
+++msgstr "För få angivna komponenter!"
+++
+++#: exif/main.c:146
+++#, c-format
+++msgid "Not yet implemented!"
+++msgstr "Inte implementerat än!"
+++
+++#: exif/main.c:165
+++#, c-format
+++msgid "Could not parse JPEG file '%s'."
+++msgstr "Kunde inte tolka JPEG-filen \"%s\"."
+++
+++#: exif/main.c:175
+++#, c-format
+++msgid "Too much EXIF data (%i bytes). Only %i bytes are allowed."
+++msgstr "För mycket EXIF-data (%i byte). Endast %i byte tillåts."
+++
+++#: exif/main.c:189
+++#: exif/main.c:435
+++#, c-format
+++msgid "Wrote file '%s'."
+++msgstr "Skrev filen \"%s\"."
+++
+++#: exif/main.c:260
+++msgid "Show IDs instead of tag names"
+++msgstr "Visa id istället för taggnamn"
+++
+++#: exif/main.c:262
+++msgid "Select tag"
+++msgstr "Välj tagg"
+++
+++#: exif/main.c:262
+++msgid "tag"
+++msgstr "tagg"
+++
+++#: exif/main.c:264
+++msgid "Select IFD"
+++msgstr "Välj IFD"
+++
+++#: exif/main.c:264
+++msgid "IFD"
+++msgstr "IFD"
+++
+++#: exif/main.c:266
+++msgid "List all EXIF tags"
+++msgstr "Lista alla EXIF-taggar"
+++
+++#: exif/main.c:268
+++msgid "Show contents of tag MakerNote"
+++msgstr "Visa innehållet för taggen MakerNote"
+++
+++#: exif/main.c:270
+++msgid "Remove tag or ifd"
+++msgstr "Ta bort tagg eller ifd"
+++
+++#: exif/main.c:272
+++msgid "Show description of tag"
+++msgstr "Visa taggbeskrivning"
+++
+++#: exif/main.c:274
+++msgid "Extract thumbnail"
+++msgstr "Extrahera miniatyrbild"
+++
+++#: exif/main.c:276
+++msgid "Remove thumbnail"
+++msgstr "Ta bort miniatyrbild"
+++
+++#: exif/main.c:278
+++msgid "Insert FILE as thumbnail"
+++msgstr "Infoga FIL som miniatyrbild"
+++
+++#: exif/main.c:278
+++#: exif/main.c:280
+++msgid "FILE"
+++msgstr "FIL"
+++
+++#: exif/main.c:280
+++msgid "Write data to FILE"
+++msgstr "Skriv data till FIL"
+++
+++#: exif/main.c:284
+++msgid "Output in a machine-readable (tab delimited) format"
+++msgstr "Utskrift i maskinläsbart format (tabulatoravgränsat)"
+++
+++#: exif/main.c:287
+++msgid "Show debugging messages"
+++msgstr "Visa felsökningsmeddelanden"
+++
+++#: exif/main.c:304
+++msgid "[OPTION...] file"
+++msgstr "[FLAGGA...] fil"
+++
+++#: exif/main.c:321
+++#, c-format
+++msgid "Invalid tag '%s'!"
+++msgstr "Ogiltig tagg \"%s\"!"
+++
+++#: exif/main.c:332
+++#, c-format
+++msgid "Invalid IFD '%s'. Valid IFDs are '0', '1', 'EXIF', 'GPS', and 'Interoperability'."
+++msgstr "Ogiltig IFD \"%s\". Giltiga IFD är \"0\", \"1\", \"EXIF\", \"GPS\", och \"Interoperability\"."
+++
+++#: exif/main.c:342
+++#, c-format
+++msgid "Please specify a tag!"
+++msgstr "Ange en tagg!"
+++
+++#: exif/main.c:346
+++#, c-format
+++msgid "Tag '%s' (0x%04x, '%s'): %s"
+++msgstr "Taggen \"%s\" (0x%04x, \"%s\"): %s"
+++
+++#: exif/main.c:370
+++#, c-format
+++msgid "'%s' does not contain EXIF data!"
+++msgstr "\"%s\" innehåller inte EXIF-data!"
+++
+++#: exif/main.c:396
+++#, c-format
+++msgid "IFD '%s' does not contain tag '%s'."
+++msgstr "IFD \"%s\" innehåller inte taggen \"%s\"."
+++
+++#: exif/main.c:410
+++#, c-format
+++msgid "'%s' does not contain a thumbnail!"
+++msgstr "\"%s\" innehåller inte en miniatyrbild!"
+++
+++#: exif/main.c:422
+++#, c-format
+++msgid "Could not open '%s' for writing (%m)!"
+++msgstr "Kunde inte öppna \"%s\" för skrivning (%m)!"
+++
+++#: exif/main.c:426
+++#, c-format
+++msgid "Could not open '%s' for writing (%s)!"
+++msgstr "Kunde inte öppna \"%s\" för skrivning (%s)!"
+++
+++#: exif/main.c:464
+++#, c-format
+++msgid "Could not open '%s' (%m)!"
+++msgstr "Kunde inte öppna \"%s\" (%m)!"
+++
+++#: exif/main.c:467
+++#, c-format
+++msgid "Could not open '%s' (%s)!"
+++msgstr "Kunde inte öppna \"%s\" (%s)!"
+++
+++#: exif/main.c:478
+++#, c-format
+++msgid "Could not allocate %i byte(s)."
+++msgstr "Kunde inte allokera %i byte."
+++
+++#: exif/main.c:488
+++#, c-format
+++msgid "Could not read '%s' (%m)."
+++msgstr "Kunde inte läsa \"%s\" (%m)."
+++
+++#: exif/main.c:491
+++#, c-format
+++msgid "Could not read '%s' (%s)."
+++msgstr "Kunde inte läsa \"%s\" (%s)."
+++
+++#: exif/main.c:506
+++#, c-format
+++msgid "You need to specify a tag!"
+++msgstr "Du behöver ange en tagg!"
+++
+++#: exif/main.c:515
+++#: exif/main.c:538
+++#, c-format
+++msgid "You need to specify an IFD!"
+++msgstr "Du behöver ange en IFD!"
+++
+++#: exif/main.c:554
+++#, c-format
+++msgid "IFD '%s' does not contain a tag '%s'!"
+++msgstr "IFD \"%s\" innehåller inte en tagg \"%s\"!"
+++
+--- exif-0.6.15.orig/debian/patches/series
++++ exif-0.6.15/debian/patches/series
+@@ -0,0 +1,3 @@
++03_manpage_improvements
++02_default_ifd
++01_swedish_translation
+--- exif-0.6.15.orig/debian/patches/02_default_ifd
++++ exif-0.6.15/debian/patches/02_default_ifd
+@@ -0,0 +1,13 @@
++--- a/exif/main.c
+++++ b/exif/main.c
++@@ -396,6 +396,10 @@
++     return 0;
++   }
++ 
+++  if (tag_string && ifd_string == NULL) {
+++      ifd_string = "EXIF";
+++  }
+++
++ 	if (ifd_string) {
++ 		ifd = exif_ifd_from_string (ifd_string);
++ 		if ((ifd < EXIF_IFD_0) || (ifd >= EXIF_IFD_COUNT) ||
+--- exif-0.6.15.orig/debian/copyright
++++ exif-0.6.15/debian/copyright
+@@ -0,0 +1,19 @@
++This package was debianized by christophe barbe <christophe@debian.org> on
++Tue, 23 Jul 2002 11:46:33 -0400.
++
++It was downloaded from http://sourceforge.net/projects/libexif
++
++Upstream Author: Lutz Müller <lutz@users.sourceforge.net>
++
++Copyright © 2002 Lutz Müller <lutz@users.sourceforge.net>
++
++License is GNU LGPL, version 2 or later:
++
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++
++
++On Debian systems, the complete text of the GNU Lesser General Public License
++can be found in “/usr/share/common-licenses/LGPL-2 file.
+--- exif-0.6.15.orig/debian/changelog
++++ exif-0.6.15/debian/changelog
+@@ -0,0 +1,146 @@
++exif (0.6.15-5) unstable; urgency=low
++
++  * Adopt the package within pkg-phototools:
++    - Set the Maintainer to the group
++    - Add Frederic Peters and myself as Uploaders.
++    - Add Vcs-Browser and Vcs-Git fields accordingly.
++  * debian/control:
++    - Add a Homepage field.
++    - Update Standards-Version to 3.7.3
++    - Fix build dep version for libexif-dev.
++    - Add build dep on quilt for patches extracted from package diff.
++    - Add build dep on gettext for swedish translation.
++  * debian/copyright:
++    - convert file to utf-8.
++    - Point to LGPL-2 rather than just LGPL, which now points to
++      LGPL-3.
++  * debian/rules
++    - Fix autotools timestamp issues which causes FTBFS (closes: #445609)
++    - Fix lintian 'clean error' warning.
++  * debian/patches
++    - Extract swedish translation patch from package diff (cf. bug 397370).
++    - Extract patch related to default ifd from package diff (cf. bug 428255).
++    - Extract patch related to manpage improvements from package diff (cf.
++      bugs 320497 and 321855).
++
++ -- Emmanuel Bouthenot <kolter@openics.org>  Mon, 31 Mar 2008 19:39:44 +0200
++
++exif (0.6.15-4) unstable; urgency=low
++
++  * debian/rules: touch config.status and config.h after configure to be sure
++    it doesn't run a second time, breaking its config.h and the build at the
++    same time.  (closes: #445609)
++
++ -- Frederic Peters <fpeters@debian.org>  Tue, 09 Oct 2007 16:58:32 +0200
++
++exif (0.6.15-3) unstable; urgency=low
++
++  * src/main.c: set default IFD to EXIF when using -t  (closes: #428255)
++  * exif.1: noted the command can operate on multiple files, and added
++    examples and explanations on options  (closes: #320497, #321855)
++
++ -- Frederic Peters <fpeters@debian.org>  Sun, 30 Sep 2007 11:37:47 +0200
++
++exif (0.6.15-2) unstable; urgency=low
++
++  * configure.in, configure, po/sv.po: added Swedish translation by Daniel
++    Nylander (closes: #397370)
++
++ -- Frederic Peters <fpeters@debian.org>  Sat, 29 Sep 2007 12:58:53 +0200
++
++exif (0.6.15-1) unstable; urgency=low
++
++  * New upstream release.
++  * debian/compat: set to 5
++  * debian/control: updated debhelper build-depends to 5.0.0
++  * debian/control: added autotools-dev as build-depends to get newer
++    config.sub and config.guess
++
++ -- Frederic Peters <fpeters@debian.org>  Fri, 25 May 2007 14:28:03 +0200
++
++exif (0.6.9-5) unstable; urgency=low
++
++  * debian/control: updated build-depends so it always links against
++    libexif12. (closes: #327045)
++
++ -- Frederic Peters <fpeters@debian.org>  Wed,  7 Sep 2005 11:49:15 +0200
++
++exif (0.6.9-4) unstable; urgency=low
++
++  * Rebuilt with new libexif12.
++
++ -- Frederic Peters <fpeters@debian.org>  Sat, 16 Jul 2005 10:12:48 +0200
++
++exif (0.6.9-3) unstable; urgency=low
++
++  * exif/actions.c: applied patch from Brendan O'Dea (thanks); no longer
++    segfaults on MakerNote (closes: #282555)
++  * debian/control: lowercased first letter of description synopsis
++  * debian/copyright: fixed license; LGPL, not GPL
++
++ -- Frederic Peters <fpeters@debian.org>  Sat, 29 Jan 2005 23:16:01 +0100
++
++exif (0.6.9-2) unstable; urgency=low
++
++  * Adopted package.
++  * debian/control: updated Maintainer field and description
++
++ -- Frederic Peters <fpeters@debian.org>  Sun, 17 Oct 2004 12:35:57 +0200
++
++exif (0.6.9-1) unstable; urgency=low
++
++  * Rebuilt against libexif10.
++  * New upstream release. 
++
++ -- christophe barbe <christophe@debian.org>  Fri, 18 Jun 2004 14:44:26 -0400
++
++exif (0.6-2) unstable; urgency=low
++
++  * Move DH_COMPAT in debian/compat.
++  * Bump Standards-Version up to 3.5.9.
++
++ -- christophe barbe <christophe@debian.org>  Thu,  3 Apr 2003 20:36:52 -0500
++
++exif (0.6-1) unstable; urgency=low
++
++  * New upstream release (Closes: #180214). 
++
++ -- christophe barbe <christophe@debian.org>  Mon, 20 Jan 2003 17:03:45 -0500
++
++exif (0.5-3) unstable; urgency=low
++
++  * Fix segfault when specifying a tag at the command-line (Closes: #170471). 
++
++ -- christophe barbe <christophe@debian.org>  Sat, 23 Nov 2002 22:10:49 -0500
++
++exif (0.5-2) unstable; urgency=low
++
++  * Added versioned Build-Depends on libexif-dev (Closes: #168891). 
++
++ -- christophe barbe <christophe@debian.org>  Wed, 13 Nov 2002 11:37:36 -0500
++
++exif (0.5-1) unstable; urgency=low
++
++  * New upstream release. 
++
++ -- christophe barbe <christophe@debian.org>  Sun, 10 Nov 2002 22:23:43 -0500
++
++exif (0.4-3) unstable; urgency=low
++
++  * Added pkg-config in the Build-Depends (closes: #154918). 
++  * No upstream man page for exif (closes: #154870).
++
++ -- christophe barbe <christophe@debian.org>  Wed, 31 Jul 2002 07:30:25 -0400
++
++exif (0.4-2) unstable; urgency=low
++
++  * Description improvment (closes: #154757). 
++
++ -- christophe barbe <christophe@debian.org>  Mon, 29 Jul 2002 17:54:45 -0400
++
++exif (0.4-1) unstable; urgency=low
++
++  * Initial Release (closes: #153996).
++
++ -- christophe barbe <christophe@debian.org>  Tue, 23 Jul 2002 11:46:33 -0400
++
+--- exif-0.6.15.orig/debian/compat
++++ exif-0.6.15/debian/compat
+@@ -0,0 +1 @@
++5
+--- exif-0.6.15.orig/debian/watch
++++ exif-0.6.15/debian/watch
+@@ -0,0 +1,2 @@
++version=3
++http://sf.net/libexif/exif-(.*)\.tar\.gz
+--- exif-0.6.15.orig/debian/rules
++++ exif-0.6.15/debian/rules
+@@ -0,0 +1,89 @@
++#!/usr/bin/make -f
++
++include /usr/share/quilt/quilt.make
++
++# Sample debian/rules that uses debhelper.
++# GNU copyright 1997 to 1999 by Joey Hess.
++
++# Uncomment this to turn on verbose mode.
++#export DH_VERBOSE=1
++
++config.status: patch configure-stamp
++configure-stamp:
++	dh_testdir
++	-test -r /usr/share/misc/config.sub && \
++	cp -f /usr/share/misc/config.sub config.sub
++	-test -r /usr/share/misc/config.guess && \
++	cp -f /usr/share/misc/config.guess config.guess
++
++	# ugly hack to fix autotools timestamp issues
++	touch aclocal.m4 && touch config.h.in
++
++	./configure --prefix=/usr --mandir=\$${prefix}/share/man
++
++	touch configure-stamp
++
++build: config.status build-stamp
++build-stamp:
++	dh_testdir
++	$(MAKE)
++
++	# build swedish translation
++	msgfmt -c -o po/sv.gmo po/sv.po
++
++	touch build-stamp
++
++clean: clean-patched unpatch
++clean-patched:
++	dh_testdir
++	dh_testroot
++	rm -f build-stamp configure-stamp
++
++	# remove builded swedish translation
++	-rm -f po/sv.gmo
++
++	[ ! -f Makefile ] || $(MAKE) distclean
++	-rm -f config.log config.sub config.guess
++	dh_clean
++
++install: build
++	dh_testdir
++	dh_testroot
++	dh_clean -k
++	dh_installdirs
++	$(MAKE) install prefix=$(CURDIR)/debian/exif/usr
++
++	# install swedish translation
++	install -m 0755 -d $(CURDIR)/debian/exif/usr/share/locale/sv/LC_MESSAGES
++	install -m 0644 po/sv.gmo $(CURDIR)/debian/exif/usr/share/locale/sv/LC_MESSAGES/exif.mo
++
++# Build architecture-independent files here.
++binary-indep: build install
++# We have nothing to do by default.
++
++# Build architecture-dependent files here.
++binary-arch: build install
++	dh_testdir
++	dh_testroot
++	dh_installdocs
++#	dh_installexamples
++#	dh_installmenu
++#	dh_installmime
++	dh_installman
++#	dh_installinfo
++#	dh_undocumented exif.1
++	dh_installchangelogs ChangeLog
++#	dh_link
++	dh_strip
++	dh_compress
++	dh_fixperms
++#	dh_makeshlibs
++	dh_installdeb
++#	dh_perl
++	dh_shlibdeps
++	dh_gencontrol
++	dh_md5sums
++	dh_builddeb
++
++binary: binary-indep binary-arch
++.PHONY: build clean binary-indep binary-arch binary install 
+--- exif-0.6.15.orig/debian/control
++++ exif-0.6.15/debian/control
+@@ -0,0 +1,21 @@
++Source: exif
++Section: graphics
++Priority: optional
++Maintainer: Debian PhotoTools Maintainers <pkg-phototools-devel@lists.alioth.debian.org>
++Uploaders: Frederic Peters <fpeters@debian.org>, Emmanuel Bouthenot <kolter@openics.org>
++Build-Depends: debhelper (>> 5.0.0), libexif-dev (>= 0.6.12), libpopt-dev, pkg-config, autotools-dev, quilt, gettext
++Standards-Version: 3.7.3
++Homepage: http://libexif.sourceforge.net/
++Vcs-Browser: http://git.debian.org/?p=pkg-phototools/exif.git
++Vcs-Git: git://git.debian.org/git/pkg-phototools/exif.git
++
++Package: exif
++Architecture: any
++Depends: ${shlibs:Depends}
++Description: command-line utility to show EXIF information in JPEG files
++ Most digital cameras produce EXIF files, which are JPEG files with
++ extra tags that contain information about the image.
++ .
++ 'exif' is a small command-line utility to show EXIF information hidden
++ in JPEG files.
++

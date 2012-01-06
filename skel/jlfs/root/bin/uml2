@@ -1,0 +1,18 @@
+#!/bin/sh
+
+if [ "$1" = "-f" ]; then rm -f *cow; fi
+
+  #con=xterm \
+  #con1=tty:/dev/tty5 \
+  #con2=tty:/dev/tty6 \
+
+linux-nest1 \
+  con=pty con0=fd:0,fd:1 \
+  eth0=tuntap,,,192.168.1.11 \
+  mem=64m \
+  umid=pharoah \
+  ubd0=uml.fs.cow,/dev/ubd3 \
+  ubd1=/dev/ubd4
+
+
+# ubd1 is swap 

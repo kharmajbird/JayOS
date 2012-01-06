@@ -1,0 +1,18 @@
+# Replace inet.example.com with the proper APN for your provider
+# connect "/usr/sbin/chat -T inet.example.com -f /etc/ppp/gprs.chat"
+
+# Specify your cellphone serial port and speed below
+# Note: you must manually reprogram certain old cell phones
+# in order to achieve connection speed more than 9600 bits ber second.
+# See http://www.esato.com/board/viewtopic.php?topic=14638&r=a
+/dev/ttyS1
+115200
+
+# The settings below usually don't need to be changed
+noauth
+updetach
+debug
+lock
+defaultroute
+noipdefault
+usepeerdns

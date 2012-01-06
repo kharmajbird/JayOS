@@ -1,0 +1,101 @@
+
+I have not yet developed a set of install scripts for two reasons. One,
+I cannot account for all the various partition layouts a person might
+have on their hard drive, and I really don't want to prompt them for
+device names and such. That belongs in the realm of mature installers
+such as the ones found in major distributions.
+
+Then there's the issue of trust. If I were a new user of JayOS, being the
+paranoid admin, I would not trust it to mess with my hard drive without
+personally reading through the scripts. Instead, I would prefer a list
+of instructions on how to do it manually.
+
+The second reason I haven't written any scripts is that I honestly didn't
+expect anyone to want to *install* JayOS :) Use it, yes, but actually
+install it like an honest-to-goodness distro? I thought I was the only
+person interested in using it that way, but now that at least one person
+has asked me how, I've decided to provide some instructions.
+
+
+* How to install JayOS to a hard drive or USB storage device
+
+Optionally, make a backup of your master boot record. Something like this
+should do the trick:
+
+	* dd if=/dev/hda of=/tmp/hda.mbr bs=512 count=1
+
+Format, create, or otherwise build a partition at least 650MB in size.
+Create a fileystem of type vfat (what?) yes, vfat. Mount it.
+
+	mkdosfs -F 16 ??
+
+Copy /boot and /fs from the CD to the mounted partition. The /fs directory
+is not strictly needed for booting, and some files in /boot could be
+pruned, but don't worry about specifics until you have the new system up.
+
+Copy /isolinux.cfg from the CD to /syslinux.cfg. It should contain the
+following lines:
+
+display /boot/isolinux.dpy
+timeout 450
+prompt 1
+F1 /boot/isolinux.dp2 
+F2 /boot/isolinux.dpy
+default vmlinuz
+label vmlinuz
+kernel /boot/vmlinuz
+append load_ramdisk=1 initrd=/boot/initrd.gz initrd_archive=ext2 ramdisk_size=196608 root=/dev/ram1 newvid rw
+
+
+Unmount the filesystem and run syslinux against the device. The syntax
+should look something like "syslinux /dev/hda". This copies boot loader
+code to the master boot record on the drive, and creates /syslinux.bin.
+
+At this point, you *could* go ahead and reboot to test, but this is a
+perfect opportunity to use QEMU for that task. Plus, it gives you the
+space to restore your MBR with your saved version, should something
+not work right the first time. (A restore can be done with the same dd
+command-- swap if= with of= and of= to if=)
+
+
+* How to use QEMU for testing new builds
+
+Assuming the (unmounted!) device name of your disk is /dev/hda, the 
+following QEMU command will launch the emulator:
+
+	* qemu -m 256 -hda /dev/hda -dummy-net
+
+If you want to test an ISO, use a command like:
+
+	* qemu -m 256 -cdrom -dummy-net
+
+For using both a disk and cdrom drive, you'll need to add the -boot parm:
+
+	BOOT CDROM
+	* qemu -m 256 -boot d -hda /dev/hda -cdrom /lfs/build/jlfs-x86-src.iso
+
+	BOOT HARD DISK
+	* qemu -m 256 -boot c -hda /dev/hda -cdrom /lfs/build/jlfs-x86-src.iso
+
+
+
+* How to install JayOS on a QEMU hard disk image
+
+
+Create a 650 MB image 
+	* qemu-img create -f raw /lfs/build/jlfs-x86-qemu.img 650M
+
+
+Boot under QEMU from cdrom
+
+	* qemu -m 256 -boot d -hda /lfs/build/jlfs-x86-qemu.img -cdrom /lfs/build/jlfs-x86-src.iso
+
+	* fdisk /dev/hda under QEMU and create hda1 as a FAT partition
+
+	* Continue with copying instructions under
+	  "How to install JayOS to a hard drive or USB storage device"
+
+
+Reboot under QEMU from the newly-created image
+
+	* qemu -m 256 -boot c -hda /lfs/build/jlfs-x86-qemu.img -dummy-net

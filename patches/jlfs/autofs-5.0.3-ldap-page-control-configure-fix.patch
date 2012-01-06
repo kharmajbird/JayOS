@@ -1,0 +1,406 @@
+diff --git a/CHANGELOG b/CHANGELOG
+index 624fe9e..98855f5 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -1,3 +1,7 @@
++??/??/2008 autofs-5.0.4
++-----------------------
++- correct configure test for ldapr page control functions.
++ 
+ 14/01/2008 autofs-5.0.3
+ -----------------------
+ - include krb5.h in lookup_ldap.h (some openssl doesn't implicitly include it).
+diff --git a/aclocal.m4 b/aclocal.m4
+index 118ef0d..f24e076 100644
+--- a/aclocal.m4
++++ b/aclocal.m4
+@@ -222,3 +222,69 @@ AC_TRY_LINK(
+ LDFLAGS="$af_check_hesiod_save_ldflags"
+ ])
+ 
++dnl --------------------------------------------------------------------------
++dnl AF_CHECK_FUNC_LDAP_CREATE_PAGE_CONTROL
++dnl
++dnl Check for function ldap_create_page_control
++dnl --------------------------------------------------------------------------
++AC_DEFUN([AF_CHECK_FUNC_LDAP_CREATE_PAGE_CONTROL],
++[AC_MSG_CHECKING(for ldap_create_page_control in -lldap)
++
++# save current ldflags
++af_check_ldap_create_page_control_save_ldflags="$LDFLAGS"
++LDFLAGS="$LDFLAGS -lldap_r"
++
++AC_TRY_LINK(
++  [ #include <ldap.h> ],
++  [ LDAP *ld;
++    ber_int_t ps;
++    struct berval *c;
++    int ic, ret;
++    LDAPControl **clp;
++    ret = ldap_create_page_control(ld,ps,c,ic,clp); ],
++  [ af_have_ldap_create_page_control=yes
++    AC_MSG_RESULT(yes) ],
++  [ AC_MSG_RESULT(no) ])
++
++if test "$af_have_ldap_create_page_control" = "yes"; then
++  AC_DEFINE(HAVE_LDAP_CREATE_PAGE_CONTROL, 1,
++        [Define to 1 if you have the `ldap_create_page_control' function.])
++fi
++
++# restore ldflags
++LDFLAGS="$af_check_ldap_create_page_control_save_ldflags"
++])
++
++dnl --------------------------------------------------------------------------
++dnl AF_CHECK_FUNC_LDAP_PARSE_PAGE_CONTROL
++dnl
++dnl Check for function ldap_parse_page_control
++dnl --------------------------------------------------------------------------
++AC_DEFUN([AF_CHECK_FUNC_LDAP_PARSE_PAGE_CONTROL],
++[AC_MSG_CHECKING(for ldap_parse_page_control in -lldap)
++
++# save current ldflags
++af_check_ldap_parse_page_control_save_ldflags="$LDFLAGS"
++LDFLAGS="$LDFLAGS -lldap_r"
++
++AC_TRY_LINK(
++  [ #include <ldap.h> ],
++  [ LDAP *ld;
++    ber_int_t ct;
++    struct berval *c;
++    int ret;
++    LDAPControl **clp;
++    ret = ldap_parse_page_control(ld,clp,ct,c); ],
++  [ af_have_ldap_parse_page_control=yes
++    AC_MSG_RESULT(yes) ],
++  [ AC_MSG_RESULT(no) ])
++
++if test "$af_have_ldap_create_page_control" = "yes"; then
++  AC_DEFINE(HAVE_LDAP_PARSE_PAGE_CONTROL, 1,
++        [Define to 1 if you have the `ldap_parse_page_control' function.])
++fi
++
++# restore ldflags
++LDFLAGS="$af_check_ldap_parse_page_control_save_ldflags"
++])
++
+diff --git a/configure b/configure
+index d212b05..e872392 100755
+--- a/configure
++++ b/configure
+@@ -3631,7 +3631,7 @@ if test "${with_hesiod+set}" = set; then
+ fi
+ 
+ 
+-if test -z "$HAVE_HESIOD"
++if test -z "$HAVE_HESIOD" -o "$HAVE_HESIOD" != "0"
+ then
+ 	HAVE_HESIOD=0
+ 	{ echo "$as_me:$LINENO: checking for libhesiod" >&5
+@@ -4498,7 +4498,7 @@ if test "${with_openldap+set}" = set; then
+ 
+ fi
+ 
+-if test -z "$HAVE_LDAP"; then
++if test -z "$HAVE_LDAP" -o "$HAVE_LDAP" != "0"; then
+ 	HAVE_LDAP=0
+ 	LDAP_FLAGS="$LDAP_FLAGS -DLDAP_DEPRECATED=1"
+ 	{ echo "$as_me:$LINENO: checking for ldap_initialize in -lldap" >&5
+@@ -4566,71 +4566,106 @@ if test $ac_cv_lib_ldap_ldap_initialize = yes; then
+   HAVE_LDAP=1 LIBLDAP="$LIBLDAP -lldap_r -llber -lresolv"
+ fi
+ 
+-	if test "$HAVE_LDAP" == "1"; then
++	if test "$HAVE_LDAP" = "1"; then
+ 
+ cat >>confdefs.h <<\_ACEOF
+ #define WITH_LDAP 1
+ _ACEOF
+ 
+ 	fi
++	{ echo "$as_me:$LINENO: checking for ldap_create_page_control in -lldap" >&5
++echo $ECHO_N "checking for ldap_create_page_control in -lldap... $ECHO_C" >&6; }
++
++# save current ldflags
++af_check_ldap_create_page_control_save_ldflags="$LDFLAGS"
++LDFLAGS="$LDFLAGS -lldap_r"
++
++cat >conftest.$ac_ext <<_ACEOF
++/* confdefs.h.  */
++_ACEOF
++cat confdefs.h >>conftest.$ac_ext
++cat >>conftest.$ac_ext <<_ACEOF
++/* end confdefs.h.  */
++ #include <ldap.h>
++int
++main ()
++{
++ LDAP *ld;
++    ber_int_t ps;
++    struct berval *c;
++    int ic, ret;
++    LDAPControl **clp;
++    ret = ldap_create_page_control(ld,ps,c,ic,clp);
++  ;
++  return 0;
++}
++_ACEOF
++rm -f conftest.$ac_objext conftest$ac_exeext
++if { (ac_try="$ac_link"
++case "(($ac_try" in
++  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
++  *) ac_try_echo=$ac_try;;
++esac
++eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
++  (eval "$ac_link") 2>conftest.er1
++  ac_status=$?
++  grep -v '^ *+' conftest.er1 >conftest.err
++  rm -f conftest.er1
++  cat conftest.err >&5
++  echo "$as_me:$LINENO: \$? = $ac_status" >&5
++  (exit $ac_status); } && {
++	 test -z "$ac_c_werror_flag" ||
++	 test ! -s conftest.err
++       } && test -s conftest$ac_exeext &&
++       $as_test_x conftest$ac_exeext; then
++   af_have_ldap_create_page_control=yes
++    { echo "$as_me:$LINENO: result: yes" >&5
++echo "${ECHO_T}yes" >&6; }
++else
++  echo "$as_me: failed program was:" >&5
++sed 's/^/| /' conftest.$ac_ext >&5
++
++	 { echo "$as_me:$LINENO: result: no" >&5
++echo "${ECHO_T}no" >&6; }
+ fi
+ 
++rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
++      conftest$ac_exeext conftest.$ac_ext
+ 
++if test "$af_have_ldap_create_page_control" = "yes"; then
+ 
++cat >>confdefs.h <<\_ACEOF
++#define HAVE_LDAP_CREATE_PAGE_CONTROL 1
++_ACEOF
+ 
+-LDFLAGS="${AF_tmp_ldflags}"
++fi
+ 
++# restore ldflags
++LDFLAGS="$af_check_ldap_create_page_control_save_ldflags"
+ 
++	{ echo "$as_me:$LINENO: checking for ldap_parse_page_control in -lldap" >&5
++echo $ECHO_N "checking for ldap_parse_page_control in -lldap... $ECHO_C" >&6; }
+ 
+-for ac_func in ldap_create_page_control ldap_parse_page_control
+-do
+-as_ac_var=`echo "ac_cv_func_$ac_func" | $as_tr_sh`
+-{ echo "$as_me:$LINENO: checking for $ac_func" >&5
+-echo $ECHO_N "checking for $ac_func... $ECHO_C" >&6; }
+-if { as_var=$as_ac_var; eval "test \"\${$as_var+set}\" = set"; }; then
+-  echo $ECHO_N "(cached) $ECHO_C" >&6
+-else
+-  cat >conftest.$ac_ext <<_ACEOF
++# save current ldflags
++af_check_ldap_parse_page_control_save_ldflags="$LDFLAGS"
++LDFLAGS="$LDFLAGS -lldap_r"
++
++cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+ cat confdefs.h >>conftest.$ac_ext
+ cat >>conftest.$ac_ext <<_ACEOF
+ /* end confdefs.h.  */
+-/* Define $ac_func to an innocuous variant, in case <limits.h> declares $ac_func.
+-   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
+-#define $ac_func innocuous_$ac_func
+-
+-/* System header to define __stub macros and hopefully few prototypes,
+-    which can conflict with char $ac_func (); below.
+-    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+-    <limits.h> exists even on freestanding compilers.  */
+-
+-#ifdef __STDC__
+-# include <limits.h>
+-#else
+-# include <assert.h>
+-#endif
+-
+-#undef $ac_func
+-
+-/* Override any GCC internal prototype to avoid an error.
+-   Use char because int might match the return type of a GCC
+-   builtin and then its argument prototype would still apply.  */
+-#ifdef __cplusplus
+-extern "C"
+-#endif
+-char $ac_func ();
+-/* The GNU C library defines this for functions which it implements
+-    to always fail with ENOSYS.  Some functions are actually named
+-    something starting with __ and the normal name is an alias.  */
+-#if defined __stub_$ac_func || defined __stub___$ac_func
+-choke me
+-#endif
+-
++ #include <ldap.h>
+ int
+ main ()
+ {
+-return $ac_func ();
++ LDAP *ld;
++    ber_int_t ct;
++    struct berval *c;
++    int ret;
++    LDAPControl **clp;
++    ret = ldap_parse_page_control(ld,clp,ct,c);
+   ;
+   return 0;
+ }
+@@ -4653,28 +4688,37 @@ eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+ 	 test ! -s conftest.err
+        } && test -s conftest$ac_exeext &&
+        $as_test_x conftest$ac_exeext; then
+-  eval "$as_ac_var=yes"
++   af_have_ldap_parse_page_control=yes
++    { echo "$as_me:$LINENO: result: yes" >&5
++echo "${ECHO_T}yes" >&6; }
+ else
+   echo "$as_me: failed program was:" >&5
+ sed 's/^/| /' conftest.$ac_ext >&5
+ 
+-	eval "$as_ac_var=no"
++	 { echo "$as_me:$LINENO: result: no" >&5
++echo "${ECHO_T}no" >&6; }
+ fi
+ 
+ rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+       conftest$ac_exeext conftest.$ac_ext
+-fi
+-ac_res=`eval echo '${'$as_ac_var'}'`
+-	       { echo "$as_me:$LINENO: result: $ac_res" >&5
+-echo "${ECHO_T}$ac_res" >&6; }
+-if test `eval echo '${'$as_ac_var'}'` = yes; then
+-  cat >>confdefs.h <<_ACEOF
+-#define `echo "HAVE_$ac_func" | $as_tr_cpp` 1
++
++if test "$af_have_ldap_create_page_control" = "yes"; then
++
++cat >>confdefs.h <<\_ACEOF
++#define HAVE_LDAP_PARSE_PAGE_CONTROL 1
+ _ACEOF
+ 
+ fi
+-done
+ 
++# restore ldflags
++LDFLAGS="$af_check_ldap_parse_page_control_save_ldflags"
++
++fi
++
++
++
++
++LDFLAGS="${AF_tmp_ldflags}"
+ 
+ #
+ # SASL support
+@@ -4703,7 +4747,7 @@ if test "${with_sasl+set}" = set; then
+ 
+ fi
+ 
+-if test -z "$HAVE_SASL" -a "$HAVE_LIBXML" == "1"
++if test -z "$HAVE_SASL" -o "$HAVE_SASL" != "0" -a "$HAVE_LIBXML" == "1"
+ then
+ 	HAVE_SASL=0
+ 	{ echo "$as_me:$LINENO: checking for sasl_client_start in -lsasl2" >&5
+diff --git a/configure.in b/configure.in
+index 952d040..a9c86dd 100644
+--- a/configure.in
++++ b/configure.in
+@@ -155,7 +155,7 @@ AC_ARG_WITH(hesiod,
+ 	fi
+ )	
+ 
+-if test -z "$HAVE_HESIOD"
++if test -z "$HAVE_HESIOD" -o "$HAVE_HESIOD" != "0"
+ then
+ 	HAVE_HESIOD=0
+ 	AF_CHECK_LIBHESIOD()
+@@ -194,15 +194,17 @@ AC_ARG_WITH(openldap,
+ 		LDAP_FLAGS="-I${withval}/include"
+ 	fi
+ )
+-if test -z "$HAVE_LDAP"; then
++if test -z "$HAVE_LDAP" -o "$HAVE_LDAP" != "0"; then
+ 	HAVE_LDAP=0
+ 	LDAP_FLAGS="$LDAP_FLAGS -DLDAP_DEPRECATED=1"
+ 	AC_CHECK_LIB(ldap, ldap_initialize, HAVE_LDAP=1 LIBLDAP="$LIBLDAP -lldap_r -llber -lresolv", ,
+ 		     -llber -lresolv $LIBS)
+-	if test "$HAVE_LDAP" == "1"; then
++	if test "$HAVE_LDAP" = "1"; then
+ 		AC_DEFINE(WITH_LDAP,1,
+ 			[Define if using LDAP as a source of automount maps])
+ 	fi
++	AF_CHECK_FUNC_LDAP_CREATE_PAGE_CONTROL()
++	AF_CHECK_FUNC_LDAP_PARSE_PAGE_CONTROL()
+ fi
+ 
+ AC_SUBST(LDAP_FLAGS)
+@@ -210,8 +212,6 @@ AC_SUBST(HAVE_LDAP)
+ AC_SUBST(LIBLDAP)
+ LDFLAGS="${AF_tmp_ldflags}"
+ 
+-AC_CHECK_FUNCS(ldap_create_page_control ldap_parse_page_control)
+-
+ #
+ # SASL support
+ #   configure magic taken from:
+@@ -236,7 +236,7 @@ AC_ARG_WITH(sasl,
+ 		SASL_FLAGS="-I${withval}/include"
+ 	fi
+ )
+-if test -z "$HAVE_SASL" -a "$HAVE_LIBXML" == "1"
++if test -z "$HAVE_SASL" -o "$HAVE_SASL" != "0" -a "$HAVE_LIBXML" == "1"
+ then
+ 	HAVE_SASL=0
+ 	AC_CHECK_LIB(sasl2, sasl_client_start, HAVE_SASL=1 LIBSASL="$LIBSASL -lsasl2", , -lsasl2 $LIBS)
+diff --git a/modules/lookup_ldap.c b/modules/lookup_ldap.c
+index 0723fd8..e8530f6 100644
+--- a/modules/lookup_ldap.c
++++ b/modules/lookup_ldap.c
+@@ -55,7 +55,7 @@ struct ldap_search_params {
+ 	char *query, **attrs;
+ 	struct berval *cookie;
+ 	int morePages;
+-	unsigned int totalCount;
++	ber_int_t totalCount;
+ 	LDAPMessage *result;
+ 	time_t age;
+ };
+@@ -63,7 +63,7 @@ struct ldap_search_params {
+ static LDAP *auth_init(unsigned logopt, const char *, struct lookup_context *);
+ 
+ #ifndef HAVE_LDAP_CREATE_PAGE_CONTROL
+-int ldap_create_page_control(LDAP *ldap, unsigned int pagesize,
++int ldap_create_page_control(LDAP *ldap, ber_int_t pagesize,
+ 			     struct berval *cookie, char isCritical,
+ 			     LDAPControl **output)
+ {
+@@ -93,7 +93,7 @@ int ldap_create_page_control(LDAP *ldap, unsigned int pagesize,
+ 
+ #ifndef HAVE_LDAP_PARSE_PAGE_CONTROL
+ int ldap_parse_page_control(LDAP *ldap, LDAPControl **controls,
+-			    unsigned int *totalcount, struct berval **cookie)
++			    ber_int_t *totalcount, struct berval **cookie)
+ {
+ 	int i, rc;
+ 	BerElement *theBer;
+@@ -1644,7 +1644,7 @@ static int do_paged_query(struct ldap_search_params *sp, struct lookup_context *
+ 	struct autofs_point *ap = sp->ap;
+ 	LDAPControl *pageControl=NULL, *controls[2] = { NULL, NULL };
+ 	LDAPControl **returnedControls = NULL;
+-	static unsigned long pageSize = 1000;
++	static ber_int_t pageSize = 1000;
+ 	static char pagingCriticality = 'T';
+ 	int rv, scope = LDAP_SCOPE_SUBTREE;
+ 

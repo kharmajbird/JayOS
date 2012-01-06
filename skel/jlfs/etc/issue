@@ -1,0 +1,23 @@
+
+
+****************************************************************************
+*                          Welcome ueberadmin!                             *
+*                                                                          *
+* Note:  The getty on virtual console #1 spawns a program that logs root   *
+*        in automatically. Root's profile on this tty is *supposed* to     *
+*        launch a graphical environment, but if you are reading this,      *
+*        that might not have happened. Make sure /usr is properly mounted. *
+*                                                                          *
+*        To restart the GUI on tty1, hit ctrl-D at this shell prompt.      *
+*        To start non-dialup DHCP networking, run dhclient.                *
+*                                                                          *
+* Now if you are at the command line because you want to be :) you will    *
+* find some things of interest in /root/bin. Root password is lfsroot.     *
+*                                                                          *
+*                                                                          *
+*                                                                          *
+*                                                                          *
+* This message was cheerfully brought to you by the letters V and I.       *
+*                                                                          *
+****************************************************************************
+

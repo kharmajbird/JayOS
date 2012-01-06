@@ -1,0 +1,101 @@
+#!/bin/sh
+PATH=$PATH:/usr/bin:/bin
+MOZDIR=/tmp/.mozilla
+SWAP=1
+JAYOS_NETWORKING=1
+
+for i in `cat /proc/cmdline`; do
+    case $i in
+        shell)	DEBUG=1 ;;
+
+        nofw)	/etc/init.d/iptables clear ;;
+
+        nonet)  JAYOS_NETWORKING=0 ;;
+
+        dhcp)	
+            if [ $JAYOS_NETWORKING ]; then
+                modprobe sky2
+                /sbin/dhclient eth0
+            fi
+            ;;
+
+        ssh)	/etc/init.d/sshd start ;;
+
+	qemu=y)	QEMU=1 ;;
+	qemu=n)	QEMU=0 ;;
+
+	noswap)	SWAP=0 ;;
+    esac
+done
+
+#
+# Relocate non-default web browser data to RAM
+#
+if [ -d /etc/mozilla ]; then
+    mkdir -p $MOZDIR
+    ln -s $MOZDIR /root/.mozilla
+    tar jxf /etc/mozilla/seamonkey.tbz -C $MOZDIR
+fi
+
+mkdir -p /tmp/uml
+
+if [ -d /var/nessus ]; then
+    mv /var/nessus /tmp
+    ln -sfn /tmp/nessus /var/nessus
+fi
+
+if [ ! $QEMU ]; then 
+    mknod /dev/kqemu c 250 0
+    modprobe -a kqemu
+fi
+
+modprobe -a snd_mixer_oss
+modprobe -a snd_pcm_oss
+
+/sbin/ldconfig
+
+# for allocating 256MB to QEMU; unmount if not needed
+#mount -t tmpfs -o size=272m none /dev/shm
+
+#
+# turn on multiple sector I/O, enable 32 bit data transfer, 
+# forgot this option, enable DMA, set spindown to 20 seconds
+#
+#if [ -b /dev/hda -a "`cat /sys/block/hda/device/media`" = "disk" ]; then
+#    /sbin/hdparm -m16 -c3 -u1 -d1 -S60 /dev/hda
+#fi
+
+if [ $SWAP ]; then
+    for i in hda sda; do
+        for j in `fdisk -l /dev/$i| grep -i swap| awk '{ print $1 }'`; do
+            echo "$j      swap     swap     encrypted   0     0" >> /etc/fstab
+        done
+    done
+
+    /etc/init.d/swap start
+fi
+
+#
+# macmini keeps wonky time
+#
+if [ ! `grep Macmini /var/log/messages >/dev/null` ]; then
+    perl -p -i -e 's/UTC=0/UTC=1/' /etc/sysconfig/clock
+    /etc/rc.d/init.d/setclock start
+fi
+
+#
+# my macally kbd doesn't have a SysReq key
+#
+echo "458856 99"| keyfuzz -s -d /dev/input/by-id/usb-Macally_Peripherals_Macally_ICEKey_keyboard-event-kbd
+
+#
+# vaio (and maybe other) performance increases
+#
+echo 1500 > /proc/sys/vm/dirty_writeback_centisecs
+
+if [ "`cat /proc/xen/capabilities 2>/dev/null`" = "control_d" ]; then
+    /etc/init.d/xend start
+    /etc/init.d/xendomains start
+fi
+
+if [ $DEBUG ]; then sh; fi

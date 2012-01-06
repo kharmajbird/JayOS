@@ -1,0 +1,24 @@
+commit 6dd60da5e6f7db05c9494d5ca023ca07505c2499
+
+From: Nicolas Boichat <nicolas@boichat.ch>
+
+Export lookup_dev.
+---
+
+ fs/block_dev.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 7d822fa..c5d045c 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -1221,6 +1221,8 @@ fail:
+ 	goto out;
+ }
+ 
++EXPORT_SYMBOL(lookup_bdev);
++
+ /**
+  * open_bdev_excl  -  open a block device by name and set it up for use
+  *

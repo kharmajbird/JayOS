@@ -1,0 +1,364 @@
+# For libmpeg3 v1.7
+#
+# 1) make libmpeg3.so
+# 2) make libmpeg3.pc for pkg-config
+# 3) can use shared liba52 if exists (with 'configure --enable-shared-liba52)
+# 4) 'make install' with option DESTDIR
+# 5) 'configure' more standard (--prefix, --bindir, --libdir, --help, etc..)
+#
+# Example for 64 bit (internal liba52):
+#    configure --prefix=/usr --libdir=/usr/lib64 && make && make install DESTDIR=/tmp/package-libmpeg3
+#
+# Example for 64 bit (shared liba52):
+#    configure --prefix=/usr --libdir=/usr/lib64 --enable-shared-liba52 && make && make install DESTDIR=/tmp/package-libmpeg3
+#
+# Example for 32 bit (internal liba52):
+#    configure --prefix=/usr && make && make install DESTDIR=/tmp/package-libmpeg3
+#
+# Example for 32 bit (shared liba52):
+#    configure --prefix=/usr --enable-shared-liba52 && make && make install DESTDIR=/tmp/package-libmpeg3
+#
+# by spina <spina80@freemail.it>
+
+--- configure	2005-08-31 04:02:31.000000000 +0000
++++ configure.new	2008-03-01 09:05:39.000000000 +0000
+@@ -16,17 +16,95 @@
+ 
+ 	if [ $HAVE_NASM == n ]; 
+ 	then echo " *** Nasm is required.  Download it from nasm.sourceforge.net"; 
+-	ERROR=1
++	exit
+ 	fi
+ 
+ fi
+ 
++## init Spina
++shared_liba52="no"
++PREFIX=""
++BINDIR=""
++DEST_LIB_DIR=""
++INCLUDEDIR=""
++A52_SHARED=""
++
++for option 
++do
++  case $option in
++    --bindir*)
++      BINDIR=`echo $option | cut -d'=' -f2`;;
++
++    --libdir*)
++      DEST_LIB_DIR=`echo $option | cut -d'=' -f2`;;
++
++    --includedir*)
++      INCLUDEDIR=`echo $option | cut -d'=' -f2`;;
++
++#   Use shared liba52 if exists
++    --enable-shared-liba52) shared_liba52="yes";;
++
++    --prefix*)
++      PREFIX=`echo $option | cut -d'=' -f2`;;
++
++    -h | --help)
++      cat <<EOF
++'configure' configures libmpeg3 1.7 to adapt to many kinds of systems.
++
++Usage: ./configure [OPTION]... [VAR=VALUE]...
++
++Defaults for the options are specified in brackets.
++
++Configuration:
++  -h, --help              display this help and exit
++
++Installation directories:
++  --prefix=PREFIX         install architecture-independent files in PREFIX
++                          [/usr/local]
++
++Fine tuning of the installation directories:
++  --bindir=DIR           user executables [PREFIX/bin]
++  --libdir=DIR           object code libraries [PREFIX/lib]
++  --includedir=DIR       C header files [PREFIX/include]
++
++Optional Features:
++  --enable-shared-liba52         use shared liba52 if exists (use static)
++EOF
++      exit;
++  esac
++done
++
++if test "x"$shared_liba52 = "xyes"
++  then
++    # liba52 is shared
++    cat > a52_test.c <<EOF
++int main()
++{
++  a52_init(0);
++}
++EOF
++
++    if gcc -la52 a52_test.c -o a52_test; then
++      A52_SHARED="yes"
++    fi
+ 
++    rm a52_test.c a52_test &>/dev/null
++fi
++
++
++sed "3a\
++PREFIX = $PREFIX\n\
++BINDIR = $BINDIR\n\
++DEST_LIB_DIR = $DEST_LIB_DIR\n\
++INCLUDEDIR = $INCLUDEDIR\n\
++A52_SHARED = $A52_SHARED
++" Makefile > Makefile.new
++
++mv Makefile.new Makefile;
++
++## end Spina
+ 
+ # success
+ if [ $ERROR == 0 ];
+ then echo "Configured successfully.  Type 'make' to build it.";
+ fi
+-
+-
+-
+--- Makefile	2006-02-15 05:09:31.000000000 +0000
++++ Makefile.new	2008-03-01 09:14:27.000000000 +0000
+@@ -4,9 +4,24 @@
+ USE_CSS = 1
+ A52DIR := $(shell expr a52dec* )
+ 
++ifeq ("$(A52_SHARED)", "")
++A52_SHARED=no
++endif
+ 
+ ifeq ("$(PREFIX)", "")
+-PREFIX=/usr
++PREFIX = /usr/local
++endif
++
++ifeq ("$(BINDIR)", "")
++BINDIR = $(PREFIX)/bin
++endif
++
++ifeq ("$(DEST_LIB_DIR)", "")
++DEST_LIB_DIR = $(PREFIX)/lib
++endif
++
++ifeq ("$(INCLUDEDIR)", "")
++INCLUDEDIR = $(PREFIX)/include
+ endif
+ 
+ ifeq ($(origin CFLAGS), environment)
+@@ -15,12 +30,8 @@
+ HAVE_CFLAGS := n
+ endif
+ 
+-
+ OBJDIR := $(shell uname --machine)
+ 
+-
+-
+-
+ ifeq ($(OBJDIR), alpha)
+   USE_MMX = 0
+   ifneq ($(HAVE_CFLAGS), y)
+@@ -31,22 +42,18 @@
+ ifeq ($(OBJDIR), i686)
+   USE_MMX = 1
+   ifneq ($(HAVE_CFLAGS), y)
+-    CFLAGS := -O2 -fomit-frame-pointer -falign-loops=2 -falign-jumps=2 -falign-functions=2 -I/usr/local/include
++    CFLAGS := -fPIC -O2 -fomit-frame-pointer -falign-loops=2 -falign-jumps=2 -falign-functions=2 -I/usr/local/include
+   endif
+   CFLAGS += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
+ endif
+ 
+ ifeq ($(OBJDIR), x86_64)
+   ifneq ($(HAVE_CFLAGS), y)
+-    CFLAGS := -O2 -fomit-frame-pointer -I/usr/local/include
++    CFLAGS := -fPIC -O2 -fomit-frame-pointer -I/usr/local/include
+   endif
+   CFLAGS += -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
+-
+-
+ endif
+ 
+-
+-
+ ifeq ($(USE_CSS), 1)
+   CFLAGS += -DHAVE_CSS
+ endif
+@@ -57,29 +64,13 @@
+   NASMOBJS = $(OBJDIR)/video/reconmmx.o
+ endif
+ 
+-
+-
+-
+-
+-
+ CFLAGS += \
+ 	-I. \
+ 	-I$(A52DIR)/include \
+ 	-I$(A52DIR)/liba52
+ 
+-
+-
+ CFLAGS += -g
+ 
+-
+-
+-
+-
+-
+-
+-
+-
+-
+ OBJS = \
+ 	$(OBJDIR)/audio/ac3.o \
+ 	$(OBJDIR)/audio/dct.o \
+@@ -117,52 +108,51 @@
+ 	$(OBJDIR)/video/vlc.o \
+ 	$(OBJDIR)/workarounds.o
+ 
+-#OBJS = \
+-#	$(OBJDIR)/audio/ac3.o \
+-#	$(OBJDIR)/audio/bit_allocation.o \
+-#	$(OBJDIR)/audio/exponents.o \
+-#	$(OBJDIR)/audio/header.o \
+-#	$(OBJDIR)/audio/huffman.o \
+-#	$(OBJDIR)/audio/layer2.o \
+-#	$(OBJDIR)/audio/layer3.o \
+-#	$(OBJDIR)/audio/mantissa.o \
+-#	$(OBJDIR)/audio/pcm.o \
+-#	$(OBJDIR)/audio/tables.o \
+-
+-
+-
+-
+ DIRS := \
+ 	$(OBJDIR)/audio \
+ 	$(OBJDIR)/video
+ 
++ifeq ("$(A52_SHARED)", "no")
+ include Makefile.a52
+ 
+ DIRS += $(A52DIRS)
+-
++endif
+ 
+ OUTPUT = $(OBJDIR)/libmpeg3.a
+ UTILS = $(OBJDIR)/mpeg3dump $(OBJDIR)/mpeg3peek $(OBJDIR)/mpeg3toc  $(OBJDIR)/mpeg3cat
+ 
+-#$(OBJDIR)/mpeg3split
++SHARED = $(OBJDIR)/libmpeg3.so
+ 
++PKG_CONFIG_FILE=$(OBJDIR)/libmpeg3.pc
+ 
+-LIBS = -lm -lpthread
++ifeq ("$(A52_SHARED)", "no")
++LIBS = -lm -lpthread 
++else
++LIBS = -lm -lpthread -la52
++endif
+ 
+-$(shell if ! test -d $(OBJDIR) \; then mkdir -p $(OBJDIR) \; fi )
++$(shell if ! test -d $(OBJDIR); then mkdir -p $(OBJDIR); fi )
+ 
+ $(shell echo $(CFLAGS) > $(OBJDIR)/c_flags)
++
++ifeq ("$(A52_SHARED)", "no")
+ $(shell echo $(A52CFLAGS) > $(OBJDIR)/a52_flags)
++endif
++
+ $(shell echo $(OBJS) $(ASMOBJS) $(A52OBJS) $(NASMOBJS) > $(OBJDIR)/objs)
+ $(shell mkdir -p $(DIRS) )
+ 
+-all: $(OUTPUT) $(UTILS)
+-
++all: $(OUTPUT) $(PKG_CONFIG_FILE) $(SHARED) $(UTILS)
+ 
+ $(OUTPUT): $(OBJS) $(ASMOBJS) $(NASMOBJS) $(A52OBJS)
+ 	ar rcs $(OUTPUT) `cat $(OBJDIR)/objs`
+ 
+-
++$(SHARED): $(OBJS) $(ASMOBJS) $(NASMOBJS) $(A52OBJS)
++ifeq ("$(A52_SHARED)", "no")
++	$(CC) `cat $(OBJDIR)/c_flags` -shared -o $(SHARED) $(OBJS) $(ASMOBJS) $(NASMOBJS) `ls $(OBJDIR)/a52dec*/liba52/*.o` -Wl,-soname -Wl,libmpeg3.so
++else
++	$(CC) `cat $(OBJDIR)/c_flags` -shared -o $(SHARED) $(OBJS) $(ASMOBJS) $(NASMOBJS)  -Wl,-soname -Wl,libmpeg3.so
++endif
+ 
+ $(OBJDIR)/mpeg3dump: $(OUTPUT) mpeg3dump.c
+ 	$(CC) `cat $(OBJDIR)/c_flags` -o $(OBJDIR)/mpeg3dump mpeg3dump.c $(OUTPUT) $(LIBS)
+@@ -176,9 +166,6 @@
+ $(OBJDIR)/mpeg3cat: $(OUTPUT) mpeg3cat.c
+ 	$(CC) `cat $(OBJDIR)/c_flags` -o $(OBJDIR)/mpeg3cat mpeg3cat.c $(OUTPUT) $(LIBS)
+ 
+-#$(OBJDIR)/mpeg3split: $(OUTPUT)
+-#	$(CC) `cat $(OBJDIR)/c_flags` -o $(OBJDIR)/mpeg3split mpeg3split.c $(OUTPUT) $(LIBS)
+-
+ $(OBJDIR)/mpeg2qt: $(OUTPUT)
+ 	$(CC) `cat $(OBJDIR)/c_flags` -o $(OBJDIR)/mpeg2qt mpeg2qt.c \
+ 		$(OUTPUT) \
+@@ -190,10 +177,34 @@
+ 		-lz \
+ 		-ldl
+ 
+-install: 
+-	cp $(UTILS) $(PREFIX)/bin
+-#	cp $(OUTPUT) $(PREFIX)/lib
+-#	cp libmpeg3.h mpeg3private.h $(PREFIX)/include
++$(PKG_CONFIG_FILE):
++	@echo -e "prefix=$(PREFIX)\n\
++exec_prefix=$(PREFIX)\n\
++libdir=$(PREFIX)/$(DEST_LIB_DIR)\n\
++includedir=$(PREFIX)/include\n\
++\n\
++Name: libmpeg3\n\
++Description: Decoder of various derivatives of MPEG standards\n\
++Version: 1.7\n\
++Requires: \n\
++Conflicts: \n" > $(PKG_CONFIG_FILE)
++ifeq ("$(A52_SHARED)", "no")
++	@echo 'Libs: -L$${libdir} -lmpeg3 -lpthread' >> $(PKG_CONFIG_FILE)
++else
++	@echo 'Libs: -L$${libdir} -lmpeg3 -lpthread -la52' >> $(PKG_CONFIG_FILE)
++endif
++	@echo 'Cflags: -I$${includedir}' >> $(PKG_CONFIG_FILE)
++
++install:
++	install -d $(DESTDIR)$(BINDIR) $(DESTDIR)$(DEST_LIB_DIR) $(DESTDIR)$(INCLUDEDIR)/audio $(DESTDIR)$(INCLUDEDIR)/video $(DESTDIR)$(DEST_LIB_DIR)/pkgconfig
++	install -m 755 $(UTILS) $(DESTDIR)$(BINDIR)
++	install $(OUTPUT) $(DESTDIR)$(DEST_LIB_DIR)
++	install $(SHARED) $(DESTDIR)$(DEST_LIB_DIR)
++	install -m 644 *.h $(DESTDIR)$(INCLUDEDIR)
++	install -m 644 *.inc $(DESTDIR)$(INCLUDEDIR)
++	install -m 644 audio/*.h $(DESTDIR)$(INCLUDEDIR)/audio
++	install -m 644 video/*.h $(DESTDIR)$(INCLUDEDIR)/video
++	install -m 644 $(PKG_CONFIG_FILE) $(DESTDIR)$(DEST_LIB_DIR)/pkgconfig
+ 
+ clean:
+ 	rm -rf $(OBJDIR)
+@@ -211,8 +222,11 @@
+ 	$(CC) -c `cat $(OBJDIR)/c_flags` $(subst $(OBJDIR)/,, $*.S) -o $*.o
+ $(NASMOBJS): 
+ 	$(NASM) -f elf $(subst $(OBJDIR)/,, $*.s) -o $*.o
++
++ifeq ("$(A52_SHARED)", "no")
+ $(A52OBJS):
+ 	$(CC) -c `cat $(OBJDIR)/a52_flags` $(subst $(OBJDIR)/,, $*.c) -o $*.o
++endif
+ 
+ $(OBJDIR)/libmpeg3.o: 				    libmpeg3.c
+ $(OBJDIR)/mpeg3atrack.o: 			    mpeg3atrack.c
+@@ -257,6 +271,6 @@
+ $(OBJDIR)/video/vlc.o:  			    video/vlc.c
+ $(OBJDIR)/workarounds.o:  			    workarounds.c
+ 
+-
+-
++ifeq ("$(A52_SHARED)", "no")
+ include depend.a52
++endif

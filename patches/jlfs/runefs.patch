@@ -1,0 +1,69 @@
+diff -Naur runefs-orig/mkrune/Makefile runefs/mkrune/Makefile
+--- runefs-orig/mkrune/Makefile	2001-04-13 12:26:22.000000000 -0700
++++ runefs/mkrune/Makefile	2005-10-06 20:19:23.144647816 -0700
+@@ -11,7 +11,7 @@
+ DEFS	=#	-DSILENT
+ 
+ CC	=	gcc
+-CFLAGS	=	-Wall -Werror -pedantic -g -I../include $(DEFS)
++CFLAGS	=	-Wall -Werror -I../include $(DEFS)
+ LDFLAGS	=	-le2p -lext2fs
+ 
+ SRC	=	mkrune.c		\
+diff -Naur runefs-orig/rmrunefs/Makefile runefs/rmrunefs/Makefile
+--- runefs-orig/rmrunefs/Makefile	2002-07-14 05:42:57.000000000 -0700
++++ runefs/rmrunefs/Makefile	2005-10-06 20:19:11.947350064 -0700
+@@ -9,7 +9,7 @@
+ #########################################################################
+ 
+ CC	=	gcc
+-CFLAGS	=	-Wall -pedantic -g -I../include
++CFLAGS	=	-Wall -I../include
+ LDFLAGS	=	-le2p -lext2fs #-lefence
+ 
+ SRC	=	rmrunefs.c
+diff -Naur runefs-orig/runecp/Makefile runefs/runecp/Makefile
+--- runefs-orig/runecp/Makefile	2000-11-26 03:40:25.000000000 -0800
++++ runefs/runecp/Makefile	2005-10-06 20:19:32.238265376 -0700
+@@ -9,7 +9,7 @@
+ #########################################################################
+ 
+ CC	=	gcc
+-CFLAGS	=	-Wall -pedantic -g -I../include
++CFLAGS	=	-Wall -I../include
+ LDFLAGS	=	-le2p -lext2fs #-lefence
+ 
+ SRC	=	runecp.c
+diff -Naur runefs-orig/runerd/Makefile runefs/runerd/Makefile
+--- runefs-orig/runerd/Makefile	2001-02-09 22:28:39.000000000 -0800
++++ runefs/runerd/Makefile	2005-10-06 20:19:35.814721672 -0700
+@@ -9,7 +9,7 @@
+ #########################################################################
+ 
+ CC	=	gcc
+-CFLAGS	=	-Wall -pedantic -g -I../include
++CFLAGS	=	-Wall -I../include
+ LDFLAGS	=	-le2p -lext2fs #-lefence
+ 
+ SRC	=	runerd.c
+diff -Naur runefs-orig/runerm/Makefile runefs/runerm/Makefile
+--- runefs-orig/runerm/Makefile	2000-11-25 22:10:46.000000000 -0800
++++ runefs/runerm/Makefile	2005-10-06 20:19:27.879927944 -0700
+@@ -1,4 +1,4 @@
+ all:
+-	gcc -Wall -pedantic -g -I../include -o ../bin/runerm runerm.c -lext2fs -le2p
++	gcc -Wall -I../include -o ../bin/runerm runerm.c -lext2fs -le2p
+ clean:
+ 	/bin/rm -f *~ ../bin/runerm
+diff -Naur runefs-orig/runewr/Makefile runefs/runewr/Makefile
+--- runefs-orig/runewr/Makefile	2001-02-09 22:17:10.000000000 -0800
++++ runefs/runewr/Makefile	2005-10-06 20:19:05.906268448 -0700
+@@ -9,7 +9,7 @@
+ #########################################################################
+ 
+ CC	=	gcc
+-CFLAGS	=	-Wall -pedantic -g -I../include
++CFLAGS	=	-Wall -I../include
+ LDFLAGS	=	-le2p -lext2fs #-lefence
+ 
+ SRC	=	runewr.c

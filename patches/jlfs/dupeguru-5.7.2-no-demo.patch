@@ -1,0 +1,20 @@
+diff -Naur dupeguru-5.7.2.orig/core/app.py dupeguru-5.7.2/core/app.py
+--- dupeguru-5.7.2.orig/core/app.py	2011-10-04 16:24:10.000000000 -0700
++++ dupeguru-5.7.2/core/app.py	2011-10-04 16:41:09.000000000 -0700
+@@ -262,16 +262,10 @@
+             j.start_job(self.results.mark_count)
+             self.results.perform_on_marked(op, not copy)
+         
+-        if not self._check_demo():
+-            return
+-        self.show_extra_fairware_reminder_if_needed()
+         jobid = JobType.Copy if copy else JobType.Move
+         self.view.start_job(jobid, do)
+     
+     def delete_marked(self, replace_with_hardlinks=False):
+-        if not self._check_demo():
+-            return
+-        self.show_extra_fairware_reminder_if_needed()
+         self.view.start_job(JobType.Delete, self._do_delete, args=[replace_with_hardlinks])
+     
+     def export_to_xhtml(self, column_ids):

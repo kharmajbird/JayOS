@@ -1,0 +1,4 @@
+ONBOOT=no
+SERVICE=wireless
+ESSID=yournet
+TYPE=wpa

@@ -1,0 +1,16 @@
+
+JayOS is a live CD distro intended for use as a more secure mobile
+environment.  It integrates in-RAM filesystem encryption with plausible
+deniabiliy for a system that can be difficult to alter without
+rebuilding. This offers a user with a high degree of data integrity;
+since all filesystems are either static or encrypted, the system is
+resistant to physical attacks.
+
+The user can choose at boot time what kind of filesystem to use and from
+where it should be read. Since components can be spread over hard disks,
+read-only media, and removable storage, this compounds the difficulty
+of proving what is encrypted swap, what is an encrypted filesystem,
+and what is simply random data.
+
+It features a 2.6 kernel, unionfs, many network security and filesystem
+tools, UML, and QEMU.  It runs great on low-end x86 hardware, too.

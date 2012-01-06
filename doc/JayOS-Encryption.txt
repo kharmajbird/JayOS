@@ -1,0 +1,166 @@
+Let me talk for a little bit about encryption, from my ideology of it, 
+to how it is implemented within JayOS.
+
+Part One:
+
+The ideal hard drive is one that is encrypted from head to toe; one
+that can be "unlocked" only by a passphrase that is stored within the
+user's head.  However, when it's cheaper for the brutes to go upside
+your head than to break your passphrase, you will want some way to
+cry Uncle without divulging everything. So in addition to being
+encrypted, the filesystems on this ideal hard drive should also contain
+some element of plausible deniability.
+
+Although JayOS does not currently implement the concept of plausible
+deniability, it has driven this project from its very beginning.
+Once upon a time in 2002, back in the 2.2 days of the Linux kernel,
+there was a driver out there which would allow the user to progressively
+unlock levels within a filesystem such that it would be impossible
+to prove the existence of further levels. One could divulge two or
+three levels under duress, and the brute would never know about a
+hidden fifth or sixth level.
+
+The name of this driver is StegFS, short for steganographic filesystem.
+Unfortunately, it was never ported to the 2.4 kernel, let alone the
+latest 2.6 series. However, I did succeed in developing a stand-alone
+environment (now known as a LiveCD) that would load a 2.2 kernel,
+and launch a command line environment suitable for creating and
+manipulating StegFS filesystems.
+
+This environment (minus StegFS) has morphed into JayOS over the
+years.  I have always hoped that by the time I finished it, "someone"
+would have upgraded the driver to work with the newer kernels.
+People have thought about it, talked about it, and even created a
+website for it, but to my knowledge, no code has ever been written.
+
+But thank goodness for the development of QEMU!
+
+Today, I can launch that rough environment I created back in 2002
+as a virtual machine within QEMU, and interact with its StegFS-enabled
+kernel.  It shouldn't take too much effort or cleanup work to add
+network support and create what is essentially a virtual black-box
+scrambling device.
+
+Now, my vision of the ideal hard drive is complete.
+
+
+Part Two:
+
+Some methods of root filesystem encryption rely on a key stored on
+some external storage device like a USB keychain, reasoning that
+possession of the device will protect your data same as your car
+keys protect your car.  I think that's just retarded thinking by
+people not serious about security.  No way am I going to entrust
+the security of my information to my ability to maintain control
+over physical items. Shit happens; people lose things, and things
+get stolen. 
+
+Wait, you say you got a backup USB device, unencrypted, in your
+safe deposit box? Riiiight. Either you're an extremely trusting
+person of the non-paranoid type, or you really don't have anything
+truly worth securing. Either of which is fine, but I am about to
+define a better level of security than most people want to fool with.
+
+First know that encryption can be useful, even if you don't have
+any data or information to secure. Encryption is like a lock; it
+keep people honest. Compared to analog transactions recorded on
+paper, digital logs are much easier to change.  Timestamps, dates,
+pictures...almost anything can be digitally altered to an extreme
+degree of authenticity. This is not always desirable.
+
+Here's an example: Say it is discovered that some illegal music
+trading is being done on a server you have access to. You only use
+the server for email and had no idea about the warez, so you have
+nothing to worry about, right?
+
+Wrong.
+
+Unknown to you, the folks who cracked your server and turned it
+into a warez host also modified the logs to implicate you instead.
+A court of law now has enough "evidence" in the logs to prove that
+you were in the habit of sending and receiving warez while reading
+your email, and finds you liable for Lots Of Money.
+
+That would suck, if something like that ever happened. 
+
+One way to guard against this scenario (although admittedly contrived) is
+to keep your filesystems encrypted, and as far as possible, read-only.
+JayOS can be a means towards that end.
+
+
+Part Three: Boot process and system filesystems:
+
+JayOS has a total of five filesystems reserved for system use:  / (root), 
+/usr, /opt, and the initial ramdisk. On the LiveCD, they are identified as
+the following files:
+
+File                            Filesystem
+-----                           -----------
+/cd/boot/initrd.gz              initial ramdisk (compressed)
+/cd/boot/root.gz                root filesystem (compressed, read-write)
+/cd/boot/root.alt               encrypted root filesystem (uncompressed)
+/cd/fs/usr.fs                   /usr (read-only)
+/cd/fs/opt.fs                   /opt (read-only)
+
+Initial ramdisk
+
+After the kernel gains control of the boot process from the boot
+loader, it copies a temporary filesystem called an initial ramdisk
+into memory, mounts it, and transfers control to the shell script
+/linuxrc.
+
+The job of /linuxrc within the initial ramdisk is to load any kernel
+modules required to mount the real root filesystem. In this case,
+the loopback module (/lib/loop.ko) is needed to support encrypted
+root filesystems. /linuxrc also parses some kernel command line
+options passed from the boot loader (see /cd/boot/isolinux.dp2 and 
+/etc/init.d/fs).
+
+Root
+
+The root filesystem is loaded into RAM by the initial ramdisk and
+mounted on / at startup. It is self-contained in that the vast 
+majority of programs necessary to do filesystem repairs and make
+network connections are available even though /usr isn't mounted
+yet.
+
+Usr
+
+This is where the bulk of the OS lives. The /usr filesystem is
+mounted read-only via loopback as type squashfs. Its size is
+conservatively less than ~400MB compressed, smaller if man pages
+are removed (make strip-man).
+
+Opt
+
+/opt is a sort of a secondary /usr. Currently, only OpenOffice is
+configured to install in /opt. The filesystem type is also squashfs.
+If you are putting together a LiveCD from components in
+http://jayos.lfs-matrix.net/jayos/vader, but are not planning on using 
+OpenOffice, you may wish to omit opt.fs
+
+
+
+Part Four:
+
+So how does JayOS provide a more secure mobile computing environment?
+
+       * all system filesystems are either encrypted, or read-only
+
+This approach makes it extremely difficult for an attacker to make sense 
+of that oh-so-secure USB thumbdrive that fell from your pocket last night.
+If you're careful, the only non-configuration files in the clear will be 
+the /usr filesystem and the initial ramdisk, leaving root, your local 
+filesystems, and even swap an unintelligible mess.
+
+       * browser caches, shell history, etc are stored in RAM, not on disk
+
+Sometimes, it is to one's advantage not to leave a trail behind for others 
+to follow. By copying the encrypted root filesystem into RAM, JayOS stops
+traditional forensics cold. 
+
+       * a known working environment can be restored by simply rebooting.
+
+The corollary to that is, all traces of user and system activity are lost
+upon reboot.
+

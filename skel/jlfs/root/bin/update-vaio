@@ -1,0 +1,6 @@
+#!/bin/sh
+
+mount /dev/sda1 /j && \
+/j/updateVAIO-from-iso /j/jlfs-x86.iso && \
+umount /j
+

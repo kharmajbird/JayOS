@@ -1,0 +1,11 @@
+# 8am-7pm activity reports every 10 minutes during weekdays
+0 8-18 * * 1-5 /usr/lib/sa/sa1 600 6 &
+
+# 7pm-8am activity reports every hour during weekdays
+0 19-7 * * 1-5 /usr/lib/sa/sa1 &
+
+# Activity reports every hour on Saturday and Sunday
+0 * * * 0,6 /usr/lib/sa/sa1 &
+
+# Daily summary prepared at 19:05
+5 19 * * * /usr/lib/sa/sa2 -A &

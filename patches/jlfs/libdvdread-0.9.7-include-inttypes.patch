@@ -1,0 +1,11 @@
+diff -Naur dvdread.orig/ifo_read.h dvdread/ifo_read.h
+--- dvdread.orig/ifo_read.h	2008-01-30 14:42:50.000000000 +0000
++++ dvdread/ifo_read.h	2008-01-30 14:54:58.361654087 +0000
+@@ -21,6 +21,7 @@
+  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  */
+ 
++#include <inttypes.h>
+ #include <dvdread/ifo_types.h>
+ #include <dvdread/dvd_reader.h>
+ 

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+#tar jcf /dev/fd0 /root `ls /etc| egrep -v "X11|gconf|mozilla"| sed "s/^/\/etc\//"`
+tar jcf /dev/fd0 \
+	/root /etc/ppp /etc/cups /etc/fstab /etc/wvdial.conf \
+	/etc/X11/XF86Config /etc/printcap /etc/sysconfig /etc/fw

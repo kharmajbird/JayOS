@@ -1,0 +1,58 @@
+#! /bin/sh
+
+# Emacs ! This is a -*- sh -*- file
+
+if [ "$1" = "stop" ]; then
+  swapoff -av
+  for i in $(echo /dev/loop[0-9]); do
+      losetup -d $i 2>/dev/null
+      if [ $? -eq 0 ]; then exit; fi
+  done
+  exit
+fi
+
+encrypted_swap=$(awk '($0 !~ /^#/ && $3 == "swap" && $4 == "encrypted") {print $1}' /etc/fstab)
+
+if [[ -n $encrypted_swap ]];then
+  loop=NONE
+  #modprobe loop
+  if [ $? == 0 ]; then
+      for (( s = 1; s <= 10; s++ )); do
+          if [ -b /dev/loop0 ]; then
+              loop=OK
+              s=11
+          else
+              sleep 1
+          fi
+      done
+  fi
+  if [ $loop == OK ]; then
+      for swdev in ${encrypted_swap}; do
+          loop=NONE
+          for l in $(echo /dev/loop[0-9]); do
+              if [ $loop == NONE ] && ! grep -q $l /proc/mounts && ! { losetup $l &> /dev/null; }; then
+                  loop=$l
+              fi
+          done
+          if [ $loop != NONE ]; then
+              # echo "Found available loop device" $loop
+              swapoff $swdev > /dev/null 2>&1
+              dd if=$swdev bs=1024 count=40 2>/dev/null |\
+              mcookie -f /dev/stdin | losetup -p 0 -e aes $loop $swdev 
+              if [ $? == 0 ]; then
+                  echo "Mounting" $swdev "on encrypted" $loop "with random key"
+                  dd if=/dev/zero of=$loop bs=1024 count=40 > /dev/null 2>&1
+                  if [ $? == 0 ]; then
+                     echo "Activating encrypted swap on" $swdev "using" $loop
+                     mkswap $loop
+		     swapon -p 0 $loop
+                  fi
+              else
+                  echo "Failed to mount" $swdev "on encrypted" $loop "with random key"
+              fi
+          else
+              echo "Could not find any available loop device for encrypted swap!"
+          fi
+      done
+  fi
+fi

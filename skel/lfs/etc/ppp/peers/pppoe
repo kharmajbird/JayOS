@@ -1,0 +1,17 @@
+# The plugin comes from the "ppp" package
+# there's no need to install rp-pppoe
+plugin rp-pppoe.so
+# Replace "eth0" with your network interface name
+eth0
+# Replace "jdoe" with your username at the ISP
+# user "jdoe"
+
+# The settings below usually don't need to be changed
+noauth
+hide-password
+updetach
+debug
+defaultroute
+noipdefault
+usepeerdns
+remotename pppoe

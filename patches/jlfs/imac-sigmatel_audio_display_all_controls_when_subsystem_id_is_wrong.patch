@@ -1,0 +1,29 @@
+commit 14f62bdeedfffcab97b5d3bf6467c3c96a08b0db
+
+From: Nicolas Boichat <nicolas@boichat.ch>
+
+Display Macbook Pro 1st gen controls when the subsystem id is wrong (0x100).
+---
+
+ sound/pci/hda/patch_sigmatel.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
+
+
+diff --git a/sound/pci/hda/patch_sigmatel.c b/sound/pci/hda/patch_sigmatel.c
+index caf48ed..e6584a8 100644
+--- a/sound/pci/hda/patch_sigmatel.c
++++ b/sound/pci/hda/patch_sigmatel.c
+@@ -3475,10 +3475,12 @@ static int patch_stac922x(struct hda_codec *codec)
+ 		case 0x106b1700:
+ 		case 0x106b0200:
+ 		case 0x106b1e00:
++		case 0x100: /* Invalid subsystem ID, happens randomly on
++			     * MacBook Pro 1st generation
++			     */
+ 			spec->board_config = STAC_INTEL_MAC_V3;
+ 			break;
+ 		case 0x106b1a00:
+-		case 0x00000100:
+ 			spec->board_config = STAC_INTEL_MAC_V4;
+ 			break;
+ 		case 0x106b0a00:

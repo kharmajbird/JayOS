@@ -1,0 +1,18 @@
+#!/bin/sh
+
+DIR=$1
+SNAPS=/usb/ufs
+
+if [ "$DIR" = "/" ]; then 
+    DIR2=root
+else
+    DIR2=$DIR
+fi
+
+mkdir -p $SNAPS/$DIR $SNAPS/$DIR2
+
+modprobe -a unionfs 2>/dev/null
+
+mount -t unionfs -o dirs=$DIR none $DIR && \
+unionctl $DIR --add $SNAPS/$DIR2 && \
+unionctl $DIR --mode $DIR ro

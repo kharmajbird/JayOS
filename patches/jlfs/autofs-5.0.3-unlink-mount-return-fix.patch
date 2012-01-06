@@ -1,0 +1,52 @@
+diff --git a/CHANGELOG b/CHANGELOG
+index eb4cce1..a0c7fa3 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -7,6 +7,7 @@
+ - use libldap instead of libldap_r (Guillaume Rousse).
+ - another fix for don't fail on empty master map.
+ - fix expire working harder than needed.
++- fix unlink of mount tree incorrectly causing autofs mount fail.
+  
+ 14/01/2008 autofs-5.0.3
+ -----------------------
+diff --git a/daemon/direct.c b/daemon/direct.c
+index 760fbd4..8d1e9c6 100644
+--- a/daemon/direct.c
++++ b/daemon/direct.c
+@@ -275,7 +275,6 @@ static int unlink_mount_tree(struct autofs_point *ap, struct list_head *list)
+ 		else
+ 			rv = umount2(mnt->path, MNT_DETACH);
+ 		if (rv == -1) {
+-			ret = 0;
+ 			debug(ap->logopt,
+ 			      "can't unlink %s from mount tree", mnt->path);
+ 
+@@ -287,6 +286,7 @@ static int unlink_mount_tree(struct autofs_point *ap, struct list_head *list)
+ 
+ 			case ENOENT:
+ 			case EFAULT:
++				ret = 0;
+ 				warn(ap->logopt, "bad path for mount");
+ 				break;
+ 			}
+diff --git a/daemon/indirect.c b/daemon/indirect.c
+index 39b42da..f0409ac 100644
+--- a/daemon/indirect.c
++++ b/daemon/indirect.c
+@@ -65,7 +65,6 @@ static int unlink_mount_tree(struct autofs_point *ap, struct mnt_list *mnts)
+ 		else
+ 			rv = umount2(this->path, MNT_DETACH);
+ 		if (rv == -1) {
+-			ret = 0;
+ 			debug(ap->logopt,
+ 			      "can't unlink %s from mount tree", this->path);
+ 
+@@ -77,6 +76,7 @@ static int unlink_mount_tree(struct autofs_point *ap, struct mnt_list *mnts)
+ 
+ 			case ENOENT:
+ 			case EFAULT:
++				ret = 0;
+ 				warn(ap->logopt, "bad path for mount");
+ 				break;
+ 			}

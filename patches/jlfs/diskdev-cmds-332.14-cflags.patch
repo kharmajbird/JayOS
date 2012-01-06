@@ -1,0 +1,9 @@
+--- diskdev_cmds-332.14.orig/Makefile.lnx	2006-11-12 15:14:45.000000000 -0800
++++ diskdev_cmds-332.14/Makefile.lnx	2006-11-12 15:16:21.000000000 -0800
+@@ -1,5 +1,5 @@
+ CC := gcc
+-CFLAGS := -g3 -Wall -I$(PWD)/include -DDEBUG_BUILD=0 -D_FILE_OFFSET_BITS=64 -D LINUX=1 -D BSD=1
++CFLAGS := -I/usr/src/diskdev-cmds-332.14/include -DDEBUG_BUILD=0 -D_FILE_OFFSET_BITS=64 -D LINUX=1 -D BSD=1
+ SUBDIRS := newfs_hfs.tproj fsck_hfs.tproj
+ 
+ all clean:

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+if [ "`cat /proc/mounts| grep hdc`" = "" ]; then mount /dev/hdc /cd; fi
+
+dd if=/cd/boot/bootiso.img of=/dev/fd0;
+umount /cd; eject cdrom

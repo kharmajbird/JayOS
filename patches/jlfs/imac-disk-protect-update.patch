@@ -1,0 +1,37 @@
+commit c78bcf2753db4c3398cdbf9262e62d7ce6fdc8f3
+
+From: Nicolas Boichat <nicolas@boichat.ch>
+
+Disk protect patch update.
+---
+
+ block/blk-core.c       |    1 +
+ include/linux/blkdev.h |    2 ++
+ 2 files changed, 3 insertions(+), 0 deletions(-)
+
+
+diff --git a/block/blk-core.c b/block/blk-core.c
+index 5affbf3..5ae5391 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -359,6 +359,7 @@ void blk_freeze_queue(struct request_queue *q, int seconds)
+ 	/* set/reset the timer */
+ 	mod_timer(&q->unfreeze_timer, msecs_to_jiffies(seconds*1000) + jiffies);
+ }
++EXPORT_SYMBOL(blk_freeze_queue);
+ 
+ /**
+  * blk_start_queue - restart a previously stopped queue
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 1173d21..a0a8b59 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -40,6 +40,8 @@ struct io_context *get_io_context(gfp_t gfp_flags, int node);
+ struct io_context *alloc_io_context(gfp_t gfp_flags, int node);
+ void copy_io_context(struct io_context **pdst, struct io_context **psrc);
+ 
++void blk_freeze_queue(struct request_queue *q, int seconds);
++
+ struct request;
+ typedef void (rq_end_io_fn)(struct request *, int);
+ 

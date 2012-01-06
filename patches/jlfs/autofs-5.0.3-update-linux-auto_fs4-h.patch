@@ -1,0 +1,70 @@
+diff --git a/CHANGELOG b/CHANGELOG
+index a0c7fa3..40ac2f8 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -8,6 +8,7 @@
+ - another fix for don't fail on empty master map.
+ - fix expire working harder than needed.
+ - fix unlink of mount tree incorrectly causing autofs mount fail.
++- update kernel header file linux/auto_fs4.h.
+  
+ 14/01/2008 autofs-5.0.3
+ -----------------------
+diff --git a/daemon/automount.c b/daemon/automount.c
+index afbcb56..7ce9828 100644
+--- a/daemon/automount.c
++++ b/daemon/automount.c
+@@ -890,7 +890,7 @@ static int set_log_priority(const char *path, int priority)
+ 	return 0;
+ }
+ 
+-static int get_pkt(struct autofs_point *ap, union autofs_packet_union *pkt)
++static int get_pkt(struct autofs_point *ap, union autofs_v5_packet_union *pkt)
+ {
+ 	struct pollfd fds[3];
+ 	int pollfds = 3;
+@@ -1074,7 +1074,7 @@ static int mount_autofs(struct autofs_point *ap)
+ 
+ static int handle_packet(struct autofs_point *ap)
+ {
+-	union autofs_packet_union pkt;
++	union autofs_v5_packet_union pkt;
+ 
+ 	if (get_pkt(ap, &pkt))
+ 		return -1;
+diff --git a/include/linux/auto_fs4.h b/include/linux/auto_fs4.h
+index 0a6bc52..31a2954 100644
+--- a/include/linux/auto_fs4.h
++++ b/include/linux/auto_fs4.h
+@@ -59,6 +59,13 @@ struct autofs_packet_expire_multi {
+ 	char name[NAME_MAX+1];
+ };
+ 
++union autofs_packet_union {
++	struct autofs_packet_hdr hdr;
++	struct autofs_packet_missing missing;
++	struct autofs_packet_expire expire;
++	struct autofs_packet_expire_multi expire_multi;
++};
++
+ /* autofs v5 common packet struct */
+ struct autofs_v5_packet {
+ 	struct autofs_packet_hdr hdr;
+@@ -78,12 +85,13 @@ typedef struct autofs_v5_packet autofs_packet_expire_indirect_t;
+ typedef struct autofs_v5_packet autofs_packet_missing_direct_t;
+ typedef struct autofs_v5_packet autofs_packet_expire_direct_t;
+ 
+-union autofs_packet_union {
++union autofs_v5_packet_union {
+ 	struct autofs_packet_hdr hdr;
+-	struct autofs_packet_missing missing;
+-	struct autofs_packet_expire expire;
+-	struct autofs_packet_expire_multi expire_multi;
+ 	struct autofs_v5_packet v5_packet;
++	autofs_packet_missing_indirect_t missing_indirect;
++	autofs_packet_expire_indirect_t expire_indirect;
++	autofs_packet_missing_direct_t missing_direct;
++	autofs_packet_expire_direct_t expire_direct;
+ };
+ 
+ #define AUTOFS_IOC_EXPIRE_MULTI		_IOW(0x93,0x66,int)

@@ -1,0 +1,101 @@
+Section "ServerLayout"
+	Identifier     "X.org Configured"
+	Screen      0  "Screen0" 0 0
+	InputDevice    "Mouse0" "CorePointer"
+	InputDevice    "Keyboard0" "CoreKeyboard"
+EndSection
+
+Section "Files"
+	RgbPath      "/usr/lib/X11/rgb"
+	ModulePath   "/usr/lib/X11/modules"
+	FontPath     "/usr/lib/X11/fonts/misc/"
+	FontPath     "/usr/lib/X11/fonts/TTF/"
+	FontPath     "/usr/lib/X11/fonts/Type1/"
+	FontPath     "/usr/lib/X11/fonts/CID/"
+	FontPath     "/usr/lib/X11/fonts/75dpi/"
+	FontPath     "/usr/lib/X11/fonts/100dpi/"
+EndSection
+
+Section "Module"
+	Load  "dbe"
+	Load  "dri"
+	Load  "extmod"
+	Load  "glx"
+	Load  "record"
+	Load  "xtrap"
+	Load  "freetype"
+	Load  "type1"
+EndSection
+
+Section "InputDevice"
+	Identifier  "Keyboard0"
+	Driver      "kbd"
+EndSection
+
+Section "InputDevice"
+	Identifier  "Mouse0"
+	Driver      "mouse"
+	Option	    "Protocol" "auto"
+	Option	    "Device" "/dev/mouse"
+EndSection
+
+Section "Monitor"
+	Identifier   "Monitor0"
+	VendorName   "Monitor Vendor"
+	ModelName    "Monitor Model"
+        HorizSync    31.5 - 57.0
+        VertRefresh  50.0 - 90.0
+EndSection
+
+Section "Device"
+        ### Available Driver options are:-
+        ### Values: <i>: integer, <f>: float, <bool>: "True"/"False",
+        ### <string>: "String", <freq>: "<f> Hz/kHz/MHz"
+        ### [arg]: arg optional
+        #Option     "HWcursor"           	# [<bool>]
+        #Option     "NoAccel"            	# [<bool>]
+        #Option     "MMIO"               	# [<bool>]
+        #Option     "ShadowFB"           	# [<bool>]
+        #Option     "Rotate"             	# [<str>]
+        #Option     "MemCFG1"            	# <i>
+        #Option     "MemCFG2"            	# <i>
+	Identifier  "Card0"
+	Driver      "cirrus"
+	VendorName  "Cirrus Logic"
+	BoardName   "GD 5446"
+	BusID       "PCI:0:2:0"
+EndSection
+
+Section "Screen"
+	Identifier "Screen0"
+	Device     "Card0"
+	Monitor    "Monitor0"
+	DefaultDepth 24
+	#DefaultFbBpp      32
+	SubSection "Display"
+		Viewport   0 0
+		Depth     1
+	EndSubSection
+	SubSection "Display"
+		Viewport   0 0
+		Depth     4
+	EndSubSection
+	SubSection "Display"
+		Viewport   0 0
+		Depth     8
+	EndSubSection
+	SubSection "Display"
+		Viewport   0 0
+		Depth     15
+	EndSubSection
+	SubSection "Display"
+		Viewport   0 0
+		Depth     16
+	EndSubSection
+	SubSection "Display"
+		Viewport   0 0
+		Depth     24
+		Modes     "1024x768" "1280x1024" 
+	EndSubSection
+EndSection
+

@@ -1,0 +1,70 @@
+Submitted By:            Randy McMurchy <randy_at_linuxfromscratch_dot_org>
+Date:                    2011-01-03
+Initial Package Version: 5.3.3
+Upstream Status:         In upstream SVN
+Origin:                  Upstream
+Description:             Fixes Berkeley-5.1 discovery and a small tweak to the EPI discovery. 
+
+--- php-5.3.3-orig/configure	2010-07-21 10:53:06.000000000 +0000
++++ php-5.3.3/configure	2010-11-23 20:13:58.000000000 +0000
+@@ -30618,7 +30618,7 @@
+ 
+   dbdp4="/usr/local/BerkeleyDB.4."
+   dbdp5="/usr/local/BerkeleyDB.5."
+-  for i in $PHP_DB4 ${dbdp5}0 ${dbdp4}8 ${dbdp4}7 ${dbdp4}6 ${dbdp4}5 ${dbdp4}4 ${dbdp4}3 ${dbdp4}2 ${dbdp4}1 ${dbdp}0 /usr/local /usr; do
++  for i in $PHP_DB4 ${dbdp5}1 ${dbdp5}0 ${dbdp4}8 ${dbdp4}7 ${dbdp4}6 ${dbdp4}5 ${dbdp4}4 ${dbdp4}3 ${dbdp4}2 ${dbdp4}1 ${dbdp}0 /usr/local /usr; do
+     if test -f "$i/db5/db.h"; then
+       THIS_PREFIX=$i
+       THIS_INCLUDE=$i/db5/db.h
+@@ -30627,6 +30627,10 @@
+       THIS_PREFIX=$i
+       THIS_INCLUDE=$i/db4/db.h
+       break
++    elif test -f "$i/include/db5.1/db.h"; then
++      THIS_PREFIX=$i
++      THIS_INCLUDE=$i/include/db5.1/db.h
++      break
+     elif test -f "$i/include/db5.0/db.h"; then
+       THIS_PREFIX=$i
+       THIS_INCLUDE=$i/include/db5.0/db.h
+@@ -30669,7 +30673,7 @@
+   if test -z "$THIS_INCLUDE"; then
+     { echo "configure: error: DBA: Could not find necessary header file(s)." 1>&2; exit 1; }
+   fi
+-  for LIB in db-5.0 db-4.8 db-4.7 db-4.6 db-4.5 db-4.4 db-4.3 db-4.2 db-4.1 db-4.0 db-4 db4 db; do
++  for LIB in db-5.1 db-5.0 db-4.8 db-4.7 db-4.6 db-4.5 db-4.4 db-4.3 db-4.2 db-4.1 db-4.0 db-4 db4 db; do
+     if test -f $THIS_PREFIX/$PHP_LIBDIR/lib$LIB.a || test -f $THIS_PREFIX/$PHP_LIBDIR/lib$LIB.$SHLIB_SUFFIX_NAME; then
+       lib_found="";
+       
+@@ -30742,7 +30746,12 @@
+ #include "confdefs.h"
+ 
+ #include "$THIS_INCLUDE"
+-#if DB_VERSION_MINOR != 1 || (DB_VERSION_MINOR == 1 && DB_VERSION_PATCH >= 25)
++#if DB_VERSION_MINOR != 1 || (DB_VERSION_MAJOR == 4 && DB_VERSION_MINOR == 1 && DB_VERSION_PATCH >= 25)
++      yes
++#endif
++    
++#include "$THIS_INCLUDE"
++#if DB_VERSION_MAJOR == 5 
+       yes
+ #endif
+     
+@@ -101660,7 +101669,7 @@
+   
+ 
+   if test "$ext_shared" = "yes"; then
+-    XMLRPC_SHARED_LIBADD="-lxmlrpc $XMLRPC_SHARED_LIBADD"
++    XMLRPC_SHARED_LIBADD="-lxmlrpc-epi $XMLRPC_SHARED_LIBADD"
+     if test -n "$XMLRPC_DIR/$PHP_LIBDIR"; then
+       
+   if test "$XMLRPC_DIR/$PHP_LIBDIR" != "/usr/$PHP_LIBDIR" && test "$XMLRPC_DIR/$PHP_LIBDIR" != "/usr/lib"; then
+@@ -101744,7 +101753,7 @@
+   case xmlrpc in
+   c|c_r|pthread*) ;;
+   *) 
+-      LIBS="-lxmlrpc $LIBS" 
++      LIBS="-lxmlrpc-epi $LIBS" 
+    ;;
+   esac
+ 

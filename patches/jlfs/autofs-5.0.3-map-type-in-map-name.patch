@@ -1,0 +1,65 @@
+diff --git a/CHANGELOG b/CHANGELOG
+index af5a1b0..76f2477 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -12,6 +12,7 @@
+ - update fix expire working harder than needed.
+ - add missing check for zero length NIS key (Wengang Wang).
+ - init SASL callbacks on every ldap lookup library load.
++- fix incorrect match of map type name when included in map name.
+  
+ 14/01/2008 autofs-5.0.3
+ -----------------------
+diff --git a/lib/master_tok.l b/lib/master_tok.l
+index b379940..4bbe033 100644
+--- a/lib/master_tok.l
++++ b/lib/master_tok.l
+@@ -77,6 +77,7 @@ int my_yyinput(char *, int);
+ char buff[1024];
+ char *bptr;
+ char *optr = buff;
++unsigned int tlen;
+ 
+ %}
+ 
+@@ -190,13 +191,27 @@ OPTNTOUT	(-n{OPTWS}|-n{OPTWS}={OPTWS}|--negative-timeout{OPTWS}|--negative-timeo
+ 	{OPTWS}\\\n{OPTWS} {}
+ 
+ 	{MULTI} {
+-		strcpy(master_lval.strtype, master_text);
+-		return(MULTITYPE);
++		tlen = master_leng - 1;
++		if (bptr != buff && isblank(master_text[tlen])) {
++			strncat(buff, master_text, tlen);
++			bptr += tlen;
++			yyless(tlen);
++		} else {
++			strcpy(master_lval.strtype, master_text);
++			return(MULTITYPE);
++		}
+ 	}
+ 
+ 	{MTYPE} {
+-		strcpy(master_lval.strtype, master_text);
+-		return(MAPTYPE);
++		tlen = master_leng - 1;
++		if (bptr != buff && isblank(master_text[tlen])) {
++			strncat(buff, master_text, tlen);
++			bptr += tlen;
++			yyless(tlen);
++		} else {
++			strcpy(master_lval.strtype, master_text);
++			return(MAPTYPE);
++		}
+ 	}
+ 
+ 	{MULTISEP} { return(DDASH); }
+@@ -226,7 +241,7 @@ OPTNTOUT	(-n{OPTWS}|-n{OPTWS}={OPTWS}|--negative-timeout{OPTWS}|--negative-timeo
+ 		yyless(0);
+ 	}
+ 
+-	{DNSERVERSTR} {
++	{DNSERVERSTR}{DNATTRSTR} {
+ 		BEGIN(DNSTR);
+ 		yyless(0);
+ 	}

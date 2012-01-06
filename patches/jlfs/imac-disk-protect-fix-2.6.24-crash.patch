@@ -1,0 +1,51 @@
+commit 0fc6ef445d2eb106a6bd4b4b52938dbfc159c0a8
+
+From: Nicolas Boichat <nicolas@boichat.ch>
+
+Elias Oltmanns  linux-thinkpad@linux-thinkpad.org
+
+    Wed, 13 Feb 2008 12:39:17 +0100
+
+    Anyway, there is a temporary solution to this problem. If you apply the
+    little patch attached to this email, the usual disk-protect patch will
+    work on 2.6.24. This change is supposed to fix a generic problem in
+    libata and may eventually be merged upstream, but Tejun Heo (libata
+    developer) said that some testing was required first.
+
+    This change is absolutely safe for everyone using a non-NCQ capable
+    system. In particular, ata_piix doesn't support NCQ. If you are using
+    ahci and /sys/class/scsi_disk/.../device/queue_depth reports a value
+    greater than 1, i.e. NCQ is enabled, then the patch shouldn't cause any
+    harm either but it may or may not affect I/O performance.
+
+    Enjoy,
+
+    Elias
+---
+
+ drivers/ata/libata-scsi.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+
+diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+index 54c1ad2..1d28f68 100644
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -831,7 +831,7 @@ static void ata_scsi_sdev_config(struct scsi_device *sdev)
+ 	 * prevent SCSI midlayer from automatically deferring
+ 	 * requests.
+ 	 */
+-	sdev->max_device_blocked = 1;
++	sdev->max_device_blocked = 2;
+ }
+ 
+ /**
+@@ -3242,7 +3242,7 @@ int ata_scsi_add_hosts(struct ata_host *host, struct scsi_host_template *sht)
+ 		 * Set host_blocked to 1 to prevent SCSI midlayer from
+ 		 * automatically deferring requests.
+ 		 */
+-		shost->max_host_blocked = 1;
++		shost->max_host_blocked = 2;
+ 
+ 		rc = scsi_add_host(ap->scsi_host, ap->host->dev);
+ 		if (rc)

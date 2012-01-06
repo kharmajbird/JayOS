@@ -1,0 +1,5 @@
+#!/bin/sh
+
+/usr/sbin/pppd /dev/ttyS0 115200 192.168.0.201:192.168.0.202 nodetach \
+  local noauth nocrtscts lock user ppp \
+  connect "/usr/sbin/chat -v -t3 ogin--ogin: ppp"

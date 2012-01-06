@@ -1,0 +1,144 @@
+#!/bin/sh
+
+#
+# Script to mount loopback system filesystems (excluding root)
+# Devices are either specified or probed for at boot time
+#
+# Example:
+# boot:  vmlinuz rootdev=/dev/sda4 usrdev=/dev/hda2 localdev=/dev/sda2
+#
+# To add more filesystems, see comments
+#
+
+DISKMNT=/cd
+MARKER=/initrd/.cddev
+
+if [ "$1" = "stop" ]; then
+	/root/bin/mt /home
+	/root/bin/mt /opt
+	/root/bin/mt /usr/local
+	killall bonobo-activation-server
+	/etc/init.d/autofs stop
+	/root/bin/mt /usr
+	umount -av
+	exit
+fi
+
+# cycle through command line to extract parms
+for i in `cat /proc/cmdline`; do
+	case $i in
+		shell)      DEBUG=1 ;;
+
+		rootdev=*)  ROOTDEV=`echo $i| sed 's/^.*=//'` ;;
+
+		usrram)     USRRAM=1 ;;
+
+		usrdev=*)   USRDEV=`echo $i| sed 's/^.*=//'` ;;
+
+		localdev=*) LOCALDEV=`echo $i| sed 's/^.*=//'` ;;
+
+		optdev=*)   OPTDEV=`echo $i| sed 's/^.*=//'` ;;
+			    
+
+		###################################################
+		# ADD parameters for new filesystems below
+		###################################################
+	esac
+done
+
+# why do I do this?
+ROOTDEV=`cat $MARKER`
+
+##################################################################
+# ADD filesystem definitions here...
+##################################################################
+#
+USRDEV=${USRDEV:=$ROOTDEV}
+LOCALDEV=${LOCALDEV:=$ROOTDEV}
+OPTDEV=${OPTDEV:=$ROOTDEV}
+#
+##################################################################
+# ADD here...
+# record format below is device:file:loopback
+#            DEV FILE LOOP
+#TODO:
+# ($LOOP variable is deceiving; change later)
+##################################################################
+#
+USR="$USRDEV:usr.fs:/usr"
+LOCAL="$LOCALDEV:local.fs:/usr/local"
+OPT="$OPTDEV:opt.fs:/opt"
+
+##################################################################
+# ADD variable(s) created above
+##################################################################
+if [ $USRRAM ]; then
+	mount /dev/loop0 /usr
+	ALL="$LOCAL $OPT"
+else
+	ALL="$USR $LOCAL $OPT"
+fi
+
+#
+# Mount each filesystem 
+#
+for FS in $ALL; do
+	DEV=`echo $FS| cut -f1 -d:`
+	FILE=`echo $FS| cut -f2 -d:`
+	LOOP=`echo $FS| cut -f3 -d:`
+
+	echo -n "Mounting device $DEV..."
+	echo $DONE| grep $DEV >/dev/null 2>&1
+
+	if [ $? -eq 0 ]; then
+		echo "Already mounted."
+		OK=0
+
+	else
+		mount -t hfsplus $DEV $DISKMNT >/dev/null 2>&1
+
+		if [ $? -ne 0 ]; then 
+			mount -t auto $DEV $DISKMNT >/dev/null 2>&1
+
+			if [ $? -ne 0 ]; then 
+				OK=1
+			else
+				OK=0
+				DONE="$DONE $DEV"
+			fi
+
+		else
+			OK=0
+			DONE="$DONE $DEV"
+		fi
+	fi
+
+	if [ "$OK" = "0" ]; then
+		echo -n "Mounting loopback on $LOOP..."
+
+		mount -o loop $DISKMNT/fs/$FILE $LOOP >/dev/null 2>&1
+
+		if [ $? -eq 0 ]; then
+			echo "OK"
+		else
+			echo "/fs/$FILE not found on $DEV"
+			# unmount $DISKMNT ?
+		fi
+
+	else
+		echo "Error mounting $DEV...$LOOP not mounted."
+	fi
+
+	echo
+	if [ $DEBUG ]; then sh; fi
+done
+
+
+# this must be done after /cd is mounted
+#
+for i in `cat /proc/cmdline`; do
+	case $i in
+		vanilla)    mount /lib/modules ;;
+	esac
+done
+

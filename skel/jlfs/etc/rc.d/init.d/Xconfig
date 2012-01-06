@@ -1,0 +1,44 @@
+#!/bin/sh
+
+#  chkconfig: 2345 99 99 
+#  description:  X display configuration
+
+CFG=/etc/X11/xorg.conf
+
+#ln -sfn /dev/psaux /dev/mouse
+#ln -sfn /dev/input/mice /dev/mouse
+
+for i in `cat /proc/cmdline`; do
+	case $i in
+		shell)      DEBUG=1 ;;
+
+		# copy my own X11 settings
+		nodef)	    mv $CFG.mine $CFG && exit ;;
+
+		# preconfigured 1024x768 on Cirrus FB for use under QEMU
+		#loqemu)	    cp -a $CFG.loqemu $CFG && exit ;;
+
+		# preconfigured 1280x1024
+		#qemu=y)	    cp -a $CFG.qemu $CFG && exit ;;
+
+		# go through system-display-config
+		#newvid)
+		#	rm -f $CFG
+    		#	cd /root 
+    		#	cat .xinitrc > .xinitrc.orig
+    		#	cat .xinitrc.cfg > .xinitrc
+    		#	/usr/bin/startx
+		#	;;
+
+		framebuf)   
+			rm -f $CFG
+    			/usr/bin/Xorg -configure
+    			if [ -f /xorg.conf.new ]; then
+        			cat /xorg.conf.new > $CFG
+    			fi
+    			if [ -f /root/xorg.conf.new ]; then
+        			cat /root/xorg.conf.new > $CFG
+    			fi
+			;;
+	esac
+done

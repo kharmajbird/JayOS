@@ -1,0 +1,117 @@
+#!/bin/sh
+########################################################################
+# Begin $network_devices/services/wireless
+#
+# Description : Wireless Handler
+#
+# Authors     : Joe Ciccone - joeciccone@crazyeyesoft.com
+#
+# Version     : 00.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc 
+. ${rc_functions} 
+. ${IFCONFIG}
+
+if [ ! -d "${network_devices}/ssid" ]; then
+	boot_mesg "${network_devices}/ssid does not exist, cannot continue." ${FAILURE}
+	echo_failure
+	exit 1
+fi
+
+case "${2}" in
+	up)
+		if [ "${ESSID}" = "scan" ]; then
+			for wnet in `iwlist ${1} scan | grep ESSID | cut -d: -f2 | cut -d'"' -f2` \
+			`iwlist ${1} scan | grep Address | awk '{print $5}'`; do
+				if [ -f "${network_devices}/ssid/${wnet}" ]; then
+					ESSID=${wnet}
+					break
+				fi
+			done
+		fi
+		
+		if [ -n "${OVERRIDE_ESSID}" ]; then
+			ESSID=${OVERRIDE_ESSID}
+		fi
+		
+		if [ "${ESSID:-scan}" = "scan" ]; then
+			boot_mesg "Could not find a configurable ssid for ${1}, cannot continue." ${FAILURE}
+			echo_failure
+			exit 1
+		else
+			if [ ! -f "${network_devices}/ssid/${ESSID}" ]; then
+				boot_mesg "Unable to open ${network_devices}/ssid/${ESSID}, cannot continue." ${FAIURE}
+				echo_failure
+				exit 1
+			fi
+			source ${network_devices}/ssid/${ESSID}
+		fi
+		
+		args1="essid ${ESSID}"
+		
+		if [ -n "${MODE}" ]; then
+			args1="${args1} mode ${MODE}"
+		fi
+		
+		if [ -n "${FREQ}" ]; then
+			args1="${args1} freq ${FREQ}"
+		fi
+		
+		if [ -n "${RATE}" ]; then
+			args1="${args1} rate ${RATE}"
+		fi
+		
+		boot_mesg "Configuring ${1} for essid ${ESSID}"
+		iwconfig ${1} ${args1}
+		evaluate_retval
+
+		boot_mesg "Setting up ${TYPE} on ${1} ..."
+		case "${TYPE}" in
+			wep)
+				args2=""
+				if [ -n "${KEY1}" ]; then
+					args2="key ${KEY1}"
+				fi
+
+				if [ -n "${KEY2}" ]; then
+					args2="${args2} key ${KEY2}"
+				fi
+
+				if [ -n "${KEY3}" ]; then
+					args2="${args2} key ${KEY3}"
+				fi
+
+				if [ -n "${KEY4}" ]; then
+					args2="${args2} key ${KEY4}"
+				fi
+
+				iwconfig ${1} ${args2}
+				evaluate_retval
+			;;
+			wpa)
+				wpa_supplicant -Bw -c/etc/wpa_supplicant.conf -i${1}
+			;;
+			*)
+				boot_mesg "Unknown Type ${TYPE}, cannot continue." ${FAILURE}
+				echo_failure
+				exit 1
+			;;
+		esac
+		evaluate_retval
+	;;
+	
+	down)
+		killall wpa_supplicant
+	;;
+	
+	*)
+		echo "Usage: ${0} [interface] {up|down}"
+		exit 1
+	;;
+esac
+
+# End $network_devices/services/wireless

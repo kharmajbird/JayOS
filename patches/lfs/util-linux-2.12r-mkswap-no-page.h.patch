@@ -1,0 +1,15 @@
+diff -Naur util-linux-2.12r.orig/disk-utils/mkswap.c util-linux-2.12r/disk-utils/mkswap.c
+--- util-linux-2.12r.orig/disk-utils/mkswap.c	2004-12-21 11:21:24.000000000 -0600
++++ util-linux-2.12r/disk-utils/mkswap.c	2008-05-11 03:19:47.000000000 -0500
+@@ -52,11 +52,6 @@
+ #ifdef HAVE_sys_user_h
+ 				/* Note: <sys/user.h> says: for gdb only */
+ #include <sys/user.h>		/* for PAGE_SIZE and PAGE_SHIFT */
+-#else
+-#ifdef HAVE_asm_page_h
+-#include <asm/page.h>		/* for PAGE_SIZE and PAGE_SHIFT */
+-				/* we also get PAGE_SIZE via getpagesize() */
+-#endif
+ #endif
+ 
+ #ifndef _IO

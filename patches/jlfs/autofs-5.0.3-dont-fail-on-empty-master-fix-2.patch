@@ -1,0 +1,52 @@
+diff --git a/CHANGELOG b/CHANGELOG
+index e393f33..033923d 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -5,6 +5,7 @@
+ - correction for handling of LDAP base dns with spaces.
+ - avoid using UDP for probing NFSv4 mount requests.
+ - use libldap instead of libldap_r (Guillaume Rousse).
++- another fix for don't fail on empty master map.
+  
+ 14/01/2008 autofs-5.0.3
+ -----------------------
+diff --git a/lib/master.c b/lib/master.c
+index ed82131..4a34dd4 100644
+--- a/lib/master.c
++++ b/lib/master.c
+@@ -799,21 +799,13 @@ int master_read_master(struct master *master, time_t age, int readall)
+ 
+ 	master_init_scan();
+ 
+-	if (!lookup_nss_read_master(master, age)) {
+-		error(logopt,
+-		      "can't read master map %s", master->name);
+-		return 0;
+-	}
+-
++	lookup_nss_read_master(master, age);
+ 	master_mount_mounts(master, age, readall);
+ 
+ 	master_mutex_lock();
+ 
+-	if (list_empty(&master->mounts)) {
+-		master_mutex_unlock();
++	if (list_empty(&master->mounts))
+ 		warn(logopt, "no mounts in table");
+-		return 1;
+-	}
+ 
+ 	master_mutex_unlock();
+ 
+diff --git a/modules/lookup_file.c b/modules/lookup_file.c
+index b01eea6..466690a 100644
+--- a/modules/lookup_file.c
++++ b/modules/lookup_file.c
+@@ -475,6 +475,7 @@ int lookup_read_master(struct master *master, time_t age, void *context)
+ 				     "failed to read included master map %s",
+ 				     master->name);
+ 				if (!master->recurse) {
++					master->name = save_name;
+ 					master->depth--;
+ 					master->recurse = 0;
+ 					fclose(f);

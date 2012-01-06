@@ -1,0 +1,1012 @@
+
+########################################################################
+#
+# Support targets:
+#
+# make xen
+# make openvz
+# make prep
+# make un-prep
+# make log-package
+# make strip
+# make strip-man
+# make clean-lfs
+# make root
+# make usr
+# make opt
+# make initrd
+# make boot
+# make addons
+# make iso
+# make isowin
+# make usb
+#
+########################################################################
+
+#
+#
+
+ROOT-REQS := $(AESPIPE) $(RUNEFS) $(LOOP-AES)
+USR-REQS := $(SQUASHFS)
+OPT-REQS := $(SQUASHFS)
+
+JLFS-SRC = $(LFS)/build/JayOS/jlfs
+
+#
+# Begin Xen stuff
+#
+
+$(KERNEL)-xen:
+	set +h && \
+	\
+	rm -rf tmpkern && mkdir tmpkern && \
+        tar jxvf $(JLFS-TARBALLS)/$(KERNEL).tar.bz2 -C tmpkern && \
+	mv tmpkern/$(KERNEL) $(KERNEL)-xen && \
+	rmdir tmpkern && \
+	touch $(KERNEL)-xen && \
+	\
+	cd $(KERNEL)-xen && \
+	cp -v $(JLFS-CONFIGS)/$(KERNEL)-xen.config .config && \
+	\
+	patch -Np1 -i $(JLFS-CONFIGS)/linux-2.6.25-squashfs-bp3.patch && \
+	patch -Np1 -i $(JLFS-CONFIGS)/$(UNIONFS).diff && \
+	\
+	make oldconfig && \
+	make && \
+	make modules && \
+	\
+	cd .. && \
+	\
+	make P=$(KERNEL)-xen log-package
+
+xen: $(KERNEL)-xen
+	cp -av $(LFS)/usr/src/$(XEN-KERNEL)/arch/i386/boot/vmlinuz \
+		$(LIVECD)/boot/vmlinuz.xen && \
+	\
+	cp -av $(LFS)/boot/$(XEN).gz $(LIVECD)/boot/xen.gz && \
+	cp -av $(LFS)/boot/xen-syms-$(XEN-VER) $(LIVECD)/boot/xen-syms-$(XEN-VER) && \
+	\
+	cp -av $(LFS)/usr/src/$(KERNEL)-xen/vmlinux $(LIVECD)/boot && \
+	strip $(LIVECD)/boot/vmlinux && \
+	gzip -9c $(LIVECD)/boot/vmlinux > $(LIVECD)/boot/vmlinuz.domU && \
+	rm $(LIVECD)/boot/vmlinux && \
+	\
+	cd $(LFS)/usr/src && \
+	\
+	tar jxvf $(JLFS-TARBALLS)/$(LOOP-AES-XEN).tar.bz2 && \
+	chmod 755 $(LOOP-AES-XEN) && \
+	chown -R 0:0 $(LOOP-AES-XEN) && \
+	\
+	cd $(LOOP-AES-XEN) && \
+	\
+	make KEYSCRUB=y USE_KBUILD=y \
+		LINUX_SOURCE=/usr/src/$(KERNEL-DIR-XEN) && \
+	\
+	mkdir -p $(LFS)/lib/modules/$(KERNEL-VER-XEN)/extra && \
+	cp -v loop.ko $(LFS)/lib/modules/$(KERNEL-VER-XEN)/extra && \
+	\
+	echo "Overwriting $(KERNEL-VER)-$(ARCH)/extra/loop.ko with 2.6.18" && \
+	cp -v loop.ko $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/extra && \
+	\
+	cd .. && \
+	rm -rf $(LOOP-AES-XEN) && \
+	\
+	\
+	make boot && \
+	make initrd \
+		INITRDFS=$(INITRDFS-XEN)
+
+
+openvz:  $(OPENVZ-KERNEL)
+	cd $(LFS)/usr/src && \
+	\
+	tar jxvf $(JLFS-TARBALLS)/$(LOOP-AES).tar.bz2 && \
+	chmod 755 $(LOOP-AES) && \
+	chown -R 0:0 $(LOOP-AES) && \
+	\
+	cd $(LOOP-AES) && \
+	\
+	make KEYSCRUB=y USE_KBUILD=y \
+		LINUX_SOURCE=/usr/src/$(OPENVZ-KERNEL) && \
+	\
+	mkdir -p $(LFS)/lib/modules/$(OPENVZ-VER)/extra && \
+	cp -v loop.ko $(LFS)/lib/modules/$(OPENVZ-VER)/extra && \
+	\
+	chroot $(LFS) /bin/bash -c ' \
+		cd /usr/src/$(OPENVZ-KERNEL) && make modules_install ' && \
+	\
+	cd .. && \
+	rm -rf $(LOOP-AES) && \
+	\
+	make boot \
+		OPENVZ=1 && \
+	make initrd \
+		OPENVZ=1 \
+		INITRDFS=$(INITRDFS-OPENVZ) && \
+	\
+	make root-generic \
+		OPENVZ=1 \
+		ROOTSIZE=123 \
+		ROOTFS=$(ROOTFS-OPENVZ)
+	
+
+$(OPENVZ-KERNEL):
+	set +h && \
+	\
+	rm -rf tmpkern && mkdir tmpkern && \
+        tar jxvf $(JLFS-TARBALLS)/$(OPENVZ-KERNEL).tar.bz2 -C tmpkern && \
+	mv tmpkern/$(OPENVZ-KERNEL) $(OPENVZ-KERNEL) && \
+	rmdir tmpkern && \
+	touch $(OPENVZ-KERNEL) && \
+	\
+	cd $(OPENVZ-KERNEL) && \
+	\
+	patch -Np1 -i $(JLFS-PATCHES)/$(OPENVZ-KERNEL)-squashfs.patch && \
+	\
+	cp -v $(JLFS-CONFIGS)/$(OPENVZ-KERNEL).config .config && \
+	\
+	make oldconfig && \
+	make -j4 bzImage && \
+	make modules && \
+	\
+	cd .. && \
+	\
+	make P=$(OPENVZ-KERNEL) log-package
+
+
+#
+# Begin Kernel
+#
+
+$(KERNEL)-$(ARCH): $(RSYNC)
+	set +h && \
+	\
+	rm -rf tmpkern && mkdir tmpkern && \
+        tar jxvf $(JLFS-TARBALLS)/$(KERNEL).tar.bz2 -C tmpkern && \
+	mv tmpkern/$(KERNEL) $(KERNEL)-$(ARCH) && \
+	rmdir tmpkern && \
+	touch $(KERNEL)-$(ARCH) && \
+	\
+	cd $(KERNEL)-$(ARCH) && \
+	\
+	cp -v $(JLFS-CONFIGS)/$(KERNEL)-$(ARCH).config .config && \
+	\
+	make oldconfig && \
+	make -j4 bzImage && \
+	make modules && \
+	\
+	cd .. && \
+	\
+	make P=$(KERNEL)-$(ARCH) log-package
+
+$(SQUASHFS):
+	set +h && \
+	\
+	tar xvf $(JLFS-TARBALLS)/$(SQUASHFS).tar.gz && \
+	chmod 755 $(SQUASHFS) && \
+	chown -R 0:0 $(SQUASHFS) && \
+	cd $(SQUASHFS) && \
+	\
+	cd squashfs-tools && \
+	make && \
+	strip mksquashfs unsquashfs && \
+	cp -av mksquashfs unsquashfs /sbin && \
+	cd .. && \
+	\
+	cd .. && \
+	rm -rf $(SQUASHFS)/* && \
+	make P=$(SQUASHFS) log-package
+
+$(LOOP-AES):
+	set +h && \
+	tar jxvf $(JLFS-TARBALLS)/$(LOOP-AES).tar.bz2 && \
+	chmod 755 $(LOOP-AES) && \
+	chown -R 0:0 $(LOOP-AES) && \
+	cd $(LOOP-AES) && \
+	\
+	make KEYSCRUB=y USE_KBUILD=y \
+		LINUX_SOURCE=/usr/src/$(KERNEL)-$(ARCH) && \
+	\
+	tar jxf $(LFS-TARBALLS)/$(UTIL-LINUX).tar.bz2 && \
+	cd $(UTIL-LINUX) && \
+	\
+	patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-loop_AES-3.1d.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-nopassword.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-missing_header-2.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-mkswap-no-page.h.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-cramfs-no-page.h.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-lseek-1.patch && \
+	\
+	./configure CFLAGS=-O2 --prefix=/usr && \
+	\
+	patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-swapon-no-page.h.patch && \
+	perl -p -i -e \
+		's/sh swap\.configure/echo this breaks my patch sh swap\.configure/' mount/Makefile && \
+	echo "#define SWAPON_HAS_TWO_ARGS" > mount/swapargs.h && \
+	echo "" >> mount/swapargs.h && \
+	echo "#include <sys/swap.h>" >> mount/swapargs.h && \
+	echo "#define PAGE_SIZE 4096" >> mount/swapargs.h && \
+	\
+	make SUBDIRS="lib mount" && \
+	cd mount && \
+	install -m 4755 -o root mount umount /bin && \
+	install -m 755 losetup swapon /sbin && \
+	rm -f /sbin/swapoff && \
+	( cd /sbin && ln -s swapon swapoff ) && \
+	cd ../.. && \
+	\
+	cd .. && \
+	rm -rf $(LOOP-AES) && \
+	make P=$(LOOP-AES) log-package
+
+########################################################################
+#
+#
+########################################################################
+
+prep:
+	-cp -av $(LFS)/usr/bin/{make,od,free,env} $(LFS)/bin
+
+	if [ ! -L $(LFS)/usr/src/Makefile ]; then \
+		ln -sfn $(JLFS-SRC)/Makefile $(LFS)/usr/src/Makefile; \
+		\
+		for i in $(JLFS-MAKEFILES); do \
+			ln -sfn $(JLFS-SRC)/Makefile.$${i} \
+				$(LFS)/usr/src/Makefile.$${i}; \
+		done; \
+		\
+	fi
+
+	mount -v --bind /proc $(LFS)/proc
+	mount -v --bind /dev $(LFS)/dev
+
+un-prep:
+	-umount /lfs/proc
+	-umount /lfs/dev
+
+#
+#
+#
+log-package:
+	rm -f $(LFS)/var/lib/packages/$(P)
+	
+	find $(LFS)/{etc,bin,lib,sbin,usr,opt,root,srv} \
+		-wholename '$(LFS)/usr/src' -prune \
+		-o -type f \
+		-cnewer $(LFS)/tmp/timestamp \
+		-print -exec sh -c \
+			" md5sum {} >> $(LFS)/var/lib/packages/$(P) " \;
+
+	touch $(LFS)/tmp/timestamp
+
+	perl -p -i -e 's/\/lfs\//\//' $(LFS)/var/lib/packages/$(P)
+
+#
+#
+#
+strip:
+	find $(LFS)/{,usr/}lib -type f \
+   		-exec /usr/bin/strip --strip-debug '{}' ';'
+
+	find $(LFS)/opt/qt/lib -type f \
+   		-exec /usr/bin/strip --strip-debug '{}' ';'
+
+	find $(LFS)/{,usr/}{bin,sbin} -type f \
+   		-exec /usr/bin/strip --strip-all '{}' ';'
+
+	find $(LFS)/opt/sbin -type f \
+   		-exec /usr/bin/strip --strip-all '{}' ';'
+
+	find $(LFS)/opt/bin -type f \
+   		-exec /usr/bin/strip --strip-all '{}' ';'
+
+#
+#
+#
+strip-man:
+	cd $(LFS) && \
+	touch usr/src/manpages.tar.bz2 && \
+	mv usr/src/manpages.tar.bz2 usr/src/manpages-orig.tar.bz2 && \
+	\
+	tar jcf usr/src/manpages.tar.bz2 \
+		usr/share/gtk-doc \
+		usr/share/ghostscript/8.15/doc \
+		usr/share/graphviz/doc \
+		usr/share/gutenprint/doc \
+		usr/share/vim/vim73/doc \
+		opt/qt/doc \
+		usr/share/{info,doc,man} \
+		srv/www/manual && \
+	\
+	rm -rf usr/share/{info,doc,man}/* \
+		srv/www/manual/* \
+		usr/share/gtk-doc/* \
+		usr/share/ghostscript/8.15/doc/* \
+		usr/share/graphviz/doc/* \
+		usr/share/gutenprint/doc/* \
+		usr/share/vim/vim73/doc/* \
+		opt/qt/doc/* && \
+	\
+	if [ -d usr/share/locale/af ]; then \
+		tar jcf usr/src/locales.tar.bz2 \
+			usr/share/locale && \
+		mv usr/share/locale/en usr/share/locale/en_US /tmp && \
+		rm -rf usr/share/locale/* && \
+		mv /tmp/en /tmp/en_US usr/share/locale; \
+	fi && \
+	\
+	if [ "$(KEEP-MAN-PAGES)" = "0" ]; then \
+		rm -f usr/src/manpages.tar.bz2 \
+			usr/src/manpages-orig.tar.bz2; \
+	fi
+
+clean-lfs:
+	#echo do -rf $(shell cd ${LFS} && ls -1| egrep -v lost|build )
+
+##########################################################################
+#
+# /usr filesystem generation
+#
+##########################################################################
+
+usr:  usr-prereqs
+	mkdir -p $(FSDIR) && \
+	rm -f $(USRFS) && \
+	\
+	if [ ! -f $(LFS)/tmp/pci.ids ]; then \
+		mv $(LFS)/usr/share/pci.ids $(LFS)/tmp; \
+	fi && \
+	if [ ! -f $(LFS)/tmp/usb.ids ]; then \
+		mv $(LFS)/usr/share/usb.ids $(LFS)/tmp; \
+	fi && \
+	\
+	cp -av $(SKEL-LFS-PROD)/usr/share/pci.ids \
+		$(SKEL-LFS-PROD)/usr/share/usb.ids \
+		$(LFS)/usr/share && \
+	\
+	if [ "$(WITHOUT-DEVEL)" != "" ]; then \
+		USREXCL="include"; \
+	fi && \
+	$(MKSQUASHFS-BIN) $(LFS)/usr $(USRFS) -e src $${USREXCL} && \
+	\
+	rm -rf $(MNT) && mkdir $(MNT) && \
+	ln -sfn /lfs/usr/src $(MNT)/src && \
+	ln -sfn /opt/java $(MNT)/java && \
+	\
+	$(MKSQUASHFS-BIN) $(MNT) $(USRFS) && \
+	chmod 644 $(USRFS)
+
+usr-prereqs:
+	chroot $(LFS) /bin/env -i \
+		\
+		HOME=/root \
+		TERM=$(TERM) \
+		PS1='\u:\w\$ ' \
+		PATH=/bin:/usr/bin:/sbin:/usr/sbin \
+		\
+		/bin/bash -c ' \
+			SHELL=/bin/bash \
+			cd /usr/src && make inside-usr-chroot '
+
+inside-usr-chroot:
+	make SHELL=/bin/sh $(USR-REQS)
+
+##########################################################################
+#
+# /opt filesystem generation
+#
+##########################################################################
+
+opt:  opt-prereqs
+	mkdir -p $(LIVECD)/fs && \
+	rm -f $(OPTFS) && \
+	$(MKSQUASHFS-BIN) $(LFS)/opt $(OPTFS) && \
+	chmod 644 $(OPTFS)
+
+opt-prereqs:
+	chroot $(LFS) /bin/env -i \
+		\
+		HOME=/root \
+		TERM=$(TERM) \
+		PS1='\u:\w\$ ' \
+		PATH=/bin:/usr/bin:/sbin:/usr/sbin \
+		\
+		/bin/bash -c ' \
+			SHELL=/bin/bash \
+			cd /usr/src && make inside-opt-chroot '
+
+inside-opt-chroot:
+	make SHELL=/bin/sh $(OPT-REQS)
+
+##########################################################################
+#
+# Root filesystem generation
+#
+##########################################################################
+
+root:  root-prereqs root-generic
+
+root-prereqs:
+	chroot $(LFS) /bin/env -i \
+		\
+		HOME=/root \
+		TERM=$(TERM) \
+		PS1='\u:\w\$ ' \
+		PATH=/bin:/usr/bin:/sbin:/usr/sbin \
+		\
+		/bin/bash -c ' \
+			SHELL=/bin/bash \
+			cd /usr/src && make root-modules && \
+		make root-qemu'
+
+root-modules:
+	if [ ! -d $(KERNEL)-$(ARCH) ]; then \
+		echo "Kernel not built. Run make first" && \
+		exit 1; \
+	fi && \
+	\
+	( cd $(KERNEL)-$(ARCH) && make modules_install ) && \
+	\
+	make SHELL=/bin/sh $(ROOT-REQS)
+
+root-qemu:
+	( cd $(QEMU)/$(KQEMU) && \
+		make clean && \
+		\
+		./configure --prefix=/usr \
+			--kernel-path=/usr/src/$(KERNEL)-$(ARCH) && \
+		make && \
+		\
+		mkdir -p $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/misc && \
+		cp -av kqemu.ko $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/misc && \
+		echo obsolete /sbin/depmod -a )
+
+root-generic:
+	-$(UMOUNT-BIN) $(MNT) 2>/dev/null
+	-$(LOSETUP-BIN) -d $(LOOPDEV) 2>/dev/null
+
+	if [ ! $(OPENVZ) ]; then \
+		rm -rf $(LFS)/lib/modules/$(OPENVZ-VER); \
+	else \
+		rm -rf $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH); \
+	fi && \
+	\
+	mkdir -p $(LIVECD)/{boot,fs} && \
+	dd if=/dev/zero of=$(ROOTFS) bs=1024k count=$(ROOTSIZE) && \
+	$(LOSETUP-BIN) $(LOOPDEV) $(ROOTFS) && \
+	$(MKE2FS-BIN) -m0 $(LOOPDEV)
+
+	if [ "$(ADDONS)" = "1" ]; then \
+		$(MKRUNE-BIN) $(LOOPDEV); \
+		make addons; \
+		patch -Np1 -i $(ADDFSDIR)/addons.patch; \
+		$(AESPIPE-BIN) -T -e aes128 < $(ADDFSDIR)/$(ADDFS)| \
+			$(RUNEWR-BIN) $(ROOTFS); \
+	fi
+
+		#echo && \
+		#echo "You fat-fingered the password!! Try again." && \
+		#echo && \
+		#\
+		#$(AESPIPE-BIN) -T -e aes128 < $(LFS)/usr/src/$(ADDFS)| \
+		#	$(RUNEWR-BIN) $(ROOTFS)|| \
+		#\
+		#echo && \
+		#echo "Still no luck, ABENDing,,," && \
+		#echo && \
+		#exit 1; \
+
+	-rm -rf $(LFS)/usr/src/{addons.orig,addons,$(ADDFS)}
+
+	rm -rf $(MNT) $(ROOTFS).gz && mkdir $(MNT) && \
+	$(MOUNT-BIN) $(LOOPDEV) $(MNT) && \
+	\
+	if [ ! -f $(LFS)/etc/ssh/ssh_host_key ]; then \
+		ssh-keygen -t rsa -f $(LFS)/etc/ssh/ssh_host_rsa_key && \
+		ssh-keygen -t dsa -f $(LFS)/etc/ssh/ssh_host_dsa_key && \
+		ssh-keygen -t rsa1 -f $(LFS)/etc/ssh/ssh_host_key; \
+	fi && \
+	\
+	cd $(LFS) && \
+	cp -a bin boot dev etc home lib media root sbin srv var $(MNT) && \
+	\
+	if [ $(OPENVZ) ]; then cp -a vz $(MNT); fi && \
+	\
+	( cd $(MNT)/etc/rc.d/init.d && \
+		patch -Np0 -i $(JLFS-PATCHES)/mountfs-uproot.patch ) && \
+	\
+	for i in 0 1 2 3 4 5 6 7; do \
+		mknod $(MNT)/dev/loop$${i} b 7 $${i}; \
+	done && \
+	mknod $(MNT)/dev/hda b 3 0 && mknod $(MNT)/dev/hdb b 3 64 && \
+	mknod $(MNT)/dev/hdc b 22 0 && mknod $(MNT)/dev/hdd b 22 64 && \
+	mknod $(MNT)/dev/sda  b 8 0 && mknod $(MNT)/dev/sda1 b 8 1 && \
+	mknod $(MNT)/dev/sda2 b 8 2 && mknod $(MNT)/dev/sda3 b 8 3 && \
+	mknod $(MNT)/dev/sda4 b 8 4 && mknod $(MNT)/dev/sda5 b 8 5 && \
+	mknod $(MNT)/dev/sda6 b 8 6 && mknod $(MNT)/dev/sda7 b 8 7 && \
+	\
+	mkdir -p $(MNT)/{cd,lfs,fs,mnt,opt,initrd,usr/lib,usr/share,proc,sys,tmp} && \
+	\
+	cp -a $(LFS)/usr/bin/{awk,gawk,wc,vi,vim,id,tty} $(MNT)/bin && \
+	cp -a $(LFS)/usr/bin/{mcookie,expr,setterm,setsid} $(MNT)/bin && \
+	cp -a $(LFS)/usr/bin/{logger,env,cut} $(MNT)/bin && \
+	cp -a $(LFS)/usr/sbin/{syslogd,klogd,chroot} $(MNT)/sbin && \
+	cp -a $(LFS)/usr/lib/libcrypto.so* $(MNT)/lib && \
+	\
+	rm -f $(MNT)/etc/rc.d/rc3.d/S24nfs-server && \
+	rm -f $(MNT)/etc/rc.d/rc3.d/S26ntp && \
+	rm -f $(MNT)/etc/rc.d/rc3.d/S25cups && \
+	rm -f $(MNT)/etc/rc.d/rc3.d/S30dhcp && \
+	rm -f $(MNT)/etc/rc.d/rc3.d/S32proftpd && \
+	rm -f $(MNT)/etc/rc.d/rc3.d/S70gpm && \
+	rm -f $(MNT)/etc/rc.d/rc6.d/K10gpm && \
+	rm -f $(MNT)/etc/udev/rules.d/70-persistent-net.rules && \
+	\
+	if [ -f $(MNT)/bin/mt ]; then \
+		mv $(MNT)/bin/mt $(MNT)/bin/mt.orig; \
+	fi && \
+	\
+	( cd $(SKEL-LFS) && \
+		find ./ -type d -name .svn -prune -o -print| \
+		cpio -pdu $(MNT) ) && \
+	\
+	( cd $(MNT)/usr && \
+		ln -s ../bin . && \
+		ln -s ../sbin . && \
+		ln -s ../cd/src . ) && \
+	\
+	( cd $(MNT)/root && \
+		mkdir -p .vnc && cd .vnc && \
+		ln -sfn ../.xinitrc xstartup ) && \
+	\
+	( cd $(MNT)/var/lock && \
+		ln -sfn ../run subsys ) && \
+	\
+	( cd $(MNT)/var/log && \
+		ln -sfn kern.log messages ) && \
+	\
+	( cd $(MNT)/etc/rc.d/rcsysinit.d && \
+		ln -sfn ../init.d/LVM S15LVM ) && \
+	\
+	( cd $(MNT)/etc/rc.d/rcsysinit.d && \
+		ln -sfn ../init.d/fs S42fs ) && \
+	\
+	( cd $(MNT)/etc/rc.d/rcsysinit.d && \
+		ln -sfn ../init.d/netcheck S50netcheck ) && \
+	\
+	( cd $(MNT)/etc/rc.d/rcsysinit.d && \
+		ln -sfn ../init.d/modules2 S07modules2 ) && \
+	\
+	( cd $(MNT)/etc/rc.d/rc2.d && ln -sfn ../init.d/fs K50fs ) && \
+	( cd $(MNT)/etc/rc.d/rc3.d && ln -sfn ../init.d/precups S24precups ) && \
+	( cd $(MNT)/etc/rc.d/rc3.d && ln -sfn ../init.d/Xconfig S99Xconfig ) && \
+	( cd $(MNT)/etc/rc.d/rc3.d && ln -sfn ../rc.local S99local ) && \
+	\
+	if [ "$(ADD-JLFS-SKEL)" = "1" ]; then \
+		( cd $(SKEL-JLFS) && \
+			find ./ -type d -name .svn -prune -o -print| \
+			cpio -pdu $(MNT) ); \
+	fi && \
+	\
+	echo $(VERSION) > $(MNT)/etc/lfs-release && \
+	echo "$(LFSVERSION)" >> $(MNT)/etc/lfs-release && \
+	cp -a $(LFS)/build/JayOS/doc $(MNT)/root && \
+	cp -av $(JLFS-SCRIPTS)/build.sh $(MNT)/root && \
+	chown 0:0 $(MNT)/etc/lfs-release && \
+	\
+	cd $(MNT)/var/lib/packages && \
+	tar cjf /tmp/allPackagesList.tbz * && \
+	rm -f $(MNT)/var/lib/packages/* && \
+	mv /tmp/allPackagesList.tbz $(MNT)/var/lib/packages && \
+	cd && \
+	\
+	mkdir -p $(LIVECD)/boot $(FSDIR) && \
+	\
+	chroot $(MNT) /sbin/ldconfig && \
+	$(UMOUNT-BIN) $(LOOPDEV) && $(LOSETUP-BIN) -d $(LOOPDEV) && \
+	gzip -9 $(ROOTFS)
+
+##########################################################################
+#
+# Target to take a tarball and create a patch suitable for target
+# root-generic to use as input to patching the root filesystem.
+#
+# During runtime, if a file named /addonsrc is found in the tarball $(ADDFS), 
+# it will be executed immediately after the tarball is extracted.
+# See /root/.bash_profile
+#
+##########################################################################
+
+addons:
+	cd $(LFS)/usr/src && \
+	\
+	rm -rf addons.orig addons && \
+	mkdir -p addons.orig addons && \
+	\
+	if [ -f $(ADDFSDIR)/$(ADDFS) ]; then \
+		cp -a $(ADDFSDIR)/$(ADDFS) addons; \
+		diff -Naur addons.orig addons > $(ADDFSDIR)/addons.patch; \
+	fi && \
+	\
+	rm -rf $(LFS)/usr/src/{addons.orig,addons,$(ADDFS)}
+
+#
+#
+#
+root-uml:
+	rm -rf $(MNT) && mkdir -p $(MNT) && \
+	\
+	$(LOSETUP-BIN) $(LOOPDEV) $(FSDIR)/uml.fs && \
+	$(MOUNT-BIN) $(LOOPDEV) $(MNT) && \
+	\
+	( cd $(SKEL-UML) && \
+		find ./ -type d -name .svn -prune -o -print| \
+		cpio -pdu $(MNT) ) && \
+	\
+	$(UMOUNT-BIN) $(LOOPDEV) && $(LOSETUP-BIN) -d $(LOOPDEV)
+
+#
+#
+#
+rootalt: root-generic
+	gzip -dc $(ROOTFS).gz| $(AESPIPE-BIN) -T -e aes128 > $(ROOTFS).alt
+
+##########################################################################
+#
+# Initial ramdisk generation
+#
+##########################################################################
+
+initrd:
+	-$(UMOUNT-BIN) $(MNT) 2>/dev/null
+	-$(LOSETUP-BIN) -d $(LOOPDEV) 2>/dev/null
+
+	rm -rf $(MNT) $(INITRDFS).gz && mkdir -p $(MNT) && \
+	dd if=/dev/zero bs=1024k count=$(INITRDSIZE) of=$(INITRDFS) && \
+	$(LOSETUP-BIN) $(LOOPDEV) $(INITRDFS) && \
+	$(MKE2FS-BIN) -m0 $(LOOPDEV)
+
+	#-if [ "$(ADDONS)" = "1" ]; then \
+	#	mkrune $(LOOPDEV); \
+	#	aespipe -T -e aes128 < small.fs.gz| runewr $(INITRDFS); \
+	#	rm -f small.fs.gz; \
+	#fi
+
+	$(MOUNT-BIN) $(LOOPDEV) $(MNT) && \
+	\
+	mkdir -p $(MNT)/{cd,dev,lib,mnt,usr/bin,proc,sys} && \
+	mknod $(MNT)/dev/null c 1 3 && \
+	mknod $(MNT)/dev/console c 5 1 && \
+	mknod $(MNT)/dev/tty c 5 0 && \
+	mknod $(MNT)/dev/tty0 c 4 0 && \
+	mknod $(MNT)/dev/hvc0 c 229 0 && mknod $(MNT)/dev/xvc0 c 204 191 && \
+	mknod $(MNT)/dev/ram0 b 1 0 && mknod $(MNT)/dev/ram1 b 1 1 && \
+	mknod $(MNT)/dev/ram2 b 1 2 && \
+	mknod $(MNT)/dev/rtc c 10 135 && \
+	\
+	mknod $(MNT)/dev/hda b 3 0 && mknod $(MNT)/dev/hdb b 3 64 && \
+	mknod $(MNT)/dev/hdc b 22 0 && mknod $(MNT)/dev/hdd b 22 64 && \
+	mknod $(MNT)/dev/sda b 8 0 && mknod $(MNT)/dev/sdb b 8 16 && \
+	mknod $(MNT)/dev/sdc b 8 32 && mknod $(MNT)/dev/sdd b 8 48 && \
+	mknod $(MNT)/dev/sr0 b 11 0 && mknod $(MNT)/dev/sr1 b 11 1 && \
+	\
+	for i in 0 1 2 3 4 5 6 7; do \
+		mknod $(MNT)/dev/loop$${i} b 7 $${i}; \
+	done && \
+	\
+	for i in 1 2 3 4 5 6 7 8; do \
+		mknod $(MNT)/dev/hda$${i} b 3 $${i}; \
+	done && \
+	\
+	x=1 && \
+	for i in 65 66 67 68 69 70 71 72; do \
+		mknod $(MNT)/dev/hdb$${x} b 3 $${i} && \
+		x=`expr $${x} + 1`; \
+	done && \
+	\
+	for i in 1 2 3 4 5 6 7 8; do \
+		mknod $(MNT)/dev/sda$${i} b 8 $${i}; \
+	done && \
+	\
+	x=1 && \
+	for i in 17 18 19 20 21 22 23 24; do \
+		mknod $(MNT)/dev/sdb$${x} b 8 $${i} && \
+		x=`expr $${x} + 1`; \
+	done && \
+	\
+	x=1 && \
+	for i in 33 34 35 36 37 38 39 40; do \
+		mknod $(MNT)/dev/sdc$${x} b 8 $${i} && \
+		x=`expr $${x} + 1`; \
+	done && \
+	\
+	x=1 && \
+	for i in 48 49 50 51 52 53 54 55; do \
+		mknod $(MNT)/dev/sdd$${x} b 8 $${i} && \
+		x=`expr $${x} + 1`; \
+	done
+
+	if [ $(OPENVZ) ]; then \
+		cp -av $(LFS)/lib/modules/$(OPENVZ-VER)/kernel/crypto/aes_generic.ko $(MNT)/lib; \
+		cp -av $(LFS)/lib/modules/$(OPENVZ-VER)/kernel/arch/x86/crypto/aes-i586.ko $(MNT)/lib; \
+		cp -av $(LFS)/lib/modules/$(OPENVZ-VER)/kernel/lib/crc-itu-t.ko $(MNT)/lib; \
+		cp -av $(LFS)/lib/modules/$(OPENVZ-VER)/kernel/drivers/firewire/firewire-core.ko $(MNT)/lib; \
+		cp -av $(LFS)/lib/modules/$(OPENVZ-VER)/kernel/drivers/firewire/firewire-ohci.ko $(MNT)/lib; \
+		cp -av $(LFS)/lib/modules/$(OPENVZ-VER)/kernel/drivers/firewire/firewire-sbp2.ko $(MNT)/lib; \
+		cp -av $(LFS)/lib/modules/$(OPENVZ-VER)/extra/loop.ko $(MNT)/lib; \
+	else \
+		cp -av $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/kernel/crypto/aes_generic.ko $(MNT)/lib; \
+		cp -av $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/kernel/arch/x86/crypto/aes-i586.ko $(MNT)/lib; \
+		cp -av $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/kernel/lib/crc-itu-t.ko $(MNT)/lib; \
+		cp -av $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/kernel/drivers/firewire/firewire-core.ko $(MNT)/lib; \
+		cp -av $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/kernel/drivers/firewire/firewire-ohci.ko $(MNT)/lib; \
+		cp -av $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/kernel/drivers/firewire/firewire-sbp2.ko $(MNT)/lib; \
+		cp -av $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/extra/loop.ko $(MNT)/lib; \
+	fi
+
+	( cd $(SKEL-INITRD) && \
+		find ./ -type d -name .svn -prune -o -print| \
+		cpio -pdu $(MNT) ) && \
+	\
+	( cd $(MNT)/bin && ln -sfn test [ ) && \
+	\
+	cp -av $(MNT)/bin/busybox /bin && \
+	cd $(MNT)/sbin && \
+	\
+	for i in chroot insmod pivot_root; do \
+		ln -f ../bin/busybox $${i}; \
+	done && \
+	\
+	cd $(MNT)/bin && \
+	for i in cat cp dd df dmesg echo egrep grep gunzip gzip ls ln more \
+		mount mknod mv ps rm sed sh sleep tar test umount zcat; do \
+		ln -f busybox $${i}; \
+	done && \
+	\
+	cd $(MNT)/usr/bin && \
+	for i in basename bunzip2 bzcat cut test unzip; do \
+		ln -f ../../bin/busybox $${i}; \
+	done && \
+	\
+	cd /usr/src && \
+	\
+	$(UMOUNT-BIN) $(LOOPDEV) && $(LOSETUP-BIN) -d $(LOOPDEV) && \
+	gzip -9 $(INITRDFS)
+
+##########################################################################
+#
+#
+#
+#
+#
+##########################################################################
+
+#vanilla:  $(KERNEL)-x86
+#	rm -rf $(LFS)/usr/src/$(LOOP-AES) && \
+#	cd $(LFS)/usr/src && ln -sfn $(KERNEL-VANILLA-VER)-x86-vanilla linux && \
+#	\
+#	chroot $(LFS) /bin/env -i \
+#		PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/X11R6/bin \
+#		KERNEL=linux-2.6.9 MODKERNEL=2.6.9 \
+#		/bin/bash -c "cd /usr/src/linux && touch /tmp/timestamp && \
+#		rm -rf $(LFS)/lib/modules/* && \
+#		make INSTALL_MOD_PATH=/tmp modules_install" && \
+#	\
+#	mkdir -p $(LFS)/lib/modules/2.6.9/kernel && \
+#	\
+#	chroot $(LFS) /bin/env -i \
+#		PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/X11R6/bin \
+#		KERNEL=linux-2.6.9 MODKERNEL=2.6.9 \
+#		/bin/bash -c "cd /usr/src && touch /tmp/timestamp && \
+#		make $(LOOP-AES)" && \
+#	\
+#	make VERSION=$(VERSION)-x86 ROOTFS=$(ROOTFS)v root-generic && \
+#	make ROOTFS=$(ROOTFS)v INITRDFS=$(INITRDFS)v MODKERNEL=2.6.9 boot && \
+#	\
+#	rm -f $(MODFS) && \
+#	mksquashfs $(LFS)/tmp/lib/modules $(MODFS) && \
+#	chmod 644 $(MODFS) && \
+#	rm -rf $(LFS)/tmp/lib $(LFS)/lib/modules/2.6.9 && \
+#	\
+#	touch $(LIVECD)/JayOS
+
+##########################################################################
+#
+# Make LIVECD directory bootable
+#
+##########################################################################
+
+boot:
+	mkdir -p $(LIVECD)/boot && \
+	\
+	if [ "$(ARCH)" = "x86" -o "$(ARCH)" = "486"  -o "$(ARCH)" = "xen" ]; then \
+		cp -a $(SKEL-BOOT)/boot/isolinux.cfg \
+			$(SKEL-BOOT)/boot/isolinux.bin \
+		$(LIVECD)/boot; \
+	fi && \
+	\
+	if [ "$(ARCH)" = "imac" ]; then \
+		( cd $(SKEL-EFI) && \
+			find ./ -type d -name .svn -prune -o -print| \
+			cpio -pdu $(LIVECD) ); \
+	fi && \
+	\
+	if [ $(OPENVZ) ]; then \
+		cp -a /usr/src/$(OPENVZ-KERNEL)/arch/x86/boot/bzImage \
+			$(LIVECD)/boot/vmlinuz.vz; \
+	else \
+		cp -a /usr/src/$(KERNEL)-$(ARCH)/arch/x86/boot/bzImage \
+			$(LIVECD)/boot/vmlinuz.$(ARCH); \
+	fi && \
+	\
+	cp -a $(SKEL-BOOT)/boot/isolinux.dp2 $(LIVECD)/boot && \
+	cat $(SKEL-BOOT)/boot/isolinux.dpy| \
+		sed -e 's/VERSION/$(LABEL)/' > $(LIVECD)/boot/isolinux.dpy
+
+##########################################################################
+#
+# ISO creation targets: "make iso" or "make iso-with-src"
+#
+##########################################################################
+
+iso:
+	if [ ! -f $(ROOTFS).gz ]; then \
+		make VERSION=$(VERSION)-$(ARCH) root && \
+		\
+		if [ "$(ALTROOT)" = "1" ]; then \
+			make VERSION=$(VERSION)-$(ARCH) ADDONS=0 rootalt && \
+			echo "Alternate root filesystem created"; \
+		fi && \
+		echo "Created root filesystem(s)"; \
+	fi && \
+	\
+	echo make boot && \
+	make iso-write
+
+iso-with-src: 
+	make INCLUDE_SRC=1 iso
+
+##########################################################################
+
+iso-write:
+	if [ "$(ARCH)" = "imac" ]; then \
+		if [ "$(INCLUDE_SRC)" = "1" ]; then \
+			SIZE=$(IMACISO-SIZE); \
+			ISO=$(ISOIMAC); \
+		else \
+			SIZE=$(IMACISO-SHORT-SIZE); \
+			ISO=$(ISOIMAC-SHORT); \
+		fi; \
+		\
+		rm -f $(LIVECD)/boot/isolinux.bin \
+			$(LIVECD)/isolinux.cfg \
+			$(LIVECD)/fs/uml.fs \
+			$(LIVECD)/fs/uml.fs.cow \
+			$(LIVECD)/fs/uml-nest1.fs.cow && \
+		\
+		$(JLFS-SCRIPTS)/hcreate.sh \
+			$(VERSION)-$(ARCH) $${SIZE} $${ISO}; \
+	fi && \
+	\
+	if [ "$(ARCH)" = "x86"  -o "$(ARCH)" = "486" -o "$(ARCH)" = "xen" ]; then \
+		if [ "$(INCLUDE_SRC)" = "1" ]; then \
+			ISO=$(ISOx86); \
+			echo BUILDTBALL="/jlfs-buildfs.tbz=/cd/jlfs-buildfs.tbz"; \
+			SRCPOINT="/src=$(BURN_SRC)"; \
+		else \
+			ISO=$(ISOx86-SHORT); \
+			SRCPOINT=""; \
+		fi && \
+		\
+		rm -fr $(LIVECD)/boot/e.efi \
+			$(LIVECD)/boot/linux.volicon \
+			$(LIVECD)/boot/map.hfs \
+			$(LIVECD)/efi && \
+		\
+		$(MKISOFS-BIN) -o $${ISO} \
+			-V $(LABEL) \
+			-v -pad -R \
+			-b boot/isolinux.bin \
+			-c boot/boot.cat \
+			-no-emul-boot \
+			-boot-load-size 4 \
+			-boot-info-table \
+			-graft-points \
+				$${SRCPOINT} \
+				$${BUILDTBALL} \
+				/doc=$(LFS)/build/JayOS/doc \
+				/boot=$(LIVECD)/boot \
+				/isolinux.cfg=$(LIVECD)/boot/isolinux.cfg \
+				/isolinux.bin=$(LIVECD)/boot/isolinux.bin \
+				/fs=$(LIVECD)/fs; \
+	fi && \
+	\
+	echo "Creating checksum for $${ISO}" && \
+	md5sum $${ISO} > $${ISO}.md5
+
+##########################################################################
+#
+# Rename ISOs to match VERSION and ARCH
+#
+##########################################################################
+rename-iso:
+	cd $(BUILD) && \
+	\
+	for i in $(ISOx86) $(ISOx86-SHORT) \
+		$(ISOIMAC) $(ISOIMAC-SHORT) $(WINISO); do \
+		\
+		if [ -f $${i} ]; then \
+			mv $${i} $(LABEL).iso && \
+			mv $${i}.md5 $(LABEL).iso.md5; \
+		fi; \
+	done && \
+	\
+	echo "renamed ISOs"
+	
+##########################################################################
+#
+# ISO creation targets:
+# Windows
+#
+##########################################################################
+
+isowin: backup-skels
+	$(MKISOFS-BIN) -v -R -J -pad -V JayOS-x86-win \
+		-o $(WINISO) \
+		-graft-points /=$(SKEL-QEMU-DEV) \
+			/doc=$(LFS)/build/JayOS/doc \
+			/jlfs-x86.iso=$(ISOx86-SHORT) && \
+	\
+	echo "Creating checksum for $${WINISO}" && \
+	md5sum $(WINISO) > $(WINISO).md5
+
+##########################################################################
+#
+# Install to VAIO hard drive
+# Custom
+#
+##########################################################################
+
+VAIO-BOOT-DEV := /dev/hda1
+
+install-vaio:
+	echo && \
+	echo "Installing JLFS within $(VAIO-BOOT-DEV)" && \
+	echo && \
+	\
+	rm -rf $(MNT) && mkdir -p $(MNT) && \
+	\
+	$(MOUNT-BIN) $(VAIO-BOOT-DEV) $(MNT) && \
+	echo skipping isolinux.cfg && \
+	echo cp -av $(LIVECD)/isolinux.cfg $(MNT) && \
+	\
+	mv $(MNT)/vmlinuz.x86 $(MNT)/vmlinuz.org && \
+	mv $(MNT)/initrd.gz $(MNT)/initrdog.gz && \
+	mv $(MNT)/boot/root.gz $(MNT)/boot/root.gz.orig && \
+	\
+	cp -av $(LIVECD)/boot/vmlinuz.x86 $(MNT) && \
+	cp -av $(INITRDFS).gz $(MNT) && \
+	cp -av $(ROOTFS).gz $(MNT)/boot && \
+	cp -av $(USRFS) $(OPTFS) $(MNT)/fs && \
+	$(UMOUNT-BIN) $(MNT) && \
+	\
+	echo "Install successful"
+
+##########################################################################
+# Create a USB image
+##########################################################################
+
+usb:
+	gzip -dc $(USB-TARBALLS)/$(STICK1).gz > /lfs/build/$(STICK1) && \
+	gzip -dc $(USB-TARBALLS)/$(STICK2).gz > /lfs/build/$(STICK2) && \
+	\
+	/sbin/kpartx -a /lfs/build/$(STICK2) && \
+	rm -rf $(MNT) && mkdir $(MNT) && \
+	ls /dev/dm-1 && sleep 5 && \
+	mount /dev/dm-1 $(MNT) && \
+	\
+	cp -a $(FSDIR) $(BOOTDIR) $(LFS)/build/JayOS/doc $(MNT) && \
+	find $(MNT)/doc -name .svn -type d| xargs rm -rf && \
+	\
+	umount /dev/dm-1 && \
+	/sbin/kpartx -d /lfs/build/$(STICK2)

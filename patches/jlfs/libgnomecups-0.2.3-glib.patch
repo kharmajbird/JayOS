@@ -1,0 +1,44 @@
+diff -Naur libgnomecups-0.2.3.orig/libgnomecups/gnome-cups-i18n.c libgnomecups-0.2.3/libgnomecups/gnome-cups-i18n.c
+--- libgnomecups-0.2.3.orig/libgnomecups/gnome-cups-i18n.c	2007-01-01 16:18:51.000000000 -0800
++++ libgnomecups-0.2.3/libgnomecups/gnome-cups-i18n.c	2011-11-27 19:17:00.072038438 -0800
+@@ -1,5 +1,4 @@
+ #include <config.h>
+-#include <glib/gmacros.h>
+ #include "gnome-cups-i18n.h"
+ 
+ #ifdef ENABLE_NLS
+diff -Naur libgnomecups-0.2.3.orig/libgnomecups/gnome-cups-init.h libgnomecups-0.2.3/libgnomecups/gnome-cups-init.h
+--- libgnomecups-0.2.3.orig/libgnomecups/gnome-cups-init.h	2007-01-01 16:18:51.000000000 -0800
++++ libgnomecups-0.2.3/libgnomecups/gnome-cups-init.h	2011-11-27 19:16:26.707880274 -0800
+@@ -1,9 +1,6 @@
+ #ifndef GNOME_CUPS_INIT
+ #define GNOME_CUPS_INIT
+ 
+-#include <glib/gtypes.h>
+-#include <glib/gmacros.h>
+-
+ G_BEGIN_DECLS
+ 
+ typedef struct _GnomeCupsAuthContext GnomeCupsAuthContext;
+diff -Naur libgnomecups-0.2.3.orig/libgnomecups/gnome-cups-printer.h libgnomecups-0.2.3/libgnomecups/gnome-cups-printer.h
+--- libgnomecups-0.2.3.orig/libgnomecups/gnome-cups-printer.h	2007-01-01 16:18:51.000000000 -0800
++++ libgnomecups-0.2.3/libgnomecups/gnome-cups-printer.h	2011-11-27 19:16:03.428507453 -0800
+@@ -2,7 +2,6 @@
+ #define GNOME_CUPS_PRINTER_H
+ 
+ #include <glib.h>
+-#include <glib-object.h>
+ #include <cups/ipp.h>
+ #include <cups/ppd.h>
+ 
+diff -Naur libgnomecups-0.2.3.orig/libgnomecups/gnome-cups-queue.h libgnomecups-0.2.3/libgnomecups/gnome-cups-queue.h
+--- libgnomecups-0.2.3.orig/libgnomecups/gnome-cups-queue.h	2007-01-01 16:18:51.000000000 -0800
++++ libgnomecups-0.2.3/libgnomecups/gnome-cups-queue.h	2011-11-27 19:16:08.084550084 -0800
+@@ -2,7 +2,6 @@
+ #define GNOME_CUPS_QUEUE_H
+ 
+ #include <glib.h>
+-#include <glib-object.h>
+ #include <cups/ipp.h>
+ 
+ G_BEGIN_DECLS

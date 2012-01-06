@@ -1,0 +1,38 @@
+diff --git a/CHANGELOG b/CHANGELOG
+index dd66e95..c221c13 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -10,6 +10,7 @@
+ - fix unlink of mount tree incorrectly causing autofs mount fail.
+ - update kernel header file linux/auto_fs4.h.
+ - update fix expire working harder than needed.
++- add missing check for zero length NIS key (Wengang Wang).
+  
+ 14/01/2008 autofs-5.0.3
+ -----------------------
+diff --git a/modules/lookup_yp.c b/modules/lookup_yp.c
+index f5097dc..0fc84f8 100644
+--- a/modules/lookup_yp.c
++++ b/modules/lookup_yp.c
+@@ -168,6 +168,10 @@ int yp_all_master_callback(int status, char *ypkey, int ypkeylen,
+ 	if (status != YP_TRUE)
+ 		return status;
+ 
++	/* Ignore zero length keys */
++	if (ypkeylen == 0)
++		return 0;
++
+ 	/*
+ 	 * Ignore keys beginning with '+' as plus map
+ 	 * inclusion is only valid in file maps.
+@@ -263,6 +267,10 @@ int yp_all_callback(int status, char *ypkey, int ypkeylen,
+ 	if (status != YP_TRUE)
+ 		return status;
+ 
++	/* Ignore zero length keys */
++	if (ypkeylen == 0)
++		return 0;
++
+ 	/*
+ 	 * Ignore keys beginning with '+' as plus map
+ 	 * inclusion is only valid in file maps.

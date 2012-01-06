@@ -1,0 +1,22 @@
+#!/bin/sh
+
+LFS=/lfs
+
+cd $LFS/build
+
+#git clone git://git.freedesktop.org/git/mesa/drm
+git clone git://anongit.freedesktop.org/git/mesa/mesa
+#git clone git://git.freedesktop.org/git/xorg/xserver
+
+cd mesa && \
+./autogen.sh && \
+make tarballs && \
+cd ..
+
+for i in "drm xserver"; do \
+	cd $i && \
+	./autogen.sh && \
+	make dist-bzip2 && \
+	mv *bz2 .. && \
+	cd ..; \
+done

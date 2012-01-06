@@ -1,0 +1,10 @@
+#e	x	c	t	cM
+.gz	Raw	'ddsk'	'DDim'	"Floppy or ramdisk image"
+.b	Raw	'UNIX'	'tbxi'	"Bootstrap"
+yaboot	Raw	'UNIX'	'boot'	"Bootstrap"
+vmlinux	Raw	'UNIX'	'boot'	"Bootstrap"
+.imac	Raw	'UNIX'	'boot'	"Bootstrap"
+.conf	Raw	'UNIX'	'boot'	"Bootstrap"
+.msg	Raw	'UNIX'	'boot'	"Bootstrap"
+.efi	Raw	'UNIX'	'boot'	"Bootstrap"
+*	Raw	'????'	'????'	"Unknown"

@@ -1,0 +1,78 @@
+diff --git a/CHANGELOG b/CHANGELOG
+index 5a85a8e..e393f33 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -4,6 +4,7 @@
+ - catch "-xfn" map type and issue "no supported" message.
+ - correction for handling of LDAP base dns with spaces.
+ - avoid using UDP for probing NFSv4 mount requests.
++- use libldap instead of libldap_r (Guillaume Rousse).
+  
+ 14/01/2008 autofs-5.0.3
+ -----------------------
+diff --git a/aclocal.m4 b/aclocal.m4
+index f24e076..a1105ae 100644
+--- a/aclocal.m4
++++ b/aclocal.m4
+@@ -232,7 +232,7 @@ AC_DEFUN([AF_CHECK_FUNC_LDAP_CREATE_PAGE_CONTROL],
+ 
+ # save current ldflags
+ af_check_ldap_create_page_control_save_ldflags="$LDFLAGS"
+-LDFLAGS="$LDFLAGS -lldap_r"
++LDFLAGS="$LDFLAGS -lldap"
+ 
+ AC_TRY_LINK(
+   [ #include <ldap.h> ],
+@@ -265,7 +265,7 @@ AC_DEFUN([AF_CHECK_FUNC_LDAP_PARSE_PAGE_CONTROL],
+ 
+ # save current ldflags
+ af_check_ldap_parse_page_control_save_ldflags="$LDFLAGS"
+-LDFLAGS="$LDFLAGS -lldap_r"
++LDFLAGS="$LDFLAGS -lldap"
+ 
+ AC_TRY_LINK(
+   [ #include <ldap.h> ],
+diff --git a/configure b/configure
+index e872392..0d3268c 100755
+--- a/configure
++++ b/configure
+@@ -4563,7 +4563,7 @@ fi
+ { echo "$as_me:$LINENO: result: $ac_cv_lib_ldap_ldap_initialize" >&5
+ echo "${ECHO_T}$ac_cv_lib_ldap_ldap_initialize" >&6; }
+ if test $ac_cv_lib_ldap_ldap_initialize = yes; then
+-  HAVE_LDAP=1 LIBLDAP="$LIBLDAP -lldap_r -llber -lresolv"
++  HAVE_LDAP=1 LIBLDAP="$LIBLDAP -lldap -llber -lresolv"
+ fi
+ 
+ 	if test "$HAVE_LDAP" = "1"; then
+@@ -4578,7 +4578,7 @@ echo $ECHO_N "checking for ldap_create_page_control in -lldap... $ECHO_C" >&6; }
+ 
+ # save current ldflags
+ af_check_ldap_create_page_control_save_ldflags="$LDFLAGS"
+-LDFLAGS="$LDFLAGS -lldap_r"
++LDFLAGS="$LDFLAGS -lldap"
+ 
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+@@ -4648,7 +4648,7 @@ echo $ECHO_N "checking for ldap_parse_page_control in -lldap... $ECHO_C" >&6; }
+ 
+ # save current ldflags
+ af_check_ldap_parse_page_control_save_ldflags="$LDFLAGS"
+-LDFLAGS="$LDFLAGS -lldap_r"
++LDFLAGS="$LDFLAGS -lldap"
+ 
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+diff --git a/configure.in b/configure.in
+index a9c86dd..27b9bec 100644
+--- a/configure.in
++++ b/configure.in
+@@ -197,7 +197,7 @@ AC_ARG_WITH(openldap,
+ if test -z "$HAVE_LDAP" -o "$HAVE_LDAP" != "0"; then
+ 	HAVE_LDAP=0
+ 	LDAP_FLAGS="$LDAP_FLAGS -DLDAP_DEPRECATED=1"
+-	AC_CHECK_LIB(ldap, ldap_initialize, HAVE_LDAP=1 LIBLDAP="$LIBLDAP -lldap_r -llber -lresolv", ,
++	AC_CHECK_LIB(ldap, ldap_initialize, HAVE_LDAP=1 LIBLDAP="$LIBLDAP -lldap -llber -lresolv", ,
+ 		     -llber -lresolv $LIBS)
+ 	if test "$HAVE_LDAP" = "1"; then
+ 		AC_DEFINE(WITH_LDAP,1,

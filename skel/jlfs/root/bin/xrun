@@ -1,0 +1,4 @@
+#!/bin/sh
+
+eval `zenity --entry --text "Execute program " --title "xrun"`
+

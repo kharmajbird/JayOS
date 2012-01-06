@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# create device-mapper nodes
+dmsetup mknodes
+
+# scan for volume groups
+vgscan --ignorelockingfailure
+
+# activate all found VGs
+vgchange -ay --ignorelockingfailure

@@ -1,0 +1,75 @@
+How to boot JayOS on an Intel-based Mac using two USB sticks
+
+
+This procedure was tested on a second-generation Mac Mini, 
+YMMV with iMacs, Macbooks and Macbook pros
+
+firmware
+
+What you will need:
+a) one Mac Mini
+b) a 1 GB USB stick (bootloader)
+c) a 4 GB USB stick (OS + Apps)
+
+
+
+
+Download this compressed image and use dd to create the bootloader stick.
+If under Linux, your USB stick shows up as /dev/sdb, then your command
+might look something like: gzip -dc JayOS-stick1.img.gz| dd of=/dev/sdb.
+
+After creating it, you can mount it and look around; not much there except
+for rEFIT on a GPT partition table.
+
+
+
+Download this image (also compressed) to create the OS stick.
+Once again, your command line might read: 
+gzip -dc JayOS-stick2-img.gz| dd of=/dev/sdb
+
+This stick has two partitions, one HFS+ and one Win32. The former is an
+extremely small spare, while the later contains Grub, the kernel and
+initial ramdisk, root, usr, and opt filesystems.
+
+
+
+
+The only devices that should be attached when starting are 
+power, video, kbd/mouse.
+
+
+Step One:
+
+Plug in both sticks and turn the machine on.
+
+
+Step Two:
+
+The rEFIt bootloader GUI should show at least one bootable device.
+Choose apropriately.
+
+
+Step Three:
+
+After a video blink or two, the Grub menu will display. Hitting any key
+will stop the seven second counter and place Grub into manual mode.
+
+The default boot options will conserve RAM by mounting the usr filesystem
+directly from stick 2.  If you have a GB or more of RAM installed,
+the usrram mode will load the usr filesystem into a 600 MB ramdisk.
+
+After you choose an option or the timer expires, the grub menu will
+disappear and control of the boot sequence is turned over to the kernel
+and initial ramdisk. 
+
+IMPORTANT:  You must remove stick 1 immediately after the kernel takes
+control, roughly between the time the first messages start scrolling and
+when video goes into framebuffer mode and a penguin (or two) shows in the
+corner of the screen. Failing to do will at worst panic the kernel if it
+can't figure out which stick to load the root filesystem from.
+
+I know, I know... Can I call it a feature?
+
+
+Step Four:
+

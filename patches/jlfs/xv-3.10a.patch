@@ -1,0 +1,44 @@
+diff -Naur xv-3.10a/Makefile xv-3.10a-new/Makefile
+--- xv-3.10a/Makefile	1995-01-23 12:20:54.000000000 -0800
++++ xv-3.10a-new/Makefile	2004-05-31 13:20:46.618778632 -0700
+@@ -102,7 +102,7 @@
+ 
+ 
+ ### for LINUX, uncomment the following line
+-#MCHN = -DLINUX
++MCHN = -DLINUX -L/usr/X11R6/lib
+ 
+ 
+ # For SCO 1.1 (UNIX 3.2v2) machines, uncomment the following:
+diff -Naur xv-3.10a/config.h xv-3.10a-new/config.h
+--- xv-3.10a/config.h	1995-01-05 10:49:21.000000000 -0800
++++ xv-3.10a-new/config.h	2004-05-31 13:20:46.620778328 -0700
+@@ -13,13 +13,13 @@
+  * definition appropriately. (use 'which gunzip' to find if you have gunzip, 
+  * and where it lives)
+  */
+-#undef USE_GUNZIP
++#define USE_GUNZIP
+ 
+ #ifdef USE_GUNZIP
+ #  ifdef VMS
+ #    define GUNZIP "UNCOMPRESS"
+ #  else
+-#    define GUNZIP "/usr/local/bin/gunzip -q"
++#    define GUNZIP "/bin/gunzip -q"
+ #  endif
+ #endif
+ 
+diff -Naur xv-3.10a/xv.h xv-3.10a-new/xv.h
+--- xv-3.10a/xv.h	1995-01-23 12:22:23.000000000 -0800
++++ xv-3.10a-new/xv.h	2004-05-31 13:21:08.432462448 -0700
+@@ -115,9 +115,6 @@
+ #ifndef VMS
+ #  include <errno.h>
+    extern int   errno;             /* SHOULD be in errno.h, but often isn't */
+-#  ifndef __NetBSD__
+-     extern char *sys_errlist[];     /* this too... */
+-#  endif
+ #endif
+ 
+ 

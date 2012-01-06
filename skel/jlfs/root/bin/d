@@ -1,0 +1,55 @@
+#!/bin/sh
+
+#
+# script to treat a root delta tarball as a filesystem,
+# mounting and unmounting it for updating
+#
+
+MNT=/tmp/deltas
+UPBALL=/usb/boot/root-deltas.tbz
+
+case $* in
+	o)
+		mkdir -p $MNT
+		tar jxf $UPBALL -C $MNT
+
+		if [ $? -eq 0 ]; then
+			echo "Deltas opened on $MNT. Run "d c" to close."
+		else
+			if [ ! -f $UPBALL ]; then echo "$UPBALL not found"; fi
+			echo "Problem opening $MNT. Exiting..."
+			exit
+		fi
+		;;
+
+	c)
+		(cd $MNT && tar jcf $UPBALL *)
+
+		if [ $? -eq 0 ]; then
+			echo "Deltas closed."
+		else
+			echo -n "Problem closing $UPBALL. Try again? (y/n)"
+			read ANS
+
+			if [ "$ANS" = "y" ]; then
+				(cd $MNT && tar jcf $UPBALL *)
+			fi
+
+			if [ $? -eq 0 ]; then
+				echo "Deltas closed."
+			else
+				echo "Problem closing $UPBALL...keeping $MNT open"
+				exit
+			fi
+		fi
+
+		rm -rf $MNT
+		;;
+
+	*)	echo
+		echo "Usage: $0  o | c"
+		echo "       where o is open and c is close"
+		echo "       o and c are mutually exclusive"
+		echo
+		exit
+esac

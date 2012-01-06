@@ -1,0 +1,22 @@
+I would like to thank, in no particular order, the following people/entities:
+
+Linus Torvalds
+Slackware
+Redhat
+linux-router-project
+Damn Small Linux
+Linux From Scratch
+Debian
+Fedora
+Geexbox
+ADIOS
+BerryOS
+Gentoo
+Yellow Dog Linux
+Knoppix
+Ubuntu
+RockLinux
+Blackdog Linux
+
+
+...and github for hosting :)

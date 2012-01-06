@@ -1,0 +1,58 @@
+# /etc/bashrc
+
+# System wide functions and aliases
+# Environment stuff goes in /etc/profile
+
+export G_FILENAME_ENCODING=@locale
+export LANG=C
+export GNUPGHOME=/home/.gnupg
+#export JAVA_HOME=/usr/java/j2re1.4.2_05
+#export PATH=$PATH:$JAVA_HOME/bin
+set -o vi
+
+export HOSTNAME=$(grep HOSTNAME /etc/sysconfig/network| cut -f2 -d'=')
+/bin/hostname $HOSTNAME
+
+# by default, we want this to get set.
+# Even for non-interactive, non-login shells.
+if [ `id -gn` = `id -un` -a `id -u` -gt 99 ]; then
+	umask 022
+else
+	umask 022
+fi
+
+# are we an interactive shell?
+if [ "$PS1" ]; then
+    if [ -x /usr/bin/tput ]; then
+      if [ "x`tput kbs`" != "x" ]; then # We can't do this with "dumb" terminal
+        stty erase `tput kbs`
+      elif [ -x /usr/bin/wc ]; then
+        if [ "`tput kbs|wc -c `" -gt 0 ]; then # We can't do this with "dumb" terminal
+          stty erase `tput kbs`
+        fi
+      fi
+    fi
+    case $TERM in
+	xterm*)
+		if [ -e /etc/sysconfig/bash-prompt-xterm ]; then
+			PROMPT_COMMAND=/etc/sysconfig/bash-prompt-xterm
+		else
+	    	PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\007"'
+		fi
+	    ;;
+	*)
+		[ -e /etc/sysconfig/bash-prompt-default ] && PROMPT_COMMAND=/etc/sysconfig/bash-prompt-default
+	    ;;
+    esac
+    PS1="\h:\w\\$ "
+    #[ "$PS1" = "\\s-\\v\\\$ " ] && PS1="[\u@\h \W]\\$ "
+    
+    #if [ "x$SHLVL" != "x1" ]; then # We're not a login shell
+        for i in /etc/profile.d/*.sh; do
+	    if [ -x $i ]; then
+	        . $i
+	    fi
+	done
+    #fi
+fi
+# vim:ts=4:sw=4

@@ -1,0 +1,61 @@
+  +---------------------------------------------+
+  |  A Flowchart for the boot sequence of JayOS |
+  +---------------------------------------------+
+            |
+  +--------------------+
+  |  Power supply ON;  |
+  |   PC BIOS starts   |
+  +--------------------+
+            |
+  +-----------------------------------------------------+
+  | BIOS looks for bootable media, either hard drive,   |
+  | CDROM, or external USB storage, then reads the boot |
+  | loader written on what passes for the MBR on drive. |
+  +-----------------------------------------------------+
+            |
+  +--------------------------------------------+
+  | The boot loader loads the kernel (vmlinuz) |
+  | and an initial ramdisk (initrd.gz) and     |
+  | then passes the reins to the kernel.       |
+  +--------------------------------------------+
+            |
+  +------------------------------------------+
+  | The kernel expands initrd.gz and mounts  |
+  | it as a temporary root file system.      |
+  +------------------------------------------+
+            |
+  +----------------------------------------------------------------------+
+  | It then executes /linuxrc in the initrd. /linuxrc parses a few       |
+  | command line parameters, then determines from which device the root  |
+  | filesystem should be loaded. The device defaults to the same one the |
+  | kernel was loaded from. /linuxrc copies the real root filesystem     |
+  | from the mounted media into /dev/ram1.                               |
+  +----------------------------------------------------------------------+
+            |
+  +------------------------------------------+
+  | The kernel mounts /dev/ram1 and executes |
+  | /sbin/init. The initial ramdisk is moved |
+  | to /initrd where it can later be         |
+  | unmounted and its memory freed.          |
+  +------------------------------------------+
+            |
+  +------------------------------------------------------+ 
+  | Init executes /etc/rc.d/rc.sysinit, then proceeds to |
+  | /etc/rc.d/rcsysinit.d and /etc/rc.d/rc3.d. There it  |
+  | runs (in order) all scripts beginning with S, and    |
+  | passes them the "start" argument.                    |
+  +------------------------------------------------------+
+            |
+  +----------------------------------------------------------------+
+  | The shell scripts perform the following functions:             |
+  |                                                                |
+  | * Mounts /usr filesystem        +==> * Loads root's .xinitrc   |
+  | * Probes hardware               |                              |
+  | * Configures X11 video          |    * Launches graphical      |
+  | * Turns on swap                 |       environment and        |
+  | * Configures networking         |       window manager         |
+  | * Initializes audio, printer,   |                              |
+  |    samba, ssh, & font services  |                              |
+  |                               ==>                              |
+  |                                                                |
+  +----------------------------------------------------------------+

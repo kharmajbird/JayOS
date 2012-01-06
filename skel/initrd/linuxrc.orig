@@ -1,0 +1,203 @@
+#!/bin/sh
+
+echo
+echo "Now entering initial ramdisk -- Low Clearance Ahead!!"
+echo
+
+MNT="/mnt"
+ID=JayOS
+CDROM_LIST=""
+CRYPT=""
+ROOTFS=boot/root.gz
+ORIGFS=boot/root.gz.orig
+VANILLAFS=boot/rootv.gz
+ALTFS=boot/root.alt
+USRFS=fs/usr.fs
+LOOP=/dev/loop7
+export MNT ID CDROM_LIST CRYPT ROOTFS ORIGFS ALTFS LOOP
+
+# housekeeping
+sleep 5
+mount -t proc none /proc
+
+
+mount_root()
+{
+	#if [ "$CDDEV" = "" ]; then
+	#	echo "The stink of a JayOS boot CD was not found :p"
+		if [ $DEBUG ]; then sh; fi
+
+	#else
+		echo "Mounting $ROOTDEV..." 2>/dev/null
+		mount -t auto $ROOTDEV $MNT >/dev/null 2>&1
+
+		if [ "$CRYPT" != "" ]; then
+			echo 2>/dev/null
+			echo "Copying alternate rootfs from $ROOTDEV into RAM..." 2>/dev/null
+			echo 2>/dev/null
+
+			dd if=$MNT/$ALTFS of=/dev/ram1 bs=1024k || sh
+			losetup $CRYPT $LOOP /dev/ram1
+
+			# circle back and load unencrypted root if password bad
+			mount $LOOP $MNT >/dev/null 2>&1
+			if [ $? -ne 0 ]; then
+				echo "U-Turn..."
+				losetup -d $LOOP
+				CRYPT=
+				mount_root
+			else
+				echo "0x0707" > /proc/sys/kernel/real-root-dev
+				umount -l $MNT
+			fi
+		else
+			echo 2>/dev/null
+			echo "Copying rootfs from $ROOTDEV into RAM..." 2>/dev/null
+			echo 2>/dev/null
+			gzip -dc $MNT/$ROOTFS > /dev/ram1 || sh
+			echo "0x0101" > /proc/sys/kernel/real-root-dev
+		fi
+
+		umount $MNT
+
+		#
+		# copy usr.fs into /dev/ram2 via kernel parm usrram
+		#
+		if [ $USRRAM ]; then
+			echo "Mounting $USRDEV..." 2>/dev/null
+			mount -t auto $USRDEV $MNT >/dev/null 2>&1
+
+			if [ $? -eq 0 ]; then
+				echo 2>/dev/null
+				echo "Copying /usr from $USRDEV into RAM..." 2>/dev/null
+				echo 2>/dev/null
+
+				dd if=$MNT/$USRFS of=/dev/ram2 bs=1024k || sh
+				losetup /dev/loop0 /dev/ram2
+				umount $MNT >/dev/null 2>&1
+			fi
+		fi
+
+		echo 2>/dev/null
+		echo "Sprinkling with holy penguin pee...stand back" 2>/dev/null
+		echo 2>/dev/null
+		if [ $DEBUG ]; then sh; fi
+
+		cd $MNT
+		umount /proc
+		/sbin/pivot_root . initrd
+		exec /sbin/chroot . /sbin/init 3
+
+		if [ $DEBUG ]; then sh; fi
+	#fi                                                                               
+}
+
+#
+# execution begins here
+#
+insmod /lib/aes_generic.ko
+
+if [ -f /lib/aes-i586.ko ]; then
+	insmod /lib/aes-i586.ko
+elif [ -f /lib/aes.ko ]; then
+	insmod /lib/aes.ko
+fi
+
+# for vfat
+#insmod /lib/nls_cp850.ko 2>/dev/null
+
+insmod /lib/loop.ko
+insmod /lib/crc-itu-t.ko
+insmod /lib/firewire-core.ko
+insmod /lib/firewire-ohci.ko
+insmod /lib/firewire-sbp2.ko
+sleep 5
+
+for scsi_cdrom in /dev/sda* /dev/sdb* /dev/sdc* /dev/sdd* \
+	/dev/sr[0-9] /dev/scd[0-99]; do
+	if [ -e "$scsi_cdrom" ]; then
+		CDROM_LIST="$CDROM_LIST $scsi_cdrom"
+	fi
+done
+
+for ide_channel in /proc/ide/ide[0-9]; do
+	if [ ! -d "$ide_channel" ]; then
+		break
+	fi
+
+	for ide_device in hda hdb hdc hdd hde hdf hdg hdh; do
+		device_media_file="$ide_channel/$ide_device/media"
+		echo "Trying device_media_file=$device_media_file..." 2>/dev/null
+
+		if [ -e "$device_media_file" ]; then
+			grep -i "cdrom" $device_media_file > /dev/null 2>&1
+
+			if [ $? -eq 0 ]; then
+				CDROM_LIST="$CDROM_LIST /dev/$ide_device"
+			fi
+		fi
+	done
+done
+
+CDDEV=""
+
+for cdrom_device in $CDROM_LIST; do
+	# first try to mount as hfsplus
+	mount -t hfsplus $cdrom_device $MNT >/dev/null 2>&1
+
+	if [ $? -ne 0 ]; then
+	    mount -t auto $cdrom_device $MNT >/dev/null 2>&1
+	    media_found=$?
+	else
+	    media_found=0
+	fi
+
+	if [ $media_found -eq 0 ]; then
+		echo -n "Media found at $cdrom_device" 2>/dev/null
+
+		[ -e "$MNT/$ID" ]
+		#media_lfs=$?
+		media_lfs=0
+
+		umount $cdrom_device
+
+		if [ $media_lfs -eq 0 ]; then
+			CDDEV="$cdrom_device"
+			ROOTDEV=$CDDEV
+			USRDEV=$CDDEV
+
+			echo 2>/dev/null
+			break;
+		else
+			echo ", not LFS boot CD."
+		fi
+	else
+		echo "No media " 2>/dev/null
+	fi
+done
+
+for ARG in `cat /proc/cmdline`; do
+	case $ARG in
+		# panic switch
+		initshell) DEBUG=1 ;;
+
+		alt)       CRYPT="-e aes"
+			   busybox echo "Setting alternate rootfs"
+			   ;;
+
+		orig)      ROOTFS=$ORIGFS ;;
+
+		vanilla)   ROOTFS=$VANILLAFS ;;
+
+		rootdev=*) ROOTDEV=`echo $ARG| sed 's/^.*=//'` ;;
+
+		usrdev=*)  USRDEV=`echo $ARG| sed 's/^.*=//'` ;;
+
+		usrram)    USRRAM=1 ;;
+
+		nousrram)  USRRAM=0 ;;
+	esac
+done
+
+mount_root
+

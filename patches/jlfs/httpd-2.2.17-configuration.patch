@@ -1,0 +1,43 @@
+--- /lfs/etc/apache/httpd.conf	2011-10-22 14:12:11.000000000 -0700
++++ httpd.conf	2011-10-22 14:00:40.000000000 -0700
+@@ -64,7 +64,7 @@
+ LoadModule authnz_ldap_module lib/apache/mod_authnz_ldap.so
+ LoadModule authz_default_module lib/apache/mod_authz_default.so
+ LoadModule auth_basic_module lib/apache/mod_auth_basic.so
+-LoadModule auth_digest_module lib/apache/mod_auth_digest.so
++#LoadModule auth_digest_module lib/apache/mod_auth_digest.so
+ LoadModule dbd_module lib/apache/mod_dbd.so
+ LoadModule dumpio_module lib/apache/mod_dumpio.so
+ LoadModule reqtimeout_module lib/apache/mod_reqtimeout.so
+@@ -105,6 +105,9 @@
+ LoadModule userdir_module lib/apache/mod_userdir.so
+ LoadModule alias_module lib/apache/mod_alias.so
+ LoadModule rewrite_module lib/apache/mod_rewrite.so
++LoadModule dav_svn_module     lib/apache/mod_dav_svn.so
++LoadModule authz_svn_module   lib/apache/mod_authz_svn.so
++LoadModule php5_module  lib/apache/libphp5.so
+ 
+ <IfModule !mpm_netware_module>
+ <IfModule !mpm_winnt_module>
+@@ -116,8 +119,8 @@
+ # It is usually good practice to create a dedicated user and group for
+ # running httpd, as with most system services.
+ #
+-User daemon
+-Group daemon
++User apache
++Group apache
+ 
+ </IfModule>
+ </IfModule>
+@@ -230,6 +233,10 @@
+     Satisfy All
+ </FilesMatch>
+ 
++<FilesMatch \.php$>
++    SetHandler application/x-httpd-php
++</FilesMatch>
++
+ #
+ # ErrorLog: The location of the error log file.
+ # If you do not specify an ErrorLog directive within a <VirtualHost>

@@ -1,0 +1,204 @@
+### GKrellM user config.  Auto written, do not edit (usually) ###
+### Version 2.3.2 ###
+enable_hostname 1
+hostname_short 0
+enable_sysname 0
+mbmon_port 0
+sticky_state 0
+dock_type 0
+decorated 0
+skip_taskbar 0
+skip_pager 0
+above 0
+below 0
+track_gtk_theme_name 0
+default_track_theme "Default"
+save_position 1
+chart_width 60
+update_HZ 10
+allow_multiple_instances 0
+float_factor 1000
+hostname sysname_mode 1
+clock_cal clock_launch 
+clock_cal clock_tooltip 
+clock_cal cal_launch 
+clock_cal cal_tooltip 
+clock_cal hour_chime_command 
+clock_cal quarter_chime_command 
+clock_cal loop_chime_enable 0
+clock_cal clock_options 0
+clock_cal cal_options 1
+clock_cal cal_format %a <span foreground="$A"><big><big>%e</big></big></span> %b
+clock_cal clock_format %l:%M <span foreground="$A"><small>%S</small></span>
+cpu extra_info cpu 1
+cpu chart_config cpu 40 20 0 0 0 0 : 0 0 0 0 500 : 0 0 0 0 500 : 0 0 0 0 500
+cpu extra_info cpu0 1
+cpu chart_config cpu0 40 20 0 0 0 0 : 0 0 0 0 500 : 0 0 0 0 500 : 0 0 0 0 500
+cpu extra_info cpu1 1
+cpu chart_config cpu1 40 20 0 0 0 0 : 0 0 0 0 500 : 0 0 0 0 500 : 0 0 0 0 500
+cpu enable 1
+cpu smp_mode 0
+cpu omit_nice_mode 0
+cpu config_tracking 0
+cpu sensor_mode 0
+cpu text_format $T
+proc enable 1 1
+proc launch 
+proc tooltip_comment 
+proc sensor_mode 0
+proc text_format \w88\a$p\f procs\n\e$u\f users
+proc chart_config 40 100 0 0 0 0 : 1 0 0 0 500 : 0 0 0 0 500
+disk assign_method 2
+disk device Disk 0 0 0 0 1 0 0
+disk chart_config Disk 40 30000 0 1 0 0 : 0 0 0 0 500 : 0 0 0 0 500
+disk device hda 0 0 1 1 1 -1 0
+disk chart_config hda 40 1000000 0 1 0 0 : 0 0 0 0 500 : 0 0 0 0 500
+disk device sda 0 0 11 1 1 -1 0
+disk chart_config sda 40 10000000 0 1 0 0 : 0 0 0 0 500 : 0 0 0 0 500
+disk device sda1 0 0 11 0 1 1 0
+disk device sda2 0 0 11 0 1 2 0
+disk device sda3 0 0 11 0 1 3 0
+disk device sda4 0 0 11 0 1 4 0
+disk device sda5 0 0 11 0 1 5 0
+disk device sdb 0 0 11 1 1 -1 0
+disk chart_config sdb 40 10 0 1 0 0 : 0 0 0 0 500 : 0 0 0 0 500
+disk device sdb1 0 0 11 0 1 1 0
+disk device sdb2 0 0 11 0 1 2 0
+disk device sdc 0 0 11 1 0 -1 0
+disk chart_config sdc 40 10 0 1 0 0 : 0 0 0 0 500 : 0 0 0 0 500
+disk device sdc1 0 0 11 0 1 1 0
+disk device sdc2 0 0 11 0 1 2 0
+disk device sdd 0 0 11 0 1 -1 0
+disk device sdd1 0 0 11 0 1 1 0
+disk device sdd2 0 0 11 0 1 2 0
+disk text_format $T
+inet text_format all \t$a\f $l\N$A\f $L
+inet update_interval all 1
+net enables ath0 1 1 0
+net chart_config ath0 40 700 0 1 0 0 : 0 0 0 0 500 : 0 0 0 0 500
+net enables eth0 1 1 0
+net chart_config eth0 40 1000 0 1 0 0 : 0 0 0 0 500 : 0 0 0 0 500
+net enables lo 0 1 0
+net enables ppp0 1 1 0
+net chart_config ppp0 40 2000 0 1 0 0 : 0 0 0 0 500 : 0 0 0 0 500
+net enables tunl0 1 1 0
+net chart_config tunl0 40 10000 0 1 0 0 : 0 0 0 0 500 : 0 0 0 0 500
+net enables wifi0 1 1 0
+net enables wlan0 1 1 0
+net chart_config wlan0 40 50000 0 1 0 0 : 0 0 0 0 500 : 0 0 0 0 500
+net enables wmaster0 1 1 0
+net timer_enabled 0
+net timer_seconds 1
+net timer_iface none
+net timer_on 
+net timer_off 
+net text_format $T\b\c\f$L
+net reset_mday 1
+net net_stats_window_height 200
+meminfo mem_meter 1 0 0
+meminfo swap_meter 1 0
+meminfo swap_chart 1 1
+meminfo chart_config 20 20 0 1 0 0 : 0 0 0 0 500 : 0 0 0 0 500
+meminfo mem_launch 
+meminfo mem_tooltip 
+meminfo mem_data_format $t - $f free
+meminfo swap_launch 
+meminfo swap_tooltip 
+meminfo swap_data_format $t - $f free
+meminfo text_format $T
+fs "repo" "/srv" 0 0 0 0 0
+fs mount_command mount /dev/disk/by-label/JAYOS-16 /srv
+fs umount_command umount /srv
+fs "fs" "/fs" 0 0 0 0 0
+fs mount_command mount /dev/disk/by-label/fs /fs
+fs umount_command umount /fs
+fs "lfs" "/lfs" 0 0 0 0 0
+fs mount_command mount -o loop /fs/fs/lfs.fs /lfs
+fs umount_command umount /lfs
+fs "src" "/lfs/build/src" 0 0 0 0 0
+fs mount_command mount -o loop /fs/fs/lfs-src.fs /lfs/build/src
+fs umount_command umount /lfs/build/src
+fs "opt" "/opt" 0 0 0 0 0
+fs mount_command mount -o loop /cd/fs/opt.fs /opt
+fs umount_command umount /opt
+fs "00" "/00" 0 1 1 0 0
+fs mount_command if [ -f /Seven/00V.fs ]; then mkdir -p /00; gmt /00 /Seven/00V.fs; fi
+fs umount_command killall -9 xine vlc gmplayer; mt /00
+fs "1082471" "/1082471" 0 1 1 0 0
+fs mount_command mkdir -p /1082471 && mount /dev/disk/by-label/1082471 /1082471 -t hfsplus
+fs umount_command umount /1082471
+fs "OneTwo" "/OneTwo" 0 1 1 0 0
+fs mount_command mkdir -p /OneTwo && mount /dev/disk/by-label/OneTwo /OneTwo -t hfsplus
+fs umount_command mt /OneTwo
+fs "Six" "/Six" 0 1 1 0 0
+fs mount_command mkdir -p /Six; mount -t auto /dev/disk/by-label/Six /Six
+fs umount_command umount /Six
+fs "Seven" "/Seven" 0 1 1 0 0
+fs mount_command mkdir -p /Seven && mount -o ro /dev/disk/by-label/Seven /Seven -t hfsplus
+fs umount_command mt /Seven
+fs "Eight" "/Eight" 0 1 1 0 0
+fs mount_command mkdir -p /Eight && mount /dev/disk/by-label/Eight /Eight -t hfsplus
+fs umount_command mt /Eight
+fs "NINE" "/NINE" 0 1 1 0 0
+fs mount_command mkdir -p /NINE; mount /dev/disk/by-label/NINE /NINE
+fs umount_command umount /NINE
+fs "Ten" "/Ten" 0 1 1 0 0
+fs mount_command mkdir -p /Ten && mount /dev/disk/by-label/Ten /Ten -t hfsplus
+fs umount_command mt /Ten
+fs "Eleven" "/Eleven" 0 1 1 0 0
+fs mount_command mkdir -p /Eleven && mount /dev/disk/by-label/Eleven /Eleven -t hfsplus
+fs umount_command mt /Eleven
+fs "Earcandy" "/Earcandy" 0 1 1 0 0
+fs mount_command mkdir -p /Earcandy && mount -t hfsplus /dev/disk/by-label/Earcandy /Earcandy
+fs umount_command mt /Earcandy
+fs "Vol1" "/Vol1" 0 1 1 0 0
+fs mount_command mkdir -p /Vol1; mount /dev/disk/by-label/backupVol1 /Vol1
+fs umount_command umount /Vol1
+fs "Vol2" "/Vol2" 0 1 1 0 0
+fs mount_command mkdir -p /Vol2; mount /dev/disk/by-label/backupVol2 /Vol2
+fs umount_command umount /Vol2
+fs "Twelve" "/Twelve" 0 1 1 0 0
+fs mount_command mkdir -p /Twelve; mount -o ro /dev/disk/by-label/Twelve /Twelve
+fs umount_command umount /Twelve
+fs "Mail" "/root/Mail" 0 1 1 0 0
+fs mount_command mkdir -p /root/Mail; gmt /root/Mail /cd/localMail.fs
+fs umount_command mt /root/Mail
+fs "Fourteen" "/Fourteen" 0 1 1 0 0
+fs mount_command mkdir -p /Fourteen; mount -o rw,force /dev/disk/by-label/Fourteen /Fourteen
+fs umount_command umount /Fourteen
+fs "15" "/15" 0 1 1 0 0
+fs mount_command if [ -f /Earcandy/fs/15.fs; then mkdir -p /15; gmt /15 /Earcandy/fs/15.fs; fi
+fs umount_command mt /15
+fs fs_check_timeout 2
+fs nfs_check_timeout 16
+fs auto_eject 0
+fs binary_units 0
+fs data_format $t - $f free
+mail mailbox-local mbox /var/spool/mail/root
+mail mua 
+mail notify 
+mail fetch_command 
+mail remote_check_timeout 5
+mail local_check_timeout 4
+mail fetch_check_is_local 0
+mail msg_count_mode 0
+mail animation_select_mode 3
+mail fetch_check_only_mode 0
+mail reset_remote_mode 0
+mail unseen_is_new 0
+mail enable 0 0 0 0
+mail animation_continuous 0
+mail show_tooltip 0
+mail mh_seq_ignore 0
+battery enable 1
+battery enable_composite 1
+battery estimate_time 0
+battery estimate_time_discharge 1500
+battery estimate_time_charge 3000
+battery estimate_time_charge_model 0
+battery full_cap_fallback 5000
+battery poll_interval 5
+battery alert_units_percent 0
+uptime enable 1
+uptime launch 
+uptime tooltip 

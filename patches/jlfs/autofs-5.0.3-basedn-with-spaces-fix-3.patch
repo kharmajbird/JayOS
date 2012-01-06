@@ -1,0 +1,25 @@
+diff --git a/CHANGELOG b/CHANGELOG
+index 8d09e93..b172579 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -2,6 +2,7 @@
+ -----------------------
+ - correct configure test for ldapr page control functions.
+ - catch "-xfn" map type and issue "no supported" message.
++- correction for handling of LDAP base dns with spaces.
+  
+ 14/01/2008 autofs-5.0.3
+ -----------------------
+diff --git a/lib/master_tok.l b/lib/master_tok.l
+index 2a6fdf9..7f1de90 100644
+--- a/lib/master_tok.l
++++ b/lib/master_tok.l
+@@ -289,7 +289,7 @@ OPTNTOUT	(-n{OPTWS}|-n{OPTWS}={OPTWS}|--negative-timeout{OPTWS}|--negative-timeo
+ 		return EQUAL;
+ 	}
+ 
+-	{DNNAMESTR1}/"," {
++	{DNNAMESTR1}/","{DNATTRSTR}"=" {
+ 		strcpy(master_lval.strtype, master_text);
+ 		return DNNAME;
+ 	}

@@ -1,0 +1,56 @@
+#!/bin/sh
+
+# script to build dynamic portion of Makefile
+#
+# 1) add variable line to file $VERSIONS (defined below) in the format of:
+#    PACKAGE = package 
+#    (where package is the filename minus tar/bz2/gz/tgz extension)
+#
+
+
+LFS=/lfs
+PREFIX="--prefix=/usr"
+ETC="--sysconfdir=/etc"
+VERSIONS="/lfs/build/JayOS/jlfs/Makefile.versions"
+
+for i in $*; do
+    i=`basename $i`
+
+    DIR=`echo $i| sed -e "s/\.tar//;s/\.tgz//;s/\.bz2//;s/\.gz//"`
+    VER=`grep $DIR $VERSIONS| sed -e "s/\(.*\) =.*/\1/"`
+
+    if [ `echo $i| grep gz$` ]; then
+        PRESS="tar.gz" && OPTS=xvf
+    fi
+
+    if [ `echo $i| grep bz2$` ]; then
+        PRESS="tar.bz2" && OPTS=jxvf
+    fi
+
+    if [ "$VER" = "" ]; then
+        echo "No version found in $VERSIONS for $i"
+        echo
+        continue
+    fi
+
+    echo "\$($VER):"
+    echo -e "\tset +h && \\"
+    echo -e "\t\\"
+    echo -e "\ttar $OPTS \$(JLFS-TARBALLS)/\$($VER).$PRESS && \\"
+    echo -e "\tchmod 755 \$($VER) && \\"
+    echo -e "\tchown -R 0:0 \$($VER) && \\"
+    echo -e "\tcd \$($VER) && \\"
+    echo -e "\t\\"
+    echo -e "\t./configure $PREFIX $ETC && \\"
+    echo -e "\tmake && \\"
+    echo -e "\tmake install && \\"
+    echo -e "\t\\"
+    echo -e "\tcd .. && \\"
+    echo -e "\trm -rf \$($VER)/* && \\"
+    echo -e "\tmake P=\$($VER) log-package"
+    echo
+
+    ALL="$ALL \$($VER)"
+done
+
+echo $ALL

@@ -1,0 +1,11 @@
+--- hfsplus-1.0.4/libhfsp/src/unicode.c.orig	2005-02-21 16:19:01.000000000 +0000
++++ hfsplus-1.0.4/libhfsp/src/unicode.c	2005-02-21 16:19:13.000000000 +0000
+@@ -16,7 +16,7 @@
+ #include <stdlib.h>
+ #include <endian.h>
+ #include <byteswap.h>
+-#include <linux/string.h>
++#include <string.h>
+ 
+ #define __USE_GNU
+     /* need wcsrtomb */

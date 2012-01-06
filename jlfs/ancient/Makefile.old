@@ -1,0 +1,6684 @@
+##########################################################################
+#
+# Makefile for Jay's Linux From Scratch
+#
+# make && make gnome && make backup && \
+#         make usr && make vanilla && \
+#         make isox86 && make isox86-short && make isowin
+#         make isoimac && make isoimac-short
+#
+# see ./Build (:r! /usr/src/Build tarball.tar.gz)
+#
+# Note: the iso* targets will overwrite /lib/modules with kernel version
+# $(KERNEL) as defined below. This means that after a build, you should not 
+# run saveroot until after a reboot because the modules stored on the root
+# filesystem are not in sync with the newly compiled kernel.
+#    
+#
+##########################################################################
+#
+# skipped packages:  Xaw3d-1.5 3ddeskfx-0.2.4 bootsplash-3.0.7 
+#
+# broken packages:   pcmcia-cs-3.2.8 (pcmcia not enabled in imac kernel)
+#
+#                    gps-1.1.0 (broken by procps-3.2.5)
+#                    Tue Sep  6 22:16:12 PDT 2005
+#
+##########################################################################
+
+LFS=/lfs
+ROOTSIZE=68
+INITRDSIZE=5
+VERSION=JayOS-20061108
+MNT=/tmp/jl
+LOOP=/dev/loop6
+#
+ADDONS=1
+ADDFS=myaddons.tbz
+ADDFSDIR=/lfs/usr/src
+#ADDFS=addons.tbz
+#ADDFSDIR=/usb
+#
+MODKERNEL=2.6.17.13
+KERNEL=linux-2.6.17.13
+LOOP-VER=loop-AES-v3.1d 
+UNIONFS-VER=unionfs-1.3
+#
+# source location
+BUILD_LFS_SRC=$(LFS)/tools/src
+BUILD_JLFS_SRC=$(LFS)/usr/src
+#
+# directories created during the build process; disposable
+BUILD=$(LFS)/build
+BURN_SRC=$(BUILD)/src
+BURN_LFS_SRC=$(BURN_SRC)/lfs
+BURN_JLFS_SRC=$(BURN_SRC)/jlfs
+LIVECD=$(BUILD)/livecd
+# boot configs and other custom changes
+THING1=$(BUILD_JLFS_SRC)/skel
+THING2=$(BUILD_JLFS_SRC)/skel-qemu
+THING3=$(BUILD_JLFS_SRC)/skel-initrd
+THING4=$(BUILD_JLFS_SRC)/skel-uml
+THING5=$(BUILD_JLFS_SRC)/skel-efi
+#
+# ISO targets
+ISOx86=$(BUILD)/jlfs-x86-src.iso
+ISOx86-SHORT=$(BUILD)/jlfs-x86.iso
+ISOIMAC=$(BUILD)/jlfs-iMac-src.iso
+ISOIMAC-SHORT=$(BUILD)/jlfs-iMac.iso
+WINISO=$(BUILD)/jlfs-x86-win.iso
+#
+# files generated for livecd
+ROOTFS=$(LIVECD)/boot/root
+ROOTFS_UML=$(LIVECD)/fs
+INITRDFS=$(LIVECD)/boot/initrd
+MODFS=$(LIVECD)/fs/modules.fs
+USRFS=$(LIVECD)/fs/usr.fs
+OPTFS=$(BUILD_JLFS_SRC)/opt.fs
+
+##########################################################################
+#
+# No more user-serviceable parts below... at least not much ;)
+#
+##########################################################################
+
+all:
+	chroot $(LFS) /bin/env -i HOME=/root TERM=$(TERM) PS1='\u:\w\$ ' \
+	PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/X11R6/bin \
+	/bin/bash -c \
+	' cd /usr/src && make inside-chroot SHELL=/bin/bash '
+
+inside-chroot:
+	touch /tmp/timestamp
+
+	cd /usr/src && \
+	\
+	make SHELL=/bin/sh Linux-PAM-0.77 hotplug-2004_09_23 gnupg-1.2.3 \
+	tcsh-6.12.00 $(KERNEL) squashfs3.0  $(LOOP-VER) aespipe-v2.2c \
+	$(UNIONFS-VER) libgpg-error-0.7 libgcrypt-1.1.94 hashalot-0.3 popt-1.7 \
+	cryptsetup-0.2  libxml2-2.6.20 libxslt-1.1.7 gmp-4.1.2  \
+	pkgconfig-0.15.0  wget-1.8.2  usbutils-0.11 glib-1.2.10 \
+	libiconv-1.9.1 glib-2.6.4  libIDL-0.8.3  atk-1.9.1 expat-1.95.8 \
+	treecc-0.3.0  pnet-0.6.4  pnetlib-0.6.4 lzo-1.08 curl-7.10.7  \
+	nasm-0.98.38 db-3.3.11  db-4.2.52  cracklib-2.7  libtool-1.5.6  \
+	openldap-2.1.22  libnet-1.1.2.1  libpcap-0.8.3 libnids-1.18  \
+	libpng-1.2.8  libreplay-0.3  libungif-4.1.0b1  libdvdcss-1.2.8 \
+	libdvdread-0.9.4  jpeg-6b tiff-v3.6.0  cpio-2.5  minicom-2.1  \
+	slang-1.4.9  tcl8.4.9  gdbm-1.8.3 Python-2.3.2  newt-0.51.6 \
+	ncftp-3.1.7  unzip-5.50  which-2.14 zip-2.3  svgalib-1.4.3 \
+	netpbm-10.22  net-snmp-5.1.1 mtools-3.9.9 syslinux-2.09  \
+	tcp_wrappers_7.6  tcpdump-3.8.3  iftop-0.16  guile-1.6.4 \
+	penggy-0.2.1 rsync-2.5.6 traceroute-1.4a12 bind-9.3.1 \
+	ddclient-3.6.3  dhcp-3.0pl2  portmap_5beta  fam-2.7.0 ppp-2.4.1 \
+	postfix-2.0.16 hfsutils-3.2.6 \
+	nfs-utils-1.0.6 procmail-3.22 rp-pppoe-3.5 samba-2.2.8a  lcms-1.11 \
+	freetype-2.1.10 fontconfig-2.3.2 Xorg-6.8.2 xterm-213 \
+	Xaw3d-1.5 Xaw95-1.1  fontconfig-2.2.1 \
+	pango-1.8.1 gtk+-1.2.10 gtk+-2.6.7 gdk-pixbuf-0.22.0  tk8.4.9 \
+	ORBit-0.5.17  imlib-1.9.14  libsigc++-1.0.3 gimp-print-4.2.6 \
+	libart_lgpl-2.3.17 XML-Parser-2.34 gimp-2.2.4 freefonts-0.10 \
+	tightvnc-1.2.9 driftnet-0.1.6  links-2.1pre13 dsniff-2.4b2 nmap-3.75  \
+	ethereal-0.10.10 ettercap-NG-0.7.0_rc1 gqview-2.1.2 \
+	gimageview-0.2.25 libmng-1.0.7 cvs-1.11.16 \
+	firefox-1.5.0.6 sylpheed-2.2.7 uudeview-0.5.18 xwc-0.91.5a xv-3.10a \
+	LinNeighborhood-0.6.5 cdparanoia-III-alpha9.8 lame-3.93.1 \
+	gnomemm-1.2.2 gtkmm-1.2.9 cdrdao-1.1.9  dvdrtools-0.1.6-i386-cvs \
+	dvd+rw-tools-5.21.4.10.8 cdrtools-2.01 cdp-0.33-13 \
+	id3lib-3.8.3 faad2-20040923 a52dec-0.7.4 xvidcore-1.1.0-beta2 \
+	alsa-lib-1.0.11 alsa-plugins-1.0.11 alsa-utils-1.0.11 alsa-tools-1.0.11 \
+	xine-lib-1.1.2 xine-ui-0.99.4 ntp-4.2.2p3 eject-2.1.5 partimage-0.6.4 \
+	zisofs-tools-1.0.4 xdaliclock-2.20 lsof_4.71 glsof-0.9.15 \
+	parted-1.6.14 bootsplash-3.0.7  fvwm95-2.0.43f \
+	sox-12.18.2 fribidi-0.10.4 libglade-2.5.1 libuser-0.51.7 usermode-1.67 \
+	wvstreams-3.75.0 wvdial-1.54.0 strace-4.4.98  libusb-0.1.8 \
+	sane-backends-1.0.14 sane-frontends-1.0.12  xsane-0.93 \
+	cups-1.1.20 ghostscript-8.51 gsview-4.7 pnm2ppa-1.12 foomatic-filters-3.0.2 \
+	sleuthkit-2.06 autopsy-2.08 dosfstools-2.10 hpoj-0.91  \
+	shared-mime-info-0.14  netcat-0.7.1  \
+	iproute2-2.6.16 cabextract-1.0 gps-1.1.0 openswan-2.1.5rc1 \
+	ipsec-tools-0.4b1 grub-0.93 gkrellm-2.2.2 screen-4.0.2 \
+	wine-0.9.21 winetools-2.1.0 foremost-0.69 gaim-1.1.2 \
+	sgml-common-0.6.3 docbook-dsssl-1.78 rhpl-0.145 pyparted-1.6.8 \
+	pyxf86config-0.3.19 OpenSP-1.5.1 openjade-1.3.2 chkconfig-1.2.24h \
+	imlib2-1.2.0.007 3ddesktop-0.2.8 3ddeskfx-0.2.4 xcdroast-0.98alpha15 \
+	afio-2.4.7 buffer-1.19 libssh-0.1 hydra-4.3 nessus-libraries-2.1.3 \
+	libnasl-2.1.3 nessus-core-2.1.3 nessus-plugins-2.1.3 autofs-4.1.3 \
+	qt-x11-free-3.3.2 \
+	ntfsprogs-200408261452 qtparted-0.4.4 libfwbuilder-2.0.6 \
+	fwbuilder-2.0.6 bridge-utils-1.0.4 Twisted-1.3.0 \
+	expect-5.42 pcmcia-cs-3.2.8 \
+	libid3tag-0.15.1b libgpod-0.4.0 gtkpod-0.99.8 xmms-1.2.10 gpart-0.1h \
+	busybox-1.00 lshw-B.02.04 nALFS-1.2.4 mingetty-1.06 \
+	Unicode-String-2.07 MP3-Info-1.11 tcc-0.9.20 \
+	ming-0.2a vnc2swf-0.4.2 swftools-0.6.3 SDL-1.2.8 \
+	qemu-0.8.2 gdb-6.3 lesstif-0.94.2 ddd-3.3.11 ms-sys-2.0.0 \
+	libmad-0.15.1b madplay-0.15.2b ctags-5.5 \
+	ImageMagick-6.2.2 libintl-perl-1.16 udftools-1.0.0b3 ddrescue-1.0-pre1 \
+	tmake-1.13 xxdiff-3.2 HTML-Parser-3.55 MIME-tools-5.420 \
+	Net_SSLeay.pm-1.30 libwww-perl-5.805 IO-stringy-2.110 \
+	MIME-Base64-3.07 MailTools-1.74 URI-1.35 fetchyahoo-2.10.3 \
+	mpg123-0.60 slik-0.92.0 gqmpeg-0.90.0 whois-4.7.5 goom-2k4-0 \
+	libcdio-0.72 libdvbpsi4-0.1.5 mpeg2dec-0.4.1 vcdimager-0.7.21 \
+	faac-1.24 x264-20051126 ffmpeg-20051126 libdvdnav-20050211 \
+	wxWidgets-2.6.2 vlc-0.8.6 vlc-0.9.0 divx4linux-20020418 MPlayer-1.0pre7try2 \
+	tct-1.16 tctutils-1.01 \
+	httpd-2.2.3 subversion-1.1.4 esvn-0.6.11-1 mp3gain-1.4.6 \
+	XML-Writer-0.520 xvid4conf-1.12 \
+	Event-1.06 lsdvd-0.16 mjpegtools-1.6.2 libao-0.8.6 libogg-1.1.2 \
+	libvorbis-1.1.1 vorbis-tools-1.1.1 ogmtools-1.5 dvdrip-0.98.1 \
+	libdv-1.0.0 libmpeg3-1.7 transcode-1.0.2 wireless-tools.28 \
+	wifi-radar-1.9.7 simplecdrx-1.3.3 convertfs-1.3
+
+gnome:
+	chroot $(LFS) /bin/env -i HOME=/root TERM=$(TERM) PS1='\u:\w\$ ' \
+	PATH=/opt/gnome/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/X11R6/bin \
+	PKG_CONFIG_PATH=/usr/X11R6/lib/pkgconfig:/usr/lib/pkgconfig \
+	GNOME_LIBCONFIG_PATH=/usr/lib GNOME_PREFIX=/usr \
+	/bin/bash -c \
+	' cd /usr/src && make gnome-chroot SHELL=/bin/bash '
+
+
+gnome-chroot:
+	touch /tmp/timestamp
+
+	cd /usr/src && \
+	\
+	make SHELL=/bin/sh blfs-bootscripts-5.1 ORBit2-2.10.1 \
+	pyorbit-2.0.0 pygtk-2.3.96 \
+	intltool-0.30 libbonobo-2.6.0 GConf-2.6.3 gnome-mime-data-2.4.1 \
+	gnome-vfs-2.6.1.1 audiofile-0.2.6 esound-0.2.34 libgnome-2.6.1.1 \
+	libgnomecanvas-2.10.2 libbonoboui-2.6.0 gnome-keyring-0.2.1 \
+	libgnomeui-2.6.1.1 libgtop-2.10.1 gnome-libs-1.4.1.4  gtklp-0.9s \
+	gtktalog-1.0rc3 gnozip-0.1.3 firestarter-1.0.3 etherape-0.9.0 dia-0.94  \
+	libgnomeprint-2.6.1 hicolor-icon-theme-0.5 gnome-icon-theme-1.2.1 \
+	libgnomeprintui-2.6.1 docbook-xml-4.3 scrollkeeper-0.3.14 \
+	grubconf-0.5.1 lavaps-2.6 glabels-1.93.3 gail-1.6.3 eel-2.6.1 \
+	librsvg-2.6.5 gnome-desktop-2.6.1 nautilus-2.6.1 \
+	nautilus-cd-burner-2.6.1 libxklavier-1.02 metacity-2.8.0 \
+	control-center-2.6.1 gconf-editor-2.6.1 libgnomecups-0.1.11 \
+	gnome-cups-manager-0.24 file-roller-2.6.1 gstreamer-0.8.5 \
+	gst-plugins-0.8.3 gnome-media-2.6.1 nautilus-media-0.8.0 \
+	gtksourceview-1.0.1 gedit-2.6.1 zenity-2.6.2 gnome-python-2.0.2 \
+	hwdata-0.118 dietlibc-0.27 kudzu-1.1.79 libgtkhtml-2.6.1 yelp-2.6.1 \
+	hwbrowser-0.15 glade-2.6.0 system-config-display-1.0.18 \
+	system-config-network-1.3.20 system-config-nfs-1.2.3 \
+	system-config-samba-1.2.14 system-config-services-0.8.8 \
+	system-config-soundcard-1.2.8 system-logviewer-0.9.7 \
+	libgphoto2-2.1.4 gphoto2-2.1.4 gtkam-0.1.12 vte-0.11.21 \
+	grip-3.2.0 ExtUtils-Depends-0.205 ExtUtils-PkgConfig-1.07 Glib-1.140 \
+	cairo-1.2.4 Cairo-1.01 \
+	Gtk2-1.140 Gtk2-GladeXML-1.004 Gnome2-Canvas-1.002 Gnome2-VFS-1.020 \
+	Gnome2-1.021 Gettext-0.01 gettext-1.04 MIME-Base64-3.05 \
+	Compress-Zlib-1.34 qemu-launcher-1.3 libpixman-0.1.4 \
+	poppler-0.2.0 evince-0.2.0 baobab-2.4.2 \
+	\
+	strip clean-var 
+
+usr:
+	mkdir -p $(LIVECD)/fs $(LFS)/usr/local/home && \
+	rm -f $(USRFS) && \
+	cp -a $(THING1)/usr/share/cups/model/* $(LFS)/usr/share/cups/model && \
+	mksquashfs $(LFS)/usr $(USRFS) -e src && \
+	rm -rf $(MNT) && mkdir -p $(MNT)/firefox && \
+	ln -sfn /lfs/usr/src $(MNT)/src && \
+	ln -sfn /tmp/.mozilla/extensions $(MNT)/firefox/extensions && \
+	ln -sfn /opt/java $(MNT)/java && \
+	mksquashfs $(MNT) $(USRFS) && \
+	chmod 644 $(USRFS)
+	-cp -av $(OPTFS) $(LIVECD)/fs
+
+boot:
+	touch $(LIVECD)/JayOS && \
+	rm -rf $(MNT) $(INITRDFS).gz && mkdir -p $(MNT) && \
+	dd if=/dev/zero bs=1024k count=$(INITRDSIZE) of=$(INITRDFS) && \
+	losetup $(LOOP) $(INITRDFS) && \
+	mke2fs -m0 $(LOOP)
+
+	#-if [ "$(ADDONS)" = "1" ]; then mkrune $(LOOP); aespipe -T -e aes128 < small.fs.gz| runewr $(INITRDFS); rm -f small.fs.gz; fi
+
+	mount $(LOOP) $(MNT) && \
+	\
+	mkdir -p $(MNT)/{cd,dev,lib,proc} && \
+	mknod $(MNT)/dev/console c 5 1 && mknod $(MNT)/dev/fd0 b 2 0 && \
+	mknod $(MNT)/dev/fd0u1440 b 2 28 && \
+	mknod $(MNT)/dev/fd0u1722 b 2 60 && \
+	mknod $(MNT)/dev/hda1 b 3 1 && mknod $(MNT)/dev/hda2 b 3 2 && \
+	mknod $(MNT)/dev/hda3 b 3 3 && mknod $(MNT)/dev/hda4 b 3 4 && \
+	mknod $(MNT)/dev/hda5 b 3 5 && mknod $(MNT)/dev/hda6 b 3 6 && \
+	mknod $(MNT)/dev/hda7 b 3 7 && mknod $(MNT)/dev/hdc b 22 0 && \
+	mknod $(MNT)/dev/hdd b 22 64 && mknod $(MNT)/dev/hde1 b 33 1 && \
+	mknod $(MNT)/dev/loop7 b 7 7 && mknod $(MNT)/dev/null c 1 3 && \
+	mknod $(MNT)/dev/ram0 b 1 0 && mknod $(MNT)/dev/ram1 b 1 1 && \
+	mknod $(MNT)/dev/sda1 b 8 1 && mknod $(MNT)/dev/sda2 b 8 2 && \
+	mknod $(MNT)/dev/sda3 b 8 3 && mknod $(MNT)/dev/sda4 b 8 4 && \
+	mknod $(MNT)/dev/sda5 b 8 5 && mknod $(MNT)/dev/sda6 b 8 6 && \
+	mknod $(MNT)/dev/sda7 b 8 7 && mknod $(MNT)/dev/tty0 c 4 0
+	-cp -a $(LFS)/lib/modules/$(MODKERNEL)/kernel/crypto/aes.ko $(MNT)/lib
+	-cp -a $(LFS)/lib/modules/$(MODKERNEL)/kernel/crypto/aes-i586.ko $(MNT)/lib
+	-cp -a $(LFS)/lib/modules/$(MODKERNEL)/kernel/fs/nls/nls_cp850.ko $(MNT)/lib
+	-cp -a $(LFS)/lib/modules/$(MODKERNEL)/kernel/drivers/ieee1394/ieee1394.ko $(MNT)/lib
+	-cp -a $(LFS)/lib/modules/$(MODKERNEL)/kernel/drivers/ieee1394/ohci1394.ko $(MNT)/lib
+	-cp -a $(LFS)/lib/modules/$(MODKERNEL)/kernel/drivers/ieee1394/sbp2.ko $(MNT)/lib
+	cp -a $(LFS)/lib/modules/$(MODKERNEL)/extra/loop.ko $(MNT)/lib && \
+	\
+	if [ ! -d $(THING1) ]; then mkdir $(THING1); fi && \
+	if [ ! -d $(THING2) ]; then mkdir $(THING2); fi && \
+	if [ ! -d $(THING3) ]; then mkdir $(THING3); fi && \
+	if [ ! -d $(THING4) ]; then mkdir $(THING4); fi && \
+	\
+	tar jxf $(THING3).tar.bz2 -C $(MNT) && \
+	cp -a $(MNT)/bin/busybox /bin && \
+	cd $(THING3)/sbin && \
+	ln -f ../bin/busybox chroot && \
+	ln -f ../bin/busybox insmod && \
+	ln -f ../bin/busybox pivot_root && \
+	cd $(THING3)/bin && \
+	ln -f busybox cat && \
+	ln -f busybox cp && \
+	ln -f busybox dd && \
+	ln -f busybox df && \
+	ln -f busybox dmesg && \
+	ln -f busybox echo && \
+	ln -f busybox egrep && \
+	ln -f busybox grep && \
+	ln -f busybox gunzip && \
+	ln -f busybox gzip && \
+	ln -f busybox ls && \
+	ln -f busybox ln && \
+	ln -f busybox more && \
+	ln -f busybox mount && \
+	ln -f busybox mknod && \
+	ln -f busybox mv && \
+	ln -f busybox ps && \
+	ln -f busybox rm && \
+	ln -f busybox sed && \
+	ln -f busybox sh && \
+	ln -f busybox sleep && \
+	ln -f busybox tar && \
+	ln -f busybox test && \
+	ln -f busybox umount && \
+	ln -f busybox zcat && \
+	cd $(THING3)/usr/bin && \
+	ln -f ../../bin/busybox basename && \
+	ln -f ../../bin/busybox bunzip2 && \
+	ln -f ../../bin/busybox bzcat && \
+	ln -f ../../bin/busybox cut && \
+	ln -f ../../bin/busybox test && \
+	ln -f ../../bin/busybox unzip && \
+	\
+	umount $(LOOP) && losetup -d $(LOOP) && \
+	gzip -9 $(INITRDFS) && \
+	\
+	cp -a $(THING1)/boot/isolinux.dp? $(LIVECD)/boot && \
+        cp -a $(THING1)/boot/isolinux.cfg $(LIVECD) && \
+        cp -a $(THING1)/boot/isolinux.bin $(LIVECD)/boot && \
+	cp -a $(THING5)/efi $(LIVECD) && \
+	cp -a $(THING5)/boot/* $(LIVECD)/boot
+	-cp -a /usr/src/$(KERNEL)/arch/i386/boot/bzImage $(LIVECD)/boot/vmlinuz
+	-cp -a /usr/src/$(KERNEL)-x86/arch/i386/boot/bzImage $(LIVECD)/boot/vmlinuz.x86
+	-cp -a /usr/src/linux-2.6.9/arch/i386/boot/bzImage $(LIVECD)/boot/vmlinuz.v
+
+#
+# Target to take a tarball and create a patch suitable for target
+# root-generic to use as input to patching the root filesystem.
+#
+# During runtime, if a file named /addonsrc is found in the tarball $(ADDFS), 
+# it will be executed immediately after the tarball is extracted.
+# See /root/.bash_profile
+#
+addons:
+	cd $(LFS)/usr/src && \
+	rm -rf addons.orig addons && mkdir -p addons.orig addons && \
+	cp -av $(ADDFSDIR)/$(ADDFS) addons
+	-diff -Naur addons.orig addons > $(ADDFSDIR)/addons.patch
+	
+	rm -rf $(LFS)/usr/src/{addons.orig,addons}
+
+
+root: root-generic root-uml
+
+root-generic:
+	mkdir -p $(LIVECD)/boot && \
+	dd if=/dev/zero of=$(ROOTFS) bs=1024k count=$(ROOTSIZE) && \
+	losetup $(LOOP) $(ROOTFS) && \
+	mke2fs -m0 $(LOOP)
+	-if [ "$(ADDONS)" = "1" ]; then mkrune $(LOOP); make addons; patch -Np1 -i $(ADDFSDIR)/addons.patch; aespipe -T -e aes128 < $(LFS)/usr/src/$(ADDFS)| runewr $(ROOTFS); fi
+	-rm -f $(LFS)/usr/src/$(ADDFS).rej
+	rm -rf $(MNT) $(ROOTFS).gz && mkdir $(MNT) && \
+	mount $(LOOP) $(MNT) && \
+	cd $(LFS) && \
+	cp -a bin boot dev etc lib root sbin srv var opt $(MNT) && \
+	mkdir -p $(MNT)/{mnt,initrd,usr/lib,usr/share,proc,sys,tmp} && \
+	\
+	cp -a $(LFS)/usr/bin/{awk,gawk,wc,find,vi,vim,id,tty} $(MNT)/bin && \
+	cp -a $(LFS)/usr/bin/{mcookie,expr,setterm,setsid} $(MNT)/bin && \
+	cp -a $(LFS)/usr/bin/{logger,env,cut} $(MNT)/bin && \
+	cp -a $(LFS)/usr/sbin/{syslogd,klogd,chroot,pcimodules} $(MNT)/sbin && \
+	cp -a $(LFS)/usr/lib/libcrypto.so* $(MNT)/lib && \
+	cp -a $(LFS)/usr/share/pci.ids $(MNT)/usr/share && \
+	\
+	rm -f $(MNT)/etc/rc.d/rcsysinit.d/S20swap && \
+	rm -f $(MNT)/etc/rc.d/rc3.d/* && \
+	rm -f $(MNT)/etc/mtab && \
+	if [ -f $(MNT)/bin/mt ]; then mv $(MNT)/bin/mt $(MNT)/bin/mt.orig; fi && \
+	\
+	tar jxf $(THING1).tar.bz2 -C $(MNT) && \
+	\
+	echo $(VERSION) > $(MNT)/etc/lfs-release && \
+	echo "LFS-5.0" >> $(MNT)/etc/lfs-release && \
+	cp -av $(LFS)/build.sh $(MNT)/root && \
+	\
+	cd $(LFS) && \
+	ln -sfn /proc/mounts $(MNT)/etc/mtab && \
+	ln -sfn /usr/sbin/chkconfig $(MNT)/sbin/chkconfig && \
+	ln -sfn /etc/modules.conf $(MNT)/etc/modprobe.conf && \
+	\
+	mkdir -p $(LIVECD)/boot $(ROOTFS_UML) && \
+	ln -sfn /tmp/uml/uml.fs.cow $(LIVECD)/fs/uml.fs.cow && \
+	ln -sfn /tmp/uml/usr.fs.cow $(LIVECD)/fs/usr.fs.cow && \
+	ln -sfn /tmp/uml/opt.fs.cow $(LIVECD)/fs/opt.fs.cow && \
+	ln -sfn /tmp/uml/uml-nest1.fs.cow $(LIVECD)/fs/uml-nest1.fs.cow && \
+	\
+	chroot $(LFS) /sbin/ldconfig && \
+	umount $(LOOP) && losetup -d $(LOOP) && \
+	cp -a $(ROOTFS) $(ROOTFS_UML)/uml.fs && \
+	gzip -9 $(ROOTFS)
+
+	#perl -p -i -e 's/^RAM_SIZE=.*$/RAM_SIZE=$(ROOTSIZE)/' \
+	#	$(MNT)/root/bin/saveroot $(MNT)/root/bin/saveroote && \
+
+root-uml:
+	rm -rf $(MNT) && mkdir -p $(MNT) && \
+	\
+	losetup $(LOOP) $(ROOTFS_UML)/uml.fs && \
+	mount $(LOOP) $(MNT) && \
+	tar jvxf $(THING4).tar.bz2 -C $(MNT) && \
+	\
+	umount $(LOOP) && losetup -d $(LOOP)
+
+
+rootalt: root-generic
+	gzip -dc $(ROOTFS).gz| aespipe -T -e aes128 > $(ROOTFS).alt
+
+##########################################################################
+#
+# ISO creation targets
+#
+##########################################################################
+
+isoimac: isoimac-pre isoimac-final
+
+isoimac-short: isoimac-pre isoimac-final-short
+
+isoimac-pre: $(KERNEL)
+	touch $(LFS)/tmp/timestamp && \
+	rm -rf $(LFS)/usr/src/$(LOOP-VER) /usr/src/$(UNIONFS-VER) && \
+	cd $(LFS)/usr/src && ln -sfn $(KERNEL) linux && \
+	\
+	chroot $(LFS) /bin/bash -c "cd /usr/src/linux && make modules_install" && \
+	chroot $(LFS) /bin/bash -c "cd /usr/src && touch /tmp/timestamp && make $(LOOP-VER)" && \
+	chroot $(LFS) /bin/bash -c "cd /usr/src && touch /tmp/timestamp && make $(UNIONFS-VER)" && \
+	\
+	make VERSION=$(VERSION)-iMac root && \
+	make boot && \
+	\
+	rm -f $(LIVECD)/fs/uml.fs.cow \
+		$(LIVECD)/fs/uml-nest1.fs.cow \
+		$(LIVECD)/fs/uml.fs \
+		$(LIVECD)/boot/vmlinuz.x86 \
+		$(LIVECD)/boot/vmlinuz.v \
+		$(ROOTFS)v.gz \
+		$(INITRDFS)v.gz && \
+	\
+	touch $(LIVECD)/JayOS
+
+
+isoimac-final4:
+	mkisofs -v -R -J -pad -V $(VERSION)-iMac \
+		-o $(ISOIMAC) \
+		-boot-load-size 4 -boot-info-table \
+		-hard-disk-boot \
+		-no-desktop \
+		-hfs-volid $(VERSION)-iMac \
+		-hfs -part \
+		-boot-hfs-file efi/refit/refit.efi \
+		-hfs-bless efi/refit \
+		\
+		/lfs/build/hfs.iso
+
+		#-map boot/map.hfs \
+isoimac-final:
+	mkisofs -v -R -J -pad -V $(VERSION)-iMac \
+		-o $(ISOIMAC) \
+		-graft-points /boot=$(LIVECD)/boot \
+			/fs=$(LIVECD)/fs /src=$(BURN_SRC) \
+			/efi=$(LIVECD)/efi \
+			/JayOS=$(LIVECD)/JayOS
+
+isoimac-final-short:
+	mkisofs -v -R -J -pad -V $(VERSION)-iMac \
+		-o $(ISOIMAC-SHORT) \
+		-graft-points /boot=$(LIVECD)/boot \
+			/fs=$(LIVECD)/fs \
+			/efi=$(LIVECD)/efi \
+			/JayOS=$(LIVECD)/JayOS && \
+	\
+	md5sum $(ISOIMAC-SHORT) > $(ISOIMAC-SHORT).md5
+
+isox86: isox86-pre isox86-final
+
+isox86-short: isox86-pre isox86-final-short
+
+isox86-pre: $(KERNEL)-x86 
+	touch $(LFS)/tmp/timestamp && \
+	rm -rf $(LFS)/usr/src/$(LOOP-VER) /usr/src/$(UNIONFS-VER) && \
+	cd $(LFS)/usr/src && ln -sfn $(KERNEL)-x86 linux && \
+	\
+	chroot $(LFS) /bin/bash -c "cd /usr/src/linux && make modules_install" && \
+	chroot $(LFS) /bin/bash -c "cd /usr/src && touch /tmp/timestamp && make $(LOOP-VER)" && \
+	chroot $(LFS) /bin/bash -c "cd /usr/src && touch /tmp/timestamp && make $(UNIONFS-VER)" && \
+	\
+	make VERSION=$(VERSION)-x86 root && \
+	make boot && \
+	\
+	touch $(LIVECD)/JayOS
+
+	#make VERSION=$(VERSION)-x86 rootalt && \
+
+isox86-final:
+	mkisofs -v -R -J -pad -V $(VERSION)-x86 \
+		-b boot/isolinux.bin -c boot/boot.cat \
+		-no-emul-boot -boot-load-size 4 -boot-info-table \
+		-o $(ISOx86) \
+		-graft-points /boot=$(LIVECD)/boot \
+			/isolinux.cfg=$(LIVECD)/isolinux.cfg \
+			/isolinux.bin=$(LIVECD)/boot/isolinux.bin \
+			/fs=$(LIVECD)/fs /src=$(BURN_SRC) \
+			/JayOS=$(LIVECD)/JayOS && \
+	\
+	md5sum $(ISOx86) > $(ISOx86).md5
+
+isox86-final-short:
+	rm -f $(LIVECD)/fs/uml.fs $(LIVECD)/fs/uml.fs.cow && \
+	mkisofs -v -R -J -pad -V $(VERSION)-x86 \
+		-b boot/isolinux.bin -c boot/boot.cat \
+		-no-emul-boot -boot-load-size 4 -boot-info-table \
+		-o $(ISOx86-SHORT) \
+		-graft-points /boot=$(LIVECD)/boot \
+			/isolinux.cfg=$(LIVECD)/isolinux.cfg \
+			/isolinux.bin=$(LIVECD)/boot/isolinux.bin \
+			/fs=$(LIVECD)/fs /JayOS=$(LIVECD)/JayOS && \
+	\
+	md5sum $(ISOx86-SHORT) > $(ISOx86-SHORT).md5
+
+isowin:
+	touch $(LIVECD)/JayOS && \
+	mkisofs -v -R -J -pad -V JayOS-x86-win \
+		-o $(WINISO) \
+		-graft-points /=$(THING2) \
+			/doc=$(THING1)/root/doc \
+			/jlfs-x86.iso=$(ISOx86-SHORT) && \
+	\
+	md5sum $(WINISO) > $(WINISO).md5
+
+
+## Depreciated targets (keep for reference)
+dvd:
+	growisofs -v -use-the-force-luke=dao -dvd-compat -speed=2 \
+		-b boot/isolinux.bin -c boot/boot.cat \
+		-no-emul-boot -boot-load-size 4 -boot-info-table \
+		-Z $(DEV) -R -J -pad \
+		-graft-points /=$(LIVECD) /src=$(BURN_SRC)
+
+## end depreciated targets
+
+backup: prep backup-things
+	rm -rf $(BURN_LFS_SRC)/* $(BURN_JLFS_SRC)/*
+	-mkdir -p $(BURN_LFS_SRC) $(BURN_JLFS_SRC)
+
+	chown 0:0 `find $(BUILD_LFS_SRC) -type f -maxdepth 1` && \
+	chmod a+r `find $(BUILD_LFS_SRC) -type f -maxdepth 1` && \
+	cp -a `find $(BUILD_LFS_SRC) -type f -maxdepth 1` $(BURN_LFS_SRC) && \
+	chown 0:0 `find $(BUILD_JLFS_SRC) -type f -maxdepth 1` && \
+	chmod a+r `find $(BUILD_JLFS_SRC) -type f -maxdepth 1`
+
+	-cp -a `find $(BUILD_JLFS_SRC) -type f -maxdepth 1` $(BURN_JLFS_SRC)
+	-cp -a $(LFS)/build.sh $(LFS)/usr/src/Makefile $(BURN_SRC)
+
+#
+# update config directories if private source available
+#
+prep:
+	-cp -av $(LFS)/usr/bin/{make,od,free} $(LFS)/bin
+	-cp -av /bin/env $(LFS)/bin
+	-cp -av /dev/null $(LFS)/dev
+
+#
+# create tarballs of skin modifications
+#
+backup-things:
+	(cd $(THING1) && tar jcf $(THING1).tar.bz2 *) && \
+	(cd $(THING2) && tar jcf $(THING2).tar.bz2 *) && \
+	(cd $(THING3) && tar jcf $(THING3).tar.bz2 *) && \
+	(cd $(THING4) && tar jcf $(THING4).tar.bz2 *) && \
+	(cd $(THING5) && tar jcf $(THING5).tar.bz2 *)
+
+#
+# only cleans /lfs/tools, not /usr/src
+#
+clean:
+	cd $(LFS)/tools && \
+	mv src .. && \
+	rm -rf * && \
+	mv ../src . && \
+	rm -rf $(LFS)/build/*
+
+clean-var:
+	cd /var/lib/packages && \
+	tar cjf /tmp/tarball.tbz * && \
+	rm -f * && \
+	mv /tmp/tarball.tbz .
+
+
+strip:
+	/usr/bin/find /{,usr/}lib -type f \
+   		-exec /usr/bin/strip --strip-debug '{}' ';'
+
+	/usr/bin/find /usr/X11R6/lib -type f \
+   		-exec /usr/bin/strip --strip-debug '{}' ';'
+
+	/usr/bin/find /{,usr/}{bin,sbin} -type f \
+   		-exec /usr/bin/strip '{}' ';'
+
+	/usr/bin/find /usr/X11R6/bin -type f \
+   		-exec /usr/bin/strip '{}' ';'
+
+strip-man:
+	cd $(LFS) && \
+	touch usr/src/manpages.tar.bz2 && \
+	mv usr/src/manpages.tar.bz2 usr/src/manpages-orig.tar.bz2 && \
+	tar jcf usr/src/manpages.tar.bz2 \
+		usr/share/{info,*doc,man,locale} usr/docs && \
+	rm -rf usr/share/info/* usr/share/*doc/* \
+		usr/share/man/* usr/share/locale/* usr/docs/*
+
+restore-man:
+	cd $(LFS) && \
+	tar jxf usr/src/manpages.tar.bz2 -C . && \
+	tar jxf usr/src/manpages-orig.tar.bz2 -C .
+
+
+vanilla: linux-2.6.9
+	rm -rf $(LFS)/usr/src/$(LOOP-VER) /usr/src/$(UNIONFS-VER) && \
+	cd $(LFS)/usr/src && ln -sfn linux-2.6.9 linux && \
+	\
+	chroot $(LFS) /bin/env -i \
+		PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/X11R6/bin \
+		KERNEL=linux-2.6.9 MODKERNEL=2.6.9 \
+		/bin/bash -c "cd /usr/src/linux && touch /tmp/timestamp && \
+		rm -rf $(LFS)/lib/modules/* && \
+		make INSTALL_MOD_PATH=/tmp modules_install" && \
+	\
+	mkdir -p $(LFS)/lib/modules/2.6.9/kernel && \
+	\
+	chroot $(LFS) /bin/env -i \
+		PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/X11R6/bin \
+		KERNEL=linux-2.6.9 MODKERNEL=2.6.9 \
+		/bin/bash -c "cd /usr/src && touch /tmp/timestamp && \
+		make $(LOOP-VER)" && \
+	\
+	make VERSION=$(VERSION)-x86 ROOTFS=$(ROOTFS)v root-generic && \
+	make ROOTFS=$(ROOTFS)v INITRDFS=$(INITRDFS)v MODKERNEL=2.6.9 boot && \
+	\
+	rm -f $(MODFS) && \
+	mksquashfs $(LFS)/tmp/lib/modules $(MODFS) && \
+	chmod 644 $(MODFS) && \
+	rm -rf $(LFS)/tmp/lib $(LFS)/lib/modules/2.6.9 && \
+	\
+	touch $(LIVECD)/JayOS
+
+
+log-package:
+	rm -f /var/lib/packages/$(P)
+	
+	find /{bin,lib,sbin,usr} \
+		-cnewer /tmp/timestamp -type f -print -exec sh -c \
+		" /tools/bin/strip -g {} 2>/dev/null; md5sum {} | \
+			grep -v usr\/src >>/var/lib/packages/$(P) " \;
+
+		#" /tools/bin/strip -g {} 2>/dev/null; md5sum {} >>/var/lib/packages/$(P) " \;
+		#-path 'usr/src' -prune 	
+	touch /tmp/timestamp
+
+##########################################################################
+#
+# GNOME libraries and programs
+#
+##########################################################################
+
+
+blfs-bootscripts-5.1:
+	set +h && \
+	tar -xvjf blfs-bootscripts-5.1.tar.bz2 && \
+	mv blfs-bootscripts-2004-05-22 blfs-bootscripts-5.1 && \
+	\
+	cd blfs-bootscripts-5.1 && \
+	make install-dhcp && \
+	make install-fam && \
+	make install-ntp
+
+
+ORBit2-2.10.1:
+	set +h && \
+	tar -xvjf ORBit2-2.10.1.tar.bz2 && \
+	cd ORBit2-2.10.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf ORBit2-2.10.1/*
+	make P=ORBit2-2.10.1 log-package
+
+pyorbit-2.0.0:
+	set +h && \
+	tar -xvjf pyorbit-2.0.0.tar.bz2 && \
+	cd pyorbit-2.0.0 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf pyorbit-2.0.0/*
+	make P=pyorbit-2.0.0 log-package
+
+pygtk-2.3.96:
+	set +h && \
+	tar -xvjf pygtk-2.3.96.tar.bz2 && \
+	cd pygtk-2.3.96 && \
+	patch -Np1 -i ../pygtk-2.3.96-lib64.patch && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf pygtk-2.3.96/*
+	make P=pygtk-2.3.96 log-package
+
+intltool-0.30:
+	set +h && \
+	tar -xvjf intltool-0.30.tar.bz2 && \
+	cd intltool-0.30 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf intltool-0.30/*
+	make P=intltool-0.30 log-package
+
+
+libbonobo-2.6.0:
+	set +h && \
+	tar -xvjf libbonobo-2.6.0.tar.bz2 && \
+	cd libbonobo-2.6.0 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--libexecdir=/usr/sbin && \
+	make && \
+	make install
+
+	rm -rf libbonobo-2.6.0/*
+	make P=libbonobo-2.6.0 log-package
+
+
+GConf-2.6.3:
+	set +h && \
+	tar -xvjf GConf-2.6.3.tar.bz2 && \
+	cd GConf-2.6.3 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc  \
+		--libdir=/usr/lib  --disable-gtk-doc \
+		--libexecdir=/usr/sbin && \
+	make && \
+	make install && \
+	ldconfig
+
+	rm -rf GConf-2.6.3/*
+	make P=GConf-2.6.3 log-package
+
+
+gnome-mime-data-2.4.1:
+	set +h && \
+	tar -xvjf gnome-mime-data-2.4.1.tar.bz2 && \
+	cd gnome-mime-data-2.4.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gnome-mime-data-2.4.1/*
+	make P=gnome-mime-data-2.4.1 log-package
+
+
+gnome-vfs-2.6.1.1:
+	set +h && \
+	tar -xvjf gnome-vfs-2.6.1.1.tar.bz2 && \
+	cd gnome-vfs-2.6.1.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--libexecdir=/usr/sbin && \
+	make && \
+	make install
+
+	rm -rf gnome-vfs-2.6.1.1/*
+	make P=gnome-vfs-2.6.1.1 log-package
+
+
+audiofile-0.2.6:
+	set +h && \
+	tar -xvzf audiofile-0.2.6.tar.gz && \
+	cd audiofile-0.2.6 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install && \
+	ldconfig
+
+	rm -rf audiofile-0.2.6/*
+	make P=audiofile-0.2.6 log-package
+
+
+esound-0.2.34:
+	set +h && \
+	tar -xvjf esound-0.2.34.tar.bz2 && \
+	cd esound-0.2.34 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--includedir=/usr/include && \
+	make && \
+	make install
+
+	rm -rf esound-0.2.34/*
+	make P=esound-0.2.34 log-package
+
+
+libgnome-2.6.1.1:
+	set +h && \
+	tar -xvjf libgnome-2.6.1.1.tar.bz2 && \
+	cd libgnome-2.6.1.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libgnome-2.6.1.1/*
+	make P=libgnome-2.6.1.1 log-package
+
+
+libgnomecanvas-2.10.2:
+	set +h && \
+	tar -xvjf libgnomecanvas-2.10.2.tar.bz2 && \
+	cd libgnomecanvas-2.10.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libgnomecanvas-2.10.2/*
+	make P=libgnomecanvas-2.10.2 log-package
+
+
+libbonoboui-2.6.0:
+	set +h && \
+	tar -xvjf libbonoboui-2.6.0.tar.bz2 && \
+	cd libbonoboui-2.6.0 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libbonoboui-2.6.0/*
+	make P=libbonoboui-2.6.0 log-package
+
+
+gnome-keyring-0.2.1:
+	set +h && \
+	tar -xvjf gnome-keyring-0.2.1.tar.bz2 && \
+	cd gnome-keyring-0.2.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--disable-gtk-doc --libexecdir=/usr/sbin && \
+	make && \
+	make install
+
+	rm -rf gnome-keyring-0.2.1/*
+	make P=gnome-keyring-0.2.1 log-package
+
+
+libgnomeui-2.6.1.1:
+	set +h && \
+	tar -xvjf libgnomeui-2.6.1.1.tar.bz2 && \
+	cd libgnomeui-2.6.1.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc  \
+		--libexecdir=/usr/sbin --disable-gtk-doc && \
+	make && \
+	make install
+
+	rm -rf libgnomeui-2.6.1.1/*
+	make P=libgnomeui-2.6.1.1 log-package
+
+
+libgtop-2.10.1:
+	set +h && \
+	tar -xvjf libgtop-2.10.1.tar.bz2 && \
+	cd libgtop-2.10.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libgtop-2.10.1/*
+	make P=libgtop-2.10.1 log-package
+
+
+gnome-libs-1.4.1.4:
+	set +h && \
+	tar -xvzf gnome-libs_1.4.1.4.orig.tar.gz && \
+	cd gnome-libs-1.4.1.4 && \
+	\
+	patch -Np1 -i ../gnome-libs-1.4.1.4-nodbcheck.patch && \
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gnome-libs-1.4.1.4/*
+	make P=gnome-libs-1.4.1.4 log-package
+
+gtktalog-1.0rc3:
+	set +h && \
+	tar -xvjf gtktalog-1.0rc3.tar.bz2 && \
+	cd gtktalog-1.0rc3 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf gtktalog-1.0rc3/*
+	make P=gtktalog-1.0rc3 log-package
+
+gtklp-0.9s:
+	set +h && \
+	tar -xvzf gtklp-0.9s.src.tar.gz && \
+	cd gtklp-0.9s && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf gtklp-0.9s/*
+	make P=gtklp-0.9s log-package
+
+gnozip-0.1.3:
+	set +h && \
+	tar -xvzf gnozip-0.1.3.tar.gz && \
+	cd gnozip-0.1.3 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf gnozip-0.1.3/*
+	make P=gnozip-0.1.3 log-package
+
+firestarter-1.0.3:
+	set +h && \
+	tar -xvzf firestarter-1.0.3.tar.gz && \
+	cd firestarter-1.0.3 && \
+	\
+	./configure PKG_CONFIG_PATH=/usr/lib/pkgconfig \
+		--prefix=/usr  --sysconfdir=/etc  && \
+	make && \
+	make install
+
+	rm -rf firestarter-1.0.3/*
+	make P=firestarter-1.0.3 log-package
+
+etherape-0.9.0:
+	set +h && \
+	tar -xvzf etherape-0.9.0.tar.gz && \
+	cd etherape-0.9.0 && \
+	\
+	patch -Np1 -i ../etherape-0.9.0-libpcap-include.patch && \
+	./configure PKG_CONFIG_PATH=/usr/lib/pkgconfig \
+		--prefix=/usr  --sysconfdir=/etc  && \
+	make && \
+	make install
+
+	rm -rf etherape-0.9.0/*
+	make P=etherape-0.9.0 log-package
+
+
+dia-0.94:
+	set +h && \
+	tar -xvzf dia-0.94.tar.gz && \
+	cd dia-0.94 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf dia-0.94/*
+	make P=dia-0.94 log-package
+
+
+libgnomeprint-2.6.1:
+	set +h && \
+	tar -xvjf libgnomeprint-2.6.1.tar.bz2 && \
+	cd libgnomeprint-2.6.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libgnomeprint-2.6.1/*
+	make P=libgnomeprint-2.6.1 log-package
+
+libgnomeprintui-2.6.1:
+	set +h && \
+	tar -xvjf libgnomeprintui-2.6.1.tar.bz2 && \
+	cd libgnomeprintui-2.6.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libgnomeprintui-2.6.1/*
+	make P=libgnomeprintui-2.6.1 log-package
+
+
+hicolor-icon-theme-0.5:
+	set +h && \
+	tar -xvzf hicolor-icon-theme-0.5.tar.gz && \
+	cd hicolor-icon-theme-0.5 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf hicolor-icon-theme-0.5/*
+	make P=hicolor-icon-theme-0.5 log-package
+
+
+gnome-icon-theme-1.2.1:
+	set +h && \
+	tar -xvjf gnome-icon-theme-1.2.1.tar.bz2 && \
+	cd gnome-icon-theme-1.2.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gnome-icon-theme-1.2.1/*
+	make P=gnome-icon-theme-1.2.1 log-package
+
+
+docbook-xml-4.3:
+	set +h && \
+	mkdir docbook-xml-4.3 && \
+	unzip docbook-xml-4.3.zip -d docbook-xml-4.3 && \
+	cd docbook-xml-4.3 && \
+	\
+        install -d /usr/share/xml/docbook/xml-dtd-4.3 && \
+        cp -af docbook.cat *.dtd ent/ *.mod /usr/share/xml/docbook/xml-dtd-4.3 && \
+        mkdir -p /etc/xml && xmlcatalog --noout --create /etc/xml/catalog && \
+        xmlcatalog --noout --create /etc/xml/docbook && \
+        xmlcatalog --noout --add "public" \
+            "-//OASIS//ELEMENTS DocBook XML Information Pool V4.3//EN" \
+            "file:///usr/share/xml/docbook/xml-dtd-4.3/dbpoolx.mod" \
+            /etc/xml/docbook && \
+        xmlcatalog --noout --add "public" \
+            "-//OASIS//DTD DocBook XML V4.3//EN" \
+            "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" \
+            /etc/xml/docbook && \
+        xmlcatalog --noout --add "public" \
+            "-//OASIS//ENTITIES DocBook XML Character Entities V4.3//EN" \
+            "file:///usr/share/xml/docbook/xml-dtd-4.3/dbcentx.mod" \
+            /etc/xml/docbook && \
+        xmlcatalog --noout --add "public" \
+            "-//OASIS//ENTITIES DocBook XML Notations V4.3//EN" \
+            "file:///usr/share/xml/docbook/xml-dtd-4.3/dbnotnx.mod" \
+            /etc/xml/docbook && \
+        xmlcatalog --noout --add "public" \
+            "-//OASIS//ENTITIES DocBook XML Additional General Entities V4.3//EN" \
+            "file:///usr/share/xml/docbook/xml-dtd-4.3/dbgenent.mod" \
+            /etc/xml/docbook && \
+        xmlcatalog --noout --add "public" \
+            "-//OASIS//ELEMENTS DocBook XML Document Hierarchy V4.3//EN" \
+            "file:///usr/share/xml/docbook/xml-dtd-4.3/dbhierx.mod" \
+            /etc/xml/docbook && \
+        xmlcatalog --noout --add "public" \
+            "-//OASIS//DTD XML Exchange Table Model 19990315//EN" \
+            "file:///usr/share/xml/docbook/xml-dtd-4.3/soextblx.dtd" \
+            /etc/xml/docbook && \
+        xmlcatalog --noout --add "public" \
+            "-//OASIS//DTD DocBook XML CALS Table Model V4.3//EN" \
+            "file:///usr/share/xml/docbook/xml-dtd-4.3/calstblx.dtd" \
+            /etc/xml/docbook && \
+        xmlcatalog --noout --add "rewriteSystem" \
+            "http://www.oasis-open.org/docbook/xml/4.3" \
+            "file:///usr/share/xml/docbook/xml-dtd-4.3" \
+            /etc/xml/docbook && \
+        xmlcatalog --noout --add "rewriteURI" \
+            "http://www.oasis-open.org/docbook/xml/4.3" \
+            "file:///usr/share/xml/docbook/xml-dtd-4.3" \
+            /etc/xml/docbook && \
+        xmlcatalog --noout --add "delegatePublic" \
+            "-//OASIS//ENTITIES DocBook XML" \
+            "file:///etc/xml/docbook" /etc/xml/catalog && \
+        xmlcatalog --noout --add "delegatePublic" \
+            "-//OASIS//DTD DocBook XML" \
+            "file:///etc/xml/docbook" /etc/xml/catalog && \
+        xmlcatalog --noout --add "delegateSystem" \
+            "http://www.oasis-open.org/docbook/" \
+            "file:///etc/xml/docbook" /etc/xml/catalog && \
+        xmlcatalog --noout --add "delegateURI" \
+            "http://www.oasis-open.org/docbook/" \
+            "file:///etc/xml/docbook" /etc/xml/catalog && \
+        xmlcatalog --noout --add "public" \
+            "-//OASIS//DTD DocBook XML V4.1.2//EN" \
+            "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" \
+            /etc/xml/docbook && \
+        xmlcatalog --noout --add "delegateSystem" \
+            "http://www.oasis-open.org/docbook/xml/4.1.2/" \
+            "file:///etc/xml/docbook" /etc/xml/catalog && \
+        xmlcatalog --noout --add "delegateURI" \
+            "http://www.oasis-open.org/docbook/xml/4.1.2/" \
+            "file:///etc/xml/docbook" /etc/xml/catalog && \
+        xmlcatalog --noout --add "rewriteSystem" \
+            "http://www.oasis-open.org/docbook/xml/4.1.2" \
+            "file:///usr/share/xml/docbook/xml-dtd-4.3" \
+            /etc/xml/docbook && \
+        xmlcatalog --noout --add "rewriteURI" \
+            "http://www.oasis-open.org/docbook/xml/4.1.2" \
+            "file:///usr/share/xml/docbook/xml-dtd-4.3" \
+            /etc/xml/docbook && \
+        xmlcatalog --noout --add "rewriteURI" \
+            "http://www.oasis-open.org/docbook/xml/4.2" \
+            "file:///usr/share/xml/docbook/xml-dtd-4.3" \
+            /etc/xml/docbook
+
+	rm -rf docbook-xml-4.3/*
+	make P=docbook-xml-4.3 log-package
+
+
+scrollkeeper-0.3.14:
+	set +h && \
+	tar -xvjf scrollkeeper-0.3.14.tar.bz2 && \
+	cd scrollkeeper-0.3.14 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+    		--localstatedir=/var --disable-static \
+    		--with-omfdirs=/usr/share/omf:/opt/gnome/share/omf && \
+	make && \
+	make install
+
+	mv /var/lib/scrollkeeper/C /tmp && \
+	rm -rf /var/lib/scrollkeeper/* && \
+	mv /tmp/C /var/lib/scrollkeeper
+
+	rm -rf scrollkeeper-0.3.14/*
+	make P=scrollkeeper-0.3.14 log-package
+
+
+grubconf-0.5.1:
+	set +h && \
+	tar -xvzf grubconf-0.5.1.tar.gz && \
+	cd grubconf-0.5.1 && \
+	\
+	./configure --prefix=/usr --localstatedir=/var/lib && \
+	patch -Np1 -i ../grubconf-0.5.1-mkinstalldirs.patch && \
+	make && \
+	make install
+
+	rm -rf grubconf-0.5.1/*
+	make P=grubconf-0.5.1 log-package
+
+
+lavaps-2.6:
+	set +h && \
+	tar -xvzf lavaps-2.6.tar.gz && \
+	cd lavaps-2.6 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf lavaps-2.6/*
+	make P=lavaps-2.6 log-package
+
+
+glabels-1.93.3:
+	set +h && \
+	tar -xvzf glabels-1.93.3.tar.gz && \
+	cd glabels-1.93.3 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--localstatedir=/var/lib && \
+	make && \
+	make install
+
+	rm -rf glabels-1.93.3/*
+	make P=glabels-1.93.3 log-package
+
+gail-1.6.3:
+	set +h && \
+	tar -xvjf gail-1.6.3.tar.bz2 && \
+	cd gail-1.6.3 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gail-1.6.3/*
+	make P=gail-1.6.3 log-package
+
+
+eel-2.6.1:
+	set +h && \
+	tar -xvjf eel-2.6.1.tar.bz2 && \
+	cd eel-2.6.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf eel-2.6.1/*
+	make P=eel-2.6.1 log-package
+
+
+librsvg-2.6.5:
+	set +h && \
+	tar -xvjf librsvg-2.6.5.tar.bz2 && \
+	cd librsvg-2.6.5 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--disable-gtk-doc && \
+	make && \
+	make install
+
+	rm -rf librsvg-2.6.5/*
+	make P=librsvg-2.6.5 log-package
+
+
+gnome-desktop-2.6.1:
+	set +h && \
+	tar -xvjf gnome-desktop-2.6.1.tar.bz2 && \
+	cd gnome-desktop-2.6.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--localstatedir=/var/lib --libexecdir=/usr/sbin && \
+	make && \
+	make install
+
+	rm -rf gnome-desktop-2.6.1/*
+	make P=gnome-desktop-2.6.1 log-package
+
+
+nautilus-2.6.1:
+	set +h && \
+	tar -xvjf nautilus-2.6.1.tar.bz2 && \
+	cd nautilus-2.6.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--localstatedir=/var/lib --libexecdir=/usr/sbin && \
+	make && \
+	make install
+
+	rm -rf nautilus-2.6.1/*
+	make P=nautilus-2.6.1 log-package
+
+
+nautilus-cd-burner-2.6.1:
+	set +h && \
+	tar -xvjf nautilus-cd-burner-2.6.1.tar.bz2 && \
+	cd nautilus-cd-burner-2.6.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--libexecdir=/usr/sbin && \
+	make && \
+	make install
+
+	rm -rf nautilus-cd-burner-2.6.1/*
+	make P=nautilus-cd-burner-2.6.1 log-package
+
+
+libxklavier-1.02:
+	set +h && \
+	tar -xvzf libxklavier-1.02.tar.gz && \
+	cd libxklavier-1.02 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libxklavier-1.02/*
+	make P=libxklavier-1.02 log-package
+
+
+metacity-2.8.0:
+	set +h && \
+	tar -xvjf metacity-2.8.0.tar.bz2 && \
+	cd metacity-2.8.0 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--libexecdir=/usr/sbin && \
+	make && \
+	make install
+
+	rm -rf metacity-2.8.0/*
+	make P=metacity-2.8.0 log-package
+
+
+control-center-2.6.1:
+	set +h && \
+	tar -xvjf control-center-2.6.1.tar.bz2 && \
+	cd control-center-2.6.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--libexecdir=/usr/sbin && \
+	make && \
+	make install
+
+	rm -rf control-center-2.6.1/*
+	make P=control-center-2.6.1 log-package
+
+
+gconf-editor-2.6.1:
+	set +h && \
+	tar -xvjf gconf-editor-2.6.1.tar.bz2 && \
+	cd gconf-editor-2.6.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gconf-editor-2.6.1/*
+	make P=gconf-editor-2.6.1 log-package
+
+
+libgnomecups-0.1.11:
+	set +h && \
+	tar -xvjf libgnomecups-0.1.11.tar.bz2 && \
+	cd libgnomecups-0.1.11 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libgnomecups-0.1.11/*
+	make P=libgnomecups-0.1.11 log-package
+
+
+
+gnome-cups-manager-0.24:
+	set +h && \
+	tar -xvjf gnome-cups-manager-0.24.tar.bz2 && \
+	cd gnome-cups-manager-0.24 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gnome-cups-manager-0.24/*
+	make P=gnome-cups-manager-0.24 log-package
+
+
+file-roller-2.6.1:
+	set +h && \
+	tar -xvjf file-roller-2.6.1.tar.bz2 && \
+	cd file-roller-2.6.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--localstatedir=/var/lib && \
+	make && \
+	make install
+
+	rm -rf file-roller-2.6.1/*
+	make P=file-roller-2.6.1 log-package
+
+
+gstreamer-0.8.5:
+	set +h && \
+	tar -xvjf gstreamer-0.8.5.tar.bz2 && \
+	cd gstreamer-0.8.5 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--localstatedir=/var/lib --disable-docs-build && \
+	make && \
+	make install && \
+	ln -sfn /usr/include/gstreamer-0.8/gst /usr/include/gst && \
+	tools/gst-register && \
+	ldconfig
+
+	rm -rf gstreamer-0.8.5/*
+	make P=gstreamer-0.8.5 log-package
+
+gst-plugins-0.8.3:
+	set +h && \
+	tar -xvzf gst-plugins-0.8.3.tar.gz && \
+	cd gst-plugins-0.8.3 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gst-plugins-0.8.3/*
+	make P=gst-plugins-0.8.3 log-package
+
+
+gnome-media-2.6.1:
+	set +h && \
+	tar -xvjf gnome-media-2.6.1.tar.bz2 && \
+	cd gnome-media-2.6.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--localstatedir=/var/lib --libexecdir=/usr/sbin && \
+	make && \
+	make install
+
+	rm -rf gnome-media-2.6.1/*
+	make P=gnome-media-2.6.1 log-package
+
+
+
+nautilus-media-0.8.0:
+	set +h && \
+	tar -xvjf nautilus-media-0.8.0.tar.bz2 && \
+	cd nautilus-media-0.8.0 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf nautilus-media-0.8.0/*
+	make P=nautilus-media-0.8.0 log-package
+
+
+gtksourceview-1.0.1:
+	set +h && \
+	tar -xvjf gtksourceview-1.0.1.tar.bz2 && \
+	cd gtksourceview-1.0.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gtksourceview-1.0.1/*
+	make P=gtksourceview-1.0.1 log-package
+
+
+gedit-2.6.1:
+	set +h && \
+	tar -xvjf gedit-2.6.1.tar.bz2 && \
+	cd gedit-2.6.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--localstatedir=/var/lib && \
+	make && \
+	make install
+
+	rm -rf gedit-2.6.1/*
+	make P=gedit-2.6.1 log-package
+
+
+zenity-2.6.2:
+	set +h && \
+	tar -xvjf zenity-2.6.2.tar.bz2 && \
+	cd zenity-2.6.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--localstatedir=/var/lib && \
+	make && \
+	make install
+
+	rm -rf zenity-2.6.2/*
+	make P=zenity-2.6.2 log-package
+
+
+gnome-python-2.0.2:
+	set +h && \
+	tar -xvjf gnome-python-2.0.2.tar.bz2 && \
+	cd gnome-python-2.0.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gnome-python-2.0.2/*
+	make P=gnome-python-2.0.2 log-package
+
+libgtkhtml-2.6.1:
+	set +h && \
+	tar -xvjf libgtkhtml-2.6.1.tar.bz2 && \
+	cd libgtkhtml-2.6.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libgtkhtml-2.6.1/*
+	make P=libgtkhtml-2.6.1 log-package
+
+yelp-2.6.1:
+	set +h && \
+	tar -xvjf yelp-2.6.1.tar.bz2 && \
+	cd yelp-2.6.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf yelp-2.6.1/*
+	make P=yelp-2.6.1 log-package
+
+
+hwdata-0.118:
+	set +h && \
+	tar -xvzf hwdata-0.118.tar.gz && \
+	cd hwdata-0.118 && \
+	\
+	patch -Np1 -i ../hwdata-0.118-makefile.patch && \
+	make && \
+	make install
+
+	rm -rf hwdata-0.118/*
+	make P=hwdata-0.118 log-package
+
+
+dietlibc-0.27:
+	set +h && \
+	tar -xvjf dietlibc-0.27.tar.bz2 && \
+	cd dietlibc-0.27 && \
+	perl -p -i -e 's/opt\/diet/usr\/diet/' libdl/Makefile \
+		contrib/Makefile.dyn Makefile && \
+	\
+	make && \
+	make install && \
+	cp -v diet.1 /usr/man/man1 && \
+	install bin-i386/dietlibc.a /usr/lib && \
+	install bin-i386/diet /usr/bin
+
+	make P=dietlibc-0.27 log-package
+
+
+kudzu-1.1.79:
+	set +h && \
+	tar -xvzf kudzu-1.1.79.tar.gz && \
+	cd kudzu-1.1.79 && \
+	\
+	make && \
+	make install
+
+	rm -rf kudzu-1.1.79/*
+	rm -rf dietlibc-0.27/*
+	make P=kudzu-1.1.79 log-package
+
+hwbrowser-0.15:
+	set +h && \
+	tar -xvzf hwbrowser-0.15.tar.gz && \
+	cd hwbrowser-0.15 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf hwbrowser-0.15/*
+	make P=hwbrowser-0.15 log-package
+
+system-config-display-1.0.18:
+	set +h && \
+	tar -xvjf system-config-display-1.0.18.tar.bz2 && \
+	cd system-config-display-1.0.18 && \
+	\
+	make && \
+	make install
+
+	rm -rf system-config-display-1.0.18/*
+	make P=system-config-display-1.0.18 log-package
+
+
+system-config-network-1.3.20:
+	set +h && \
+	tar -xvzf system-config-network-1.3.20.tar.gz && \
+	cd system-config-network-1.3.20 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf system-config-network-1.3.20/*
+	make P=system-config-network-1.3.20 log-package
+
+
+system-config-nfs-1.2.3:
+	set +h && \
+	tar -xvjf system-config-nfs-1.2.3.tar.bz2 && \
+	cd system-config-nfs-1.2.3 && \
+	\
+	make && \
+	make install
+
+	rm -rf system-config-nfs-1.2.3/*
+	make P=system-config-nfs-1.2.3 log-package
+
+
+system-config-samba-1.2.14:
+	set +h && \
+	tar -xvjf system-config-samba-1.2.14.tar.bz2 && \
+	cd system-config-samba-1.2.14 && \
+	\
+	make && \
+	make install
+
+	rm -rf system-config-samba-1.2.14/*
+	make P=system-config-samba-1.2.14 log-package
+
+
+system-config-services-0.8.8:
+	set +h && \
+	tar -xvzf system-config-services-0.8.8.tar.gz && \
+	cd system-config-services-0.8.8 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf system-config-services-0.8.8/*
+	make P=system-config-services-0.8.8 log-package
+
+
+system-config-soundcard-1.2.8:
+	set +h && \
+	tar -xvjf system-config-soundcard-1.2.8.tar.bz2 && \
+	cd system-config-soundcard-1.2.8 && \
+	\
+	make && \
+	make install
+
+	rm -rf system-config-soundcard-1.2.8/*
+	make P=system-config-soundcard-1.2.8 log-package
+
+
+system-logviewer-0.9.7:
+	set +h && \
+	tar -xvzf system-logviewer-0.9.7.tar.gz && \
+	cd system-logviewer-0.9.7 && \
+	\
+	make && \
+	make install
+
+	rm -rf system-logviewer-0.9.7/*
+	make P=system-logviewer-0.9.7 log-package
+
+glade-2.6.0:
+	set +h && \
+	tar -xvjf glade-2.6.0.tar.bz2 && \
+	cd glade-2.6.0 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--localstatedir=/var/lib && \
+	make && \
+	make install
+
+	rm -rf glade-2.6.0/*
+	make P=glade-2.6.0 log-package
+
+libgphoto2-2.1.4:
+	set +h && \
+	tar -xvjf libgphoto2-2.1.4.tar.bz2 && \
+	cd libgphoto2-2.1.4 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libgphoto2-2.1.4/*
+	make P=libgphoto2-2.1.4 log-package
+
+gphoto2-2.1.4:
+	set +h && \
+	tar -xvjf gphoto2-2.1.4.tar.bz2 && \
+	cd gphoto2-2.1.4 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gphoto2-2.1.4/*
+	make P=gphoto2-2.1.4 log-package
+
+
+gtkam-0.1.12:
+	set +h && \
+	tar -xvzf gtkam-0.1.12.tar.gz && \
+	cd gtkam-0.1.12 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--localstatedir=/var/lib && \
+	make && \
+	make install
+
+	rm -rf gtkam-0.1.12/*
+	make P=gtkam-0.1.12 log-package
+
+
+vte-0.11.21:
+	set +h && \
+	tar -xvjf vte-0.11.21.tar.bz2 && \
+	cp -p /usr/include/fontconfig/fontconfig.h /usr/X11R6/include/fontconfig && \
+	cd vte-0.11.21 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf vte-0.11.21/*
+	make P=vte-0.11.21 log-package
+
+grip-3.2.0:
+	set +h && \
+	tar -xvzf grip-3.2.0.tar.gz && \
+	cd grip-3.2.0 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf grip-3.2.0/*
+	make P=grip-3.2.0 log-package
+
+
+ExtUtils-Depends-0.205:
+	set +h && \
+	tar -xvzf ExtUtils-Depends-0.205.tar.gz && \
+	cd ExtUtils-Depends-0.205 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf ExtUtils-Depends-0.205/*
+	make P=ExtUtils-Depends-0.205 log-package
+
+
+ExtUtils-PkgConfig-1.07:
+	set +h && \
+	tar -xvzf ExtUtils-PkgConfig-1.07.tar.gz && \
+	cd ExtUtils-PkgConfig-1.07 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf ExtUtils-PkgConfig-1.07/*
+	make P=ExtUtils-PkgConfig-1.07 log-package
+
+
+Glib-1.140:
+	set +h && \
+	tar -xvzf Glib-1.140.tar.gz && \
+	cd Glib-1.140 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf Glib-1.140/*
+	make P=Glib-1.140 log-package
+
+
+Gnome2-Canvas-1.002:
+	set +h && \
+	tar -xvzf Gnome2-Canvas-1.002.tar.gz && \
+	cd Gnome2-Canvas-1.002 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf Gnome2-Canvas-1.002/*
+	make P=Gnome2-Canvas-1.002 log-package
+
+
+Gnome2-VFS-1.020:
+	set +h && \
+	tar -xvzf Gnome2-VFS-1.020.tar.gz && \
+	cd Gnome2-VFS-1.020 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf Gnome2-VFS-1.020/*
+	make P=Gnome2-VFS-1.020 log-package
+
+Cairo-1.01:
+	set +h && \
+	tar -xvzf Cairo-1.01.tar.gz && \
+	cd Cairo-1.01 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf Cairo-1.01/*
+	make P=Cairo-1.01 log-package
+
+
+Gtk2-1.140:
+	set +h && \
+	tar -xvzf Gtk2-1.140.tar.gz && \
+	cd Gtk2-1.140 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf Gtk2-1.140/*
+	make P=Gtk2-1.140 log-package
+
+
+Gtk2-GladeXML-1.004:
+	set +h && \
+	tar -xvzf Gtk2-GladeXML-1.004.tar.gz && \
+	cd Gtk2-GladeXML-1.004 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf Gtk2-GladeXML-1.004/*
+	make P=Gtk2-GladeXML-1.004 log-package
+
+
+Gnome2-1.021:
+	set +h && \
+	tar -xvzf Gnome2-1.021.tar.gz && \
+	cd Gnome2-1.021 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf Gnome2-1.021/*
+	make P=Gnome2-1.021 log-package
+
+Gettext-0.01:
+	set +h && \
+	tar -xvzf Gettext-0.01.tar.gz && \
+	cd Gettext-0.01 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf Gettext-0.01/*
+	make P=Gettext-0.01 log-package
+
+gettext-1.04:
+	set +h && \
+	tar -xvzf gettext-1.04.tar.gz && \
+	cd gettext-1.04 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf gettext-1.04/*
+	make P=gettext-1.04 log-package
+
+
+
+qemu-launcher-1.3:
+	set +h && \
+	tar -xvzf qemu-launcher_1.3-1.tar.gz && \
+	cd qemu-launcher-1.3 && \
+	\
+	patch -Np1 -i ../qemu-launcher-1.3-nokeyboard-option.patch && \
+	make
+
+	rm -rf qemu-launcher-1.3/*
+	make P=qemu-launcher-1.3 log-package
+
+MIME-Base64-3.05:
+	set +h && \
+	tar -xvzf MIME-Base64-3.05.tar.gz && \
+	cd MIME-Base64-3.05 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf MIME-Base64-3.05/*
+	make P=MIME-Base64-3.05 log-package
+
+Compress-Zlib-1.34:
+	set +h && \
+	tar -xvzf Compress-Zlib-1.34.tar.gz && \
+	cd Compress-Zlib-1.34 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf Compress-Zlib-1.34/*
+	make P=Compress-Zlib-1.34 log-package
+
+
+libpixman-0.1.4:
+	set +h && \
+	tar -xvzf libpixman-0.1.4.tar.gz && \
+	cd libpixman-0.1.4 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libpixman-0.1.4/*
+	make P=libpixman-0.1.4 log-package
+
+
+cairo-1.2.4:
+	set +h && \
+	tar -xvzf cairo-1.2.4.tar.gz && \
+	cd cairo-1.2.4 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf cairo-1.2.4/*
+	make P=cairo-1.2.4 log-package
+
+poppler-0.2.0:
+	set +h && \
+	tar -xvzf poppler-0.2.0.tar.gz && \
+	cd poppler-0.2.0 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf poppler-0.2.0/*
+	make P=poppler-0.2.0 log-package
+
+
+evince-0.2.0:
+	set +h && \
+	tar -xvjf evince-0.2.0.tar.bz2 && \
+	cd evince-0.2.0 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf evince-0.2.0/*
+	make P=evince-0.2.0 log-package
+
+
+####
+# Everything else
+#
+
+Linux-PAM-0.77:
+	set +h && \
+	tar -xvjf Linux-PAM-0.77.tar.bz2 && \
+	cd Linux-PAM-0.77 && \
+	\
+	patch -Np1 -i ../Linux-PAM-0.77-linkage-1.patch && \
+	./configure --enable-static-libpam --with-mailspool=/var/mail \
+	--enable-read-both-confs --sysconfdir=/etc && \
+	make && \
+	make install && \
+	mv /lib/libpam.a /lib/libpam_misc.a /lib/libpamc.a /usr/lib && \
+	ln -sf ../../lib/libpam.so.0.77 /usr/lib/libpam.so && \
+	ln -sf ../../lib/libpam_misc.so.0.77 /usr/lib/libpam_misc.so && \
+	ln -sf ../../lib/libpamc.so.0.77 /usr/lib/libpamc.so
+
+	rm -rf Linux-PAM-0.77/*
+	make P=Linux-PAM-0.77 log-package
+
+hotplug-2004_09_23:
+	set +h && \
+	(cd /etc && ln -sfn rc.d/init.d .) && \
+	tar -xvjf hotplug-2004_09_23.tar.bz2 && \
+	cd hotplug-2004_09_23 && \
+	\
+	make install && \
+	cp etc/hotplug/pnp.distmap /etc/hotplug && \
+	rm -f /etc/hotplug/net.agent && \
+	mkdir -p /lib/firmware && \
+	perl -p -i -e "s/lock\/subsys/run/" /etc/rc.d/init.d/hotplug && \
+	\
+	rm -rf hotplug-2004_09_23/*
+	make P=hotplug-2004_09_23 log-package
+
+gnupg-1.2.3:
+	set +h && \
+	tar -xvjf gnupg-1.2.3.tar.bz2 && \
+	cd gnupg-1.2.3 && \
+	\
+	./configure --prefix=/usr --libexecdir=/usr/lib && \
+	make && \
+	make install && \
+	chmod 4755 /usr/bin/gpg
+
+	rm -rf gnupg-1.2.3/*
+	make P=gnupg-1.2.3 log-package
+
+tcsh-6.12.00:
+	set +h && \
+	tar -xvzf tcsh-6.12.00.tar.gz && \
+	cd tcsh-6.12.00 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install && \
+	cp tcsh.man /usr/share/man/man1/tcsh.1 && \
+	ln -s /usr/bin/tcsh /bin/csh
+
+	rm -rf tcsh-6.12.00/*
+	make P=tcsh-6.12.00 log-package
+
+$(KERNEL):
+	set +h && \
+        tar -xvjf $(KERNEL).tar.bz2 && \
+	tar -xvzf squashfs3.0.tar.gz */linux-2.6.15/squashfs3.0-patch && \
+	mv squashfs3.0/linux-2.6.15/squashfs3.0-patch . && \
+	rm -rf squashfs3.0 && \
+	ln -sfn $(KERNEL) linux && \
+        cd $(KERNEL) && \
+        \
+	patch -Np1 -i ../imac-imacfb.patch && \
+	patch -Np1 -i ../imac-acpi-blacklist-fix.patch && \
+	patch -Np1 -i ../imac-efi_e820_all_mapped_fix.patch && \
+	patch -Np1 -i ../imac-intelfb-945g.patch && \
+	patch -Np1 -i ../imac-ir.patch && \
+	patch -Np1 -i ../imac-keyboard_hid.patch && \
+	patch -Np1 -i ../imac-mouseemu.patch && \
+	patch -Np1 -i ../imac-pata_sata.patch && \
+	patch -Np1 -i ../imac-piix.ich7.patch && \
+	patch -Np1 -i ../imac-sata_resume.patch && \
+	patch -Np1 -i ../imac-sci_en.patch && \
+	patch -Np1 -i ../imac-sigmatel_audio.patch && \
+	patch -Np1 -i ../imac-usb-storage-zerowait.patch && \
+        patch -Np1 -i ../squashfs3.0-patch && \
+        rm -f ../squashfs3.0-patch && \
+	cp -av ../$(KERNEL).config .config && \
+        \
+        make oldconfig && \
+        make bzImage && \
+        make modules && \
+        make modules_install 
+
+        make P=$(KERNEL) log-package
+
+
+$(KERNEL)-x86:
+	set +h && \
+	rm -rf tmpkern && mkdir tmpkern && \
+        tar -xvjf $(KERNEL).tar.bz2 -C tmpkern && \
+	mv tmpkern/$(KERNEL) $(KERNEL)-x86 && \
+	rmdir tmpkern && \
+	\
+	tar -xvzf squashfs3.0.tar.gz */linux-2.6.15/squashfs3.0-patch && \
+	mv squashfs3.0/linux-2.6.15/squashfs3.0-patch . && \
+	rm -rf squashfs3.0 && \
+	ln -sfn $(KERNEL)-x86 linux && \
+        cd $(KERNEL)-x86 && \
+        \
+	patch -Np1 -i ../imac-imacfb.patch && \
+	patch -Np1 -i ../imac-acpi-blacklist-fix.patch && \
+	patch -Np1 -i ../imac-efi_e820_all_mapped_fix.patch && \
+	patch -Np1 -i ../imac-intelfb-945g.patch && \
+	patch -Np1 -i ../imac-ir.patch && \
+	patch -Np1 -i ../imac-keyboard_hid.patch && \
+	patch -Np1 -i ../imac-mouseemu.patch && \
+	patch -Np1 -i ../imac-pata_sata.patch && \
+	patch -Np1 -i ../imac-piix.ich7.patch && \
+	patch -Np1 -i ../imac-sata_resume.patch && \
+	patch -Np1 -i ../imac-sci_en.patch && \
+	patch -Np1 -i ../imac-sigmatel_audio.patch && \
+	patch -Np1 -i ../imac-usb-storage-zerowait.patch && \
+        patch -Np1 -i ../squashfs3.0-patch && \
+        rm -f ../squashfs3.0-patch && \
+	cp -av ../$(KERNEL)-x86.config .config && \
+        \
+        make oldconfig && \
+        make bzImage && \
+        make modules && \
+        make modules_install 
+
+        make P=$(KERNEL)-x86 log-package
+
+
+linux-2.6.9:
+	set +h && \
+        tar -xvjf linux-2.6.9.tar.bz2 && \
+	tar -xvjf linux-2.6.9-patches.tar.bz2 && \
+	tar -xvzf squashfs3.0.tar.gz */linux-2.6.10/squashfs3.0-patch && \
+	mv squashfs3.0/linux-2.6.10/squashfs3.0-patch . && \
+	rm -rf squashfs3.0 && \
+	ln -sfn linux-2.6.9 linux && \
+        cd linux-2.6.9 && \
+	\
+	bzcat ../linux-2.6.9-patches/patch-2.6.9-ac11.bz2| patch -Np1 && \
+	for i in $(shell cat ../linux-2.6.9-patches/patch-list); do echo $$(i); \
+		patch -Np1 -i ../linux-2.6.9-patches/$$(i); done && \
+        patch -Np1 -i ../squashfs3.0-patch && \
+	\
+        rm -f ../squashfs3.0-patch && \
+	cp -av ../linux-2.6.9-i686.config .config && \
+	perl -p -i -e 's/^EXTRAVERSION =.*/EXTRAVERSION =/' Makefile && \
+        \
+        make oldconfig && \
+        make bzImage && \
+        make modules
+
+
+squashfs3.0:
+	set +h && \
+	tar -xvzf squashfs3.0.tar.gz && \
+	cd squashfs3.0 && \
+	\
+	cd squashfs-tools && \
+	make && \
+	cp -av mksquashfs /sbin
+
+	rm -rf squashfs3.0/*
+	make P=squashfs3.0 log-package
+
+openswan-2.1.5rc1:
+	set +h && \
+	tar -xvzf openswan-2.1.5rc1.tar.gz && \
+	cd openswan-2.1.5rc1 && \
+	\
+	perl -p -i -e 's/usr\/local/usr/g' \
+		`find ./ -type f| xargs grep -l usr\/local` && \
+	perl -p -i -e 's/^SUBDIRS=doc /SUBDIRS=/' Makefile && \
+	make programs && \
+	make install
+
+	rm -rf openswan-2.1.5rc1/*
+	make P=openswan-2.1.5rc1 log-package
+
+
+ipsec-tools-0.4b1:
+	set +h && \
+	tar -xvzf ipsec-tools-0.4b1.tar.gz && \
+	cd ipsec-tools-0.4b1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	perl -p -i -e 's/ENOENT/2/' \
+		`find ./ -type f| xargs grep -l ENOENT` && \
+	perl -p -i -e 's/EINTR/4/' \
+		`find ./ -type f| xargs grep -l EINTR` && \
+	perl -p -i -e 's/EINVAL/22/' \
+		`find ./ -type f| xargs grep -l EINVAL` && \
+	perl -p -i -e 's/EPROTONOSUPPORT/93/' \
+		`find ./ -type f| xargs grep -l EPROTONOSUPPORT` && \
+	perl -p -i -e 's/EAFNOSUPPORT/97/' \
+		`find ./ -type f| xargs grep -l EAFNOSUPPORT` && \
+	perl -p -i -e 's/ENOBUFS/105/' \
+		`find ./ -type f| xargs grep -l ENOBUFS` && \
+	make && \
+	make install
+
+	rm -rf ipsec-tools-0.4b1/*
+	make P=ipsec-tools-0.4b1 log-package
+
+
+
+loop-AES-v3.1d:
+	set +h && \
+	tar -xvjf loop-AES-v3.1d.tar.bz2 && \
+	cd loop-AES-v3.1d && \
+	\
+	make USE_KBUILD=y LINUX_SOURCE=/usr/src/linux && \
+	\
+	tar jxf ../util-linux-2.12r.tar.bz2 && \
+	cd util-linux-2.12r && \
+	patch -Np1 -i ../../util-linux-2.12r-loop_AES-3.1d.patch && \
+	patch -Np1 -i ../../util-linux-2.12r-nopassword.patch && \
+	patch -Np1 -i ../../util-linux-2.12r-missing_header-2.patch && \
+	./configure CFLAGS=-O2 --prefix=/usr && \
+	make SUBDIRS="lib mount" && \
+	cd mount && \
+	install -m 4755 -o root mount umount /bin && \
+	install -m 755 losetup swapon /sbin && \
+	rm -f /sbin/swapoff && \
+	( cd /sbin && ln -s swapon swapoff )
+
+	-install -m 644 mount.8 umount.8 losetup.8 /usr/share/man/man8
+	-install -m 644 swapon.8 swapoff.8 /usr/share/man/man8
+	-install -m 644 fstab.5 /usr/share/man/man5 
+
+	rm -rf loop-AES-v3.1d/*
+	make P=loop-AES-v3.1d log-package
+
+aespipe-v2.2c:
+	set +h && \
+	tar -xvjf aespipe-v2.2c.tar.bz2 && \
+	cd aespipe-v2.2c && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf aespipe-v2.2c/*
+	make P=aespipe-v2.2c log-package
+
+libgpg-error-0.7:
+	set +h && \
+	tar -xvzf libgpg-error-0.7.tar.gz && \
+	cd libgpg-error-0.7 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf libgpg-error-0.7/*
+	make P=libgpg-error-0.7 log-package
+
+
+libgcrypt-1.1.94:
+	set +h && \
+	tar -xvzf libgcrypt-1.1.94.tar.gz && \
+	cd libgcrypt-1.1.94 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf libgcrypt-1.1.94/*
+	make P=libgcrypt-1.1.94 log-package
+
+
+hashalot-0.3:
+	set +h && \
+	tar -xvzf hashalot-0.3.tar.gz && \
+	cd hashalot-0.3 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf hashalot-0.3/*
+	make P=hashalot-0.3 log-package
+
+
+
+cryptsetup-0.2:
+	set +h && \
+	tar -xvjf cryptsetup-0.2-pre1.tar.bz2 && \
+	cd cryptsetup-0.2 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf cryptsetup-0.2/*
+	make P=cryptsetup-0.2 log-package
+
+
+libxml2-2.6.20:
+	set +h && \
+	tar -xvjf libxml2-2.6.20.tar.bz2 && \
+	cd libxml2-2.6.20 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libxml2-2.6.20/*
+	make P=libxml2-2.6.20 log-package
+
+
+libxslt-1.1.7:
+	set +h && \
+	tar -xvzf libxslt-1.1.7.tar.gz && \
+	cd libxslt-1.1.7 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf libxslt-1.1.7/*
+	make P=libxslt-1.1.7 log-package
+
+libsigc++-1.0.3:
+	set +h && \
+	tar -xvzf libsigc++-1.0.3.tar.gz && \
+	cd libsigc++-1.0.3 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libsigc++-1.0.3/*
+	make P=libsigc++-1.0.3 log-package
+
+gtkmm-1.2.9:
+	set +h && \
+	tar -xvzf gtkmm-1.2.9.tar.gz && \
+	cd gtkmm-1.2.9 && \
+	\
+	patch -Np1 -i ../gtkmm_1.2.8-1.diff && \
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	#patch -Np1 -i ../gtkmm_1.2.8-2.diff && \
+	rm -rf gtkmm-1.2.9/*
+	make P=gtkmm-1.2.9 log-package
+
+net-snmp-5.1.1:
+	set +h && \
+	tar -xvzf net-snmp-5.1.1.tar.gz && \
+	cd net-snmp-5.1.1 && \
+	\
+	./configure --prefix=/usr \
+		--with-default-snmp-version=3 \
+		--with-sys-contact=root@localhost \
+		--with-sys-location=localhost \
+		--with-logfile=/var/log/snmpd.log \
+		--with-persistent-directory=/var/net-snmp && \
+	make && \
+	make install && \
+	ln -sfn libnetsnmp.so libsnmp.so && \
+	cd /usr/include/net-snmp/library && \
+	mv getopt.h getopt.h.orig && \
+	ln -sfn /usr/include/getopt.h . && \
+	cd /usr/src
+
+	rm -rf net-snmp-5.1.1/*
+	make P=net-snmp-5.1.1 log-package
+
+
+gmp-4.1.2:
+	set +h && \
+	tar -xvjf gmp-4.1.2.tar.bz2 && \
+	cd gmp-4.1.2 && \
+	\
+	./configure --prefix=/usr --infodir=/usr/share/info \
+		--mandir=/usr/share/man && \
+	make && \
+	make install
+
+	rm -rf gmp-4.1.2/*
+	make P=gmp-4.1.2 log-package
+
+pkgconfig-0.15.0:
+	set +h && \
+	tar -xvzf pkgconfig-0.15.0.tar.gz && \
+	cd pkgconfig-0.15.0 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install && \
+	\
+	rm -rf pkgconfig-0.15.0/*
+	make P=pkgconfig-0.15.0 log-package
+
+
+wget-1.8.2:
+	set +h && \
+	tar -xvzf wget-1.8.2.tar.gz && \
+	cd wget-1.8.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf wget-1.8.2/*
+	make P=wget-1.8.2 log-package
+
+
+usbutils-0.11:
+	set +h && \
+	tar -xvzf usbutils-0.11.tar.gz && \
+	cd usbutils-0.11 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install && \
+	rm /usr/lib/libusb.* && \
+	rm /usr/include/libusb.h
+
+	rm -rf usbutils-0.11/*
+	make P=usbutils-0.11 log-package
+
+
+glib-1.2.10:
+	set +h && \
+	tar -xvzf glib-1.2.10.tar.gz && \
+	cd glib-1.2.10 && \
+	\
+	patch -Np1 -i ../glib-1.2.10-config_update-1.patch && \
+	patch -Np1 -i ../glib-1.2.10-fixes-1.patch && \
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf glib-1.2.10/*
+	make P=glib-1.2.10 log-package
+
+
+glib-2.6.4:
+	set +h && \
+	tar -xvjf glib-2.6.4.tar.bz2 && \
+	cd glib-2.6.4 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--with-libiconv && \
+	make && \
+	make install
+
+	#rm -rf glib-2.6.4/*
+	make P=glib-2.6.4 log-package
+
+libIDL-0.8.3:
+	set +h && \
+	tar -xvjf libIDL-0.8.3.tar.bz2 && \
+	cd libIDL-0.8.3 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf libIDL-0.8.3/*
+	make P=libIDL-0.8.3 log-package
+
+atk-1.9.1:
+	set +h && \
+	tar -xvjf atk-1.9.1.tar.bz2 && \
+	cd atk-1.9.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install && \
+	ldconfig
+
+	rm -rf atk-1.9.1/*
+	make P=atk-1.9.1 log-package
+
+
+expat-1.95.8:
+	set +h && \
+	tar -xvzf expat-1.95.8.tar.gz && \
+	cd expat-1.95.8 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf expat-1.95.8/*
+	make P=expat-1.95.8 log-package
+
+
+treecc-0.3.0:
+	set +h && \
+	tar -xvzf treecc-0.3.0.tar.gz && \
+	cd treecc-0.3.0 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf treecc-0.3.0/*
+	make P=treecc-0.3.0 log-package
+
+
+pnet-0.6.4:
+	set +h && \
+	tar -xvzf pnet-0.6.4.tar.gz && \
+	cd pnet-0.6.4 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf pnet-0.6.4/*
+	make P=pnet-0.6.4 log-package
+
+
+pnetlib-0.6.4:
+	set +h && \
+	tar -xvzf pnetlib-0.6.4.tar.gz && \
+	cd pnetlib-0.6.4 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf pnetlib-0.6.4/*
+	make P=pnetlib-0.6.4 log-package
+
+lzo-1.08:
+	set +h && \
+	tar -xvzf lzo-1.08.tar.gz && \
+	cd lzo-1.08 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf lzo-1.08/*
+	make P=lzo-1.08 log-package
+
+
+curl-7.10.7:
+	set +h && \
+	tar -xvjf curl-7.10.7.tar.bz2 && \
+	cd curl-7.10.7 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf curl-7.10.7/*
+	make P=curl-7.10.7 log-package
+
+
+nasm-0.98.38:
+	set +h && \
+	tar -xvjf nasm-0.98.38.tar.bz2 && \
+	cd nasm-0.98.38 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf nasm-0.98.38/*
+	make P=nasm-0.98.38 log-package
+
+db-3.3.11:
+	set +h && \
+	tar -xvzf db-3.3.11.tar.gz && \
+	cd db-3.3.11 && \
+	patch -Np0 -i ../db-patch.3.3.11.1 && \
+	patch -Np0 -i ../db-patch.3.3.11.2 && \
+	patch -Np0 -i ../db-patch.3.3.11 && \
+	\
+	cd build_unix && \
+	../dist/configure --prefix=/usr \
+	    --enable-compat185 \
+	    --enable-cxx \
+	    --enable-static \
+	    --enable-shared && \
+	make all install && \
+	cd /usr/lib && ln -s libdb-3.3.a libdb.a && \
+	perl -p -i -e 's/^DB185/DB/' /usr/include/db_185.h
+
+	rm -rf db-3.3.11/*
+	make P=db-3.3.11 log-package
+
+db-4.2.52:
+	set +h && \
+	tar -xvzf db-4.2.52.tar.gz && \
+	cd db-4.2.52 && \
+	patch -Np0 -i ../db-patch.4.2.52.1 && \
+	patch -Np0 -i ../db-patch.4.2.52.2 && \
+	\
+	cd build_unix && \
+	../dist/configure --prefix=/usr \
+	    --enable-compat185 \
+	    --enable-cxx && \
+	make && \
+	make install
+
+	rm -rf db-4.2.52/*
+	make P=db-4.2.52 log-package
+
+
+cracklib-2.7:
+	set +h && \
+	tar -xvzf cracklib-2.7.tar.gz && \
+	mv cracklib,2.7 cracklib-2.7 && \
+	cd cracklib-2.7 && \
+	\
+	make DICTPATH=/usr/lib/pw_dict all && \
+	make DICTPATH=/usr/lib/pw_dict install
+
+	rm -rf cracklib-2.7/*
+	make P=cracklib-2.7 log-package
+
+
+
+libtool-1.5.6:
+	set +h && \
+	tar -xvzf libtool-1.5.6.tar.gz && \
+	cd libtool-1.5.6 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf libtool-1.5.6/*
+	make P=libtool-1.5.6 log-package
+
+
+openldap-2.1.22:
+	set +h && \
+	tar -xvzf openldap-2.1.22.tgz && \
+	cd openldap-2.1.22 && \
+	\
+	./configure --prefix=/usr --libexecdir=/usr/sbin \
+	    --sysconfdir=/etc --localstatedir=/var/lib \
+	    --disable-debug --enable-ldbm && \
+	make depend && \
+	make && \
+	make install
+
+	rm -rf openldap-2.1.22/*
+	make P=openldap-2.1.22 log-package
+
+
+libnet-1.1.2.1:
+	set +h && \
+	tar -xvzf libnet.tar.gz && \
+	mv libnet libnet-1.1.2.1 && \
+	cd libnet-1.1.2.1 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf libnet-1.1.2.1/*
+	make P=libnet-1.1.2.1 log-package
+
+
+libpcap-0.8.3:
+	set +h && \
+	tar -xvzf libpcap-0.8.3.tar.gz && \
+	cd libpcap-0.8.3 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf libpcap-0.8.3/*
+	make P=libpcap-0.8.3 log-package
+
+
+libnids-1.18:
+	set +h && \
+	tar -xvzf libnids-1.18.tar.gz && \
+	cd libnids-1.18 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf libnids-1.18/*
+	make P=libnids-1.18 log-package
+
+
+libpng-1.2.8:
+	set +h && \
+	tar -xvjf libpng-1.2.8.tar.bz2 && \
+	cd libpng-1.2.8 && \
+	\
+	patch -Np1 -i ../libpng-1.2.8-link_to_proper_libs-1.patch && \
+	make prefix=/usr \
+   	   ZLIBINC=/usr/include ZLIBLIB=/usr/lib -f scripts/makefile.linux && \
+	make prefix=/usr install -f scripts/makefile.linux
+
+	rm -rf libpng-1.2.8/*
+	make P=libpng-1.2.8 log-package
+
+libpng-1.2.12:
+	set +h && \
+	tar -xvjf libpng-1.2.12.tar.bz2 && \
+	cd libpng-1.2.12 && \
+	\
+	./configure --prefix=/usr && \
+	make  prefix=/usr \
+           ZLIBINC=/usr/include ZLIBLIB=/usr/lib -f scripts/makefile.linux && \
+	make prefix=/usr install -f scripts/makefile.linux
+
+	rm -rf libpng-1.2.12/*
+	make P=libpng-1.2.12 log-package
+
+libreplay-0.3:
+	set +h && \
+	tar -xvzf libreplay-0.3.tar.gz && \
+	cd libreplay-0.3 && \
+	\
+	make && \
+	cp -v libreplay.so /usr/lib && \
+	cp -v realplay.dump realplay.dump_live /usr/bin
+
+	rm -rf libreplay-0.3/*
+	make P=libreplay-0.3 log-package
+
+
+libungif-4.1.0b1:
+	set +h && \
+	tar -xvzf libungif-4.1.0b1.tar.gz && \
+	cd libungif-4.1.0b1 && \
+	\
+	patch -Np1 -i ../libungif-4.1.0b1-va_start.patch && \
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf libungif-4.1.0b1/*
+	make P=libungif-4.1.0b1 log-package
+
+
+libdvdcss-1.2.8:
+	set +h && \
+	tar -xvjf libdvdcss-1.2.8.tar.bz2 && \
+	cd libdvdcss-1.2.8 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf libdvdcss-1.2.8/*
+	make P=libdvdcss-1.2.8 log-package
+
+
+libdvdread-0.9.4:
+	set +h && \
+	tar -xvzf libdvdread-0.9.4.tar.gz && \
+	cd libdvdread-0.9.4 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf libdvdread-0.9.4/*
+	make P=libdvdread-0.9.4 log-package
+
+
+cpio-2.5:
+	set +h && \
+	tar -xvzf cpio-2.5.tar.gz && \
+	cd cpio-2.5 && \
+	\
+	./configure --prefix=/usr --libexec=/usr/sbin \
+		--bindir=/bin && \
+	make && \
+	make install
+
+	rm -rf cpio-2.5/*
+	make P=cpio-2.5 log-package
+
+
+minicom-2.1:
+	set +h && \
+	tar -xvzf minicom-2.1.tar.gz && \
+	cd minicom-2.1 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf minicom-2.1/*
+	make P=minicom-2.1 log-package
+
+
+slang-1.4.9:
+	set +h && \
+	tar -xvjf slang-1.4.9.tar.bz2 && \
+	cd slang-1.4.9 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install && \
+	make elf && \
+	make install-elf && \
+	make install-links && \
+	chmod 755 /usr/lib/libslang.so.1.4.9
+
+	rm -rf slang-1.4.9/*
+	make P=slang-1.4.9 log-package
+
+tcl8.4.9:
+	set +h && \
+	tar -xvzf tcl8.4.9-src.tar.gz && \
+	cd tcl8.4.9 && \
+	\
+	cd unix && \
+	./configure --prefix=/usr --enable-threads && \
+	make && \
+	make install && \
+	install -d /usr/include/tcl8.4/unix && \
+	install -m644 *.h /usr/include/tcl8.4/unix/ && \
+	install -d /usr/include/tcl8.4/generic && \
+	install -c -m644 ../generic/*.h /usr/include/tcl8.4/generic/ && \
+	rm -f /usr/include/tcl8.4/generic/{tcl,tclDecls,tclPlatDecls}.h && \
+	ln -nsf ../../include/tcl8.4 /usr/lib/tcl8.4/include && \
+	ln -sfn libtcl8.4.9.so /usr/lib/libtcl.so && \
+	ln -sfn tclsh8.4 /usr/bin/tclsh
+
+	#perl -p -i -e 's/usr\/include/usr\/include\/tcl8\.4/' \
+	#	tclConfig.sh && \
+	#perl -p -i -e 's/usr\/src\/tcl8\.4\.9/usr\/include\/tcl8\.4/' \
+	#	tclConfig.sh && \
+	#mv /usr/lib/tcl8.4 /usr/lib/tcl8.4.9 && \
+
+	make P=tcl8.4.9 log-package
+
+
+tk8.4.9:
+	set +h && \
+	tar -xvzf tk8.4.9-src.tar.gz && \
+	cd tk8.4.9 && \
+	\
+	cd unix && \
+	./configure --prefix=/usr --enable-threads && \
+	make && \
+	make install && \
+	\
+	install -d /usr/include/tk8.4/unix && \
+	install -m644 *.h /usr/include/tk8.4/unix/ && \
+	install -d /usr/include/tk8.4/generic && \
+	install -m644 ../generic/*.h /usr/include/tk8.4/generic/ && \
+	rm -f /usr/include/tk8.4/generic/{tk,tkDecls,tkPlatDecls}.h && \
+	ln -nsf ../../include/tk8.4 /usr/lib/tk8.4/include && \
+	ln -sf libtk8.4.9.so /usr/lib/libtk.so && \
+	ln -sf wish8.4 /usr/bin/wish
+
+	#perl -p -i -e 's/usr\/include/usr\/include\/tk8\.4/' \
+	#	tkConfig.sh && \
+	#perl -p -i -e 's/usr\/src\/tk8\.4\.9/usr\/include\/tk8\.4/' \
+	#	tkConfig.sh && \
+	#mv /usr/lib/tk8.4 /usr/lib/tk8.4.9 && \
+	make P=tk8.4.9 log-package
+
+
+gdbm-1.8.3:
+	set +h && \
+	tar -xvzf gdbm-1.8.3.tar.gz && \
+	cd gdbm-1.8.3 && \
+	\
+	./configure --prefix=/usr --infodir=/usr/share/info \
+		--mandir=/usr/share/man && \
+	make && \
+	make BINOWN=root BINGRP=root install && \
+	make BINOWN=root BINGRP=root install-compat
+
+	rm -rf gdbm-1.8.3/*
+	make P=gdbm-1.8.3 log-package
+
+
+Python-2.3.2:
+	set +h && \
+	tar -xvzf Python-2.3.2.tgz && \
+	cd Python-2.3.2 && \
+	\
+	patch -Np1 -i ../Python-2.3.2-gdbm-2.patch && \
+	./configure --prefix=/usr --enable-shared && \
+	make && \
+	make install  && \
+	ln -sfn /usr/bin/python2.3 /usr/bin/python2
+	##cp -v /usr/lib/python2.2/site-packages/* \
+	##	/usr/lib/python2.3/site-packages
+
+	rm -rf Python-2.3.2/*
+	make P=Python-2.3.2 log-package
+
+
+
+newt-0.51.6:
+	set +h && \
+	tar -xvzf newt_0.51.6.orig.tar.gz && \
+	cd newt-0.51.6 && \
+	tar -xvzf newt-0.51.6.tar.gz && \
+	cd newt-0.51.6 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install 
+
+	rm -rf newt-0.51.6/*
+	make P=newt-0.51.6 log-package
+
+
+ncftp-3.1.7:
+	set +h && \
+	tar -xvzf ncftp-3.1.7-src.tar.gz && \
+	cd ncftp-3.1.7 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf ncftp-3.1.7/*
+	make P=ncftp-3.1.7 log-package
+
+
+unzip-5.50:
+	set +h && \
+	tar -xvzf unzip550.tar.gz && \
+	cd unzip-5.50 && \
+	\
+	patch -Np1 -i ../unzip-5.50-fix-Makefile.patch && \
+	patch -Np1 -i ../unzip-5.50-fix-libz.patch && \
+	patch -Np1 -i ../unzip-5.50-dont-make-noise.patch && \
+	patch -Np1 -i ../unzip-5.50-dotdot.patch && \
+	cp unix/Makefile . && \
+	make prefix=/usr linux && \
+	make prefix=/usr linux_shlibz && \
+	make prefix=/usr install && \
+	cp -a libunzip.so* /usr/lib
+
+	rm -rf unzip-5.50/*
+	make P=unzip-5.50 log-package
+
+popt-1.7:
+	set +h && \
+	tar -xvzf popt-1.7.tar.gz && \
+	cd popt-1.7 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf popt-1.7/*
+	make P=popt-1.7 log-package
+
+
+partimage-0.6.4:
+	set +h && \
+	tar -xvjf partimage-0.6.4.tar.bz2 && \
+	cd partimage-0.6.4 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	ln -s /usr/share/gettext/mkinstalldirs . && \
+	perl -p -i -e "s/partimag.root/root.root/" Makefile Makefile.am && \
+	make install
+
+	rm -rf partimage-0.6.4/*
+	make P=partimage-0.6.4 log-package
+
+
+which-2.14:
+	set +h && \
+	tar -xvzf which-2.14.tar.gz && \
+	cd which-2.14 && \
+	\
+	./configure --prefix=/usr --exec-prefix=/ && \
+	make && \
+	make install
+
+	rm -rf which-2.14/*
+	make P=which-2.14 log-package
+
+
+zip-2.3:
+	set +h && \
+	tar -xvzf zip23.tar.gz && \
+	cd zip-2.3 && \
+	\
+	cp unix/Makefile . && \
+	make prefix=/usr generic_gcc && \
+	make prefix=/usr install
+
+	rm -rf zip-2.3/*
+	make P=zip-2.3 log-package
+
+
+netpbm-10.22:
+	set +h && \
+	tar -xvzf netpbm-10.22.tgz && \
+	cd netpbm-10.22 && \
+	cp -av ../netpbm-10.22-Makefile.config Makefile.config && \
+	make && \
+	make package pkgdir=/pkg && \
+	cd /pkg && \
+	cp -av include bin /usr && \
+	cp -av man/* /usr/man && \
+	cp -av link/* lib/* /usr/lib && \
+	cd .. && rm -rf /pkg
+
+	rm -rf netpbm-10.22/*
+	make P=netpbm-10.22 log-package
+
+
+mtools-3.9.9:
+	set +h && \
+	tar -xvjf mtools-3.9.9.tar.bz2 && \
+	cd mtools-3.9.9 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf mtools-3.9.9/*
+	make P=mtools-3.9.9 log-package
+
+
+syslinux-2.09:
+	set +h && \
+	tar -xvzf syslinux-2.09.tar.gz && \
+	cd syslinux-2.09 && \
+	\
+	make syslinux && \
+	make install && \
+	mkdir -p /boot && \
+	cp -v isolinux.bin /boot
+
+	rm -rf syslinux-2.09/*
+	make P=syslinux-2.09 log-package
+
+
+tcp_wrappers_7.6:
+	set +h && \
+	tar -xvzf tcp_wrappers_7.6.tar.gz && \
+	cd tcp_wrappers_7.6 && \
+	\
+	patch -Np1 -i ../tcp_wrappers-7.6-shared-lib-plus-plus.patch && \
+	make REAL_DAEMON_DIR=/usr/sbin STYLE=-DPROCESS_OPTIONS linux && \
+	make install
+
+	rm -rf tcp_wrappers_7.6/*
+	make P=tcp_wrappers_7.6 log-package
+
+
+tcpdump-3.8.3:
+	set +h && \
+	tar -xvzf tcpdump-3.8.3.tar.gz && \
+	cd tcpdump-3.8.3 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf tcpdump-3.8.3/*
+	make P=tcpdump-3.8.3 log-package
+
+
+iftop-0.16:
+	set +h && \
+	tar -xvzf iftop-0.16.tar.gz && \
+	cd iftop-0.16 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf iftop-0.16/*
+	make P=iftop-0.16 log-package
+
+
+guile-1.6.4:
+	set +h && \
+	tar -xvzf guile-1.6.4.tar.gz && \
+	cd guile-1.6.4 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf guile-1.6.4/*
+	make P=guile-1.6.4 log-package
+
+
+penggy-0.2.1:
+	set +h && \
+	tar -xvzf penggy-0.2.1.tar.gz && \
+	cd penggy-0.2.1 && \
+	\
+	./configure --sysconfdir=/etc --prefix=/usr && \
+	make prefix=/usr && \
+	make prefix=/usr install
+
+	rm -rf penggy-0.2.1/*
+	make P=penggy-0.2.1 log-package
+
+
+rsync-2.5.6:
+	set +h && \
+	tar -xvzf rsync-2.5.6.tar.gz && \
+	cd rsync-2.5.6 && \
+	\
+	groupadd rsyncd && \
+	useradd -c rsyncd -d /home/rsync -g rsyncd -s /bin/false rsyncd && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install 
+
+	rm -rf rsync-2.5.6/*
+	make P=rsync-2.5.6 log-package
+
+
+traceroute-1.4a12:
+	set +h && \
+	tar -xvzf traceroute-1.4a12.tar.gz && \
+	cd traceroute-1.4a12 && \
+	\
+	mv Makefile.in Makefile.in.bak && \
+	sed 's/-o bin/-o root/' Makefile.in.bak > Makefile.in && \
+	./configure --prefix=/usr && \
+	make && \
+	make install && \
+	make install-man
+
+	rm -rf traceroute-1.4a12/*
+	make P=traceroute-1.4a12 log-package
+
+bind-9.3.1:
+	set +h && \
+	tar -xvzf bind-9.3.1.tar.gz && \
+	cd bind-9.3.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make -C lib/dns && \
+	make -C lib/isc && \
+	make -C lib/bind9 && \
+	make -C lib/isccfg && \
+	make -C lib/lwres && \
+	make -C bin/dig && \
+	make -C bin/dig install
+
+	rm -rf bind-9.3.1/*
+	make P=bind-9.3.1 log-package
+
+
+ddclient-3.6.3:
+	set +h && \
+	tar -xvzf ddclient.tar.gz && \
+	cd ddclient-3.6.3 && \
+	\
+  	cp -av ddclient /usr/sbin && \
+  	cp -av sample-etc_ddclient.conf /etc/ddclient.conf && \
+  	cp -av sample-etc_rc.d_init.d_ddclient /etc/rc.d/init.d/ddclient
+
+	rm -rf ddclient-3.6.3/*
+	make P=ddclient-3.6.3 log-package
+
+
+dhcp-3.0pl2:
+	set +h && \
+	tar -xvzf dhcp-3.0pl2.tar.gz && \
+	cd dhcp-3.0pl2 && \
+	\
+	./configure && \
+	make && \
+	make LIBDIR=/usr/lib INCDIR=/usr/include install
+
+	rm -rf dhcp-3.0pl2/*
+	make P=dhcp-3.0pl2 log-package
+
+
+portmap_5beta:
+	set +h && \
+	tar -xvzf portmap_5beta.tar.gz && \
+	cd portmap_5beta && \
+	\
+	patch -Np1 -i ../portmap-5beta-compilation_fixes-3.patch && \
+	patch -Np1 -i ../portmap-5beta-glibc-errno-fix.patch && \
+	make && \
+	make install
+
+	rm -rf portmap_5beta/*
+	make P=portmap_5beta log-package
+
+fam-2.7.0:
+	set +h && \
+	tar -xvzf fam-2.7.0.tar.gz && \
+	cd fam-2.7.0 && \
+	\
+	patch -Np1 -i ../fam-2.7.0-dnotify-1.patch && \
+	chmod -v 755 configure && \
+	autoreconf -f -i && \
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf fam-2.7.0/*
+	make P=fam-2.7.0 log-package
+
+
+nfs-utils-1.0.6:
+	set +h && \
+	tar -xvzf nfs-utils-1.0.6.tar.gz && \
+	cd nfs-utils-1.0.6 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc --sbindir=/sbin && \
+	make && \
+	make install
+
+	rm -rf nfs-utils-1.0.6/*
+	make P=nfs-utils-1.0.6 log-package
+
+
+ppp-2.4.1:
+	set +h && \
+	tar -xvzf ppp-2.4.1.tar.gz && \
+	cd ppp-2.4.1 && \
+	\
+	./configure && \
+	make && \
+	make install
+	#patch -Np1 -i ../ppp-2.4.1-pppoe-5.patch && \
+	
+	rm -rf ppp-2.4.1/*
+	make P=ppp-2.4.1 log-package
+
+
+
+postfix-2.0.16:
+	set +h && \
+	tar -xvzf postfix-2.0.16.tar.gz && \
+	cd postfix-2.0.16 && \
+	patch -Np1 -i ../postfix-2.0.16-lpthread.patch && \
+	\
+	groupadd postfix && \
+	groupadd postdrop && \
+	groupadd -g 65534 nogroup && \
+	useradd -c postfix -d /dev/null -g postfix -s /bin/false postfix && \
+	useradd -c nobody -d /home -g nogroup -s /bin/bash -u 65534 nobody && \
+	chown postfix:postfix /var/mail && \
+	\
+	make && \
+	sh postfix-install daemon_directory=/usr/sbin \
+                   manpage_directory=/usr/share/man \
+                   sample_directory=/usr/share/doc/postfix \
+                   -non-interactive && \
+	cp -rf html/* /usr/share/doc/postfix && \
+	\
+	rm -rf postfix-2.0.16/*
+	make P=postfix-2.0.16 log-package
+
+
+hfsutils-3.2.6:
+	set +h && \
+	tar -xvzf hfsutils-3.2.6.tar.gz && \
+	cd hfsutils-3.2.6 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--enable-devlibs && \
+	make && \
+	make install
+
+	rm -rf hfsutils-3.2.6/*
+	make P=hfsutils-3.2.6 log-package
+
+
+procmail-3.22:
+	set +h && \
+	tar -xvzf procmail-3.22.tar.gz && \
+	cd procmail-3.22 && \
+	\
+	make LOCKINGTEST=/tmp BASENAME=/usr install && \
+	make install-suid
+
+	rm -rf procmail-3.22/*
+	make P=procmail-3.22 log-package
+
+
+rp-pppoe-3.5:
+	set +h && \
+	tar -xvzf rp-pppoe-3.5.tar.gz && \
+	cd rp-pppoe-3.5 && \
+	\
+	cd src && \
+	./configure && \
+	make && \
+	make install && \
+	cd ../gui && \
+	make && \
+	make install && \
+	cd .. && \
+	cp -av scripts/adsl-init /etc/rc.d/init.d/adsl && \
+	chmod 755 /etc/rc.d/init.d/adsl && \
+	perl -p -i -e "s/echo_/echo /;s/lock\/subsys/run/" /etc/rc.d/init.d/adsl
+
+	rm -rf rp-pppoe-3.5/*
+	make P=rp-pppoe-3.5 log-package
+
+
+samba-2.2.8a:
+	set +h && \
+	tar -xvjf samba-2.2.8a.tar.bz2 && \
+	cd samba-2.2.8a && \
+	\
+	cd source && \
+	mkdir -p /etc/samba/private && \
+	mkdir -p /var/cache/samba && \
+	./configure \
+	   --prefix=/usr \
+	   --sysconfdir=/etc \
+	   --localstatedir=/var \
+	   --with-piddir=/var/run \
+	   --with-fhs \
+	   --with-libsmbclient \
+	   --with-smbmount && \
+	make && \
+	make install && \
+	\
+	rm -rf /usr/private && \
+	cp -v ../examples/simple/smb.conf /etc/samba && \
+	echo "swat 901/tcp" >> /etc/services
+
+	#echo "swat stream tcp nowait.400 root /usr/sbin/swat swat" >> \
+	#   /etc/inetd.conf
+
+	rm -rf samba-2.2.8a/*
+	make P=samba-2.2.8a log-package
+
+
+jpeg-6b:
+	set +h && \
+	tar -xvzf jpegsrc.v6b.tar.gz && \
+	cd jpeg-6b && \
+	\
+	./configure --enable-static --enable-shared --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf jpeg-v6b/*
+	make P=jpeg-v6b log-package
+
+
+tiff-v3.6.0:
+	set +h && \
+	tar -xvzf tiff-v3.6.0.tar.gz && \
+	cd tiff-v3.6.0 && \
+	\
+	./configure --prefix=/usr --noninteractive \
+   		--with-DIR_MAN=/usr/share/man && \
+	make && \
+	make install
+
+	rm -rf tiff-v3.6.0/*
+	make P=tiff-v3.6.0 log-package
+
+
+lcms-1.11:
+	set +h && \
+	tar -xvzf lcms-1.11.tar.gz && \
+	cd lcms-1.11 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf lcms-1.11/*
+	make P=lcms-1.11 log-package
+
+
+XFree86-4.4.0:
+	set +h && \
+	tar xvjf XFree86-4.4.0-src-1.tar.bz2 && \
+	tar xvjf XFree86-4.4.0-src-2.tar.bz2 && \
+	tar xvjf XFree86-4.4.0-src-3.tar.bz2 && \
+	tar xvjf XFree86-4.4.0-src-4.tar.bz2 && \
+	tar xvjf XFree86-4.4.0-src-5.tar.bz2 && \
+	tar xvjf XFree86-4.4.0-src-6.tar.bz2 && \
+	mv xc XFree86-4.4.0 && \
+	cd XFree86-4.4.0 && \
+	patch -Np2 -i ../XFree86-kernel_headers.patch && \
+	\
+	WORLDOPTS="" make World 2>&1 | tee xfree-compile.log && \
+	make install && \
+	make install.man && \
+	ln -sf /usr/X11R6/bin /usr/bin/X11 && \
+	ln -sf /usr/X11R6/lib/X11 /usr/lib/X11 && \
+	ln -sf /usr/X11R6/include/X11 /usr/include/X11 && \
+	echo /usr/X11R6/lib >> /etc/ld.so.conf && \
+	ldconfig && \
+	\
+	cd programs/xterm && \
+	rm -f *.o && \
+	xmkmf && \
+	perl -p -i -e "s/_WIDE_CHARS/_WIDE_CHARS -DOPT_256_COLORS -DDFT_TERM_TYPE=xterm-color/" \
+		Makefile && \
+	make && \
+	make install && \
+	ln -sfn /usr/X11R6/bin/Xorg /usr/X11R6/bin/X
+
+	rm -rf /usr/X11R6/lib/libfontconfig.so.*
+	#rm -rf XFree86-4.4.0/*
+	make P=XFree86-4.4.0 log-package
+
+
+Xorg-6.8.2:
+	set +h && \
+	tar xvjf X11R6.8.2-src.tar.bz2 && \
+	mv xc Xorg-6.8.2 && \
+	cd Xorg-6.8.2 && \
+	cp -a ../Xorg-6.8.2-host.def config/cf/host.def && \
+	patch -Np1 -i ../xorg-6.8.1-kernel26-1.patch && \
+	patch -Np1 -i ../xorg-6.8.1-luit_race-1.patch && \
+	patch -Np1 -i ../xorg-6.8.2-BUSmemcpy_PIC-1.patch && \
+	patch -Np1 -i ../xorg-6.8.2-libGL_PIC-1.patch && \
+	patch -Np1 -i ../xorg-6.8.2-nonow-1.patch && \
+	\
+	sed -i -e "s@^#include <linux/config.h>@/* & */@" `grep -lr linux/config.h *` && \
+	WORLDOPTS="" make World 2>&1 | tee xfree-compile.log && \
+	make install && \
+	ln -sf /usr/X11R6/bin /usr/bin/X11 && \
+	ln -sf /usr/X11R6/lib/X11 /usr/lib/X11 && \
+	ln -sf /usr/X11R6/include/X11 /usr/include/X11 && \
+	echo /usr/X11R6/lib >> /etc/ld.so.conf && \
+	ldconfig
+	-make install.man
+
+	# breaks Xft build?
+
+	#cd programs/xterm && \
+	#rm -f *.o && \
+	#xmkmf && \
+	#perl -p -i -e "s/_WIDE_CHARS/_WIDE_CHARS -DOPT_256_COLORS -DDFT_TERM_TYPE=xterm-color/" \
+	#	Makefile && \
+	#make && \
+	#make install
+
+	rm -rf /usr/X11R6/lib/libfontconfig.so*
+	rm -rf Xorg-6.8.2/*
+	make P=Xorg-6.8.2 log-package
+
+Xorg-6.9.0:
+	set +h && \
+	tar xvjf X11R6.9.0-src.tar.bz2 && \
+	mv xc Xorg-6.9.0 && \
+	cd Xorg-6.9.0 && \
+	cp -a ../Xorg-6.9.0-host.def config/cf/host.def && \
+	patch -Np1 -i ../xorg-6.9.0-luit_race-1.patch && \
+	patch -Np1 -i ../xorg-6.9.0-security-2.patch && \
+	\
+	sed -i -e "s@^#include <linux/config.h>@/* & */@" `grep -lr linux/config.h *` && \
+	\
+	make World 2>&1 | tee xorg-compile.log && \
+	make install && \
+	ln -sf /usr/X11R6/bin /usr/bin/X11 && \
+	ln -sf /usr/X11R6/lib/X11 /usr/lib/X11 && \
+	ln -sf /usr/X11R6/include/X11 /usr/include/X11 && \
+	\
+	install -v -d -m755 /usr/share/fonts && \
+	ln -sfn /usr/X11R6/lib/X11/fonts/TTF /usr/share/fonts/X11-TTF && \
+	echo /usr/X11R6/lib >> /etc/ld.so.conf && \
+	ldconfig
+
+	#sed -i -e "/^SUBDIRS =/s/ etc$//" programs/Xserver/Xprint/Imakefile && \
+
+	#rm -rf /usr/X11R6/lib/libfontconfig.so*
+	#rm -rf Xorg-6.9.0/*
+	make P=Xorg-6.9.0 log-package
+
+xterm-213:
+	set +h && \
+	tar -xvzf xterm-213.tgz && \
+	cd xterm-213 && \
+	\
+	./configure --prefix=/usr/X11R6 --enable-luit --with-wide-chars && \
+	make && \
+	make install && \
+	make install-ti
+
+	rm -rf xterm-213/*
+	make P=xterm-213 log-package
+
+Xaw3d-1.5:
+#	set +h && \
+#	tar -xvzf Xaw3d-1.5.tar.gz && \
+#	mkdir Xaw3d-1.5 && \
+#	cp -a xc/* XFree86-4.4.0 && \
+#	rm -rf xc && \
+#	cd XFree86-4.4.0 && \
+#	cd lib/Xaw3d && \
+#	\
+#	xmkmf && \
+#	make includes && \
+#	make depend && \
+#	make && \
+#	make install
+#
+#	#patch -Np1 -i ../Xaw3d-1.5-compilation_fix-1.patch && \
+#
+#	rm -rf XFree86-4.4.0/*
+#	make P=Xaw3d-1.5 log-package
+
+
+Xaw95-1.1:
+	set +h && \
+	tar -xvzf Xaw95-1.1-src.tar.gz && \
+	cd Xaw95-1.1 && \
+	patch -Np1 -i ../Xaw95-1.1-no-widec.patch && \
+	\
+	xmkmf && \
+	make includes && \
+	mkdir -p /usr/X11R6/include/X11/Xaw3d && \
+	cp -f *h /usr/X11R6/include/X11/Xaw3d && \
+	make depend && \
+	make && \
+	make install
+
+	rm -rf Xaw95-1.1/*
+	make P=Xaw95-1.1 log-package
+
+
+fontconfig-2.2.1:
+	set +h && \
+	tar -xvzf fontconfig-2.2.1.tar.gz && \
+	cd fontconfig-2.2.1 && \
+	patch -Np1 -i ../fontconfig.patch && \
+	patch -Np1 -i ../fontconfig.patch2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf fontconfig-2.2.1/*
+	make P=fontconfig-2.2.1 log-package
+
+fontconfig-2.3.2:
+	set +h && \
+	tar -xvzf fontconfig-2.3.2.tar.gz && \
+	cd fontconfig-2.3.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc --disable-docs && \
+	perl -p -i -e 's/^LIBS =/LIBS = -liconv/' \
+		Makefile fc-cache/Makefile fc-list/Makefile \
+		fc-match/Makefile fc-case/Makefile fc-lang/Makefile && \
+	\
+	make && \
+	make install && \
+	install -v -m755 -d /usr/share/doc/fontconfig/fontconfig-devel && \
+	install -v -m644 doc/*.3 /usr/share/man/man3 && \
+	install -v -m644 doc/*.5 /usr/share/man/man5 && \
+	install -v -m644 doc/*.{html,pdf,txt} /usr/share/doc/fontconfig && \
+	install -v -m644 doc/fontconfig-devel/* /usr/share/doc/fontconfig/fontconfig-devel
+
+	rm -rf fontconfig-2.3.2/*
+	make P=fontconfig-2.3.2 log-package
+
+
+freetype-2.1.10:
+	set +h && \
+	tar -xvjf freetype-2.1.10.tar.bz2 && \
+	cd freetype-2.1.10 && \
+	\
+	sed -i -r 's:.*(#.*BYTE.*) .*:\1:' include/freetype/config/ftoption.h && \
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf freetype-2.1.10/*
+	make P=freetype-2.1.10 log-package
+
+
+pango-1.8.1:
+	set +h && \
+	tar -xvjf pango-1.8.1.tar.bz2 && \
+	cd pango-1.8.1 && \
+	rm -rf /usr/X11R6/include/fontconfig && \
+	\
+	./configure PKG_CONFIG_PATH=/usr/X11R6/lib/pkgconfig \
+		--prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install && \
+	ldconfig
+
+	rm -rf pango-1.8.1/*
+	make P=pango-1.8.1 log-package
+
+
+gtk+-1.2.10:
+	set +h && \
+	tar -xvzf gtk+-1.2.10.tar.gz && \
+	cd gtk+-1.2.10 && \
+	\
+	patch -Np1 -i ../gtk+-1.2.10-config_update-1.patch && \
+	patch -Np1 -i ../gtk+-1.2.10-fixes-1.patch && \
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gtk+-1.2.10/*
+	make P=gtk+-1.2.10 log-package
+
+
+gtk+-2.6.1:
+	set +h && \
+	tar -xvjf gtk+-2.6.1.tar.bz2 && \
+	cd gtk+-2.6.1 && \
+	\
+	./configure PKG_CONFIG_PATH=/usr/X11R6/lib/pkgconfig:/usr/lib/pkgconfig  \
+		--prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gtk+-2.6.1/*
+	make P=gtk+-2.6.1 log-package
+
+gtk+-2.6.7:
+	set +h && \
+	tar -xvjf gtk+-2.6.7.tar.bz2 && \
+	cd gtk+-2.6.7 && \
+	\
+	./configure PKG_CONFIG_PATH=/usr/X11R6/lib/pkgconfig:/usr/lib/pkgconfig  \
+		--prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+
+	rm -rf gtk+-2.6.7/*
+	make P=gtk+-2.6.7 log-package
+
+gdk-pixbuf-0.22.0:
+	set +h && \
+	tar -xvjf gdk-pixbuf-0.22.0.tar.bz2 && \
+	cd gdk-pixbuf-0.22.0 && \
+	\
+	./configure --prefix=/usr   --disable-gtk-doc && \
+	make && \
+	make install
+
+	rm -rf gdk-pixbuf-0.22.0/*
+	make P=gdk-pixbuf-0.22.0 log-package
+
+
+ORBit-0.5.17:
+	set +h && \
+	tar -xvjf ORBit-0.5.17.tar.bz2 && \
+	cd ORBit-0.5.17 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf ORBit-0.5.17/*
+	make P=ORBit-0.5.17 log-package
+
+
+
+imlib-1.9.14:
+	set +h && \
+	tar -xvjf imlib-1.9.14.tar.bz2 && \
+	cd imlib-1.9.14 && \
+	\
+	./configure --prefix=/usr  --sysconfdir=/etc/imlib  && \
+	make && \
+	make install
+
+	rm -rf imlib-1.9.14/*
+	make P=imlib-1.9.14 log-package
+
+
+gimp-print-4.2.6:
+	set +h && \
+	tar -xvzf gimp-print-4.2.6.tar.gz && \
+	cd gimp-print-4.2.6 && \
+	\
+	./configure --prefix=/usr --with-translated-ppds=no && \
+	make && \
+	make install
+
+	rm -rf gimp-print-4.2.6/*
+	make P=gimp-print-4.2.6 log-package
+
+
+libart_lgpl-2.3.17:
+	set +h && \
+	tar -xvjf libart_lgpl-2.3.17.tar.bz2 && \
+	cd libart_lgpl-2.3.17 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libart_lgpl-2.3.17/*
+	make P=libart_lgpl-2.3.17 log-package
+
+gimp-2.0.2:
+	set +h && \
+	tar -xvjf gimp-2.0.2.tar.bz2 && \
+	cd gimp-2.0.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gimp-2.0.2/*
+	make P=gimp-2.0.2 log-package
+
+gimp-2.2.4:
+	set +h && \
+	tar -xvjf GIMPshop-source-2.2.4.tar.bz2 && \
+	cd gimp-2.2.4 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gimp-2.2.4/*
+	make P=gimp-2.2.4 log-package
+
+
+
+freefonts-0.10:
+	set +h && \
+	tar -xvzf freefonts-0.10.tar.gz  && \
+	cp -av freefont /usr/X11R6/lib/X11/fonts && \
+	mv freefont freefonts-0.10 
+
+	rm -rf freefonts-0.10/*
+	make P=freefonts-0.10 log-package
+
+
+tightvnc-1.2.9:
+	set +h && \
+	tar -xvjf tightvnc-1.2.9_unixsrc.tar.bz2 && \
+	mv vnc_unixsrc tightvnc-1.2.9 && \
+	cd tightvnc-1.2.9 && \
+	\
+	xmkmf && \
+	make World && \
+	cd Xvnc && \
+	./configure --prefix=/usr && \
+	make && \
+	cd .. && \
+	./vncinstall /usr/bin /usr/man
+
+	rm -rf tightvnc-1.2.9/*
+	make P=tightvnc-1.2.9 log-package
+
+
+driftnet-0.1.6:
+	set +h && \
+	tar -xvzf driftnet-0.1.6.tar.gz && \
+	cd driftnet-0.1.6 && \
+	\
+	make && \
+	cp -av driftnet /usr/bin
+
+	rm -rf driftnet-0.1.6/*
+	make P=driftnet-0.1.6 log-package
+
+
+links-2.1pre13:
+	set +h && \
+	tar -xvjf links-2.1pre13.tar.bz2 && \
+	cd links-2.1pre13 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf links-2.1pre13/*
+	make P=links-2.1pre13 log-package
+
+
+dsniff-2.4b2:
+	set +h && \
+	tar -xvzf dsniff-2.4b2.tar.gz && \
+	cd dsniff-2.4b2 && \
+	\
+	patch -Np1 -i ../dsniff-2.4b2.no-arpspoof.patch && \
+	./configure --prefix=/usr && \
+	perl -p -i -e "s/lcrypto/lcrypto \-lpthread/" Makefile && \
+	make && \
+	make install
+
+	rm -rf libnids-1.18/*
+	rm -rf dsniff-2.4b2/*
+
+	make P=dsniff-2.4b2 log-package
+
+nmap-3.75:
+	set +h && \
+	tar -xvjf nmap-3.75.tar.bz2 && \
+	cd nmap-3.75 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf nmap-3.75/*
+	make P=nmap-3.75 log-package
+
+
+ethereal-0.10.10:
+	set +h && \
+	tar -xvjf ethereal-0.10.10.tar.bz2 && \
+	cd ethereal-0.10.10 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf ethereal-0.10.10/*
+	make P=ethereal-0.10.10 log-package
+
+
+ettercap-NG-0.7.0_rc1:
+	set +h && \
+	tar -xvzf ettercap-NG-0.7.0_rc1.tar.gz && \
+	cd ettercap-NG-0.7.0_rc1 && \
+	\
+	./configure PKG_CONFIG_PATH=/usr/lib/pkgconfig \
+		--prefix=/usr --exec-prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install && \
+	cp -v share/etter.conf /etc
+
+	rm -rf ettercap-NG-0.7.0_rc1/*
+	make P=ettercap-NG-0.7.0_rc1 log-package
+
+
+gqview-2.1.2:
+	set +h && \
+	tar -xvzf gqview-2.1.2.tar.gz && \
+	cd gqview-2.1.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gqview-2.1.2/*
+	make P=gqview-2.1.2 log-package
+
+
+gimageview-0.2.25:
+	set +h && \
+	tar -xvzf gimageview-0.2.25.tar.gz && \
+	cd gimageview-0.2.25 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf gimageview-0.2.25/*
+	make P=gimageview-0.2.25 log-package
+
+libmng-1.0.7:
+	set +h && \
+	tar -xvzf libmng-1.0.7.tar.gz && \
+	cd libmng-1.0.7 && \
+	\
+	cp -v makefiles/makefile.linux makefile && \
+	make prefix=/usr && \
+	make prefix=/usr install
+
+	rm -rf libmng-1.0.7/*
+	make P=libmng-1.0.7 log-package
+
+
+cvs-1.11.16:
+	set +h && \
+	tar -xvjf cvs-1.11.16.tar.bz2 && \
+	cd cvs-1.11.16 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf cvs-1.11.16/*
+	make P=cvs-1.11.16 log-package
+
+firefox-1.5.0.6:
+	set +h && \
+	tar -xvjf firefox-1.5.0.6-source.tar.bz2 && \
+	mv mozilla firefox-1.5.0.6 && \
+	cd firefox-1.5.0.6 && \
+	\
+	export MOZILLA_OFFICIAL="1" && \
+	export BUILD_OFFICIAL="1" && \
+	export MOZ_PHOENIX="1" && \
+	\
+	PKG_CONFIG_PATH=/usr/X11R6/lib/pkgconfig ./configure \
+	--prefix=/usr/firefox \
+	--with-default-mozilla-five-home=/usr/lib/firefox-1.5.0.6 \
+	--with-user-appdir=.firefox \
+	--with-system-zlib \
+	--with-system-png \
+	--with-system-jpeg \
+	--enable-application=browser \
+	--enable-default-toolkit=gtk2 \
+	--enable-extensions=all,-typeaheadfind \
+	--enable-crypto \
+	--enable-xft \
+	--enable-xinerama \
+	--enable-optimize \
+	--enable-reorder \
+	--enable-strip \
+	--enable-cpp-rtti \
+	--enable-single-profile \
+	--disable-freetype2 \
+	--disable-accessibility \
+	--disable-debug \
+	--disable-tests \
+	--disable-logging \
+	--disable-pedantic \
+	--disable-installer \
+	--disable-mailnews \
+	--disable-ldap \
+	--disable-calendar \
+	--disable-composer \
+	--disable-profilesharing && \
+	\
+	make PKG_CONFIG_PATH=/usr/X11R6/lib/pkgconfig && \
+	make PKG_CONFIG_PATH=/usr/X11R6/lib/pkgconfig install && \
+	install -d /usr/include/firefox-1.5.0.6/nss && \
+	cp -Lf dist/private/nss/*.h dist/public/nss/*.h /usr/include/firefox-1.5.0.6/nss && \
+	\
+	cd /usr/firefox/lib/firefox-1.5.0.6 && \
+	export LD_LIBRARY_PATH="$PWD" && \
+	export MOZILLA_FIVE_HOME="$PWD" && \
+	echo /usr/firefox/lib/firefox-1.5.0.6 >> /etc/ld.so.conf && \
+	ldconfig && \
+	./regxpcom && \
+	touch `find . -name *.rdf` && \
+	ln -sfn /usr/firefox/bin/firefox /usr/bin/firefox && \
+	cd /usr/firefox && ln -sfn /tmp/.mozilla/extensions .
+
+	rm -rf firefox-1.5.0.6/*
+	make P=firefox-1.5.0.6 log-package
+
+sylpheed-2.2.7:
+	set +h && \
+	tar -xvjf sylpheed-2.2.7.tar.bz2 && \
+	cd sylpheed-2.2.7 && \
+	\
+	./configure --sysconfdir=/etc --prefix=/usr --enable-ssl \
+		--enable-gpgme \
+		--enable-ldap && \
+	make && \
+	make install
+
+	rm -rf sylpheed-2.2.7/*
+	make P=sylpheed-2.2.7 log-package
+
+
+uudeview-0.5.18:
+	set +h && \
+	tar -xvzf uudeview-0.5.18.tar.gz && \
+	cd uudeview-0.5.18 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf uudeview-0.5.18/*
+	make P=uudeview-0.5.18 log-package
+
+
+xwc-0.91.5a:
+	set +h && \
+	mkdir xwc-0.91.5a && \
+	tar -xvzf xwc-0.91.5a.tar.gz -C xwc-0.91.5a && \
+	cd xwc-0.91.5a && \
+	tar -xvjf fox-0.99.42.tar.bz2 && \
+	tar -xvjf xwc-0.91.5.tar.bz2 && \
+	bzip2 -d *patch*bz2 && \
+	patch -Np0 -i fox-0.99.42.patch && \
+	patch -Np0 -i fox-0.99.42.patch2 && \
+	patch -Np0 -i fox-0.99.42.patch3 && \
+	\
+	cd fox && \
+	./configure --with-opengl=no  --prefix=/usr && \
+	make && \
+	make install && \
+	\
+	cd ../xwc-0.91.5 && \
+	perl -p -i -e "s/^INSTALLDIR=.*/INSTALLDIR= \/usr/" Makefile && \
+	perl -p -i -e "s/usr\/local/usr/" Makefile && \
+	perl -p -i -e "s/usr\/local/usr/" QueryRPM/Makefile && \
+	perl -p -i -e "s/usr\/local/usr/" textedit/Makefile && \
+	perl -p -i -e "s/usr\/local/usr/" textview/Makefile && \
+	make FOXLIB=/usr/lib  INSTALLDIR=/usr && \
+	make drop
+
+	rm -rf xwc-0.91.5a/*
+	make P=xwc-0.91.5a log-package
+
+xv-3.10a:
+	set +h && \
+	tar -xvzf xv-3.10a.tar.gz && \
+	cd xv-3.10a && \
+	\
+	patch -Np1 -i ../xv-3.10a.patch && \
+	perl -p -i -e "s/usr\/local/usr/" Makefile && \
+	\
+	make BINDIR=/usr/bin  \
+		MANDIR=/usr/man/man1  LIBDIR=/usr/lib && \
+	make install
+
+	rm -rf xv-3.10a/*
+	make P=xv-3.10a log-package
+
+
+LinNeighborhood-0.6.5:
+	set +h && \
+	tar -xvzf LinNeighborhood-0.6.5.tar.gz && \
+	cd LinNeighborhood-0.6.5 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf LinNeighborhood-0.6.5/*
+	make P=LinNeighborhood-0.6.5 log-package
+
+
+cdparanoia-III-alpha9.8:
+	set +h && \
+	tar -xvzf cdparanoia-III-alpha9.8.src.tgz && \
+	cd cdparanoia-III-alpha9.8 && \
+	\
+	./configure --prefix=/usr && \
+	make all && \
+	make install
+
+	make P=cdparanoia-III-alpha9.8 log-package
+
+gnomemm-1.2.2:
+	set +h && \
+	tar -xvjf gnomemm-1.2.2.tar.bz2 && \
+	cd gnomemm-1.2.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gnomemm-1.2.2/*
+	make P=gnomemm-1.2.2 log-package
+
+
+cdrdao-1.1.9:
+	set +h && \
+	tar -xvzf cdrdao-1.1.9.tar.gz && \
+	cd cdrdao-1.1.9 && \
+	\
+	GTKMM_CONFIG=/usr/bin ./configure --prefix=/usr --without-scglib && \
+	make && \
+	make install
+
+	rm -rf cdrdao-1.1.9/*
+	rm -rf cdparanoia-III-alpha9.8/*
+	make P=cdrdao-1.1.9 log-package
+
+cdrtools-2.01:
+	set +h && \
+	tar -xvjf cdrtools-2.01.tar.bz2 && \
+	cd cdrtools-2.01 && \
+	bzip2 -dc ../cdrtools-2.01a32-ossdvd.patch.bz2| patch -Np1 && \
+	\
+	make INS_BASE=/usr DEFINSUSR=root DEFINSGRP=root && \
+	make INS_BASE=/usr DEFINSUSR=root DEFINSGRP=root install && \
+	cp -av /usr/bin/mkisofs /bin
+
+	#patch -Np1 -i ../cdrtools-2.00.3-kernel_2.6-1.patch && \
+	rm -rf cdrtools-2.01/*
+	make P=cdrtools-2.01 log-package
+
+
+cdp-0.33-13:
+	set +h && \
+	tar -xvzf cdp-0.33-13.tar.gz && \
+	cd cdp-0.33-13 && \
+	\
+	ln -sfn /bin/gunzip /bin/compress && \
+	make clean && \
+	make && \
+	make install
+
+	rm -rf cdp-0.33-13/*
+	make P=cdp-0.33-13 log-package
+
+
+lame-3.93.1:
+	set +h && \
+	tar -xvzf lame-3.93.1.tar.gz && \
+	cd lame-3.93.1 && \
+	\
+	./configure --prefix=/usr --mandir=/usr/share/man \
+		--with-gtk-prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf lame-3.93.1/*
+	make P=lame-3.93.1 log-package
+
+
+MPlayer-1.0pre7try2:
+	set +h && \
+	tar -xvjf MPlayer-1.0pre7try2.tar.bz2 && \
+	cd MPlayer-1.0pre7try2 && \
+	\
+	install -d /usr/lib/win32
+
+	tar xjvf mplayer-codecs-all-20060501.tar.bz2 -C /usr/lib/win32 && \
+	mv /usr/lib/win32/all-20060501/* /usr/lib/win32 && \
+	rmdir /usr/lib/win32/all-20060501 && \
+	\
+	tar xjvf mplayer-codecs-qt63dlls-20050115.tar.bz2 -C /usr/lib/win32 && \
+	mv /usr/lib/win32/qt63dlls-20050115/* /usr/lib/win32 && \
+	rmdir /usr/lib/win32/qt63dlls-20050115 && \
+	\
+	tar xjvf mplayer-codecs-qtextras-20041107.tar.bz2 -C /usr/lib/win32 && \
+	mv /usr/lib/win32/qtextras-20041107/* /usr/lib/win32 && \
+	rmdir /usr/lib/win32/qtextras-20041107 && \
+	\
+	tar xjvf mplayer-rp9codecs-20050115.tar.bz2 -C /usr/lib/win32 && \
+	mv /usr/lib/win32/rp9codecs-20050115/* /usr/lib/win32 && \
+	rmdir /usr/lib/win32/rp9codecs-20050115 && \
+	\
+	tar xjvf mplayer-codecs-essential-20061022.tar.bz2 -C /usr/lib/win32 && \
+	mv /usr/lib/win32/essential-20061022/* /usr/lib/win32 && \
+	rmdir /usr/lib/win32/essential-20061022 && \
+	\
+	unzip mplayer-windows-all-20060611.zip -d /usr/lib/win32 && \
+	mv /usr/lib/win32/windows-all-20060611/* /usr/lib/win32 && \
+	rmdir /usr/lib/win32/windows-all-20060611 && \
+	\
+	unzip mplayer-codecs-windows-essential-20061022.zip -d /usr/lib/win32 && \
+	mv /usr/lib/win32/windows-essential-20061022/* /usr/lib/win32 && \
+	rmdir /usr/lib/win32/windows-essential-20061022 && \
+	\
+	cd MPlayer-1.0pre7try2 && \
+	sed -i 's/getline/vobsub_&/' vobsub.c && \
+	\
+	patch -Np1 -i ../MPlayer-1.0pre7try2-kernel_2.6-1.patch && \
+	patch -Np1 -i ../MPlayer-1.0pre7try2-round_function_fix-1.patch && \
+	patch -Np1 -i ../MPlayer-1.0pre7try2-jack_fixes-1.patch && \
+	patch -Np1 -i ../MPlayer-1.0pre7try2-x264_fixes-1.patch && \
+	\
+	./configure --prefix=/usr --confdir=/etc/mplayer --enable-largefiles \
+		--disable-external-faad --enable-internal-faad \
+		--enable-gui --enable-menu --enable-shared-pp \
+		--enable-alsa --enable-libavcodec \
+		--enable-xvid --enable-liba52 \
+		--with-codecsdir=/usr/lib/win32 && \
+	make && \
+	make install && \
+	make -C libavcodec/libpostproc install && \
+	ln -v -s libdha.so.1.0 /usr/lib/libdha.so && \
+	echo "dev.rtc.max-user-freq=1024" >> /etc/sysctl.conf && \
+	cp -v etc/codecs.conf /etc/mplayer && \
+	cp -v etc/dvb-menu.conf /etc/mplayer && \
+	cp -v etc/input.conf /etc/mplayer && \
+	cp -v etc/menu.conf /etc/mplayer && \
+	sed -e "/^include/d" < etc/example.conf > /etc/mplayer/mplayer.conf && \
+	tar xjvf ../mplayer-skin-default-1.7.tar.bz2 -C /usr/share/mplayer/Skin
+	chown -R root:root /usr/share/mplayer /usr/lib/win32
+
+	#--disable-libavformat 
+
+	rm -rf MPlayer-1.0pre7try2/*
+	make P=MPlayer-1.0pre7try2 log-package
+
+eject-2.1.5:
+	set +h && \
+	tar -xvzf eject-2.1.5.tar.gz && \
+	mv eject eject-2.1.5 && \
+	cd eject-2.1.5 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf eject-2.1.5/*
+	make P=eject-2.1.5 log-package
+
+
+svgalib-1.4.3:
+	set +h && \
+	tar -xvzf svgalib-1.4.3.tar.gz && \
+	cd svgalib-1.4.3 && \
+	patch -Np1 -i ../svgalib-1.4.3-gcc3-1.patch && \
+	patch -Np1 -i ../svgalib-1.4.3-cfg.patch && \
+	\
+	make install
+
+	rm -rf svgalib-1.4.3/*
+	make P=svgalib-1.4.3 log-package
+
+
+zisofs-tools-1.0.4:
+	set +h && \
+	tar -xvjf zisofs-tools-1.0.4.tar.bz2 && \
+	cd zisofs-tools-1.0.4 && \
+	\
+	./configure --prefix=/ && \
+	make && \
+	make install
+
+	rm -rf zisofs-tools-1.0.4/*
+	make P=zisofs-tools-1.0.4 log-package
+
+
+xdaliclock-2.20:
+	set +h && \
+	tar -xvzf xdaliclock-2.20.tar.gz && \
+	cd xdaliclock-2.20 && \
+	\
+	cd X11 && \
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf xdaliclock-2.20/*
+	make P=xdaliclock-2.20 log-package
+
+
+lsof_4.71:
+	set +h && \
+	tar -xvjf lsof_4.71.tar.bz2 && \
+	cd lsof_4.71 && \
+	tar xvf lsof_4.71_src.tar && \
+	cd lsof_4.71_src && \
+	touch .neverInv && \
+	./Configure -n linux && \
+	make && \
+	strip lsof && \
+	cp -av lsof /sbin && \
+	cp -av lsof.8 /usr/man/man8 && \
+	\
+	rm -rf lsof_4.71/*
+	make P=lsof_4.71 log-package
+
+
+glsof-0.9.15:
+	set +h && \
+	tar -xvzf glsof-0.9.15.tar.gz && \
+	cd glsof-0.9.15 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf glsof-0.9.15/*
+	make P=glsof-0.9.15 log-package
+
+
+#parted-1.7.1:
+#	set +h && \
+#	tar -xvjf parted-1.7.1.tar.bz2 && \
+#	cd parted-1.7.1 && \
+#	\
+#	./configure --prefix=/usr --sysconfdir=/etc && \
+#	make && \
+#	make install
+#
+#	rm -rf parted-1.7.1/*
+#	make P=parted-1.7.1 log-package
+
+parted-1.6.14:
+	set +h && \
+	tar -xvzf parted-1.6.14.tar.gz  && \
+	cd parted-1.6.14 && \
+	patch -Np1 -i ../parted-1.6.14-partition-protected.patch && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf parted-1.6.14/*
+	make P=parted-1.6.14 log-package
+
+
+bootsplash-3.0.7:
+#	set +h && \
+#	tar -xvjf bootsplash-3.0.7.tar.bz2  && \
+#	cd bootsplash-3.0.7 && \
+#	\
+#	patch -Np1 -i ../bootsplash-3.0.7.patch && \
+#	cd Utilities && \
+#	make all && \
+#	\
+#	cp -av fbmngplay fbresolution fbtruetype splash /sbin && \
+#	cd .. && mkdir -p /etc/bootsplash/themes && \
+#	cp -av Scripts/sysconfig.bootsplash /etc/sysconfig/bootsplash && \
+#	cp -av Scripts/splash.sh /etc/rc.d/init.d && \
+#	chmod 755 /etc/rc.d/init.d/splash.sh
+#
+#	#tar jxf ../Theme-OfficeDesktop.tar.bz2 -C /etc/bootsplash/themes && \
+#	#tar jxf ../Theme-SuSE-8.2.tar.bz2 -C /etc/bootsplash/themes
+#	rm -rf bootsplash-3.0.7/*
+#	make P=bootsplash-3.0.7 log-package
+
+
+fvwm95-2.0.43f:
+	set +h && \
+	tar -xvzf fvwm95-2.0.43f.tar.gz && \
+	cd fvwm95-2.0.43f && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install && \
+	tar -xvzf ../fvwm95icons-horen.tar.gz -C /usr/lib/X11 && \
+	chown -R 0:0 /usr/lib/X11/icons/*
+
+	rm -rf fvwm95-2.0.43f/*
+	make P=fvwm95-2.0.43f log-package
+
+alsa-lib-1.0.11:
+	set +h && \
+	tar -xvjf alsa-lib-1.0.11.tar.bz2 && \
+	cd alsa-lib-1.0.11 && \
+	\
+	./configure --prefix=/usr --enable-static && \
+	make && \
+	make install
+
+	rm -rf alsa-lib-1.0.11/*
+	make P=alsa-lib-1.0.11 log-package
+
+alsa-plugins-1.0.11:
+	set +h && \
+	tar -xvjf alsa-plugins-1.0.11.tar.bz2 && \
+	cd alsa-plugins-1.0.11 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	#patch -Np1 -i ../alsa-plugins-1.0.11-no_jack-1.patch && \
+
+	rm -rf alsa-plugins-1.0.11/*
+	make P=alsa-plugins-1.0.11 log-package
+
+alsa-utils-1.0.11:
+	set +h && \
+	tar -xvjf alsa-utils-1.0.11.tar.bz2 && \
+	cd alsa-utils-1.0.11 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install && \
+	\
+	touch /etc/asound.state
+
+	rm -rf alsa-utils-1.0.11/*
+	make P=alsa-utils-1.0.11 log-package
+
+alsa-tools-1.0.11:
+	set +h && \
+	tar -xvjf alsa-tools-1.0.11.tar.bz2 && \
+	cd alsa-tools-1.0.11 && \
+	\
+	cd ac3dec && \
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf alsa-tools-1.0.11/*
+	make P=alsa-tools-1.0.11 log-package
+
+
+sox-12.18.2:
+	set +h && \
+	tar -xvzf sox-12.18.2.tar.gz && \
+	cd sox-12.18.2 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf sox-12.18.2/*
+	make P=sox-12.18.2 log-package
+
+libiconv-1.9.1:
+	set +h && \
+	tar -xvzf libiconv-1.9.1.tar.gz && \
+	cd libiconv-1.9.1 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf libiconv-1.9.1/*
+	make P=libiconv-1.9.1 log-package
+
+
+fribidi-0.10.4:
+	set +h && \
+	tar -xvjf fribidi-0.10.4.tar.bz2 && \
+	cd fribidi-0.10.4 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf fribidi-0.10.4/*
+	make P=fribidi-0.10.4 log-package
+
+
+libglade-2.5.1:
+	set +h && \
+	tar -xvjf libglade-2.5.1.tar.bz2 && \
+	cd libglade-2.5.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libglade-2.5.1/*
+	make P=libglade-2.5.1 log-package
+
+
+wvstreams-3.75.0:
+	set +h && \
+	tar -xvzf wvstreams-3.75.0.tar.gz && \
+	cd wvstreams-3.75.0 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf wvstreams-3.75.0/*
+	make P=wvstreams-3.75.0 log-package
+
+wvdial-1.54.0:
+	set +h && \
+	tar -xvzf wvdial-1.54.0.tar.gz && \
+	cd wvdial-1.54.0 && \
+	perl -p -i -e "s/^PREFIX=\/usr\/local/PREFIX=\/usr/" Makefile && \
+	\
+	make && \
+	make install
+
+	rm -rf wvdial-1.54.0/*
+	make P=wvdial-1.54.0 log-package
+
+
+sane-backends-1.0.14:
+	set +h && \
+	tar -xvzf sane-backends-1.0.14.tar.gz && \
+	cd sane-backends-1.0.14 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf sane-backends-1.0.14/*
+	make P=sane-backends-1.0.14 log-package
+
+
+
+sane-frontends-1.0.12:
+	set +h && \
+	tar -xvzf sane-frontends-1.0.12.tar.gz && \
+	cd sane-frontends-1.0.12 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf sane-frontends-1.0.12/*
+	make P=sane-frontends-1.0.12 log-package
+
+
+xsane-0.93:
+	set +h && \
+	tar -xvzf xsane-0.93.tar.gz && \
+	cd xsane-0.93 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf xsane-0.93/*
+	make P=xsane-0.93 log-package
+
+
+xine-lib-1.1.2:
+	set +h && \
+	tar -xvjf xine-lib-1.1.2.tar.bz2 && \
+	cd xine-lib-1.1.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--with-w32-path=/usr/lib/win32 && \
+	make && \
+	make install
+
+	#patch -Np1 -i ../xine-lib-1-rc4a.audio_oss_out.patch && \
+	rm -rf xine-lib-1.1.2/*
+	make P=xine-lib-1.1.2 log-package
+
+xine-ui-0.99.4:
+	set +h && \
+	tar -xvzf xine-ui-0.99.4.tar.gz && \
+	cd xine-ui-0.99.4 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf xine-ui-0.99.4/*
+	make P=xine-ui-0.99.4 log-package
+
+
+ntp-4.2.2p3:
+	set +h && \
+	tar -xvzf ntp-4.2.2p3.tar.gz && \
+	cd ntp-4.2.2p3 && \
+	\
+	./configure --prefix=/usr -bindir=/usr/sbin --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf ntp-4.2.2p3/*
+	make P=ntp-4.2.2p3 log-package
+
+
+ghostscript-8.51:
+	set +h && \
+	tar -xvjf ghostscript-8.51.tar.bz2 && \
+	cd ghostscript-8.51 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install && \
+	make so && \
+	make soinstall && \
+	install -v -d -m755 /usr/include/ps && \
+	install -v -m644 src/*.h /usr/include/ps
+
+	tar xvzf ghostscript-fonts-std-8.11.tar.gz -C /usr/share/ghostscript && \
+	tar xzvf gnu-gs-fonts-other-6.0.tar.gz -C /usr/share/ghostscript && \
+	chown -v -R root:root /usr/share/ghostscript/fonts
+
+	rm -rf ghostscript-8.51/*
+	make P=ghostscript-8.51 log-package
+
+
+gsview-4.7:
+	set +h && \
+	tar -xzvf gsview-4.7.tar.gz && \
+	cd gsview-4.7 && \
+	\
+	sed 's/^GSVIEW_ROOT=\/usr\/local/GSVIEW_ROOT=\/usr/' \
+		srcunx/unx.mak > Makefile && \
+	perl -p -i -e "s/netscape/firefox/" srcunx/gvxreg.c && \
+	patch -Np1 -i ../gsview-4.7-pstotext-1.patch && \
+	make && \
+	make install
+
+	rm -rf gsview-4.7/*
+	make P=gsview-4.7 log-package
+
+
+cups-1.1.20:
+	set +h && \
+	tar -xvjf cups-1.1.20-source.tar.bz2 && \
+	cd cups-1.1.20 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--localstatedir=/var  --disable-pam && \
+	make && \
+	make install && \
+	perl -p -i -e "s/echo_/echo /" /etc/rc.d/init.d/cups && \
+	cp -v ../cups-1.1.20.conf /etc/cups/cupsd.conf && \
+	mkdir -p /var/{spool,log}/cups && \
+	rm -f /etc/rc.d/rc2.d/S99cups
+
+	rm -rf cups-1.1.20/*
+	make P=cups-1.1.20 log-package
+
+libusb-0.1.8:
+	set +h && \
+	tar -xvzf libusb-0.1.8.tar.gz && \
+	cd libusb-0.1.8 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install && \
+	cd /usr/lib && mv libusb libusb.so && \
+	ln -sfn libusb.so libusb && \
+	cd /usr/src
+
+	rm -rf libusb-0.1.8/*
+	make P=libusb-0.1.8 log-package
+
+hpoj-0.91:
+	set +h && \
+	tar -xvzf hpoj-0.91.tgz && \
+	cd hpoj-0.91 && \
+	\
+	bzcat ../hpoj-0.91-kernel26.patch.bz2| patch -Np0 && \
+	./configure --prefix=/usr --with-usb=libusb --with-libusb=/usr \
+		--with-snmp=/usr/include/net-snmp/library && \
+	make && \
+	make install
+
+	rm -rf hpoj-0.91/*
+	make P=hpoj-0.91 log-package
+
+libuser-0.51.7:
+	set +h && \
+	tar -xvzf libuser-0.51.7.tar.gz && \
+	cd libuser-0.51.7 && \
+	\
+	patch -Np1 -i ../libuser-0.51.7.python.patch && \
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--with-python-version=2.3 && \
+	perl -p -i -e "s/^SUBDIRS = reference sgml/SUBDIRS = reference/" \
+		docs/Makefile* && \
+	make && \
+	make install
+
+	rm -rf libuser-0.51.7/*
+	make P=libuser-0.51.7 log-package
+
+usermode-1.67:
+	set +h && \
+	tar -xvzf usermode-1.67.tar.gz && \
+	cd usermode-1.67 && \
+	\
+	patch -Np1 -i ../usermode-1.67-DISABLE_DEPRECATED.patch && \
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf usermode-1.67/*
+	make P=usermode-1.67 log-package
+
+sleuthkit-2.06:
+	set +h && \
+	tar -xvzf sleuthkit-2.06.tar.gz && \
+	cd sleuthkit-2.06 && \
+	\
+	make && \
+	cp -rv ../sleuthkit-2.06 /usr/sleuthkit
+
+	#rm -rf sleuthkit-2.06/*
+	make P=sleuthkit-2.06 log-package
+
+
+autopsy-2.08:
+	set +h && \
+	tar -xvjf autopsy-2.08.tar.bz2 && \
+	cd autopsy-2.08 && \
+	\
+	cp -Rv ../autopsy-2.08 /usr/autopsy && \
+	ln -sfn /usr/autopsy/autopsy /usr/bin/autopsy
+
+	rm -rf autopsy-2.08/*
+	make P=autopsy-2.08 log-package
+
+
+dosfstools-2.10:
+	set +h && \
+	tar -xvzf dosfstools-2.10.src.tar.gz && \
+	cd dosfstools-2.10 && \
+	patch -Np1 -i ../dosfstools-2.10-kernel-2.6-1.patch && \
+	\
+	make && \
+	make install
+
+	rm -rf dosfstools-2.10/*
+	make P=dosfstools-2.10 log-package
+
+
+strace-4.4.98:
+	set +h && \
+	tar -xvjf strace-4.4.98.tar.bz2 && \
+	cd strace-4.4.98 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf strace-4.4.98/*
+	make P=strace-4.4.98 log-package
+
+
+pnm2ppa-1.12:
+	set +h && \
+	tar -xvzf pnm2ppa-1.12.tar.gz && \
+	cd pnm2ppa-1.12 && \
+	\
+	perl -p -i -e "s/\/local//" Makefile && \
+	make && \
+	make install
+
+	rm -rf pnm2ppa-1.12/*
+	make P=pnm2ppa-1.12 log-package
+
+
+foomatic-filters-3.0.2:
+	set +h && \
+	tar -xvzf foomatic-filters-3.0-current.tar.gz && \
+	mv foomatic-filters-3.0-20060904 foomatic-filters-3.0.2 && \
+	cd foomatic-filters-3.0.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf foomatic-filters-3.0.2/*
+	make P=foomatic-filters-3.0.2 log-package
+
+
+XML-Parser-2.34:
+	set +h && \
+	tar -xvzf XML-Parser-2.34.tar.gz && \
+	cd XML-Parser-2.34 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf XML-Parser-2.34/*
+	make P=XML-Parser-2.34 log-package
+
+shared-mime-info-0.14:
+	set +h && \
+	tar -xvzf shared-mime-info-0.14.tar.gz && \
+	cd shared-mime-info-0.14 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf shared-mime-info-0.14/*
+	make P=shared-mime-info-0.14 log-package
+
+
+netcat-0.7.1:
+	set +h && \
+	tar -xvjf netcat-0.7.1.tar.bz2 && \
+	cd netcat-0.7.1 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf netcat-0.7.1/*
+	make P=netcat-0.7.1 log-package
+
+
+iproute2-2.6.16:
+	set +h && \
+	tar -xvzf iproute2-2.6.16-060323.tar.gz && \
+	mv iproute2-2.6.16-060323 iproute2-2.6.16 && \
+	cd iproute2-2.6.16 && \
+	\
+	sh ./configure && \
+	make KERNEL_INCLUDE=/usr/src/linux/include && \
+	make install
+
+	rm -rf iproute2-2.6.16/*
+	make P=iproute2-2.6.16 log-package
+
+qt-x11-free-3.3.2:
+	set +h && \
+	tar -xvjf qt-x11-free-3.3.2.tar.bz2 && \
+	cd qt-x11-free-3.3.2 && \
+	patch -Np1 -i ../qt-x11-free-3.3.2-skiplicence.patch && \
+	QTDIR=/usr/src/qt-x11-free-3.3.2  && \
+	LD_LIBRARY_PATH=$(QTDIR)/lib:$(LD_LIBRARY_PATH) && \
+	PATH=$(QTDIR)/bin:$(PATH) && \
+	echo $(QTDIR) >> /etc/ld.so.conf && \
+		./configure -prefix /usr/qt-3.3.2 -qt-gif \
+			-system-libpng -system-libmng -system-zlib \
+			-system-libjpeg -no-exceptions -thread \
+			-plugin-imgfmt-png && \
+	make sub-tools && \
+	make install && \
+	ln -sfn qt-3.3.2 /usr/qt && \
+	ln -s libqt-mt.so /usr/qt/lib/libqt.so && \
+	cp -r doc/man /usr/qt/doc
+	echo "/usr/qt/lib" >> /etc/ld.so.conf
+
+	rm -rf qt-x11-free-3.3.2/*
+	make P=qt-x11-free-3.3.2 log-package
+
+libfwbuilder-2.0.6:
+	set +h && \
+	tar -xvzf libfwbuilder-2.0.6.tar.gz && \
+	cd libfwbuilder-2.0.6 && \
+	\
+	QTDIR=/usr/qt ./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libfwbuilder-2.0.6/*
+	make P=libfwbuilder-2.0.6 log-package
+
+fwbuilder-2.0.6:
+	set +h && \
+	tar -xvzf fwbuilder-2.0.6.tar.gz && \
+	cd fwbuilder-2.0.6 && \
+	\
+	QTDIR=/usr/qt ./configure --prefix=/usr --sysconfdir=/etc && \
+	make QTDIR=/usr/qt && \
+	make install && \
+	cp -v src/gui/fwbuilder /usr/bin
+
+	rm -rf fwbuilder-2.0.6/*
+	make P=fwbuilder-2.0.6 log-package
+
+
+cabextract-1.0:
+	set +h && \
+	tar -xvzf cabextract-1.0.tar.gz && \
+	cd cabextract-1.0 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf cabextract-1.0/*
+	make P=cabextract-1.0 log-package
+
+
+ntfsprogs-200408261452:
+	set +h && \
+	tar -xvjf ntfsprogs-200408261452.tar.bz2 && \
+	cd ntfsprogs-200408261452 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf ntfsprogs-200408261452/*
+	make P=ntfsprogs-200408261452 log-package
+
+
+qtparted-0.4.4:
+	set +h && \
+	tar -xvjf qtparted-0.4.4.tar.bz2 && \
+	cd qtparted-0.4.4 && \
+	\
+	PATH=$(PATH):/usr/qt/bin QTDIR=/usr/qt ./configure --prefix=/usr \
+		--sysconfdir=/etc --disable-reiserfs --disable-jfs \
+		--disable-xfs && \
+	PATH=$(PATH):/usr/qt/bin make && \
+	make install
+
+	rm -rf qtparted-0.4.4/*
+	make P=qtparted-0.4.4 log-package
+
+
+# needs /proc mounted within chroot
+# procps-3.2.5 upgrade broke gps
+#
+# linuxprocfs.cc:518: error: parse error before `]' token
+# make[2]: *** [linuxprocfs.o] Error 1
+
+gps-1.1.0:
+#	set +h && \
+#	tar -xvzf gps-1.1.0.tar.gz && \
+#	cd gps-1.1.0 && \
+#	\
+#	./configure --prefix=/usr --sysconfdir=/etc  --enable-netwatch && \
+#	make && \
+#	make install
+#
+#	rm -rf gps-1.1.0/*
+#	make P=gps-1.1.0 log-package
+
+grub-0.93:
+	set +h && \
+	tar -xvzf grub_0.93+cvs20030224.orig.tar.gz && \
+	mv grub-0.93+cvs20030224 grub-0.93 && \
+	cd grub-0.93 && \
+	\
+	zcat ../grub_0.93+cvs20030224-2.diff.gz| patch -Np1 && \
+	patch -Np1 -i ../grub-0.93-gcc33-1.patch && \
+	./configure --prefix=/usr && \
+	make && \
+	make install && \
+	mkdir -p /boot/grub && \
+	cp -v stage1/stage1 /boot/grub && \
+	cp -v stage2/stage2 /boot/grub
+
+	rm -rf grub-0.93/*
+	make P=grub-0.93 log-package
+
+gkrellm-2.2.2:
+	set +h && \
+	tar -xvjf gkrellm-2.2.2.tar.bz2 && \
+	cd gkrellm-2.2.2 && \
+	\
+	make && \
+	make INSTALLROOT=/usr install
+
+	rm -rf gkrellm-2.2.2/*
+	make P=gkrellm-2.2.2 log-package
+
+screen-4.0.2:
+	set +h && \
+	tar -xvzf screen-4.0.2.tar.gz && \
+	cd screen-4.0.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf screen-4.0.2/*
+	make P=screen-4.0.2 log-package
+
+
+wine-0.9.21:
+	set +h && \
+	tar -xvjf wine-0.9.21.tar.bz2 && \
+	cd wine-0.9.21 && \
+	\
+	./configure --prefix=/usr && \
+	make depend && \
+	make && \
+	make install
+
+	rm -rf wine-0.9.21/*
+	make P=wine-0.9.21 log-package
+
+
+winetools-2.1.0:
+	set +h && \
+	mkdir -p winetools-2.1.0 && \
+	tar -xvzf winetools-2.1.0.tgz -C winetools-2.1.0 && \
+	cd winetools-2.1.0 && \
+	\
+	mkdir -p /usr/winetools && \
+	perl -p -i -e 's/opt\/wine/usr\/wine/' install.sh wt210 && \
+	cp -vR * /usr/winetools && \
+	ln -sfn /usr/winetools/wt210 /usr/bin/wt
+
+	rm -rf winetools-2.1.0/*
+	make P=winetools-2.1.0 log-package
+
+
+foremost-0.69:
+	set +h && \
+	tar -xvzf foremost-0.69.tar.gz && \
+	cd foremost-0.69 && \
+	\
+	perl -p -i -e 's/usr\/local/usr/;s/CDm/m/' Makefile && \
+	make && \
+	make install && \
+	cp -v foremost.conf /etc
+
+	rm -rf foremost-0.69/*
+	make P=foremost-0.69 log-package
+
+gaim-1.1.2:
+	set +h && \
+	tar -xvjf gaim-1.1.2.tar.bz2 && \
+	cd gaim-1.1.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gaim-1.1.2/*
+	make P=gaim-1.1.2 log-package
+
+
+
+sgml-common-0.6.3:
+	set +h && \
+	tar -xvzf sgml-common-0.6.3.tgz && \
+	cd sgml-common-0.6.3 && \
+	\
+	patch -Np1 -i ../sgml-common-0.6.3-manpage-1.patch && \
+	aclocal && \
+ 	automake -acf && \
+ 	autoconf && \
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install && \
+	install-catalog --add /etc/sgml/sgml-ent.cat \
+		/usr/share/sgml/sgml-iso-entities-8879.1986/catalog && \
+	install-catalog --add /etc/sgml/sgml-docbook.cat \
+		/etc/sgml/sgml-ent.cat
+
+	rm -rf sgml-common-0.6.3/*
+	make P=sgml-common-0.6.3 log-package
+
+
+docbook-dsssl-1.78:
+	set +h && \
+	tar -xvzf docbook-dsssl-1.78.tar.gz && \
+	cd docbook-dsssl-1.78 && \
+	\
+	mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-1.78/dtds/decls && \
+	mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-1.78/lib && \
+	mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-1.78/common && \
+	mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-1.78/html && \
+	mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-1.78/print && \
+	mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-1.78/test && \
+	mkdir -p /usr/share/sgml/docbook/dsssl-stylesheets-1.78/images && \
+	\
+	install bin/collateindex.pl /usr/bin && \
+	cp catalog VERSION /usr/share/sgml/docbook/dsssl-stylesheets-1.78 && \
+	cp dtds/decls/*.dcl \
+		/usr/share/sgml/docbook/dsssl-stylesheets-1.78/dtds/decls && \
+	cp lib/dblib.dsl /usr/share/sgml/docbook/dsssl-stylesheets-1.78/lib && \
+	cp common/*.dsl /usr/share/sgml/docbook/dsssl-stylesheets-1.78/common && \
+	cp common/*.ent /usr/share/sgml/docbook/dsssl-stylesheets-1.78/common && \
+	cp html/*.dsl /usr/share/sgml/docbook/dsssl-stylesheets-1.78/html && \
+	cp lib/*.dsl /usr/share/sgml/docbook/dsssl-stylesheets-1.78/lib && \
+	cp print/*.dsl /usr/share/sgml/docbook/dsssl-stylesheets-1.78/print && \
+	cp images/*.gif /usr/share/sgml/docbook/dsssl-stylesheets-1.78/images && \
+	\
+	install-catalog --add /etc/sgml/dsssl-docbook-stylesheets.cat \
+		/usr/share/sgml/docbook/dsssl-stylesheets-1.78/catalog && \
+	install-catalog --add /etc/sgml/sgml-docbook.cat \
+		/etc/sgml/dsssl-docbook-stylesheets.cat
+
+	rm -rf docbook-dsssl-1.78/*
+	make P=docbook-dsssl-1.78 log-package
+
+OpenSP-1.5.1:
+	set +h && \
+	tar -xvzf OpenSP-1.5.1.tar.gz && \
+	cd OpenSP-1.5.1 && \
+	\
+	patch -Np1 -i ../OpenSP-1.5.1-LITLEN.patch && \
+	./configure --prefix=/usr --disable-static --enable-http \
+	--enable-default-catalog=/etc/sgml/catalog \
+	--enable-default-search-path=/usr/share/sgml && \
+	\
+	make pkgdatadir=/usr/share/sgml/OpenSP-1.5.1 && \
+	make pkgdatadir=/usr/share/sgml/OpenSP-1.5.1 install && \
+	\
+	ln -sf onsgmls /usr/bin/nsgmls && \
+	ln -sf osgmlnorm /usr/bin/sgmlnorm && \
+	ln -sf ospam /usr/bin/spam && \
+	ln -sf ospcat /usr/bin/spcat && \
+	ln -sf ospent /usr/bin/spent && \
+	ln -sf osx /usr/bin/sx && \
+	ln -sf osx /usr/bin/sgml2xml && \
+	ln -sf libosp.so /usr/lib/libsp.so && \
+	\
+	install-catalog --add /etc/sgml/OpenSP-1.5.1.cat \
+		/usr/share/sgml/OpenSP-1.5.1/catalog && \
+	install-catalog --add /etc/sgml/sgml-docbook.cat \
+		/etc/sgml/OpenSP-1.5.1.cat
+
+	rm -rf OpenSP-1.5.1/*
+	make P=OpenSP-1.5.1 log-package
+
+
+openjade-1.3.2:
+	set +h && \
+	tar -xvzf openjade-1.3.2.tar.gz && \
+	cd openjade-1.3.2 && \
+	\
+	./configure --prefix=/usr --enable-http --disable-static \
+		--enable-default-catalog=/etc/sgml/catalog \
+		--enable-default-search-path=/usr/share/sgml \
+		--datadir=/usr/share/sgml/openjade-1.3.2 && \
+	make && \
+	make install && \
+	\
+	ln -sf openjade /usr/bin/jade && \
+	ln -sf libogrove.so /usr/lib/libgrove.so && \
+	ln -sf libospgrove.so /usr/lib/libspgrove.so && \
+	ln -sf libostyle.so /usr/lib/libstyle.so && \
+	install -m644 dsssl/catalog /usr/share/sgml/openjade-1.3.2 && \
+	install -m644 dsssl/*.dtd dsssl/*.dsl dsssl/*.sgm \
+		/usr/share/sgml/openjade-1.3.2 && \
+	install-catalog --add /etc/sgml/openjade-1.3.2.cat \
+		/usr/share/sgml/openjade-1.3.2/catalog && \
+	install-catalog --add /etc/sgml/sgml-docbook.cat \
+		/etc/sgml/openjade-1.3.2.cat
+
+	rm -rf openjade-1.3.2/*
+	make P=openjade-1.3.2 log-package
+
+
+pyparted-1.6.8:
+	set +h && \
+	tar -xvzf pyparted-1.6.8.tar.gz && \
+	cd pyparted-1.6.8 && \
+	patch -Np1 -i ../pyparted-1.6.8-libdl.patch && \
+	patch -Np1 -i ../pyparted-1.6.8-parted.includes.patch && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf pyparted-1.6.8/*
+	make P=pyparted-1.6.8 log-package
+
+pyparted-1.7.3:
+	set +h && \
+	tar -xvzf pyparted-1.7.3.tar.gz && \
+	cd pyparted-1.7.3 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	#patch -Np1 -i ../pyparted-1.6.8-libdl.patch && \
+	#patch -Np1 -i ../pyparted-1.6.8-parted.includes.patch && \
+
+	rm -rf pyparted-1.7.3/*
+	make P=pyparted-1.7.3 log-package
+
+
+pyxf86config-0.3.19:
+	set +h && \
+	tar -xvzf pyxf86config-0.3.19.tar.gz && \
+	cd pyxf86config-0.3.19 && \
+	\
+	patch -Np1 -i ../pyxf86config-0.3.19.header.patch && \
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--with-python-version=2.3 && \
+	make && \
+	make install
+
+	rm -rf pyxf86config-0.3.19/*
+	make P=pyxf86config-0.3.19 log-package
+
+
+rhpl-0.145:
+	set +h && \
+	tar -xvzf rhpl-0.145.tar.gz && \
+	cd rhpl-0.145 && \
+	\
+	make && \
+	make install && \
+	cd src/iconvmodule && python setup.py install && \
+	gcc -pthread -shared build/temp.linux-i686-2.3/iconvmodule.o \
+		-liconv -o build/lib.linux-i686-2.3/iconv.so && \
+	cp -v build/lib.linux-i686-2.3/iconv.so \
+		/usr/lib/python2.3/site-packages/rhpl
+
+	rm -rf rhpl-0.145/*
+	make P=rhpl-0.145 log-package
+
+
+chkconfig-1.2.24h:
+	set +h && \
+	tar -xvzf chkconfig-1.2.24h.tar.gz && \
+	cd chkconfig-1.2.24h && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf chkconfig-1.2.24h/*
+	make P=chkconfig-1.2.24h log-package
+
+
+imlib2-1.2.0.007:
+	set +h && \
+	tar -xvzf imlib2-1.2.0.007.tar.gz && \
+	cd imlib2-1.2.0.007 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf imlib2-1.2.0.007/*
+	make P=imlib2-1.2.0.007 log-package
+
+
+3ddesktop-0.2.8:
+	set +h && \
+	tar -xvzf 3ddesktop-0.2.8.tar.gz && \
+	cd 3ddesktop-0.2.8 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf 3ddesktop-0.2.8/*
+	make P=3ddesktop-0.2.8 log-package
+
+3ddeskfx-0.2.4:
+#	set +h && \
+#	tar -xvzf 3ddeskfx-0.2.4.tar.gz && \
+#	cd 3ddeskfx-0.2.4 && \
+#	\
+#	./configure --prefix=/usr --sysconfdir=/etc && \
+#	make && \
+#	make install
+#
+#	rm -rf 3ddeskfx-0.2.4/*
+#	make P=3ddeskfx-0.2.4 log-package
+
+xcdroast-0.98alpha15:
+	set +h && \
+	tar -xvzf xcdroast-0.98alpha15.tar.gz && \
+	cd xcdroast-0.98alpha15 && \
+	tar zxvf ../xcdroast-new_configure.tar.gz && \
+	patch -Np1 -i ../xcdroast-wav.patch && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf xcdroast-0.98alpha15/*
+	make P=xcdroast-0.98alpha15 log-package
+
+afio-2.4.7:
+	set +h && \
+	tar -xvzf afio-2.4.7.tgz && \
+	cd afio-2.4.7 && \
+	\
+	make && \
+	make install
+
+	rm -rf afio-2.4.7/*
+	make P=afio-2.4.7 log-package
+
+buffer-1.19:
+	set +h && \
+	tar -xvzf buffer-1.19.tgz && \
+	cd buffer-1.19 && \
+	make clean && \
+	patch -Np1 -i ../buffer-1.19-man1.patch && \
+	\
+	make && \
+	make install
+
+	rm -rf buffer-1.19/*
+	make P=buffer-1.19 log-package
+
+libssh-0.1:
+	set +h && \
+	tar -xvzf libssh-0.1.tgz && \
+	cd libssh-0.1 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf libssh-0.1/*
+	make P=libssh-0.1 log-package
+
+
+hydra-4.3:
+	set +h && \
+	tar -xvzf hydra-4.3-src.tar.gz && \
+	mv hydra-4.3-src hydra-4.3 && \
+	cd hydra-4.3 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf hydra-4.3/*
+	make P=hydra-4.3 log-package
+
+nessus-libraries-2.1.3:
+	set +h && \
+	tar -xvzf nessus-libraries-2.1.3.tar.gz && \
+	mv nessus-libraries nessus-libraries-2.1.3 && \
+	cd nessus-libraries-2.1.3 && \
+	\
+	./configure --prefix=/usr --localstatedir=/var && \
+	make && \
+	make install
+
+	rm -rf nessus-libraries-2.1.3/*
+	make P=nessus-libraries-2.1.3 log-package
+
+
+libnasl-2.1.3:
+	set +h && \
+	tar -xvzf libnasl-2.1.3.tar.gz && \
+	mv libnasl libnasl-2.1.3 && \
+	cd libnasl-2.1.3 && \
+	\
+	./configure --prefix=/usr --localstatedir=/var && \
+	make && \
+	make install
+
+	rm -rf libnasl-2.1.3/*
+	make P=libnasl-2.1.3 log-package
+
+
+nessus-core-2.1.3:
+	set +h && \
+	tar -xvzf nessus-core-2.1.3.tar.gz && \
+	mv nessus-core nessus-core-2.1.3 && \
+	cd nessus-core-2.1.3 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var && \
+	make && \
+	make install
+
+	rm -rf nessus-core-2.1.3/*
+	make P=nessus-core-2.1.3 log-package
+
+
+nessus-plugins-2.1.3:
+	set +h && \
+	tar -xvzf nessus-plugins-2.1.3.tar.gz && \
+	mv nessus-plugins nessus-plugins-2.1.3 && \
+	cd nessus-plugins-2.1.3 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var && \
+	make && \
+	make install && \
+	mkdir -p /usr/var && ln -sfn /var/nessus /usr/var/nessus && \
+	mkdir -p /tmp/.desc && \
+	ln -sfn /tmp/.desc /usr/lib/nessus/plugins/.desc && \
+	rm -rf /usr/com && ln -fns /var /usr/com
+
+	rm -rf nessus-plugins-2.1.3/*
+	make P=nessus-plugins-2.1.3 log-package
+
+
+autofs-4.1.3:
+	set +h && \
+	tar -xvjf autofs-4.1.3.tar.bz2 && \
+	cd autofs-4.1.3 && \
+	patch -Np1 -i ../autofs-4.1.3-strict.patch && \
+	patch -Np1 -i ../autofs-4.1.3-mtab_lock.patch && \
+	patch -Np1 -i ../autofs-4.1.3-signal-race-fix.patch && \
+	patch -Np1 -i ../autofs-4.1.3-non_block_ping.patch && \
+	patch -Np1 -i ../autofs-4.1.3-sock-leak-fix.patch && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc --sbindir=/sbin && \
+	make && \
+	make install
+
+	rm -rf autofs-4.1.3/*
+	make P=autofs-4.1.3 log-package
+
+
+
+####
+# The following blocks are separate for now and 
+# not automatically installed. They may or may not build with 
+# "make package".
+#
+
+# wget -nd -nH -v http://www.binarycode.org/openoffice/stable/1.1.0_sdk/OOo_1.1.0_LinuxIntel_sdk.tar.gz
+#
+OOo_1.1.3rc_LinuxIntel_install:
+	set +h && \
+	wget -nd -nH -v http://openofficeorg.secsup.org/contrib/rc/1.1.3rc/OOo_1.1.3rc_LinuxIntel_install.tar.gz && \
+	tar -xvzf OOo_1.1.3rc_LinuxIntel_install.tar.gz && \
+	cd OOo_1.1.3_LinuxIntel_install && \
+	\
+	./setup
+
+	#rm -rf OOo_1.1.3rc_LinuxIntel_install/*
+	make P=OOo_1.1.3rc_LinuxIntel_install log-package
+
+# needs correct PATH invocation
+#	wget -nd -nH -v http://192.18.97.252/ECom/EComTicketServlet/BEGINjsecom15d.sun.com-1ee6%3A413f26e5%3Aadb6b1f5c2f22569/-2147483648/510665199/1/489806/489686/510665199/2ts+/westCoastFSEND/j2re-1.4.2_05-oth-JPR/j2re-1.4.2_05-oth-JPR:3/j2re-1_4_2_05-linux-i586-rpm.bin && \
+j2re-1_4_2_05:
+	set +h && \
+	unrpm j2re-1_4_2_05-linux-i586.rpm && \
+	mv j2re-1_4_2_05-linux-i586.rpm.unpack j2re-1_4_2_05 && \
+	cd j2re-1_4_2_05 && \
+	cp -R usr/* /opt
+
+	rm -rf j2re-1_4_2_05/*
+	make P=j2re-1_4_2_05 log-package
+
+# needs Java VM
+LimeWireLinux:
+	set +h && \
+	mkdir -p LimeWireLinux && \
+	cd LimeWireLinux && \
+	PATH=$(PATH):/usr/java/j2re1.4.2_05/bin sh ../LimeWireLinux.bin && \
+	cd ..
+
+	#rm -rf LimeWireLinux/*
+	make P=LimeWireLinux log-package
+
+#
+# End block of separated packages. From here on out, everything is fair
+# game
+############
+
+
+bridge-utils-1.0.4:
+	set +h && \
+	tar -xvzf bridge-utils-1.0.4.tar.gz && \
+	cd bridge-utils-1.0.4 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf bridge-utils-1.0.4/*
+	make P=bridge-utils-1.0.4 log-package
+
+
+Twisted-1.3.0:
+	set +h && \
+	tar -xvjf Twisted-1.3.0.tar.bz2 && \
+	cd Twisted-1.3.0 && \
+	\
+	python setup.py install
+
+	rm -rf Twisted-1.3.0/*
+	make P=Twisted-1.3.0 log-package
+
+expect-5.42:
+	set +h && \
+	tar -xvzf expect-5.42.1.tar.gz && \
+	cd expect-5.42 && \
+	patch -N -p1 -i ../expect-5.42.1-spawn-1.patch && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--enable-shared && \
+	make && \
+	make install && \
+	ln -sf ../libexpect5.42.a /usr/lib/expect5.42
+
+	rm -rf expect-5.42/*
+	rm -rf tk8.4.9/*
+	rm -rf tcl8.4.9/*
+	make P=expect-5.42 log-package
+
+
+pcmcia-cs-3.2.8:
+#	set +h && \
+#	tar -xvzf pcmcia-cs-3.2.8.tar.gz && \
+#	cd pcmcia-cs-3.2.8 && \
+#	\
+#	../pcmcia-expect.sh && \
+#	make all && \
+#	make install
+#
+#	rm -rf pcmcia-cs-3.2.8/*
+#	make P=pcmcia-cs-3.2.8 log-package
+
+
+transcode-1.0.2:
+	set +h && \
+	tar -xvzf transcode-1.0.2.tar.gz && \
+	cd transcode-1.0.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc --enable-sdl \
+		--enable-vorbis \
+		--enable-ogg --enable-lzo --enable-a52 --enable-libxml2  \
+		--enable-gtk --enable-mjpegtools  --enable-imagemagick && \
+	make && \
+	make install
+
+		#--with-libmpeg3-includes=/usr/include \
+		#--with-libmpeg3-libs=/usr/lib \
+		# --enable-libdv \
+		#--enable-libmpeg3  \
+
+	rm -rf transcode-1.0.2/*
+	make P=transcode-1.0.2 log-package
+
+
+libid3tag-0.15.1b:
+	set +h && \
+	tar -xvzf libid3tag-0.15.1b.tar.gz && \
+	cd libid3tag-0.15.1b && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libid3tag-0.15.1b/*
+	make P=libid3tag-0.15.1b log-package
+
+
+libgpod-0.4.0:
+	set +h && \
+	tar -xvzf libgpod-0.4.0.tar.gz && \
+	cd libgpod-0.4.0 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libgpod-0.4.0/*
+	make P=libgpod-0.4.0 log-package
+
+
+gtkpod-0.99.8:
+	set +h && \
+	tar -xvzf gtkpod-0.99.8.tar.gz && \
+	cd gtkpod-0.99.8 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gtkpod-0.99.8/*
+	make P=gtkpod-0.99.8 log-package
+
+
+xmms-1.2.10:
+	set +h && \
+	tar -xvjf xmms-1.2.10.tar.bz2 && \
+	cd xmms-1.2.10 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf xmms-1.2.10/*
+	make P=xmms-1.2.10 log-package
+
+
+gpart-0.1h:
+	set +h && \
+	tar -xvzf gpart-0.1h.tar.gz && \
+	cd gpart-0.1h && \
+	\
+	perl -p -i -e 's/^prefix=\/usr\/local/prefix=\/usr/' inst.defs && \
+	make && \
+	make install
+
+	rm -rf gpart-0.1h/*
+	make P=gpart-0.1h log-package
+
+
+busybox-1.00:
+	set +h && \
+	tar -xvzf busybox-1.00.tar.gz && \
+	cd busybox-1.00 && \
+	\
+	cp -av ../busybox-1.0.0.config .config && \
+	make oldconfig && \
+	make 
+
+	#make install
+
+	#rm -rf busybox-1.00/*
+	make P=busybox-1.00 log-package
+
+
+lshw-B.02.04:
+	set +h && \
+	tar -xvzf lshw-B.02.04.tar.gz && \
+	cd lshw-B.02.04 && \
+	perl -p -i -e 's/,--as-needed//' src/Makefile src/gui/Makefile && \
+	\
+	make && \
+	make gui && \
+	make install && \
+	make install-gui
+
+	rm -rf lshw-B.02.04/*
+	make P=lshw-B.02.04 log-package
+
+
+nALFS-1.2.4:
+	set +h && \
+	tar -xvjf nALFS-1.2.4.tar.bz2 && \
+	cd nALFS-1.2.4 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf nALFS-1.2.4/*
+	make P=nALFS-1.2.4 log-package
+
+
+mingetty-1.06:
+	set +h && \
+	tar -xvzf mingetty-1.06.tar.gz && \
+	cd mingetty-1.06 && \
+	\
+	make && \
+	make install
+
+	rm -rf mingetty-1.06/*
+	make P=mingetty-1.06 log-package
+
+
+Unicode-String-2.07:
+	set +h && \
+	tar -xvzf Unicode-String-2.07.tar.gz && \
+	cd Unicode-String-2.07 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf Unicode-String-2.07/*
+	make P=Unicode-String-2.07 log-package
+
+
+MP3-Info-1.11:
+	set +h && \
+	tar -xvzf MP3-Info-1.11.tar.gz && \
+	cd MP3-Info-1.11 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf MP3-Info-1.11/*
+	make P=MP3-Info-1.11 log-package
+
+
+tcc-0.9.20:
+	set +h && \
+	tar -xvzf tcc-0.9.20.tar.gz && \
+	cd tcc-0.9.20 && \
+	patch -Np1 -i ../tcc-0.9.20-tccdoc.patch && \
+	\
+	./configure --prefix=/opt && \
+	make && \
+	make install
+
+	rm -rf tcc-0.9.20/*
+	make P=tcc-0.9.20 log-package
+
+ming-0.2a:
+	set +h && \
+	tar -xvzf ming-0.2a.tgz && \
+	cd ming-0.2a && \
+	\
+	make static && \
+	make install && \
+	cd py_ext && \
+	perl -p -i -e 's/^#include \"Python.h\"/#include <python2.3\/Python.h>/' ming_wrap.c && \
+	perl -p -i -e 's/^PYINCDIR.*/PYINCDIR = \/usr\/include\/python2\.3/' Makefile && \
+	perl -p -i -e 's/^PYLIBDIR.*/PYLIBDIR = \/usr\/lib\/python2\.3/' Makefile && \
+	make mingcmodule.so && \
+	make install
+
+	rm -rf ming-0.2a/*
+	make P=ming-0.2a log-package
+
+
+vnc2swf-0.4.2:
+	set +h && \
+	tar -xvzf vnc2swf-0.4.2.tar.gz && \
+	cd vnc2swf-0.4.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf vnc2swf-0.4.2/*
+	make P=vnc2swf-0.4.2 log-package
+
+
+swftools-0.6.3:
+	set +h && \
+	tar -xvzf swftools-0.6.3.tar.gz && \
+	cd swftools-0.6.3 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf swftools-0.6.3/*
+	make P=swftools-0.6.3 log-package
+
+SDL-1.2.8:
+	set +h && \
+	tar -xvzf SDL-1.2.8.tar.gz && \
+	cd SDL-1.2.8 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf SDL-1.2.8/*
+	make P=SDL-1.2.8 log-package
+
+
+
+qemu-0.8.2:
+	set +h && \
+	tar -xvzf qemu-0.8.2.tar.gz && \
+	tar -xvzf kqemu-1.3.0pre9.tar.gz -C qemu-0.8.2 && \
+	cd qemu-0.8.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install && \
+	\
+	cd kqemu-1.3.0pre9 && \
+	./configure && \
+	make && \
+	./install.sh
+
+	rm -rf qemu-0.8.2/*
+	make P=qemu-0.8.2 log-package
+
+
+lesstif-0.94.2:
+	set +h && \
+	tar -xvjf lesstif-0.94.2.tar.bz2 && \
+	cd lesstif-0.94.2 && \
+	./CVSMake && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var \
+		--enable-build-20 \
+		--enable-build-21 \
+		--disable-debug \
+		--disable-build-tests \
+		--with-xdnd && \
+	perl -p -i -e 's/ all\-local//g' `find ./ -name Makefile` && \
+	perl -p -i -e 's/BUG\-REPORTING/  /g' `find ./ -name Makefile` && \
+	perl -p -i -e 's/INSTALL\.txt/  /g' `find ./ -name Makefile` && \
+	perl -p -i -e 's/ReleaseNotes\.txt/  /g' `find ./ -name Makefile` && \
+	make && \
+	make install
+
+	rm -rf lesstif-0.94.2/*
+	make P=lesstif-0.94.2 log-package
+
+
+ddd-3.3.11:
+	set +h && \
+	tar -xvzf ddd-3.3.11.tar.gz && \
+	cd ddd-3.3.11 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf ddd-3.3.11/*
+	make P=ddd-3.3.11 log-package
+
+
+gdb-6.3:
+	set +h && \
+	tar -xvzf gdb-6.3.tar.gz && \
+	cd gdb-6.3 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gdb-6.3/*
+	make P=gdb-6.3 log-package
+
+
+ms-sys-2.0.0:
+	set +h && \
+	tar -xvzf ms-sys-2.0.0.tgz && \
+	cd ms-sys-2.0.0 && \
+	\
+	perl -p -i -e 's/^PREFIX = \/usr\/local/PREFIX = \/usr/' Makefile && \
+	make && \
+	make install
+
+	rm -rf ms-sys-2.0.0/*
+	make P=ms-sys-2.0.0 log-package
+
+dvdrtools-0.1.6-i386-cvs:
+	set +h && \
+	tar -xvzf dvdrtools-0.1.6-i386-cvs.tar.gz && \
+	mv dvdrtools dvdrtools-0.1.6-i386-cvs && \
+	cd dvdrtools-0.1.6-i386-cvs && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf dvdrtools-0.1.6-i386-cvs/*
+	make P=dvdrtools-0.1.6-i386-cvs log-package
+
+
+dvd+rw-tools-5.21.4.10.8:
+	set +h && \
+	tar -xvzf dvd+rw-tools-5.21.4.10.8.tar.gz && \
+	cd dvd+rw-tools-5.21.4.10.8 && \
+	\
+	perl -p -i -e 's/^prefix\?=\/usr\/local/prefix\?=\/usr/' Makefile.m4 && \
+	make && \
+	make install
+
+	rm -rf dvd+rw-tools-5.21.4.10.8/*
+	make P=dvd+rw-tools-5.21.4.10.8 log-package
+
+
+libmad-0.15.1b:
+	set +h && \
+	tar -xvzf libmad-0.15.1b.tar.gz && \
+	cd libmad-0.15.1b && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libmad-0.15.1b/*
+	make P=libmad-0.15.1b log-package
+
+
+madplay-0.15.2b:
+	set +h && \
+	tar -xvzf madplay-0.15.2b.tar.gz && \
+	cd madplay-0.15.2b && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf madplay-0.15.2b/*
+	make P=madplay-0.15.2b log-package
+
+ctags-5.5:
+	set +h && \
+	tar -xvzf ctags-5.5.tar.gz && \
+	cd ctags-5.5 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf ctags-5.5/*
+	make P=ctags-5.5 log-package
+
+
+unionfs-1.3:
+	set +h && \
+	tar -xvzf unionfs-1.3.tar.gz && \
+	cd unionfs-1.3 && \
+	\
+	make install-mod PREFIX=/usr LINUXSRC=/usr/src/linux \
+		MODDIR=/lib/modules/$(MODKERNEL) && \
+	make utils PREFIX=/usr && \
+	make install-utils PREFIX=/usr
+
+	strip --strip-debug /lib/modules/$(MODKERNEL)/kernel/fs/unionfs/unionfs.
+	-depmod -a
+
+	#make utils PREFIX=/usr && \
+
+	rm -rf unionfs-1.3/*
+	make P=unionfs-1.3 log-package
+
+ImageMagick-6.2.2:
+	set +h && \
+	tar -xvjf ImageMagick-6.2.2-0.tar.bz2 && \
+	cd ImageMagick-6.2.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf ImageMagick-6.2.2/*
+	make P=ImageMagick-6.2.2 log-package
+
+
+libintl-perl-1.16:
+	set +h && \
+	tar -xvzf libintl-perl-1.16.tar.gz && \
+	cd libintl-perl-1.16 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf libintl-perl-1.16/*
+	make P=libintl-perl-1.16 log-package
+
+xvidcore-1.1.0-beta2:
+	set +h && \
+	tar -xvjf xvidcore-1.1.0-beta2.tar.bz2 && \
+	cd xvidcore-1.1.0-beta2 && \
+	\
+	cd build/generic && \
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install && \
+	ln -sf libxvidcore.so.4.0 /usr/lib/libxvidcore.so.4 && \
+	ln -sf libxvidcore.so.4 /usr/lib/libxvidcore.so
+
+	rm -rf xvidcore-1.1.0-beta2/*
+	make P=xvidcore-1.1.0-beta2 log-package
+
+
+
+udftools-1.0.0b3:
+	set +h && \
+	tar -xvzf udftools-1.0.0b3.tar.gz && \
+	cd udftools-1.0.0b3 && \
+	\
+	bzip2 -dc ../udftools-1.0.0b3.patch.bz2| patch -Np1 && \
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf udftools-1.0.0b3/*
+	make P=udftools-1.0.0b3 log-package
+
+
+#faad2-2.0:
+#	set +h && \
+#	unzip faad2-2.0.zip && \
+#	mv faad2 faad2-2.0 && \
+#	cd faad2-2.0 && \
+#	patch -Np1 -i ../faad2-2.0.patch && \
+#	autoreconf -vif && \
+#	\
+#	./configure --prefix=/usr --sysconfdir=/etc --enable-shared && \
+#	make && \
+#	make install
+#
+#	#rm -rf faad2-2.0/*
+#	make P=faad2-2.0 log-package
+
+id3lib-3.8.3:
+	set +h && \
+	tar -xvzf id3lib3.8.3_3.8.3.orig.tar.gz && \
+	cd id3lib-3.8.3 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf id3lib-3.8.3/*
+	make P=id3lib-3.8.3 log-package
+
+
+
+faad2-20040923:
+	set +h && \
+	tar -xvjf faad2-20040923.tar.bz2 && \
+	cd faad2-20040923 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--with-drm && \
+	make && \
+	make install
+
+	rm -rf faad2-20040923/*
+	make P=faad2-20040923 log-package
+
+
+a52dec-0.7.4:
+	set +h && \
+	tar -xvzf a52dec-0.7.4.tar.gz && \
+	cd a52dec-0.7.4 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc --enable-shared && \
+	make && \
+	make install
+
+	#rm -rf a52dec-0.7.4/*
+	make P=a52dec-0.7.4 log-package
+
+
+ddrescue-1.0-pre1:
+	set +h && \
+	tar -xvzf ddrescue-1.0-pre1.tar.gz && \
+	cd ddrescue-1.0-pre1 && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install
+
+	rm -rf ddrescue-1.0-pre1/*
+	make P=ddrescue-1.0-pre1 log-package
+
+
+tmake-1.13:
+	set +h && \
+	tar -xvzf tmake-1.13.tar.gz && \
+	cd tmake-1.13 && \
+	\
+	mkdir -p /usr/lib/tmake && \
+	cp -r lib/linux-g++ /usr/lib/tmake && \
+	cp -r lib/unix /usr/lib/tmake && \
+	cp -a bin/* /usr/bin
+
+	rm -rf tmake-1.13/*
+	make P=tmake-1.13 log-package
+
+xxdiff-3.2:
+	set +h && \
+	tar -xvjf xxdiff-3.2.tar.bz2 && \
+	cd xxdiff-3.2/src && \
+	\
+	export QTDIR="/usr/qt" && \
+	make -f Makefile.bootstrap makefile && \
+	make && \
+	cd .. && install bin/xxdiff /usr/X11R6/bin 
+
+	rm -rf xxdiff-3.2/*
+	make P=xxdiff-3.2 log-package
+
+HTML-Parser-3.55:
+	set +h && \
+	tar -xvzf HTML-Parser-3.55.tar.gz && \
+	cd HTML-Parser-3.55 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf HTML-Parser-3.55/*
+	make P=HTML-Parser-3.55 log-package
+
+
+MIME-tools-5.420:
+	set +h && \
+	tar -xvzf MIME-tools-5.420.tar.gz && \
+	cd MIME-tools-5.420 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf MIME-tools-5.420/*
+	make P=MIME-tools-5.420 log-package
+
+
+Net_SSLeay.pm-1.30:
+	set +h && \
+	tar -xvzf Net_SSLeay.pm-1.30.tar.gz && \
+	cd Net_SSLeay.pm-1.30 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf Net_SSLeay.pm-1.30/*
+	make P=Net_SSLeay.pm-1.30 log-package
+
+
+libwww-perl-5.805:
+	set +h && \
+	tar -xvzf libwww-perl-5.805.tar.gz && \
+	cd libwww-perl-5.805 && \
+	\
+	perl Makefile.PL -n  && \
+	make && \
+	make install
+
+	rm -rf libwww-perl-5.805/*
+	make P=libwww-perl-5.805 log-package
+
+IO-stringy-2.110:
+	set +h && \
+	tar -xvzf IO-stringy-2.110.tar.gz && \
+	cd IO-stringy-2.110 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf IO-stringy-2.110/*
+	make P=IO-stringy-2.110 log-package
+
+
+MIME-Base64-3.07:
+	set +h && \
+	tar -xvzf MIME-Base64-3.07.tar.gz && \
+	cd MIME-Base64-3.07 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf MIME-Base64-3.07/*
+	make P=MIME-Base64-3.07 log-package
+
+
+MailTools-1.74:
+	set +h && \
+	tar -xvzf MailTools-1.74.tar.gz && \
+	cd MailTools-1.74 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf MailTools-1.74/*
+	make P=MailTools-1.74 log-package
+
+
+URI-1.35:
+	set +h && \
+	tar -xvzf URI-1.35.tar.gz && \
+	cd URI-1.35 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf URI-1.35/*
+	make P=URI-1.35 log-package
+
+
+
+fetchyahoo-2.10.3:
+	set +h && \
+	tar -xvzf fetchyahoo-2.10.3.tar.gz && \
+	cd fetchyahoo-2.10.3 && \
+	\
+	cp -av fetchyahoorc /etc && \
+	cp -av fetchyahoo.1 /usr/man/man1 && \
+	cp -av fetchyahoo /usr/bin
+
+	rm -rf fetchyahoo-2.10.3/*
+	make P=fetchyahoo-2.10.3 log-package
+
+
+mpg123-0.60:
+	set +h && \
+	tar -xvjf mpg123-0.60.tar.bz2 && \
+	cd mpg123-0.60 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf mpg123-0.60/*
+	make P=mpg123-0.60 log-package
+
+
+slik-0.92.0:
+	set +h && \
+	tar -xvzf slik-0.92.0.tar.gz && \
+	cd slik-0.92.0 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf slik-0.92.0/*
+	make P=slik-0.92.0 log-package
+
+
+gqmpeg-0.90.0:
+	set +h && \
+	tar -xvzf gqmpeg-0.90.0.tar.gz && \
+	cd gqmpeg-0.90.0 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf gqmpeg-0.90.0/*
+	make P=gqmpeg-0.90.0 log-package
+
+
+whois-4.7.5:
+	set +h && \
+	tar -xvzf whois_4.7.5.tar.gz && \
+	cd whois-4.7.5 && \
+	\
+	make prefix=/usr && \
+	make prefix=/usr install
+
+	rm -rf whois-4.7.5/*
+	make P=whois-4.7.5 log-package
+
+goom-2k4-0:
+	set +h && \
+	tar -xvzf goom-2k4-0-src.tar.gz && \
+	mv goom2k4-0 goom-2k4-0 && \
+	cd goom-2k4-0 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf goom-2k4-0/*
+	make P=goom-2k4-0 log-package
+
+
+libcdio-0.72:
+	set +h && \
+	tar -xvzf libcdio-0.72.tar.gz && \
+	cd libcdio-0.72 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libcdio-0.72/*
+	make P=libcdio-0.72 log-package
+
+
+libdvbpsi4-0.1.5:
+	set +h && \
+	tar -xvzf libdvbpsi4-0.1.5.tar.gz && \
+	cd libdvbpsi4-0.1.5 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--enable-shared && \
+	make && \
+	make install
+
+	rm -rf libdvbpsi4-0.1.5/*
+	make P=libdvbpsi4-0.1.5 log-package
+
+
+mpeg2dec-0.4.1:
+	set +h && \
+	tar -xvzf mpeg2dec-20050802.tar.gz && \
+	mv mpeg2dec-0.4.1-cvs mpeg2dec-0.4.1 && \
+	cd mpeg2dec-0.4.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--enable-shared && \
+	make && \
+	make install
+
+	make P=mpeg2dec-0.4.1 log-package
+
+
+vcdimager-0.7.21:
+	set +h && \
+	tar -xvzf vcdimager-0.7.21.tar.gz && \
+	cd vcdimager-0.7.21 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf vcdimager-0.7.21/*
+	make P=vcdimager-0.7.21 log-package
+
+
+faac-1.24:
+	set +h && \
+	tar -xvjf faac-1.24.tar.bz2 && \
+	cd faac-1.24 && \
+	\
+	./bootstrap && \
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--enable-shared && \
+	make && \
+	make install
+
+	rm -rf faac-1.24/*
+	make P=faac-1.24 log-package
+
+
+x264-20051126:
+	set +h && \
+	tar -xvjf x264-20051126.tar.bz2 && \
+	cd x264-20051126 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--enable-shared && \
+	make && \
+	make install
+
+	make P=x264-20051126 log-package
+
+ffmpeg-20051126:
+	set +h && \
+	tar -xvjf ffmpeg-20051126.tar.bz2 && \
+	cd ffmpeg-20051126 && \
+	\
+	./configure --prefix=/usr \
+		--enable-mp3lame \
+		--enable-faad \
+		--enable-faac \
+		--enable-xvid \
+		--enable-x264 \
+		--enable-a52 \
+		--enable-pp \
+		--enable-shared \
+		--enable-gpl && \
+	make && \
+	make install
+
+	make P=ffmpeg-20051126 log-package
+
+libdvdnav-20050211:
+	set +h && \
+	tar -xvjf libdvdnav-20050211.tar.bz2 && \
+	cd libdvdnav-20050211 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	patch -Np1 -i ../libdvdnav-20050211-missing.patch && \
+	aclocal && \
+	make && \
+	make install
+
+	rm -rf libdvdnav-20050211/*
+	make P=libdvdnav-20050211 log-package
+
+
+wxWidgets-2.6.2:
+	set +h && \
+	tar -xvzf wxWidgets-2.6.2.tar.gz && \
+	cd wxWidgets-2.6.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf wxWidgets-2.6.2/*
+	make P=wxWidgets-2.6.2 log-package
+
+vlc-0.8.6:
+	set +h && \
+	tar -xvzf vlc-snapshot-20060901.tar.gz && \
+	mv vlc-0.8.6-svn vlc-0.8.6 && \
+	cd vlc-0.8.6 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--with-libmpeg2-tree=/usr/src/mpeg2dec-0.4.1 \
+		--with-ffmpeg-tree=/usr/src/ffmpeg-20051126 \
+		--with-x264-tree=/usr/src/x264-20051126 \
+		--with-a52="/usr/include:/usr/lib" \
+		--enable-goom \
+		--enable-dvdread --disable-mad \
+		--disable-mkv --disable-ogg \
+		--enable-faad \
+		--enable-faac && \
+	make && \
+	make install
+
+	rm -rf vlc-0.8.6/*
+	make P=vlc-0.8.6 log-package
+
+vlc-0.9.0:
+#	set +h && \
+#	tar -xvzf vlc-snapshot-20061102.tar.gz && \
+#	mv vlc-0.9.0-svn vlc-0.9.0 && \
+#	cd vlc-0.9.0 && \
+#	\
+#	./configure --prefix=/usr --sysconfdir=/etc \
+#		\
+#		--with-ffmpeg-faac --enable-ffmpeg --with-ffmpeg-mp3lame \
+#		\
+#		--with-libmpeg2-tree=/usr/src/mpeg2dec-0.4.1 \
+#		--with-ffmpeg-tree=/usr/src/ffmpeg-20051126 \
+#		--with-x264-tree=/usr/src/x264-20051126 \
+#		--with-a52="/usr/include:/usr/lib" \
+#		--enable-goom \
+#		--enable-dvdread --disable-mad \
+#		--disable-mkv --disable-ogg \
+#		--enable-faad \
+#		--enable-faac && \
+#	patch -Np1 -i ../vlc-0.9.0-add-libiconv.patch && \
+#	make && \
+#	make install
+#
+#	rm -rf vlc-0.9.0/*
+#	make P=vlc-0.9.0 log-package
+
+baobab-2.4.2:
+	set +h && \
+	tar -xvzf baobab-2.4.2.tar.gz && \
+	cd baobab-2.4.2 && \
+	\
+	PKG_CONFIG_PATH=/usr/lib/pkg-config ./configure --prefix=/usr \
+		--sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf baobab-2.4.2/*
+	make P=baobab-2.4.2 log-package
+
+
+tct-1.16:
+	set +h && \
+	tar -xvzf tct-1.16.tar.gz && \
+	cd tct-1.16 && \
+	chown -R 0:0 * && \
+	\
+	make && \
+	mkdir -p /usr/tct && cp -a * /usr/tct && \
+	cd /usr/tct/bin && ln -sfn ../lazarus/lazarus .
+
+	rm -rf tct-1.16/*
+	make P=tct-1.16 log-package
+
+
+tctutils-1.01:
+	set +h && \
+	tar -xvzf tctutils-1.01.tar.gz && \
+	cd tctutils-1.01 && \
+	perl -p -i -e 's/^TCT_DIR = \/usr\/local\/tct/TCT_DIR = \/usr\/tct/' src/Makefile && \
+	\
+	make && \
+	cp -av bin /usr/bin
+
+	rm -rf tctutils-1.01/*
+	make P=tctutils-1.01 log-package
+
+
+subversion-1.1.4:
+	set +h && \
+	tar -xvjf subversion-1.1.4.tar.bz2 && \
+	cd subversion-1.1.4 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install && \
+	\
+	echo "svn stream tcp nowait svn /usr/bin/svnserve svnserve -i" >> \
+		/etc/inetd.conf && \
+	echo "svn:!:1003:13:svn:/dev/null:/bin/false" >> /etc/passwd
+
+	#cp -av subversion/mod_authz_svn/.libs/mod_authz_svn.so /usr/lib/apache && \
+	#cp -av subversion/mod_dav_svn/.libs/mod_dav_svn.so /usr/lib/apache && \
+
+	rm -rf subversion-1.1.4/*
+	make P=subversion-1.1.4 log-package
+
+
+httpd-2.2.3:
+	set +h && \
+	tar -xvjf httpd-2.2.3.tar.bz2
+	-groupadd -g 25 apache
+	-useradd -c "Apache Server" -d /dev/null -g apache \
+		-s /bin/false -u 25 apache
+
+	cd httpd-2.2.3 && \
+	patch -Np1 -i ../httpd-2.2.2-config-1.patch && \
+	\
+	./configure --prefix=/usr \
+	--with-devrandom=/dev/urandom --enable-dav \
+	--enable-layout=FHS --enable-ssl --enable-mods-shared=all && \
+	make && \
+	make install && \
+	\
+	sed -i -e "s/^User nobody/User apache/;s/^Group/Group apache/" \
+		/etc/apache/httpd.conf && \
+	rm -rf /srv/www/manual
+
+	rm -rf httpd-2.2.3/*
+	make P=httpd-2.2.3 log-package
+
+esvn-0.6.11-1:
+	set +h && \
+	tar -xvzf esvn-0.6.11-1.tar.gz && \
+	mv esvn esvn-0.6.11-1 && \
+	cd esvn-0.6.11-1 && \
+	\
+	export QTDIR="/usr/qt" PATH=$(PATH):/usr/qt/bin && \
+	make && \
+	make install && \
+	cp -av esvn /usr/bin
+
+	rm -rf esvn-0.6.11-1/*
+	make P=esvn-0.6.11-1 log-package
+
+
+mp3gain-1.4.6:
+	set +h && \
+	mkdir mp3gain-1.4.6 && \
+	unzip mp3gain-1_4_6-src.zip -d mp3gain-1.4.6 && \
+	cd mp3gain-1.4.6 && \
+	\
+	make && \
+	strip mp3gain && \
+	cp -av mp3gain /usr/bin
+
+	rm -rf mp3gain-1.4.6/* 
+	make P=mp3gain-1.4.6 log-package
+
+
+XML-Writer-0.520:
+	set +h && \
+	tar -xvzf XML-Writer-0.520.tar.gz && \
+	cd XML-Writer-0.520 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make test && \
+	make install
+
+	rm -rf XML-Writer-0.520/*
+	make P=XML-Writer-0.520 log-package
+
+
+Gtk-Perl-0.7009:
+#	set +h && \
+#	tar -xvzf Gtk-Perl-0.7009.tar.gz && \
+#	cd Gtk-Perl-0.7009 && \
+#	\
+#	perl Makefile.PL --without-guessing && \
+#	make && \
+#	make install
+#
+#	-(cd Gtk-Perl-0.7009/GdkPixbuf && perl Makefile.PL)
+#	-(cd Gtk-Perl-0.7009/GdkPixbuf && perl -p -i -e 's/<gtk\//<gtk-1.2\/gtk\//' gtktypexp.c
+#	-(cd Gtk-Perl-0.7009/GdkPixbuf && perl Makefile.PL)
+#
+#	cd Gtk-Perl-0.7009/GdkPixbuf && \
+#	perl -p -i -e 's/<gtk\//<gtk-1.2\/gtk\//' gtktypexp.c && \
+#	perl Makefile.PL && \
+#	make && \
+#	make install
+#
+#	rm -rf Gtk-Perl-0.7009/*
+#	make P=Gtk-Perl-0.7009 log-package
+
+
+xvid4conf-1.12:
+	set +h && \
+	tar -xvzf xvid4conf_1.12.orig.tar.gz && \
+	cd xvid4conf-1.12 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf xvid4conf-1.12/*
+	make P=xvid4conf-1.12 log-package
+
+divx4linux-20020418:
+	set +h && \
+	tar -xvzf divx4linux-20020418.tgz && \
+	cd divx4linux-20020418 && \
+	\
+	cp -av *h /usr/include && \
+	cp -av *so /usr/lib && \
+	ldconfig
+
+	rm -rf divx4linux-20020418/*
+	make P=divx4linux-20020418 log-package
+
+Event-1.06:
+	set +h && \
+	tar -xvzf Event-1.06.tar.gz && \
+	cd Event-1.06 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf Event-1.06/*
+	make P=Event-1.06 log-package
+
+
+lsdvd-0.16:
+	set +h && \
+	tar -xvzf lsdvd-0.16.tar.gz && \
+	cd lsdvd-0.16 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf lsdvd-0.16/*
+	make P=lsdvd-0.16 log-package
+
+
+mjpegtools-1.6.2:
+	set +h && \
+	tar -xvzf mjpegtools-1.6.2.tar.gz && \
+	cd mjpegtools-1.6.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf mjpegtools-1.6.2/*
+	make P=mjpegtools-1.6.2 log-package
+
+libao-0.8.6:
+	set +h && \
+	tar -xvzf libao-0.8.6.tar.gz && \
+	cd libao-0.8.6 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libao-0.8.6/*
+	make P=libao-0.8.6 log-package
+
+
+libogg-1.1.2:
+	set +h && \
+	tar -xvzf libogg-1.1.2.tar.gz && \
+	cd libogg-1.1.2 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libogg-1.1.2/*
+	make P=libogg-1.1.2 log-package
+
+
+ogmtools-1.5:
+	set +h && \
+	tar -xvjf ogmtools-1.5.tar.bz2 && \
+	cd ogmtools-1.5 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf ogmtools-1.5/*
+	make P=ogmtools-1.5 log-package
+
+libvorbis-1.1.1:
+	set +h && \
+	tar -xvzf libvorbis-1.1.1.tar.gz && \
+	cd libvorbis-1.1.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install
+
+	rm -rf libvorbis-1.1.1/*
+	make P=libvorbis-1.1.1 log-package
+
+
+vorbis-tools-1.1.1:
+	set +h && \
+	tar -xvzf vorbis-tools-1.1.1.tar.gz && \
+	cd vorbis-tools-1.1.1 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc --enable-vcut && \
+	make && \
+	make install
+
+	rm -rf vorbis-tools-1.1.1/*
+	make P=vorbis-tools-1.1.1 log-package
+
+
+dvdrip-0.98.1:
+	set +h && \
+	tar -xvzf dvdrip-0.98.1.tar.gz && \
+	cd dvdrip-0.98.1 && \
+	\
+	perl Makefile.PL && \
+	make && \
+	make install
+
+	rm -rf dvdrip-0.98.1/*
+	make P=dvdrip-0.98.1 log-package
+
+wireless-tools.28:
+	set +h && \
+	tar -xvzf wireless_tools.28.tar.gz && \
+	mv wireless_tools.28 wireless-tools.28 && \
+	cd wireless-tools.28 && \
+	\
+	make PREFIX=/usr && \
+	make PREFIX=/usr install
+
+	rm -rf wireless_tools.28/*
+	make P=wireless_tools.28 log-package
+
+
+wifi-radar-1.9.7:
+	set +h && \
+	tar -xvjf wifi-radar-1.9.7.tar.bz2 && \
+	cd wifi-radar-1.9.7 && \
+	\
+	make install && \
+	\
+	rm -rf wifi-radar-1.9.7/*
+	make P=wifi-radar-1.9.7 log-package
+
+
+libdv-1.0.0:
+	set +h && \
+	tar -xvzf libdv-1.0.0.tar.gz && \
+	cd libdv-1.0.0 && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc --enable-sdl && \
+	make && \
+	make install
+
+	#rm -rf libdv-1.0.0/*
+	make P=libdv-1.0.0 log-package
+
+
+libmpeg3-1.7:
+	set +h && \
+	tar -xvjf libmpeg3-1.7-src.tar.bz2 && \
+	cd libmpeg3-1.7 && \
+	patch -Np1 -i ../libmpeg3-1.7-install-libs.patch && \
+	\
+	make && \
+	make install
+
+	#rm -rf libmpeg3-1.7/*
+	make P=libmpeg3-1.7 log-package
+
+
+simplecdrx-1.3.3:
+	set +h && \
+	tar -xvjf simplecdrx-1.3.3.tar.bz2 && \
+	cd simplecdrx-1.3.3 && \
+	\
+	ln -sfn /usr/include/gtk-1.2/gtk /usr/include/gtk && \
+	ln -sfn /usr/include/gtk-1.2/gdk /usr/include/gdk && \
+	ln -sfn /usr/include/glib-1.2/glib.h /usr/include/glib.h && \
+	ln -sfn /usr/lib/glib/include/glibconfig.h /usr/include/glibconfig.h && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	patch -Np1 -i ../simplecdrx-1.3.3-nopo.patch && \
+	make && \
+	make install && \
+	cp -av pixmaps/simplecdr.xpm /usr/share/pixmaps
+
+	rm -rf simplecdrx-1.3.3/*
+	make P=simplecdrx-1.3.3 log-package
+
+# requires gnome-vfs 2.7
+#rhythmbox-0.9.6:
+#	set +h && \
+#	tar -xvjf rhythmbox-0.9.6.tar.bz2 && \
+#	cd rhythmbox-0.9.6 && \
+#	\
+#	./configure --prefix=/usr --sysconfdir=/etc && \
+#	make && \
+#	make install
+#
+#	rm -rf rhythmbox-0.9.6/*
+#	make P=rhythmbox-0.9.6 log-package
+
+
+convertfs-1.3:
+	set +h && \
+	tar -xvzf convertfs-13jan2005.tar.gz && \
+	mv convertfs convertfs-1.3 && \
+	cd convertfs-1.3 && \
+	\
+	make && \
+	cp devclone devremap prepindex contrib/convertfs /usr/bin
+
+	rm -rf convertfs-1.3/*
+	make P=convertfs-1.3 log-package
+
+

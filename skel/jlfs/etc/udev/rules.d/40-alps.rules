@@ -1,0 +1,1 @@
+SUBSYSTEMS=="input", ATTRS{name}=="AlpsPS/2 ALPS DualPoint TouchPad", KERNEL=="event*", SYMLINK+="input/alps"

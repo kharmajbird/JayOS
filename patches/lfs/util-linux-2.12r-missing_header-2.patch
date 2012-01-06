@@ -1,0 +1,18 @@
+Submitted By: Jim Gifford (patches at jg555 dot com)
+Date: 2006-05-30
+Initial Package Version: 2.12r
+Origin: Jim Gifford
+Upstream Status: Sent
+Description: Fixes the missing delcaration of R_OK in swapon.c build
+ 
+diff -Naur util-linux-2.12r.orig/mount/swapon.c util-linux-2.12r/mount/swapon.c
+--- util-linux-2.12r.orig/mount/swapon.c	2006-07-30 13:42:01.000000000 -0700
++++ util-linux-2.12r/mount/swapon.c	2006-07-30 13:42:38.000000000 -0700
+@@ -23,6 +23,7 @@
+ #include <string.h>
+ #include <mntent.h>
+ #include <errno.h>
++#include <fcntl.h>
+ #include <sys/types.h>
+ #include <sys/wait.h>
+ #include <sys/stat.h>

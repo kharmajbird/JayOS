@@ -1,0 +1,33 @@
+#!/bin/sh
+
+#
+# Usage:  updateVAIO-from-iso [file.iso]
+#
+
+VAIO=/dev/hda1
+MNT=/tmp/$$mnt
+#
+INITRD=initrd.gz
+KERNEL=vmlinuz.x86
+ROOTFS=root.gz
+USRFS=usr.fs
+OPTFS=opt.fs
+
+ISO=$1
+
+if [ $# -ne 1 ]; then exit 1; fi
+if [ ! -f $ISO ]; then exit 2; fi
+
+mkdir -p /tmp/$$iso $MNT
+mount -t iso9660 -o loop $ISO /tmp/$$iso || exit 3
+mount $VAIO $MNT || exit 4
+
+mkdir -p $MNT/{boot,fs}
+cp -v /tmp/$$iso/boot/$INITRD /tmp/$$iso/boot/$KERNEL $MNT/boot
+cp -v /tmp/$$iso/fs/$ROOTFS /tmp/$$iso/fs/$USRFS /tmp/$$iso/fs/$OPTFS $MNT/fs
+
+umount $MNT
+umount /tmp/$$iso
+rmdir /tmp/$$iso /tmp/$$mnt
+
+

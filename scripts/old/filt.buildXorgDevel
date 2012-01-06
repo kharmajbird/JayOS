@@ -1,0 +1,25 @@
+#!/bin/sh
+
+LFS=/lfs
+PROJECTS="drm mesa xorg"
+#CATEGORY="proto util app data xserver driver"
+CATEGORY="driver"
+
+cd $LFS/build
+
+git clone git://git.freedesktop.org/git/xorg/xserver
+git clone git://git.freedesktop.org/git/xorg/driver/xf86-video-intel
+git clone git://git.freedesktop.org/git/xorg/driver/xf86-video-vesa
+git clone git://git.freedesktop.org/git/xorg/driver/xf86-video-vga
+
+for i in "xf86-video-vesa xf86-video-vga xf86-video-intel"; do \
+	cd xf86-video-vesa && \
+	./autogen.sh && \
+	make dist-bzip2 && \
+	mv *bz2 .. && \
+	cd ..; \
+done
+
+
+
+

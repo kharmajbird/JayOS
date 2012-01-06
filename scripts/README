@@ -1,0 +1,11 @@
+Developer tools
+
+Some of them I wrote for a single purpose early on and now I can't bear
+to delete them (filt.*), some I did as an example of how to accomplish
+something tricky (chg-max-sector.sh, hcreate.sh, linuxrc, mkcd.sh, and
+updateVAIO-from-iso), some are are used in the build process (build.sh,
+create-new-stanza, create-pkglist.sh, and dl.sh), and some I did not write
+at all, but still find useful for reference (init-linuxrc, gunze-setup).
+
+More ancient Bash scripts can be found under /skel/jlfs/root/bin. Many
+of those haven't been upgraded/tested recently, so YMMV.

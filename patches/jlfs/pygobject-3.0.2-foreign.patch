@@ -1,0 +1,12 @@
+diff -Naur pygobject-3.0.2.orig/gi/pygi-foreign-cairo.c pygobject-3.0.2/gi/pygi-foreign-cairo.c
+--- pygobject-3.0.2.orig/gi/pygi-foreign-cairo.c	2011-08-06 05:44:52.000000000 -0700
++++ pygobject-3.0.2/gi/pygi-foreign-cairo.c	2011-11-23 21:27:18.103917678 -0800
+@@ -118,7 +118,7 @@
+ #if PY_VERSION_HEX < 0x03000000
+     Pycairo_IMPORT;
+ #else
+-    Pycairo_CAPI = (Pycairo_CAPI_t*) PyCapsule_Import("cairo.CAPI", 0);
++    Pycairo_CAPI = (Pycairo_CAPI_t*) PyCObject_Import("cairo", "CAPI");
+ #endif
+ 
+     if (Pycairo_CAPI == NULL)

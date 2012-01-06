@@ -1,0 +1,47 @@
+#!/bin/sh
+
+#
+# smart file:  script to find $* and print file info by default
+#
+# NOTES:
+# minus vee means no verbose; verbose is default
+#
+
+EXTRA=
+NAMEONLY=0
+SEARCH=`echo $PATH $EXTRA| sed "s/:/ /g"`
+
+if [ $# -lt 1 ]; then
+  echo "Syntax: `basename $0` [ -v ] filename"
+  exit
+fi
+
+if [ "$1" = "-v" ]; then
+  shift
+  NAMEONLY=1
+fi
+
+while [ $# != 0 ]; do
+  for i in $SEARCH; do
+    if [ -f $i/$1 ]; then
+      list="$list $i/$1"
+    fi
+  done
+
+  shift
+done
+
+if [ "$list" != "" ]; then 
+  if [ $NAMEONLY -eq 1 ]; then
+    echo $list
+
+  else
+    echo "--------------------------------------------------------------------------------"
+    file $list; 
+    echo "--------------------------------------------------------------------------------"
+    ldd $list
+    echo "--------------------------------------------------------------------------------"
+    ls -al $list
+    echo "--------------------------------------------------------------------------------"
+  fi
+fi

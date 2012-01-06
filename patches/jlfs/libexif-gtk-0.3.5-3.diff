@@ -1,0 +1,305 @@
+--- libexif-gtk-0.3.5.orig/libexif-gtk/Makefile.am
++++ libexif-gtk-0.3.5/libexif-gtk/Makefile.am
+@@ -3,8 +3,7 @@
+ 	-I$(top_srcdir)/intl				\
+ 	-I$(top_srcdir)/gtk-extensions			\
+ 	$(LIBEXIF_GTK_CFLAGS)				\
+-	-DG_LOG_DOMAIN=\"libexif\"			\
+-	-DGTK_DISABLE_DEPRECATED
++	-DG_LOG_DOMAIN=\"libexif\"
+ 
+ lib_LTLIBRARIES = libexif-gtk.la
+ 
+--- libexif-gtk-0.3.5.orig/libexif-gtk/Makefile.in
++++ libexif-gtk-0.3.5/libexif-gtk/Makefile.in
+@@ -251,8 +251,7 @@
+ 	-I$(top_srcdir)/intl				\
+ 	-I$(top_srcdir)/gtk-extensions			\
+ 	$(LIBEXIF_GTK_CFLAGS)				\
+-	-DG_LOG_DOMAIN=\"libexif\"			\
+-	-DGTK_DISABLE_DEPRECATED
++	-DG_LOG_DOMAIN=\"libexif\"
+ 
+ lib_LTLIBRARIES = libexif-gtk.la
+ libexif_gtkincludedir = $(includedir)/libexif-gtk
+--- libexif-gtk-0.3.5.orig/configure.in
++++ libexif-gtk-0.3.5/configure.in
+@@ -39,7 +39,7 @@
+ dnl ---------------------------------------------------------------------------
+ dnl libraries needed
+ dnl ---------------------------------------------------------------------------
+-PKG_CHECK_MODULES(LIBEXIF_GTK, gtk+-2.0 libexif >= 0.5.9)
++PKG_CHECK_MODULES(LIBEXIF_GTK, gtk+-2.0 libexif >= 0.6.12)
+ AC_SUBST(LIBEXIF_GTK_LIBS)
+ AC_SUBST(LIBEXIF_GTK_CFLAGS)
+ PKG_CHECK_MODULES(GTK, gtk+-2.0)
+--- libexif-gtk-0.3.5.orig/gtk-extensions/Makefile.am
++++ libexif-gtk-0.3.5/gtk-extensions/Makefile.am
+@@ -1,7 +1,6 @@
+ INCLUDES =				\
+ 	-I$(top_srcdir)			\
+ 	-I$(top_srcdir)/intl		\
+-	-DGTK_DISABLE_DEPRECATED	\
+ 	$(GTK_CFLAGS)
+ 
+ noinst_LTLIBRARIES = libgtk-extensions.la
+--- libexif-gtk-0.3.5.orig/gtk-extensions/Makefile.in
++++ libexif-gtk-0.3.5/gtk-extensions/Makefile.in
+@@ -219,7 +219,6 @@
+ INCLUDES = \
+ 	-I$(top_srcdir)			\
+ 	-I$(top_srcdir)/intl		\
+-	-DGTK_DISABLE_DEPRECATED	\
+ 	$(GTK_CFLAGS)
+ 
+ noinst_LTLIBRARIES = libgtk-extensions.la
+--- libexif-gtk-0.3.5.orig/debian/changelog
++++ libexif-gtk-0.3.5/debian/changelog
+@@ -0,0 +1,110 @@
++libexif-gtk (0.3.5-3) unstable; urgency=low
++
++  * Replaces/Conflicts libexif-gtk4 since they share the same translation file
++    and using another is really kludgy.  (closes: #328704)
++  * debian/copyright: updated FSF address.
++
++ -- Frederic Peters <fpeters@debian.org>  Tue, 27 Sep 2005 09:18:41 +0200
++
++libexif-gtk (0.3.5-2) unstable; urgency=low
++
++  * Rebuilt against new libexif12.
++
++ -- Frederic Peters <fpeters@debian.org>  Wed, 27 Jul 2005 20:45:09 +0200
++
++libexif-gtk (0.3.5-1) unstable; urgency=low
++
++  * New upstream release.
++    * soname bumped.
++
++ -- Frederic Peters <fpeters@debian.org>  Sat, 16 Jul 2005 10:20:00 +0200
++
++libexif-gtk (0.3.3-6) unstable; urgency=low
++
++  * Adopted package.
++
++ -- Frederic Peters <fpeters@debian.org>  Sun, 17 Oct 2004 12:37:39 +0200
++
++libexif-gtk (0.3.3-5) unstable; urgency=low
++
++  * Rebuilt against libexif10.
++  * Removed DISABLE_DEPRECATED to be nice with gtk+2.4 (Closes: #250043).
++
++ -- christophe barbe <christophe@debian.org>  Fri, 18 Jun 2004 14:53:39 -0400
++
++libexif-gtk (0.3.3-4) unstable; urgency=low
++
++  * Built against libexif9.
++  * Move DH_COMPAT in debian/compat.
++  * Bump Standards-Version up to 3.5.9.
++  * In new libdevel section.
++
++ -- christophe barbe <christophe@debian.org>  Tue,  5 Aug 2003 14:07:00 -0400
++
++libexif-gtk (0.3.3-3) unstable; urgency=low
++
++  * Libtool update to get a working MIPS package (Closes: 178572). 
++
++ -- christophe barbe <christophe@debian.org>  Mon, 27 Jan 2003 09:57:53 -0500
++
++libexif-gtk (0.3.3-2) unstable; urgency=low
++
++  * Versionned Build-Depend for libexif-dev.
++
++ -- christophe barbe <christophe@debian.org>  Wed, 22 Jan 2003 10:53:18 -0500
++
++libexif-gtk (0.3.3-1) unstable; urgency=low
++
++  * New upstream release. 
++
++ -- christophe barbe <christophe@debian.org>  Mon, 20 Jan 2003 17:52:57 -0500
++
++libexif-gtk (0.3.2-4) unstable; urgency=low
++
++  * Fix override disparity (The 'I can do it' release).
++
++ -- christophe barbe <christophe@debian.org>  Sat, 16 Nov 2002 16:19:48 -0500
++
++libexif-gtk (0.3.2-3) unstable; urgency=low
++
++  * Fix override disparity.
++
++ -- christophe barbe <christophe@debian.org>  Sat, 16 Nov 2002 15:56:38 -0500
++
++libexif-gtk (0.3.2-2) unstable; urgency=low
++
++  * Fix broken Build-Depends (Closes: #169375). 
++
++ -- christophe barbe <christophe@debian.org>  Sat, 16 Nov 2002 15:41:39 -0500
++
++libexif-gtk (0.3.2-1) unstable; urgency=low
++
++  * New upstream release. 
++
++ -- christophe barbe <christophe@debian.org>  Sun, 10 Nov 2002 22:35:29 -0500
++
++libexif-gtk (0.3.0-4) unstable; urgency=low
++
++  * Update Maintener e-mail address.
++
++ -- christophe barbe <christophe@debian.org>  Wed, 24 Apr 2002 15:06:49 -0400
++
++libexif-gtk (0.3.0-3) unstable; urgency=low
++
++  * Fixed Build-Depenpds (Closes: #142301).
++
++ -- christophe barbe <christophe.barbe@ufies.org>  Thu, 11 Apr 2002 09:04:21 -0400
++
++libexif-gtk (0.3.0-2) unstable; urgency=low
++
++  * Add pkg-config in build depends (Closes: #142048). 
++
++ -- christophe barbe <christophe.barbe@ufies.org>  Tue,  9 Apr 2002 19:04:33 -0400
++
++libexif-gtk (0.3.0-1) unstable; urgency=low
++
++  * Initial Release.
++  * close ITA (Closes: #139896).
++
++ -- christophe barbe <christophe.barbe@ufies.org>  Mon, 25 Feb 2002 17:58:36 -0500
++
+--- libexif-gtk-0.3.5.orig/debian/control
++++ libexif-gtk-0.3.5/debian/control
+@@ -0,0 +1,31 @@
++Source: libexif-gtk
++Section: libs
++Priority: optional
++Maintainer: Frederic Peters <fpeters@debian.org>
++Build-Depends: debhelper (>> 3.0.0), libexif-dev (>= 0.6.12), libglib2.0-dev, pkg-config, libgtk2.0-dev, libatk1.0-dev, libpango1.0-dev
++Standards-Version: 3.6.2
++
++Package: libexif-gtk-dev
++Section: libdevel
++Architecture: any
++Depends: libexif-gtk5 (= ${Source-Version}), libc6-dev
++Description: Library providing GTK+ widgets to display/edit EXIF tags (development files)
++ Most digital cameras produce EXIF files, which are JPEG files with
++ extra tags that contain information about the image. The EXIF library
++ allows you to parse an EXIF file and read the data from those tags.
++ .
++ This library provides GTK+ widgets to display/edit EXIF tags.
++
++Package: libexif-gtk5
++Section: libs
++Architecture: any
++Depends: ${shlibs:Depends}
++Conflicts: libexif-gtk4
++Replaces: libexif-gtk4
++Description: Library providing GTK+ widgets to display/edit EXIF tags
++ Most digital cameras produce EXIF files, which are JPEG files with
++ extra tags that contain information about the image. The EXIF library
++ allows you to parse an EXIF file and read the data from those tags.
++ .
++ This library provides GTK+ widgets to display/edit EXIF tags.
++
+--- libexif-gtk-0.3.5.orig/debian/copyright
++++ libexif-gtk-0.3.5/debian/copyright
+@@ -0,0 +1,22 @@
++This package was debianized by christophe barbe <christophe.barbe@ufies.org> on
++Mon, 25 Feb 2002 17:58:36 -0500.
++
++It was downloaded from http://prdownloads.sourceforge.net/libexif/libexif-gtk-0.3.5.tar.gz 
++
++Upstream Authors:
++ - Lutz Müller <urc8@rz.uni-karlsruhe.de>
++ - Curtis Galloway <curtisg@users.sourceforge.net>
++
++Copyright:
++
++		    GNU GENERAL PUBLIC LICENSE
++		       Version 2, June 1991
++
++Copyright (C) 1989, 1991 Free Software Foundation, Inc.
++    51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
++Everyone is permitted to copy and distribute verbatim copies
++of this license document, but changing it is not allowed.
++ 
++On Debian systems, the complete text of the GNU General Public License
++version 2 can be found in /usr/share/common-licenses/GPL-2 file.
++
+--- libexif-gtk-0.3.5.orig/debian/libexif-gtk-dev.files
++++ libexif-gtk-0.3.5/debian/libexif-gtk-dev.files
+@@ -0,0 +1,3 @@
++usr/lib/pkgconfig/libexif-gtk.pc
++usr/include/libexif-gtk/*
++usr/lib/lib*.{a,la,so}
+--- libexif-gtk-0.3.5.orig/debian/rules
++++ libexif-gtk-0.3.5/debian/rules
+@@ -0,0 +1,65 @@
++#!/usr/bin/make -f
++
++#export DH_VERBOSE=1
++major=`ls libexif-gtk/.libs/libexif-gtk*.so.* | \
++ awk '{if (match($$0,/\.so\.[0-9]+$$/)) print substr($$0,RSTART+4)}'`
++
++configure: configure-stamp
++configure-stamp:
++	dh_testdir
++	./configure --prefix=/usr
++	#sed --in-place -e "s/libexif-gtk/libexif-gtk-5/" config.h
++	## includes major version number so it looks for translations in that
++	## .mo file; so upgrading from a soname to another works.
++	touch configure-stamp
++
++build: build-stamp
++build-stamp: configure-stamp 
++	dh_testdir
++	$(MAKE)
++	touch build-stamp
++
++clean:
++	dh_testdir
++	dh_testroot
++	rm -f build-stamp configure-stamp
++	-$(MAKE) distclean
++	dh_clean
++
++install: build
++	dh_testdir
++	dh_testroot
++	dh_clean -k
++	dh_installdirs
++	$(MAKE) install prefix=$(CURDIR)/debian/libexif-gtk$(major)/usr
++	dh_movefiles --sourcedir=debian/libexif-gtk$(major)
++	find debian -type d | xargs rmdir -p --ignore-fail-on-non-empty
++
++# Build architecture-independent files here.
++binary-indep: build install
++# We have nothing to do by default.
++
++# Build architecture-dependent files here.
++binary-arch: build install
++	dh_testdir
++	dh_testroot
++	dh_installdocs
++	dh_installexamples
++	dh_installmenu
++	dh_installcron
++	dh_installman
++	dh_installinfo
++	dh_installchangelogs ChangeLog
++	dh_link
++	dh_strip
++	dh_compress
++	dh_fixperms
++	dh_makeshlibs
++	dh_installdeb
++	dh_shlibdeps
++	dh_gencontrol
++	dh_md5sums
++	dh_builddeb
++
++binary: binary-indep binary-arch
++.PHONY: build clean binary-indep binary-arch binary install configure
+--- libexif-gtk-0.3.5.orig/debian/compat
++++ libexif-gtk-0.3.5/debian/compat
+@@ -0,0 +1 @@
++3

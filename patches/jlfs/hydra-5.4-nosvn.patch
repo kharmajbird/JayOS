@@ -1,0 +1,56 @@
+diff -Naur hydra-5.4.orig/configure hydra-5.4/configure
+--- hydra-5.4.orig/configure	2006-01-20 07:44:15.000000000 -0600
++++ hydra-5.4/configure	2008-03-25 04:59:21.000000000 -0500
+@@ -118,29 +118,29 @@
+     echo "                              ... NOT found, module postgres disabled"
+ fi
+ 
+-echo "Checking for SVN (ibsvn_client-1 libapr-0.so libaprutil-0.so) ..."
+-for i in  $LIBDIRS /lib  /usr/lib /usr/local/lib /opt/local/lib .
+-do
+-    if [ "X" = "X$SVN_PATH" ]; then
+-        if [ -f "$i/libsvn_client-1.so" ]&&[ -f "$i/libapr-0.so" ]&&[ -f "$i/libaprutil-0.so" ]; then
+-            SVN_PATH="$i"
+-        fi
+-    fi
+-    if [ "X" = "X$SVN_PATH" ]; then
+-        TMP_LIB=`/bin/ls $i/libsvn_client*.so* 2> /dev/null | grep libsvn_client.`
+-        if [ -n "$TMP_LIB" ]; then
+-          SVN_PATH="$i"
+-        fi
+-    fi
+-    
+-    
+-done
+-if [ -n "$SVN_PATH" ]; then
+-    echo "                              ... found"
+-fi
+-if [ "X" = "X$SVN_PATH" ]; then
+-    echo "                              ... NOT found, module svn disabled"
+-fi
++#echo "Checking for SVN (ibsvn_client-1 libapr-0.so libaprutil-0.so) ..."
++#for i in  $LIBDIRS /lib  /usr/lib /usr/local/lib /opt/local/lib .
++#do
++#    if [ "X" = "X$SVN_PATH" ]; then
++#        if [ -f "$i/libsvn_client-1.so" ]&&[ -f "$i/libapr-0.so" ]&&[ -f "$i/libaprutil-0.so" ]; then
++#            SVN_PATH="$i"
++#        fi
++#    fi
++#    if [ "X" = "X$SVN_PATH" ]; then
++#        TMP_LIB=`/bin/ls $i/libsvn_client*.so* 2> /dev/null | grep libsvn_client.`
++#        if [ -n "$TMP_LIB" ]; then
++#          SVN_PATH="$i"
++#        fi
++#    fi
++#    
++#    
++#done
++#if [ -n "$SVN_PATH" ]; then
++#    echo "                              ... found"
++#fi
++#if [ "X" = "X$SVN_PATH" ]; then
++#    echo "                              ... NOT found, module svn disabled"
++#fi
+ 
+ echo "Checking for SAP/R3 (librfc/saprfc.h) ..."
+ for i in  $LIBDIRS /lib  /usr/lib /usr/local/lib /opt/local/lib .

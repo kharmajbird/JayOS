@@ -1,0 +1,22 @@
+diff -Naur udftools-1.0.0b3.orig/cdrwtool/cdrwtool.c udftools-1.0.0b3/cdrwtool/cdrwtool.c
+--- udftools-1.0.0b3.orig/cdrwtool/cdrwtool.c	2002-12-27 22:48:51.000000000 -0600
++++ udftools-1.0.0b3/cdrwtool/cdrwtool.c	2008-05-08 08:16:17.000000000 -0500
+@@ -20,6 +20,7 @@
+  *
+  */
+ 
++#include <limits.h>
+ #include <fcntl.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+diff -Naur udftools-1.0.0b3.orig/pktsetup/pktsetup.c udftools-1.0.0b3/pktsetup/pktsetup.c
+--- udftools-1.0.0b3.orig/pktsetup/pktsetup.c	2002-11-26 01:18:51.000000000 -0600
++++ udftools-1.0.0b3/pktsetup/pktsetup.c	2008-05-08 08:16:30.000000000 -0500
+@@ -16,6 +16,7 @@
+  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  *
+  */
++#include <limits.h>
+ #include <stdio.h>
+ #include <fcntl.h>
+ #include <sys/ioctl.h>

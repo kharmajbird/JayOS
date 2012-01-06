@@ -1,0 +1,18 @@
+--- hfsplus-1.0.4/libhfsp/src/os.c	2002-03-25 07:48:37.000000000 -0800
++++ hfsplus-1.0.4.new/libhfsp/src/os.c	2006-11-12 18:38:41.000000000 -0800
+@@ -78,6 +78,7 @@
+ 
+     case HFSP_MODE_RDWR:
+     default:
++/*
+       fprintf(stderr,"*** Warning: You are about to open '%s' "
+ 	     "for writing ***\n", path);
+       fprintf(stderr,"*** Do you really want to do that ? (y/n) ***\n");
+@@ -86,6 +87,7 @@
+       while (c != 'y' && c != 'n');
+       if (c != 'y')
+ 	  exit(1);
++*/
+       mode = O_RDWR;
+       break;
+     }

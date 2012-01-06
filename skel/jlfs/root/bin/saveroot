@@ -1,0 +1,59 @@
+#!/bin/sh
+
+#
+# run only when CF is mounted as /usb
+#
+
+## change BIGCF to 1 if you want to retain the previous root filesystem
+BIGCF=1
+RAM_SIZE=64
+CF=/usb
+ROOTFS=boot/root
+loop=NONE
+
+##
+## Nothing more to edit, move along, move along...
+##
+
+if [ "$1" != "-y" ]; then
+  echo "Please edit /root/bin/saveroot, then execute as: saveroot -y"
+  exit
+fi
+
+# I'm not in the habit of doing this, but you might want to
+# cp -a /tmp/.mozilla /etc/mozilla
+
+
+# avoid corruption
+if [ $BIGCF ]; then 
+  if [ -f $CF/$ROOTFS.gz ]; then mv $CF/$ROOTFS.gz $CF/$ROOTFS.gz.orig; fi
+fi
+
+sync
+
+echo "Copying..."
+if [ ! -d $CF/boot ]; then mkdir $CF/boot; fi
+dd if=/dev/ram1 of=$CF/$ROOTFS bs=1024k count=$RAM_SIZE
+
+echo "Syncing..."
+sync
+
+loop=NONE
+# find a free loop device
+for l in $(echo /dev/loop[0-9]); do
+    if [ $loop == NONE ] && ! grep -q $l /proc/mounts && ! { losetup $l &> /dev/null; }; then
+        loop=$l
+    fi
+done
+
+echo "Fscking..."
+losetup $loop $CF/$ROOTFS
+e2fsck -fy $loop
+losetup -d $loop
+gzip -9 $CF/$ROOTFS
+
+if [ -f $CF/$ROOTFS-deltas.tbz ]; then 
+    mv $CF/$ROOTFS-deltas.tbz $CF/$ROOTFS-deltas.tbz.orig
+fi
+
+/root/bin/striproot -f -95

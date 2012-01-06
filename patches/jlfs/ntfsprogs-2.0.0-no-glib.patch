@@ -1,0 +1,25 @@
+diff -Naur ntfsprogs-2.0.0.orig/libntfs/gnome-vfs-method.c ntfsprogs-2.0.0/libntfs/gnome-vfs-method.c
+--- ntfsprogs-2.0.0.orig/libntfs/gnome-vfs-method.c	2007-09-26 11:28:34.000000000 -0700
++++ ntfsprogs-2.0.0/libntfs/gnome-vfs-method.c	2011-11-30 18:23:59.316692913 -0800
+@@ -31,9 +31,7 @@
+ 
+ #include "gnome-vfs-method.h"	/* self */
+ #include <libgnomevfs/gnome-vfs-method.h>
+-#include <glib/gmessages.h>
+ #include "gnome-vfs-module.h"
+-#include <glib/ghash.h>
+ #ifdef HAVE_STRING_H
+ #include <string.h>
+ #endif
+diff -Naur ntfsprogs-2.0.0.orig/libntfs/gnome-vfs-module.c ntfsprogs-2.0.0/libntfs/gnome-vfs-module.c
+--- ntfsprogs-2.0.0.orig/libntfs/gnome-vfs-module.c	2007-09-26 11:28:34.000000000 -0700
++++ ntfsprogs-2.0.0/libntfs/gnome-vfs-module.c	2011-11-30 18:25:05.366686561 -0800
+@@ -25,8 +25,6 @@
+ 
+ #include "gnome-vfs-method.h"
+ #include <libgnomevfs/gnome-vfs-module.h>
+-#include <glib/gmessages.h>
+-#include <glib/gutils.h>	/* for g_atexit() */
+ 
+ static void vfs_module_shutdown_atexit(void);
+ 

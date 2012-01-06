@@ -1,0 +1,242 @@
+Submitted By: DJ Lucas (dj at linuxfromscratch dot org)
+Date: 2004-08-30
+Initial Package Version: 3.5
+Origin: Self
+Description: Removed dependancy on net-tools in favor of utils from iproute2.
+Upstream Status:  Not submitted
+
+$LastChangedBy: igor $
+$Date: 2005-01-04 03:43:16 -0700 (Tue, 04 Jan 2005) $
+
+diff -Naur rp-pppoe-3.5-orig/doc/CHANGES rp-pppoe-3.5/doc/CHANGES
+--- rp-pppoe-3.5-orig/doc/CHANGES	2002-07-08 09:38:24.000000000 -0500
++++ rp-pppoe-3.5/doc/CHANGES	2004-08-30 22:20:13.931535304 -0500
+@@ -1,5 +1,11 @@
+ # LIC: GPL
+ 
++Changes from Version 3.5 to current:
++
++- Adapted scripts to make use of the utilities included with the iproute2
++  package as opposed to the ones included with net-tools.
++  Does this break 2.0.x kernels?
++
+ Changes from Version 3.4 to 3.5:
+ 
+ - Fixes for compilation on Solaris.
+diff -Naur rp-pppoe-3.5-orig/doc/HOW-TO-CONNECT rp-pppoe-3.5/doc/HOW-TO-CONNECT
+--- rp-pppoe-3.5-orig/doc/HOW-TO-CONNECT	2002-07-08 09:38:24.000000000 -0500
++++ rp-pppoe-3.5/doc/HOW-TO-CONNECT	2004-08-30 22:17:19.436062648 -0500
+@@ -21,14 +21,15 @@
+ of this document.  However, if the card is the only Ethernet card in
+ the system, executing:
+ 
+-	ifconfig eth0
++	ip link show eth0
+ 
+ should display something like this:
+ 
+-	eth0      Link encap:Ethernet  HWaddr 00:60:67:62:31:D4  
++3: eth0: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast qlen 1000
++    link/ether 00:10:b5:d1:ea:fc brd ff:ff:ff:ff:ff:ff
+ 
+-plust some more lines.  Your HWaddr will be different.  As long as you see
+-the HWaddr line, your card should be working.
++Your second line will most definately be different.  As long as you see
++the link/ether line, your card should be working.
+ 
+ DO NOT assign an IP address to the Ethernet card.  DO NOT configure the
+ card to come up at boot time.
+@@ -119,7 +120,7 @@
+ 
+ If you want to manually configure the LAN hosts, here's how:
+ 
+-In Linux, use: "ifconfig eth0 mtu 1452".  For best results, put this
++In Linux, use: "ip link set eth0 mtu 1452".  For best results, put this
+ in an /etc/rc.d/rc.local script.
+ 
+ For Windows, machines, see http://lan.cns.ksu.edu/OS/WIN95/slip95.htm.
+@@ -147,9 +148,9 @@
+ 
+ Well, I can't really help you here.  To use these instructions, you must
+ have Linux working to the point where it recognizes your Ethernet card.
+-If you type "ifconfig ethx" and you get back a HWAddr value, your Ethernet
+-card is probably OK.  But I really can't help with hardware configuration
+-issues.
++If you type "ip link show ethx" and you get back a hardware address value 
++in the line that begins with link/ether, your Ethernet card is probably OK.  
++But I really can't help with hardware configuration issues.
+ 
+ -----------------------------------------------------------------------------
+ B) Connection seems to come up, but I can't browse the web or ping anything
+@@ -223,9 +224,9 @@
+ address.  For example, if eth0 is your internal LAN card and eth1 goes to
+ the DSL modem, do something like this:
+ 
+-	ifconfig eth1 10.0.0.1 netmask 255.255.255.0
++	ip link set eth1 10.0.0.1/24
+ 
+-(You may have to choose a different IP address; experiment.)
++(You may have to choose a different IP address and prefix; experiment.)
+ -----------------------------------------------------------------------------
+ K) How can I run a script every time I connect and get a new IP address?
+ 
+@@ -261,8 +262,8 @@
+ connected to the ADSL modem.  You might want to add these lines in
+ pppoe-connect:
+ 
+-	ifconfig ethx down
+-	ifconfig ethx up mtu 1500
++	ip link set ethx down
++	ip link set  ethx up mtu 1500
+ 
+ which should reset things to sane values.
+ 
+diff -Naur rp-pppoe-3.5-orig/gui/tkpppoe.in rp-pppoe-3.5/gui/tkpppoe.in
+--- rp-pppoe-3.5-orig/gui/tkpppoe.in	2002-07-08 09:38:24.000000000 -0500
++++ rp-pppoe-3.5/gui/tkpppoe.in	2004-08-30 21:04:07.736702432 -0500
+@@ -1573,7 +1573,7 @@
+ #***********************************************************************
+ proc GetEthernetInterfaces {} {
+     set ifs {}
+-    set fp [open "|/sbin/ifconfig" "r"]
++    set fp [open "|/sbin/ip" "r"]
+     while {[gets $fp line] >= 0} {
+ 	if {[regexp {^eth[0-9]+} $line eth]} {
+ 	    lappend ifs $eth
+diff -Naur rp-pppoe-3.5-orig/man/pppoe-sniff.8 rp-pppoe-3.5/man/pppoe-sniff.8
+--- rp-pppoe-3.5-orig/man/pppoe-sniff.8	2002-07-08 09:38:24.000000000 -0500
++++ rp-pppoe-3.5/man/pppoe-sniff.8	2004-08-30 21:06:06.050715968 -0500
+@@ -32,7 +32,7 @@
+ for example, type these commands:
+ 
+ .nf
+-	ifconfig eth0 promisc
++	ip link set eth0 promisc on
+ 	pppoe-sniff -I eth0
+ .fi
+ 
+@@ -49,7 +49,7 @@
+ remember to turn off promiscuous mode:
+ 
+ .nf
+-	ifconfig eth0 -promisc
++	ip link set eth0 promisc on
+ .fi
+ 
+ .SH OPTIONS
+diff -Naur rp-pppoe-3.5-orig/scripts/pppoe-connect.in rp-pppoe-3.5/scripts/pppoe-connect.in
+--- rp-pppoe-3.5-orig/scripts/pppoe-connect.in	2002-07-08 09:38:24.000000000 -0500
++++ rp-pppoe-3.5/scripts/pppoe-connect.in	2004-08-30 21:19:42.593582584 -0500
+@@ -28,7 +28,7 @@
+ localstatedir=/var
+ 
+ # Paths to programs
+-IFCONFIG=/sbin/ifconfig
++IPBIN=/sbin/ip
+ PPPD=@PPPD@
+ SETSID=@SETSID@
+ PPPOE=@sbindir@/pppoe
+@@ -115,7 +115,7 @@
+ # fails on some *BSD's, so we'll only do it under Linux
+ 
+ if test `uname -s` = Linux ; then
+-    $IFCONFIG $ETH up mtu 1500
++    $IPBIN link set $ETH up mtu 1500
+     # For 2.4 kernels.  Will fail on 2.2.x, but who cares?
+     modprobe ppp_generic > /dev/null 2>&1
+     modprobe ppp_async > /dev/null 2>&1
+diff -Naur rp-pppoe-3.5-orig/scripts/pppoe-setup.in rp-pppoe-3.5/scripts/pppoe-setup.in
+--- rp-pppoe-3.5-orig/scripts/pppoe-setup.in	2002-07-08 09:38:24.000000000 -0500
++++ rp-pppoe-3.5/scripts/pppoe-setup.in	2004-08-30 21:17:41.196037816 -0500
+@@ -17,7 +17,7 @@
+ exec_prefix=@exec_prefix@
+ 
+ # Paths to programs
+-IFCONFIG=/sbin/ifconfig
++IPBIN=/sbin/ip
+ PPPD=@PPPD@
+ PPPOE=@sbindir@/pppoe
+ ECHO=@ECHO@
+@@ -94,7 +94,7 @@
+ 
+     # Under Linux, "fix" the default interface if eth1 is not available
+     if test `uname -s` = "Linux" ; then
+-	$IFCONFIG $ETH > /dev/null 2>&1 || ETH=eth0
++	$IPBIN link show $ETH > /dev/null 2>&1 || ETH=eth0
+     fi
+     $ECHO ""
+     $ECHO "INTERFACE"
+diff -Naur rp-pppoe-3.5-orig/scripts/pppoe-start.in rp-pppoe-3.5/scripts/pppoe-start.in
+--- rp-pppoe-3.5-orig/scripts/pppoe-start.in	2002-07-08 09:38:24.000000000 -0500
++++ rp-pppoe-3.5/scripts/pppoe-start.in	2004-08-30 21:50:26.559257192 -0500
+@@ -29,7 +29,7 @@
+ # Paths to programs
+ CONNECT=@sbindir@/pppoe-connect
+ ECHO=@ECHO@
+-IFCONFIG=/sbin/ifconfig
++IPBIN=/sbin/ip
+ 
+ # Set to "C" locale so we can parse messages from commands
+ LANG=C
+@@ -69,8 +69,8 @@
+     $ECHO "* interfaces.  The one you chose for PPPoE should contain the words:" >> $DEBUG
+     $ECHO "* 'UP' and 'RUNNING'.  If it does not, you probably have an Ethernet" >> $DEBUG
+     $ECHO "* driver problem." >> $DEBUG
+-    $ECHO "Output of ifconfig -a" >> $DEBUG
+-    $IFCONFIG -a >> $DEBUG
++    $ECHO "Output of 'ip link show'" >> $DEBUG
++    $IPBIN link show >> $DEBUG
+     $ECHO "---------------------------------------------" >> $DEBUG
+     if [ "`uname -s`" = "Linux" ] ; then
+         $ECHO "* The following section contains information about kernel modules" >> $DEBUG
+@@ -85,8 +85,8 @@
+     $ECHO "* have defined a default route and gateway, and pppd will" >> $DEBUG
+     $ECHO "* not create a default route using your ISP.  Try getting" >> $DEBUG
+     $ECHO "* rid of this route." >> $DEBUG
+-    $ECHO "Output of netstat -n -r" >> $DEBUG
+-    netstat -n -r >> $DEBUG
++    $ECHO "Output of ip route" >> $DEBUG
++    $IPBIN route >> $DEBUG
+     $ECHO "---------------------------------------------" >> $DEBUG
+     $ECHO "Contents of /etc/resolv.conf" >> $DEBUG
+     $ECHO "* The following section lists DNS setup." >> $DEBUG
+diff -Naur rp-pppoe-3.5-orig/scripts/pppoe-status rp-pppoe-3.5/scripts/pppoe-status
+--- rp-pppoe-3.5-orig/scripts/pppoe-status	2002-07-08 09:38:24.000000000 -0500
++++ rp-pppoe-3.5/scripts/pppoe-status	2004-08-30 21:52:58.461164592 -0500
+@@ -66,14 +66,14 @@
+ 	PID=`cat $i`
+ 	if [ "$PID" = "$PPPD_PID" ] ; then
+ 	    IF=`basename $i .pid`
+-	    netstat -rn | grep " ${IF}\$" > /dev/null
+-	    # /sbin/ifconfig $IF | grep "UP.*POINTOPOINT" > /dev/null
++	    ip route | grep "dev ${IF}" > /dev/null
++	    # /sbin/ip link show $IF | grep "UP.*POINTOPOINT" > /dev/null
+ 	    if [ "$?" != "0" ] ; then
+ 		echo "pppoe-status: Link is attached to $IF, but $IF is down"
+ 		exit 1
+ 	    fi
+ 	    echo "pppoe-status: Link is up and running on interface $IF"
+-	    /sbin/ifconfig $IF
++	    /sbin/ip link show $IF
+ 	    exit 0
+ 	fi
+     fi
+@@ -81,4 +81,4 @@
+ 
+ echo "pppoe-status: Link is down -- could not find interface corresponding to"
+ echo "pppd pid $PPPD_PID"
+-exit 1
+\ No newline at end of file
++exit 1
+diff -Naur rp-pppoe-3.5-orig/src/pppoe-sniff.c rp-pppoe-3.5/src/pppoe-sniff.c
+--- rp-pppoe-3.5-orig/src/pppoe-sniff.c	2002-07-08 09:38:24.000000000 -0500
++++ rp-pppoe-3.5/src/pppoe-sniff.c	2004-08-30 21:54:47.247626536 -0500
+@@ -194,7 +194,7 @@
+ 
+ #endif
+ 
+-    /* We assume interface is in promiscuous mode -- use ifconfig to
++    /* We assume interface is in promiscuous mode -- use 'ip link show' to
+        ensure this */
+     fprintf(stderr, "Sniffing for PADR.  Start your connection on another machine...\n");
+     while (!SeenPADR) {

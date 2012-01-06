@@ -1,0 +1,78 @@
+########################################################################
+##
+## Package list and version information included by Makefile
+##
+## See LFS.depends for relative build order;
+## /usr/bin/make determines absolute build order
+##
+########################################################################
+
+AUTOCONF = autoconf-2.68
+AUTOMAKE = automake-1.11.1
+BASH = bash-4.1
+BINUTILS = binutils-2.20.1
+BISON = bison-2.4.3
+BZIP2 = bzip2-1.0.5
+COREUTILS = coreutils-8.5
+DEJAGNU = dejagnu-1.4.4
+DIFFUTILS = diffutils-3.0
+E2FSPROGS = e2fsprogs-1.41.12
+#
+# Also update in jlfs/Makefile.versions
+EXPECT = expect-5.44.1.15
+#
+FILE = file-5.04
+FINDUTILS = findutils-4.4.2
+FLEX = flex-2.5.35
+GAWK = gawk-3.1.8
+GCC4 = gcc-4.5.1
+GCC4-VER = 4.5.1
+GETTEXT = gettext-0.18.1.1
+GLIBC = glibc-2.12.1
+GREP = grep-2.6.3
+GROFF = groff-1.20.1
+#
+# grub2 is 1.98, avoid for now
+GRUB = grub-0.97
+#
+GZIP = gzip-1.4
+IANA-ETC = iana-etc-2.30
+INETUTILS = inetutils-1.8
+IPROUTE = iproute2-2.6.35
+KBD = kbd-1.15.2
+LESS = less-436
+LFS-BOOTSCRIPTS = lfs-bootscripts-20100627
+LIBTOOL = libtool-2.2.10
+GDBM = gdbm-1.8.3
+LINUX = linux-2.6.34
+M4 = m4-1.4.14
+MAKE = make-3.81
+MAN-DB = man-db-2.5.7
+MAN-PAGES = man-pages-3.25
+MODULE-INIT-TOOLS = module-init-tools-3.12
+MPFR = mpfr-3.0.0
+GMP = gmp-5.0.1
+MPC = mpc-0.8.2
+NCURSES = ncurses-5.7
+PATCH = patch-2.6.1
+PERL = perl-5.10.1
+PERL-VER = 5.10.1
+PROCPS = procps-3.2.8
+PSMISC = psmisc-22.12
+READLINE = readline-6.1
+SED = sed-4.2.1
+PKG-CONFIG = pkg-config-0.25
+SHADOW = shadow-4.1.4.2
+SYSKLOGD = sysklogd-1.5
+SYSVINIT = sysvinit-2.88dsf
+TAR = tar-1.23
+TCL = tcl8.5.8
+TCL-VER = 8.5.8
+TEXINFO = texinfo-4.13
+UDEV = udev-161
+UDEV-CONFIG = udev-config-20100128
+UTIL-LINUX = util-linux-ng-2.17
+VIM = vim-7.3
+VIM-VER = 73
+ZLIB = zlib-1.2.5
+ZLIB-VER = 1.2.3

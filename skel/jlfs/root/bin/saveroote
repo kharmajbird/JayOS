@@ -1,0 +1,47 @@
+#!/bin/sh
+
+#
+# run only when CF is mounted as /usb
+#
+
+# change BIGCF to 0 if you want to retain the previous rootfs
+BIGCF=1
+SWAP=/usb/boot/root.alt
+RAM_SIZE=64
+
+# don't change these...
+CF=/usb
+ROOTFS=boot/root
+
+if [ "$1" != "-y" ]; then
+  echo "Please edit /root/bin/saveroot, then execute as: saveroot -y"
+  exit
+fi
+
+# avoid corruption
+if [ $BIGCF ]; then 
+  echo "Backing orig..."
+  dd if=$SWAP of=$CF/$ROOTFS.alt.orig bs=1024k count=$RAM_SIZE
+fi
+
+sync
+
+echo "Copying..."
+if [ ! -d $CF/boot ]; then mkdir $CF/boot; fi
+dd if=/dev/ram1 of=$SWAP bs=1024k count=$RAM_SIZE
+
+echo "Syncing..."
+sync
+
+# find a free loop device
+loop=NONE
+for l in $(echo /dev/loop[0-9]); do
+    if [ $loop == NONE ] && ! grep -q $l /proc/mounts && ! { losetup $l &> /dev/null; }; then
+        loop=$l
+    fi
+done
+
+echo "Fscking..."
+losetup -e aes $loop $SWAP
+e2fsck -fy $loop
+losetup -d $loop

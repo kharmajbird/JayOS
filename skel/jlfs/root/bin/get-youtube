@@ -1,0 +1,17 @@
+#!/bin/sh
+
+URL=`zenity --entry --text "http:// " --title "Youtube URL:"`
+FN=/tmp/`youtube-dl --get-filename $URL`
+
+xterm -bg \#c0c0c0 -fg black -rv -e  \
+    "(cd /tmp; youtube-dl $URL)"
+
+if [ ! `mount| grep /opt` ]; then
+    mount /opt
+    FLAG=1
+fi
+
+vlc $FN
+rm -f $FN
+
+if [ $FLAG ]; then umount /opt; fi

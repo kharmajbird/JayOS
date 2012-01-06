@@ -1,0 +1,80 @@
+#!/bin/sh
+
+#
+# mkmfs:  script to duplicate (and optionally encrypted) the root filesystem
+#
+
+CPARM=
+LOOP=/dev/loop6
+
+if [ $# -lt 2 ]; then
+	echo
+	echo "Usage:  $0 [-e] -t type -s size-in-MB -f file"
+	echo
+	exit 1
+fi
+while [ $1 ]; do
+    case $1 in
+        -e)  CPARM="-e aes"; shift ;;
+        -t)  shift; TYPE=$1; shift ;;
+        -s)  shift; SIZE=$1; shift ;;
+        -f)  shift; FS=$1; shift ;;
+    esac
+done
+
+
+# create image
+if [ ! -d `dirname $FS` ]; then mkdir -p `dirname $FS`; fi
+
+if [ -f $FS ]; then
+    echo
+    echo "Filesystem $FS exists:"
+    ls -l $FS && file $FS
+    echo
+    echo -n "Remove? (y/n): "; read ans
+
+    if [ "$ans" != "y" ]; then
+        echo "Aborting..."
+        exit 1
+    else
+        rm -f $FS
+    fi
+fi
+
+dd if=/dev/zero of=$FS bs=1024k count=$SIZE
+echo OK
+
+
+# attach loopback
+losetup $CPARM $LOOP $FS
+
+if [ $? -ne 0 ]; then
+    echo "Error doing losetup."
+    exit
+fi
+
+FS=$LOOP
+
+
+# create filesystem
+case $TYPE in
+    vfat) mkdosfs $FS ;;
+	
+    ext2) yes| mke2fs -m0 $FS ;;
+
+    ext3) yes| mke2fs -j -m0 $FS ;;
+esac
+
+mkdir -p /tmp/new
+mount $LOOP /tmp/new
+
+echo "Copying root filesystem..."
+cp -ax / /tmp/new
+perl -p -i -e 's/saveroot \-y/saveroote \-y/' /root/.fvwm95rc
+touch /tmp/new/etc/lfs-release
+
+echo "Closing up shop..."
+umount $LOOP
+e2fsck -fy $LOOP
+losetup -d $LOOP
+rm -rf /tmp/new

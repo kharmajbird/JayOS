@@ -1,0 +1,27 @@
+#!/bin/sh
+
+#
+# script to mount/umount loopback filesystems
+#
+
+loop=NONE
+fs=$1
+back=$2
+
+
+umount $fs 2>/dev/null
+
+for i in $(echo /dev/loop[0-9]); do
+    losetup -d $i 2>/dev/null
+    if [ $? -eq 0 ]; then exit; fi
+done
+
+for l in $(echo /dev/loop[0-9]); do
+    if [ $loop == NONE ] && ! grep -q $l /proc/mounts && ! { losetup $l &> /dev/null; }; then
+        loop=$l
+    fi
+done
+
+#losetup -e aes -k 128 -P sha256 $loop $back && \
+losetup -e aes $loop $back 2>/dev/null && \
+mount -t ext3 $loop $fs 2>/dev/null || mount -t ext2 $loop $fs 2>/dev/null

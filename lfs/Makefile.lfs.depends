@@ -1,0 +1,127 @@
+########################################################################
+##
+## Dependency variables included by Makefile
+##
+## Should not have to be modified except to add new packages
+## not already defined within Makefile.lfs.versions
+##
+########################################################################
+
+########################################################################
+#
+# built outside of chrooted environment
+#
+########################################################################
+
+LFS-TEMPSYS := PASS1-$(BINUTILS) PASS1-$(GCC4) \
+	TEMP-linux-headers TEMP-$(GLIBC) \
+	adjust-toolchain \
+	PASS2-$(BINUTILS) \
+	TEMP-$(GMP) TEMP-$(MPC) \
+	PASS2-$(GCC4) \
+	TEMP-$(TCL) TEMP-$(EXPECT) TEMP-$(DEJAGNU) \
+	TEMP-$(NCURSES) TEMP-$(BASH) TEMP-$(BZIP2) TEMP-$(COREUTILS) \
+	TEMP-$(DIFFUTILS) TEMP-$(FINDUTILS) TEMP-$(GAWK) \
+	TEMP-$(GETTEXT) TEMP-$(GREP) TEMP-$(GZIP) TEMP-$(M4) TEMP-$(MAKE) \
+	TEMP-$(PATCH) TEMP-$(PERL) TEMP-$(SED) TEMP-$(TAR) \
+	TEMP-$(TEXINFO)
+
+
+########################################################################
+#
+# built inside a chrooted environment
+#
+########################################################################
+
+LFS-BASICSYS := linux-headers $(MAN-PAGES) $(GLIBC) \
+		readjust-toolchain \
+		$(ZLIB) $(BINUTILS) $(M4) $(GMP) $(MPFR) $(MPC) $(FILE) \
+		$(GCC4) $(SED) $(PKG-CONFIG) $(NCURSES) $(UTIL-LINUX) \
+		$(E2FSPROGS) $(COREUTILS) $(IANA-ETC) $(M4) $(BISON) $(PROCPS) \
+		$(GREP) $(READLINE) $(BASH) $(LIBTOOL) $(GDBM) $(INETUTILS) \
+		$(PERL) $(AUTOCONF) $(AUTOMAKE) $(BZIP2) $(DIFFUTILS) $(GAWK) \
+		$(FINDUTILS) $(FLEX) $(GETTEXT) $(GROFF) $(GRUB) $(GZIP) \
+		$(IPROUTE) $(KBD) $(LESS) $(MAKE) $(MAN-DB) \
+		$(MODULE-INIT-TOOLS) $(PATCH) $(PSMISC) $(SHADOW) \
+		$(SYSKLOGD) $(SYSVINIT) $(TAR) $(TEXINFO) $(UDEV) \
+		$(VIM) $(LFS-BOOTSCRIPTS)
+
+########################################################################
+########################################################################
+
+
+# few user-serviceable parts below
+
+
+
+########################################################################
+# Development aids
+########################################################################
+
+
+#	PASS1-$(BINUTILS) \
+
+#
+# comment and move above targets that built clean
+#
+
+	#PASS1-$(GCC4) \
+	#TEMP-linux-headers \
+	#TEMP-$(GLIBC) \
+	#adjust-toolchain \
+	#TEMP-$(TCL) \
+	#TEMP-$(EXPECT) \
+	#TEMP-$(DEJAGNU) \
+	#TEMP-$(GMP) \
+	#TEMP-$(MPC) \
+	#PASS2-$(GCC4) \
+	#PASS2-$(BINUTILS) \
+	#TEMP-$(NCURSES) \
+	#TEMP-$(BASH) \
+	#TEMP-$(BZIP2) \
+	#TEMP-$(COREUTILS) \
+	#TEMP-$(DIFFUTILS) \
+	#TEMP-$(FINDUTILS) \
+	#TEMP-$(GAWK) \
+	#TEMP-$(GETTEXT) \
+	#TEMP-$(GREP) \
+	#TEMP-$(GZIP) \
+
+REDO-LFS-TEMPSYS := \
+	TEMP-$(M4) \
+	TEMP-$(MAKE) \
+	TEMP-$(PATCH) \
+	TEMP-$(PERL) \
+	TEMP-$(SED) \
+	TEMP-$(TAR) \
+	TEMP-$(TEXINFO)
+
+#
+# comment and move above targets that built clean
+#
+
+	#linux-headers \
+	#$(MAN-PAGES) \
+	#$(GLIBC) \
+	#readjust-toolchain \
+	#$(ZLIB) \
+	#$(BINUTILS) \
+	#$(M4) $(GMP) \
+	#$(MPFR) $(MPC) \
+	#$(FILE) \
+	#$(GCC4) \
+	#$(SED) $(PKG-CONFIG) $(NCURSES) $(UTIL-LINUX) $(E2FSPROGS) \
+	#$(COREUTILS) \
+	#$(IANA-ETC) $(BISON) $(PROCPS) $(GREP) $(READLINE) $(BASH) \
+	#$(LIBTOOL) \
+	#$(GDBM) $(INETUTILS) $(PERL) $(AUTOCONF) \
+	#$(AUTOMAKE) $(BZIP2) $(DIFFUTILS) $(GAWK) $(FINDUTILS) \
+	#$(FLEX) $(GETTEXT) $(GROFF) $(GRUB) \
+	#$(GZIP) \
+	#$(IPROUTE) $(KBD) $(LESS) $(MAKE) $(MAN-DB) \
+
+REDO-LFS-BASICSYS := \
+	$(MODULE-INIT-TOOLS) \
+	$(PATCH) $(PSMISC) $(SHADOW) \
+	$(SYSKLOGD) $(SYSVINIT) $(TAR) $(TEXINFO) $(UDEV) $(VIM) \
+	$(LFS-BOOTSCRIPTS)

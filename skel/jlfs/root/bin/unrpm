@@ -1,0 +1,34 @@
+#!/bin/sh
+
+## unrpm.sh, v0.1
+## Copyright (C) 2002 Gary Benson <gary@inauspicious.org>
+##
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+
+# Script to unpack rpm files
+
+if [ $# = 0 ]; then
+    echo 1>&2 "usage: `basename $0` RPM..."
+    exit 1
+fi
+for rpmfile in $@; do
+    rpmname=`basename "$rpmfile" | sed -e 's/\.[^.]*\.rpm$//'`
+    if [ "$rpmname" = "$rpmfile" ]; then
+	rpmname="$rpmfile.unpack"
+    fi
+
+    mkdir $rpmname
+    if [ $? = 0 ]; then
+	rpm2cpio $rpmfile | (cd $rpmname ; cpio -id --quiet)
+    else
+	echo 1>&2 "`basename $0`: skipping $rpmfile"
+    fi
+done

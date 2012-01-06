@@ -1,0 +1,19 @@
+# Your username at the ISP
+# user "jdoe"
+# Replace TTTTTTT with the ISP phone number
+connect "/usr/sbin/chat -T TTTTTTT -f /etc/ppp/dialup.chat"
+
+# Specify your modem serial port and speed below
+/dev/ttyS0
+115200
+
+# The settings below usually don't need to be changed
+updetach
+noauth
+hide-password
+debug
+lock
+defaultroute
+noipdefault
+usepeerdns
+remotename dialup

@@ -1,0 +1,4132 @@
+--- libaio-0.3.107.orig/debian/libaio1-udeb.install
++++ libaio-0.3.107/debian/libaio1-udeb.install
+@@ -0,0 +1 @@
++lib/lib*.so.*
+--- libaio-0.3.107.orig/debian/libaio1.lintian-overrides
++++ libaio-0.3.107/debian/libaio1.lintian-overrides
+@@ -0,0 +1 @@
++libaio1: shared-lib-without-dependency-information ./lib/libaio.so.1.0.1
+--- libaio-0.3.107.orig/debian/watch
++++ libaio-0.3.107/debian/watch
+@@ -0,0 +1,3 @@
++# Site		Directory		Pattern			Version	Script
++version=3
++http://download.fedoraproject.org/pub/fedora/linux/development/source/SRPMS/ libaio-([\d\.]+)-[\w\.]+\.src.rpm debian uupdate
+--- libaio-0.3.107.orig/debian/README.source
++++ libaio-0.3.107/debian/README.source
+@@ -0,0 +1,3 @@
++This package uses quilt to manage all modifications to the upstream
++source. Please refer to /usr/share/doc/quilt/README.source for more
++information.
+--- libaio-0.3.107.orig/debian/libaio-dev.install
++++ libaio-0.3.107/debian/libaio-dev.install
+@@ -0,0 +1,3 @@
++usr/include
++usr/lib/lib*.so
++usr/lib/lib*.a
+--- libaio-0.3.107.orig/debian/control
++++ libaio-0.3.107/debian/control
+@@ -0,0 +1,45 @@
++Source: libaio
++Maintainer: Guillem Jover <guillem@debian.org>
++Priority: extra
++Section: libs
++Vcs-Browser: http://git.hadrons.org/?p=debian/pkgs/libaio.git
++Vcs-Git: git://git.hadrons.org/git/debian/pkgs/libaio.git
++Build-Depends: debhelper (>= 7), quilt (>= 0.40)
++Standards-Version: 3.8.3
++
++Package: libaio1
++Architecture: i386 amd64 ia64 s390 alpha powerpc arm armeb armel hppa m68k mips mipsel sh3 sh4 sparc
++Depends: ${shlibs:Depends}
++Description: Linux kernel AIO access library - shared library
++ This library enables userspace to use Linux kernel asynchronous I/O
++ system calls, important for the performance of databases and other
++ advanced applications.
++
++Package: libaio1-udeb
++Package-Type: udeb
++Section: debian-installer
++Architecture: i386 amd64 ia64 s390 alpha powerpc arm armeb armel hppa m68k mips mipsel sh3 sh4 sparc
++Depends: ${shlibs:Depends}
++Description: Linux kernel AIO access library - shared library
++ This library enables userspace to use Linux kernel asynchronous I/O
++ system calls, important for the performance of databases and other
++ advanced applications.
++
++Package: libaio1-dbg
++Section: debug
++Architecture: i386 amd64 ia64 s390 alpha powerpc arm armeb armel hppa m68k mips mipsel sh3 sh4 sparc
++Depends: libaio1 (= ${binary:Version})
++Description: Linux kernel AIO access library - debugging symbols
++ This library enables userspace to use Linux kernel asynchronous I/O
++ system calls, important for the performance of databases and other
++ advanced applications.
++
++Package: libaio-dev
++Section: libdevel
++Architecture: i386 amd64 ia64 s390 alpha powerpc arm armeb armel hppa m68k mips mipsel sh3 sh4 sparc
++Depends: libaio1 (= ${binary:Version})
++Description: Linux kernel AIO access library - development files
++ This library enables userspace to use Linux kernel asynchronous I/O
++ system calls, important for the performance of databases and other
++ advanced applications.
++
+--- libaio-0.3.107.orig/debian/compat
++++ libaio-0.3.107/debian/compat
+@@ -0,0 +1 @@
++7
+--- libaio-0.3.107.orig/debian/rules
++++ libaio-0.3.107/debian/rules
+@@ -0,0 +1,84 @@
++#!/usr/bin/make -f
++
++# Uncomment this to turn on verbose mode.
++#export DH_VERBOSE=1
++
++DEB_HOST_ARCH_CPU ?= $(shell dpkg-architecture -qDEB_HOST_ARCH_CPU)
++
++CFLAGS = -Wall -g
++
++ifneq (,$(filter noopt,$(DEB_BUILD_OPTIONS)))
++	CFLAGS += -O0
++else
++	CFLAGS += -O2
++endif
++
++lib := libaio1
++libdbg := $(lib)-dbg
++libudeb := $(lib)-udeb
++libdev := libaio-dev
++
++include /usr/share/quilt/quilt.make
++
++build-indep:
++
++build-arch: patch
++	dh_testdir
++	
++	$(MAKE)
++
++build: build-indep build-arch
++
++clean: unpatch
++	dh_testdir
++	dh_testroot
++	
++	$(MAKE) clean
++	
++	dh_clean
++
++check-arch: build-arch
++	dh_testdir
++	
++ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
++	$(MAKE) partcheck
++endif
++
++install-arch: check-arch
++	dh_testdir
++	dh_testroot
++	dh_clean
++	dh_installdirs
++	
++	$(MAKE) install \
++	  DESTDIR=$(CURDIR)/debian/tmp \
++	  libdir=/lib
++
++binary: binary-indep binary-arch
++
++binary-indep:
++	# Nothing to do.
++
++binary-arch: install-arch
++	dh_testdir
++	dh_testroot
++	dh_install -s
++	dh_installchangelogs -s ChangeLog
++	dh_installdocs -s
++	dh_installexamples -s
++	dh_installman -s
++	dh_lintian -s
++	dh_link -s
++	dh_strip -s --dbg-package=$(libdbg)
++	dh_compress -s
++	dh_fixperms -s
++	dh_makeshlibs -s --add-udeb '$(libudeb)'
++	dh_shlibdeps -s
++	dh_installdeb -s
++	dh_gencontrol -s
++	dh_md5sums -s
++	dh_builddeb -s
++
++.PHONY: clean build-indep build-arch build 
++.PHONY: install-arch binary-indep binary-arch binary
++
+--- libaio-0.3.107.orig/debian/docs
++++ libaio-0.3.107/debian/docs
+@@ -0,0 +1 @@
++TODO
+--- libaio-0.3.107.orig/debian/libaio-dev.manpages
++++ libaio-0.3.107/debian/libaio-dev.manpages
+@@ -0,0 +1,9 @@
++man/io.3
++man/io_fsync.3
++man/io_prep_*.3
++man/io_queue_*.3
++man/io_set_*.3
++man/aio.3
++man/aio_init.3
++man/aio*64.3
++man/lio*.3
+--- libaio-0.3.107.orig/debian/changelog
++++ libaio-0.3.107/debian/changelog
+@@ -0,0 +1,201 @@
++libaio (0.3.107-7) unstable; urgency=low
++
++  * Add support for sh3 and sh4. (Closes: #535288)
++    Thanks to Nobuhiro Iwamatsu <iwamatsu@nigauri.org>.
++  * Now using Standards-Version 3.8.3 (no changes needed).
++
++ -- Guillem Jover <guillem@debian.org>  Thu, 10 Sep 2009 13:02:34 +0200
++
++libaio (0.3.107-6) unstable; urgency=low
++
++  * Workaround debhelper compat v7 bug (#534565) in dh_install which makes
++    files end up under /debian/tmp/ in the binary package, by not passing
++    --sourcedir to dh_install. (Closes: #533359, #532644)
++  * Pass -s to arch dependent debhelper commands.
++  * Now using Standards-Version 3.8.2 (no changes needed).
++
++ -- Guillem Jover <guillem@debian.org>  Thu, 25 Jun 2009 14:11:25 +0200
++
++libaio (0.3.107-5) unstable; urgency=low
++
++  * Change libaio1-dbg section to debug.
++  * Fix build failure in test suite on non-i386 32 bit architectures.
++  * Fix man pages errors and warnings.
++
++ -- Guillem Jover <guillem@debian.org>  Wed, 10 Jun 2009 06:09:52 +0200
++
++libaio (0.3.107-4) unstable; urgency=low
++
++  * Switch to debhelper compatibility level 7.
++  * Use dh_prep instead of “dh_clean -k”.
++  * Remove libaio1.dirs, unneeded due to dh_lintian taking care of it.
++  * Run the test suite on all architectures and not only on i386.
++  * Now using Standards-Version 3.8.1 (no changes needed).
++  * Switch the upstream repository reference from CVS to git.
++
++ -- Guillem Jover <guillem@debian.org>  Mon, 08 Jun 2009 19:40:54 +0200
++
++libaio (0.3.107-3) unstable; urgency=low
++
++  * Fix the Vcs-Git URL.
++  * Remove XB- from the Package-Type field.
++  * Fix watch file URL. (Closes: #502884)
++    Thanks to Jiří Paleček <jpalecek@web.de>.
++
++ -- Guillem Jover <guillem@debian.org>  Mon, 20 Oct 2008 20:36:43 +0300
++
++libaio (0.3.107-2) unstable; urgency=low
++
++  * Only run the test suite on i386 as it has not been ported for other
++    architectures. (Closes: #488812)
++  * Use $(filter ...) instead of $(findstring ...) to extract space separated
++    options from DEB_BUILD_OPTIONS in debian/rules.
++  * Do not check for the existence of the Makefile on clean, it's always
++    there.
++  * Switch to use dh_lintian instead of manually installing the overrides.
++    - Bump the versioned debhelper Build-Depends to 6.0.7.
++
++ -- Guillem Jover <guillem@debian.org>  Wed, 09 Jul 2008 05:32:30 +0300
++
++libaio (0.3.107-1) unstable; urgency=low
++
++  * New upstream release.
++  * Run the test suite on install, and support nocheck DEB_BUILD_OPTIONS
++    to disable it.
++
++ -- Guillem Jover <guillem@debian.org>  Tue, 24 Jun 2008 09:03:54 +0300
++
++libaio (0.3.106-9) unstable; urgency=low
++
++  * Fix misspelled words (linux -> Linux and aio -> AIO).
++  * Update packaging Vcs fields to the new URL.
++  * Improve debian/copyright:
++    - Change 'Copyright Holder' to 'Copyright Holders'.
++    - Use UTF-8 copyright sign.
++    - Update upstream download url.
++    - Refer to LGPL-2.1 from common-licenses instead of just LGPL.
++  * Add a debian/README.source file.
++  * Now using Standards-Version 3.8.0.
++  * Refresh patches with -pab. (Closes: #484962)
++  * Update watch file URL. (Closes: #450017)
++
++ -- Guillem Jover <guillem@debian.org>  Sun, 22 Jun 2008 07:42:52 +0300
++
++libaio (0.3.106-8) unstable; urgency=low
++
++  * Install shared library under /lib, needed by multipath binaries which
++    reside under /sbin. (Closes: #441244)
++    - debian/patches/02_libdevdir.patch: New file.
++  * Add a debugging symbols library package.
++  * Add Vcs-Browser and Vcs-Git fields.
++
++ -- Guillem Jover <guillem@debian.org>  Tue, 11 Sep 2007 04:29:22 +0300
++
++libaio (0.3.106-7) unstable; urgency=low
++
++  * Add a new library udeb needed for multipath support. (Closes: #440320)
++
++ -- Guillem Jover <guillem@debian.org>  Thu, 06 Sep 2007 03:11:08 +0300
++
++libaio (0.3.106-6) unstable; urgency=low
++
++  * Link against libgcc to avoid unresolved symbols on at least hppa.
++    - debian/01_link_libgcc.patch: New file.
++    Thanks to Steve Langasek <vorlon@debian.org> for the analysis.
++  * Add shlibs:Depends substvar back into libaio1 Depends, since we link
++    against an external library now (although it might not be used on any
++    architecture).
++
++ -- Guillem Jover <guillem@debian.org>  Mon, 06 Aug 2007 04:50:18 +0300
++
++libaio (0.3.106-5) unstable; urgency=low
++
++  * Do not ignore 'make clean' errors on clean.
++  * Support build-arch and build-indep in debian/rules:
++    - Rename install to install-arch.
++    - Rename build to build-arch.
++    - Add an empty build target that depends on build-arch and build-indep.
++  * Switch directory variables to simply expanded ones in debian/rules.
++  * Use binary:Version instead of the deprecated Source-Version substvar.
++  * Remove Tag field as it does not seem to make much sense to include it
++    in the packages.
++
++ -- Guillem Jover <guillem@debian.org>  Tue, 17 Jul 2007 09:19:26 +0300
++
++libaio (0.3.106-4) unstable; urgency=low
++
++  * Add armeb and armel to the Architecture fields.
++
++ -- Guillem Jover <guillem@debian.org>  Fri, 19 Jan 2007 06:48:26 +0200
++
++libaio (0.3.106-3) unstable; urgency=low
++
++  * Fix a typo in the arm io_syscall5 macro, making the library end up
++    with unresolvable symbols. (Closes: #393156)
++    Thanks to Marcin Juszkiewicz <debian-bugs@hrw.one.pl>.
++
++ -- Guillem Jover <guillem@debian.org>  Mon, 16 Oct 2006 10:44:02 +0300
++
++libaio (0.3.106-2) unstable; urgency=low
++
++  * Use quilt for patching:
++    - Add new debian/patches/series file.
++    - Add Build-Depends on 'quilt (>= 0.40)'.
++    - Include quilt.make from debian/rules.
++  * Add support for arm, hppa, m68k, mips, mipsel and sparc. Those have yet
++    to be tested with the harness test suite and pass it.
++  * Add a Tag: field to all binary packages.
++
++ -- Guillem Jover <guillem@debian.org>  Tue, 19 Sep 2006 00:48:10 +0300
++
++libaio (0.3.106-1) unstable; urgency=low
++
++  * New Upstream Release. (Closes: #384268)
++    - Fix .endp being outside of procedure on ia64 with new binutils.
++      (Closes: #385373)
++
++ -- Guillem Jover <guillem@debian.org>  Fri,  1 Sep 2006 05:51:36 +0300
++
++libaio (0.3.104-2) unstable; urgency=low
++
++  * New Maintainer.
++  * Provide a new binary package libaio-dev, with the static library
++    the .so symlink and the manpages. (Closes: #318795)
++  * Add debian/libaio-dev.install.
++  * Add debian/libaio-dev.manpages.
++  * Rename the binary package libaio to libaio1 to match the soname, no
++    transition package as no one depends on it.
++  * Rename debian/lintian.override to debian/libaio1.lintian.
++  * Remove shlib-missing-in-control-file lintian override as we provide
++    now the shlibs file.
++  * Only put "usr/share/lintian/override" in libaio1.dirs.
++  * Remove temporal debhelper leftover files:
++    - debian/libaio-0.3.104.postinst.debhelper
++    - debian/libaio-0.3.104.postrm.debhelper
++  * Add amd64 to the Architecture fields. (Closes: #335352)
++  * Switch to debhelper compat level 5.
++  * Now using Standards-Version 3.7.2.
++  * Change Priority from optional to extra.
++  * Specify in the package description that this library is for Linux.
++  * Remove unneeded debian/dirs file.
++  * Remove debian/debianize.patch, we actually want the .so symlink
++    and the .a library when doing "make install".
++  * Clean up debian/rules:
++    - Do not use stamp files.
++    - Remove unused comments.
++    - Remove unused configure target.
++    - Do not pass DESTDIR to make as it is not using it.
++  * Complete debian/copyright:
++    - Add copyright holder information.
++    - Add the LGPL license snippet.
++    - Specify a download url which actually works.
++  * Add a watch file.
++
++ -- Guillem Jover <guillem@debian.org>  Thu, 24 Aug 2006 05:45:36 +0300
++
++libaio (0.3.104-1) unstable; urgency=low
++
++  * Initial Release.
++
++ -- William Lee Irwin III <wli@holomorphy.com>  Fri, 22 Apr 2005 14:49:28 -0700
++
+--- libaio-0.3.107.orig/debian/libaio1.install
++++ libaio-0.3.107/debian/libaio1.install
+@@ -0,0 +1 @@
++lib/lib*.so.*
+--- libaio-0.3.107.orig/debian/copyright
++++ libaio-0.3.107/debian/copyright
+@@ -0,0 +1,32 @@
++This package was debianized by William Lee Irwin III <wli@holomorphy.com> on
++Fri, 22 Apr 2005 14:49:28 -0700.
++
++Currently maintained by Guillem Jover <guillem@debian.org>.
++
++It was downloaded from:
++
++    git://git.kernel.org/pub/scm/libs/libaio/libaio.git
++
++Copyright Holders:
++
++    Copyright © 2002-2003 Benjamin LaHaise <bcrl@redhat.com>
++    Copyright © 2003-2004 Jeff Moyer <jmoyer@redhat.com>
++
++License:
++
++    This library is free software; you can redistribute it and/or
++    modify it under the terms of the GNU Lesser General Public
++    License as published by the Free Software Foundation; either
++    version 2.1 of the License, or (at your option) any later version.
++
++    This library is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++    Lesser General Public License for more details.
++
++    You should have received a copy of the GNU Lesser General Public
++    License along with this library; if not, write to the Free Software
++    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
++
++On Debian systems, the complete text of the GNU Lesser General
++Public License can be found in '/usr/share/common-licenses/LGPL-2.1'.
+--- libaio-0.3.107.orig/debian/patches/02_libdevdir.patch
++++ libaio-0.3.107/debian/patches/02_libdevdir.patch
+@@ -0,0 +1,60 @@
++Index: b/Makefile
++===================================================================
++--- a/Makefile
+++++ b/Makefile
++@@ -5,9 +5,11 @@ RELEASE=$(shell awk '/Release:/ { print 
++ CVSTAG = $(NAME)_$(subst .,-,$(VERSION))_$(subst .,-,$(RELEASE))
++ RPMBUILD=$(shell `which rpmbuild >&/dev/null` && echo "rpmbuild" || echo "rpm")
++ 
+++DESTDIR=
++ prefix=/usr
++ includedir=$(prefix)/include
++ libdir=$(prefix)/lib
+++libdevdir=$(prefix)/lib
++ 
++ default: all
++ 
++@@ -15,7 +17,12 @@ all:
++ 	@$(MAKE) -C src
++ 
++ install:
++-	@$(MAKE) -C src install prefix=$(prefix) includedir=$(includedir) libdir=$(libdir)
+++	@$(MAKE) -C src install \
+++	  DESTDIR=$(DESTDIR) \
+++	  prefix=$(prefix) \
+++	  includedir=$(includedir) \
+++	  libdir=$(libdir) \
+++	  libdevdir=$(libdevdir)
++ 
++ check:
++ 	@$(MAKE) -C harness check
++Index: b/src/Makefile
++===================================================================
++--- a/src/Makefile
+++++ b/src/Makefile
++@@ -1,6 +1,8 @@
+++DESTDIR=
++ prefix=/usr
++ includedir=$(prefix)/include
++ libdir=$(prefix)/lib
+++libdevdir=$(prefix)/lib
++ 
++ ARCH := $(shell uname -m | sed -e s/i.86/i386/)
++ CFLAGS := -nostdlib -nostartfiles -Wall -I. -g -fomit-frame-pointer -O2 -fPIC
++@@ -51,11 +53,11 @@ $(libname): $(libaio_sobjs) libaio.map
++ 	$(CC) $(SO_CFLAGS) -Wl,--version-script=libaio.map -Wl,-soname=$(soname) -o $@ $(libaio_sobjs) $(LINK_FLAGS)
++ 
++ install: $(all_targets)
++-	install -D -m 644 libaio.h $(includedir)/libaio.h
++-	install -D -m 644 libaio.a $(libdir)/libaio.a
++-	install -D -m 755 $(libname) $(libdir)/$(libname)
++-	ln -sf $(libname) $(libdir)/$(soname)
++-	ln -sf $(libname) $(libdir)/libaio.so
+++	install -D -m 644 libaio.h $(DESTDIR)$(includedir)/libaio.h
+++	install -D -m 644 libaio.a $(DESTDIR)$(libdevdir)/libaio.a
+++	install -D -m 755 $(libname) $(DESTDIR)$(libdir)/$(libname)
+++	ln -sf $(libdir)/$(libname) $(DESTDIR)$(libdir)/$(soname)
+++	ln -sf $(libdir)/$(libname) $(DESTDIR)$(libdevdir)/libaio.so
++ 
++ $(libaio_objs): libaio.h
++ 
+--- libaio-0.3.107.orig/debian/patches/01_link_libgcc.patch
++++ libaio-0.3.107/debian/patches/01_link_libgcc.patch
+@@ -0,0 +1,13 @@
++Index: b/src/Makefile
++===================================================================
++--- a/src/Makefile
+++++ b/src/Makefile
++@@ -6,7 +6,7 @@ ARCH := $(shell uname -m | sed -e s/i.86
++ CFLAGS := -nostdlib -nostartfiles -Wall -I. -g -fomit-frame-pointer -O2 -fPIC
++ SO_CFLAGS=-shared $(CFLAGS)
++ L_CFLAGS=$(CFLAGS)
++-LINK_FLAGS=
+++LINK_FLAGS := -lgcc
++ 
++ soname=libaio.so.1
++ minor=0
+--- libaio-0.3.107.orig/debian/patches/series
++++ libaio-0.3.107/debian/patches/series
+@@ -0,0 +1,5 @@
++00_arches.patch
++00_arches_sh.patch
++01_link_libgcc.patch
++02_libdevdir.patch
++03_man_errors.patch
+--- libaio-0.3.107.orig/debian/patches/00_arches_sh.patch
++++ libaio-0.3.107/debian/patches/00_arches_sh.patch
+@@ -0,0 +1,142 @@
++From: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
++Subject: Add SH supprt
++
++The test-suite logs can be found at:
++
++  <http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=535288>
++
++
++diff --git a/harness/main.c b/harness/main.c
++index f472da7..01fbb87 100644
++--- a/harness/main.c
+++++ b/harness/main.c
++@@ -13,7 +13,7 @@
++ 
++ #if defined(__i386__) || defined(__powerpc__) || defined(__mips__)
++ #define KERNEL_RW_POINTER	((void *)0xc0010000)
++-#elif defined(__arm__) || defined(__m68k__) || defined(__s390__)
+++#elif defined(__arm__) || defined(__m68k__) || defined(__s390__) || defined(__sh__)
++ #define KERNEL_RW_POINTER	((void *)0x00010000)
++ #elif defined(__hppa__)
++ #define KERNEL_RW_POINTER	((void *)0x10100000)
++diff --git a/src/libaio.h b/src/libaio.h
++index 68e22ac..d306084 100644
++--- a/src/libaio.h
+++++ b/src/libaio.h
++@@ -107,6 +107,16 @@ typedef enum io_iocb_cmd {
++ #  else
++ #    error "neither mipseb nor mipsel?"
++ #  endif
+++#elif defined(__sh__) /* sh3/sh4*/
+++#  if defined (__BIG_ENDIAN__) /* big endian, 32 bits */
+++#define PADDED(x, y)	unsigned y; x
+++#define PADDEDptr(x, y)	unsigned y; x
+++#define PADDEDul(x, y)	unsigned y; unsigned long x
+++#  elif defined(__LITTLE_ENDIAN__) /* little endian, 32 bits */
+++#define PADDED(x, y)	x; unsigned y
+++#define PADDEDptr(x, y)	x; unsigned y
+++#define PADDEDul(x, y)	unsigned long x; unsigned y
+++#  endif
++ #else
++ #error	endian?
++ #endif
++diff --git a/src/syscall-sh.h b/src/syscall-sh.h
++new file mode 100644
++index 0000000..9945ec6
++--- /dev/null
+++++ b/src/syscall-sh.h
++@@ -0,0 +1,78 @@
+++/* Copy from ./arch/sh/include/asm/unistd_32.h */
+++#define __NR_io_setup       245
+++#define __NR_io_destroy     246
+++#define __NR_io_getevents   247
+++#define __NR_io_submit      248
+++#define __NR_io_cancel      249
+++
+++#define io_syscall1(type,fname,sname,type1,arg1) \
+++type fname(type1 arg1) \
+++{ \
+++register long __sc0 __asm__ ("r3") = __NR_##sname; \
+++register long __sc4 __asm__ ("r4") = (long) arg1; \
+++__asm__ __volatile__ ("trapa    #0x11" \
+++	: "=z" (__sc0) \
+++	: "0" (__sc0), "r" (__sc4) \
+++	: "memory"); \
+++	return (type) __sc0;\
+++}
+++
+++#define io_syscall2(type,fname,sname,type1,arg1,type2,arg2) \
+++type fname(type1 arg1,type2 arg2) \
+++{ \
+++register long __sc0 __asm__ ("r3") = __NR_##sname; \
+++register long __sc4 __asm__ ("r4") = (long) arg1; \
+++register long __sc5 __asm__ ("r5") = (long) arg2; \
+++	__asm__ __volatile__ ("trapa    #0x12" \
+++	: "=z" (__sc0) \
+++	: "0" (__sc0), "r" (__sc4), "r" (__sc5) \
+++	: "memory"); \
+++	return (type) __sc0;\
+++}
+++
+++#define io_syscall3(type,fname,sname,type1,arg1,type2,arg2,type3,arg3) \
+++type fname(type1 arg1,type2 arg2,type3 arg3) \
+++{ \
+++register long __sc0 __asm__ ("r3") = __NR_##sname; \
+++register long __sc4 __asm__ ("r4") = (long) arg1; \
+++register long __sc5 __asm__ ("r5") = (long) arg2; \
+++register long __sc6 __asm__ ("r6") = (long) arg3; \
+++	__asm__ __volatile__ ("trapa    #0x13" \
+++	: "=z" (__sc0) \
+++	: "0" (__sc0), "r" (__sc4), "r" (__sc5), "r" (__sc6) \
+++	: "memory"); \
+++	return (type) __sc0;\
+++}
+++
+++#define io_syscall4(type,fname,sname,type1,arg1,type2,arg2,type3,arg3,type4,arg4) \
+++type fname(type1 arg1, type2 arg2, type3 arg3, type4 arg4) \
+++{ \
+++register long __sc0 __asm__ ("r3") = __NR_##sname; \
+++register long __sc4 __asm__ ("r4") = (long) arg1; \
+++register long __sc5 __asm__ ("r5") = (long) arg2; \
+++register long __sc6 __asm__ ("r6") = (long) arg3; \
+++register long __sc7 __asm__ ("r7") = (long) arg4; \
+++__asm__ __volatile__ ("trapa    #0x14" \
+++	: "=z" (__sc0) \
+++	: "0" (__sc0), "r" (__sc4), "r" (__sc5), "r" (__sc6),  \
+++	"r" (__sc7) \
+++	: "memory" ); \
+++	return (type) __sc0;\
+++}
+++
+++#define io_syscall5(type,fname,sname,type1,arg1,type2,arg2,type3,arg3,type4,arg4,type5,arg5) \
+++type fname(type1 arg1, type2 arg2, type3 arg3, type4 arg4, type5 arg5) \
+++{ \
+++register long __sc3 __asm__ ("r3") = __NR_##sname; \
+++register long __sc4 __asm__ ("r4") = (long) arg1; \
+++register long __sc5 __asm__ ("r5") = (long) arg2; \
+++register long __sc6 __asm__ ("r6") = (long) arg3; \
+++register long __sc7 __asm__ ("r7") = (long) arg4; \
+++register long __sc0 __asm__ ("r0") = (long) arg5; \
+++__asm__ __volatile__ ("trapa    #0x15" \
+++	: "=z" (__sc0) \
+++	: "0" (__sc0), "r" (__sc4), "r" (__sc5), "r" (__sc6), "r" (__sc7),  \
+++	"r" (__sc3) \
+++	: "memory" ); \
+++	return (type) __sc0;\
+++}
++diff --git a/src/syscall.h b/src/syscall.h
++index b957bbe..ea0435e 100644
++--- a/src/syscall.h
+++++ b/src/syscall.h
++@@ -32,6 +32,8 @@
++ #include "syscall-parisc.h"
++ #elif defined(__mips__)
++ #include "syscall-mips.h"
+++#elif defined(__sh__)
+++#include "syscall-sh.h"
++ #else
++ #error "add syscall-arch.h"
++ #endif
++-- 
++1.6.3.1
++
+--- libaio-0.3.107.orig/debian/patches/00_arches.patch
++++ libaio-0.3.107/debian/patches/00_arches.patch
+@@ -0,0 +1,799 @@
++---
++ harness/main.c       |    8 +
++ src/libaio.h         |   34 +++++++
++ src/syscall-arm.h    |  116 ++++++++++++++++++++++++++
++ src/syscall-m68k.h   |   78 +++++++++++++++++
++ src/syscall-mips.h   |  223 +++++++++++++++++++++++++++++++++++++++++++++++++++
++ src/syscall-parisc.h |  146 +++++++++++++++++++++++++++++++++
++ src/syscall-sparc.h  |  130 +++++++++++++++++++++++++++++
++ src/syscall.h        |   10 ++
++ 8 files changed, 744 insertions(+), 1 deletion(-)
++
++--- /dev/null
+++++ b/src/syscall-m68k.h
++@@ -0,0 +1,78 @@
+++#define __NR_io_setup		241
+++#define __NR_io_destroy		242
+++#define __NR_io_getevents	243
+++#define __NR_io_submit		244
+++#define __NR_io_cancel		245
+++
+++#define io_syscall1(type,fname,sname,atype,a) \
+++type fname(atype a) \
+++{ \
+++register long __res __asm__ ("%d0") = __NR_##sname; \
+++register long __a __asm__ ("%d1") = (long)(a); \
+++__asm__ __volatile__ ("trap  #0" \
+++		      : "+d" (__res) \
+++		      : "d" (__a)  ); \
+++return (type) __res; \
+++}
+++
+++#define io_syscall2(type,fname,sname,atype,a,btype,b) \
+++type fname(atype a,btype b) \
+++{ \
+++register long __res __asm__ ("%d0") = __NR_##sname; \
+++register long __a __asm__ ("%d1") = (long)(a); \
+++register long __b __asm__ ("%d2") = (long)(b); \
+++__asm__ __volatile__ ("trap  #0" \
+++		      : "+d" (__res) \
+++		      : "d" (__a), "d" (__b) \
+++		     ); \
+++return (type) __res; \
+++}
+++
+++#define io_syscall3(type,fname,sname,atype,a,btype,b,ctype,c) \
+++type fname(atype a,btype b,ctype c) \
+++{ \
+++register long __res __asm__ ("%d0") = __NR_##sname; \
+++register long __a __asm__ ("%d1") = (long)(a); \
+++register long __b __asm__ ("%d2") = (long)(b); \
+++register long __c __asm__ ("%d3") = (long)(c); \
+++__asm__ __volatile__ ("trap  #0" \
+++		      : "+d" (__res) \
+++		      : "d" (__a), "d" (__b), \
+++			"d" (__c) \
+++		     ); \
+++return (type) __res; \
+++}
+++
+++#define io_syscall4(type,fname,sname,atype,a,btype,b,ctype,c,dtype,d) \
+++type fname (atype a, btype b, ctype c, dtype d) \
+++{ \
+++register long __res __asm__ ("%d0") = __NR_##sname; \
+++register long __a __asm__ ("%d1") = (long)(a); \
+++register long __b __asm__ ("%d2") = (long)(b); \
+++register long __c __asm__ ("%d3") = (long)(c); \
+++register long __d __asm__ ("%d4") = (long)(d); \
+++__asm__ __volatile__ ("trap  #0" \
+++		      : "+d" (__res) \
+++		      : "d" (__a), "d" (__b), \
+++			"d" (__c), "d" (__d)  \
+++		     ); \
+++return (type) __res; \
+++}
+++
+++#define io_syscall5(type,fname,sname,atype,a,btype,b,ctype,c,dtype,d,etype,e) \
+++type fname (atype a,btype b,ctype c,dtype d,etype e) \
+++{ \
+++register long __res __asm__ ("%d0") = __NR_##sname; \
+++register long __a __asm__ ("%d1") = (long)(a); \
+++register long __b __asm__ ("%d2") = (long)(b); \
+++register long __c __asm__ ("%d3") = (long)(c); \
+++register long __d __asm__ ("%d4") = (long)(d); \
+++register long __e __asm__ ("%d5") = (long)(e); \
+++__asm__ __volatile__ ("trap  #0" \
+++		      : "+d" (__res) \
+++		      : "d" (__a), "d" (__b), \
+++			"d" (__c), "d" (__d), "d" (__e)  \
+++		     ); \
+++return (type) __res; \
+++}
+++
++--- /dev/null
+++++ b/src/syscall-sparc.h
++@@ -0,0 +1,130 @@
+++/* $Id: unistd.h,v 1.74 2002/02/08 03:57:18 davem Exp $ */
+++
+++/*
+++ * System calls under the Sparc.
+++ *
+++ * Don't be scared by the ugly clobbers, it is the only way I can
+++ * think of right now to force the arguments into fixed registers
+++ * before the trap into the system call with gcc 'asm' statements.
+++ *
+++ * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)
+++ *
+++ * SunOS compatibility based upon preliminary work which is:
+++ *
+++ * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)
+++ */
+++
+++
+++#define __NR_io_setup		268
+++#define __NR_io_destroy		269
+++#define __NR_io_submit		270
+++#define __NR_io_cancel		271
+++#define __NR_io_getevents	272
+++
+++
+++#define io_syscall1(type,fname,sname,type1,arg1) \
+++type fname(type1 arg1) \
+++{ \
+++long __res; \
+++register long __g1 __asm__ ("g1") = __NR_##sname; \
+++register long __o0 __asm__ ("o0") = (long)(arg1); \
+++__asm__ __volatile__ ("t 0x10\n\t" \
+++		      "bcc 1f\n\t" \
+++		      "mov %%o0, %0\n\t" \
+++		      "sub %%g0, %%o0, %0\n\t" \
+++		      "1:\n\t" \
+++		      : "=r" (__res), "=&r" (__o0) \
+++		      : "1" (__o0), "r" (__g1) \
+++		      : "cc"); \
+++if (__res < -255 || __res >= 0) \
+++	return (type) __res; \
+++return -1; \
+++}
+++
+++#define io_syscall2(type,fname,sname,type1,arg1,type2,arg2) \
+++type fname(type1 arg1,type2 arg2) \
+++{ \
+++long __res; \
+++register long __g1 __asm__ ("g1") = __NR_##sname; \
+++register long __o0 __asm__ ("o0") = (long)(arg1); \
+++register long __o1 __asm__ ("o1") = (long)(arg2); \
+++__asm__ __volatile__ ("t 0x10\n\t" \
+++		      "bcc 1f\n\t" \
+++		      "mov %%o0, %0\n\t" \
+++		      "sub %%g0, %%o0, %0\n\t" \
+++		      "1:\n\t" \
+++		      : "=r" (__res), "=&r" (__o0) \
+++		      : "1" (__o0), "r" (__o1), "r" (__g1) \
+++		      : "cc"); \
+++if (__res < -255 || __res >= 0) \
+++	return (type) __res; \
+++return -1; \
+++}
+++
+++#define io_syscall3(type,fname,sname,type1,arg1,type2,arg2,type3,arg3) \
+++type fname(type1 arg1,type2 arg2,type3 arg3) \
+++{ \
+++long __res; \
+++register long __g1 __asm__ ("g1") = __NR_##sname; \
+++register long __o0 __asm__ ("o0") = (long)(arg1); \
+++register long __o1 __asm__ ("o1") = (long)(arg2); \
+++register long __o2 __asm__ ("o2") = (long)(arg3); \
+++__asm__ __volatile__ ("t 0x10\n\t" \
+++		      "bcc 1f\n\t" \
+++		      "mov %%o0, %0\n\t" \
+++		      "sub %%g0, %%o0, %0\n\t" \
+++		      "1:\n\t" \
+++		      : "=r" (__res), "=&r" (__o0) \
+++		      : "1" (__o0), "r" (__o1), "r" (__o2), "r" (__g1) \
+++		      : "cc"); \
+++if (__res < -255 || __res>=0) \
+++	return (type) __res; \
+++return -1; \
+++}
+++
+++#define io_syscall4(type,fname,sname,type1,arg1,type2,arg2,type3,arg3,type4,arg4) \
+++type fname(type1 arg1, type2 arg2, type3 arg3, type4 arg4) \
+++{ \
+++long __res; \
+++register long __g1 __asm__ ("g1") = __NR_##sname; \
+++register long __o0 __asm__ ("o0") = (long)(arg1); \
+++register long __o1 __asm__ ("o1") = (long)(arg2); \
+++register long __o2 __asm__ ("o2") = (long)(arg3); \
+++register long __o3 __asm__ ("o3") = (long)(arg4); \
+++__asm__ __volatile__ ("t 0x10\n\t" \
+++		      "bcc 1f\n\t" \
+++		      "mov %%o0, %0\n\t" \
+++		      "sub %%g0, %%o0, %0\n\t" \
+++		      "1:\n\t" \
+++		      : "=r" (__res), "=&r" (__o0) \
+++		      : "1" (__o0), "r" (__o1), "r" (__o2), "r" (__o3), "r" (__g1) \
+++		      : "cc"); \
+++if (__res < -255 || __res>=0) \
+++	return (type) __res; \
+++return -1; \
+++}
+++
+++#define io_syscall5(type,fname,sname,type1,arg1,type2,arg2,type3,arg3,type4,arg4, \
+++	  type5,arg5) \
+++type fname(type1 arg1,type2 arg2,type3 arg3,type4 arg4,type5 arg5) \
+++{ \
+++long __res; \
+++register long __g1 __asm__ ("g1") = __NR_##sname; \
+++register long __o0 __asm__ ("o0") = (long)(arg1); \
+++register long __o1 __asm__ ("o1") = (long)(arg2); \
+++register long __o2 __asm__ ("o2") = (long)(arg3); \
+++register long __o3 __asm__ ("o3") = (long)(arg4); \
+++register long __o4 __asm__ ("o4") = (long)(arg5); \
+++__asm__ __volatile__ ("t 0x10\n\t" \
+++		      "bcc 1f\n\t" \
+++		      "mov %%o0, %0\n\t" \
+++		      "sub %%g0, %%o0, %0\n\t" \
+++		      "1:\n\t" \
+++		      : "=r" (__res), "=&r" (__o0) \
+++		      : "1" (__o0), "r" (__o1), "r" (__o2), "r" (__o3), "r" (__o4), "r" (__g1) \
+++		      : "cc"); \
+++if (__res < -255 || __res>=0) \
+++	return (type) __res; \
+++return -1; \
+++}
+++
++--- a/src/syscall.h
+++++ b/src/syscall.h
++@@ -22,6 +22,16 @@
++ #include "syscall-s390.h"
++ #elif defined(__alpha__)
++ #include "syscall-alpha.h"
+++#elif defined(__arm__)
+++#include "syscall-arm.h"
+++#elif defined(__m68k__)
+++#include "syscall-m68k.h"
+++#elif defined(__sparc__)
+++#include "syscall-sparc.h"
+++#elif defined(__hppa__)
+++#include "syscall-parisc.h"
+++#elif defined(__mips__)
+++#include "syscall-mips.h"
++ #else
++ #error "add syscall-arch.h"
++ #endif
++--- /dev/null
+++++ b/src/syscall-mips.h
++@@ -0,0 +1,223 @@
+++/*
+++ * This file is subject to the terms and conditions of the GNU General Public
+++ * License.  See the file "COPYING" in the main directory of this archive
+++ * for more details.
+++ *
+++ * Copyright (C) 1995, 96, 97, 98, 99, 2000 by Ralf Baechle
+++ * Copyright (C) 1999, 2000 Silicon Graphics, Inc.
+++ *
+++ * Changed system calls macros _syscall5 - _syscall7 to push args 5 to 7 onto
+++ * the stack. Robin Farine for ACN S.A, Copyright (C) 1996 by ACN S.A
+++ */
+++
+++#ifndef _MIPS_SIM_ABI32
+++#define _MIPS_SIM_ABI32			1
+++#define _MIPS_SIM_NABI32		2
+++#define _MIPS_SIM_ABI64			3
+++#endif
+++
+++#if _MIPS_SIM == _MIPS_SIM_ABI32
+++
+++/*
+++ * Linux o32 style syscalls are in the range from 4000 to 4999.
+++ */
+++#define __NR_Linux			4000
+++#define __NR_io_setup			(__NR_Linux + 241)
+++#define __NR_io_destroy			(__NR_Linux + 242)
+++#define __NR_io_getevents		(__NR_Linux + 243)
+++#define __NR_io_submit			(__NR_Linux + 244)
+++#define __NR_io_cancel			(__NR_Linux + 245)
+++
+++#endif /* _MIPS_SIM == _MIPS_SIM_ABI32 */
+++
+++#if _MIPS_SIM == _MIPS_SIM_ABI64
+++
+++/*
+++ * Linux 64-bit syscalls are in the range from 5000 to 5999.
+++ */
+++#define __NR_Linux			5000
+++#define __NR_io_setup			(__NR_Linux + 200)
+++#define __NR_io_destroy			(__NR_Linux + 201)
+++#define __NR_io_getevents		(__NR_Linux + 202)
+++#define __NR_io_submit			(__NR_Linux + 203)
+++#define __NR_io_cancel			(__NR_Linux + 204)
+++#endif /* _MIPS_SIM == _MIPS_SIM_ABI64 */
+++
+++#if _MIPS_SIM == _MIPS_SIM_NABI32
+++
+++/*
+++ * Linux N32 syscalls are in the range from 6000 to 6999.
+++ */
+++#define __NR_Linux			6000
+++#define __NR_io_setup			(__NR_Linux + 200)
+++#define __NR_io_destroy			(__NR_Linux + 201)
+++#define __NR_io_getevents		(__NR_Linux + 202)
+++#define __NR_io_submit			(__NR_Linux + 203)
+++#define __NR_io_cancel			(__NR_Linux + 204)
+++#endif /* _MIPS_SIM == _MIPS_SIM_NABI32 */
+++
+++#define io_syscall1(type,fname,sname,atype,a) \
+++type fname(atype a) \
+++{ \
+++	register unsigned long __a0 asm("$4") = (unsigned long) a; \
+++	register unsigned long __a3 asm("$7"); \
+++	unsigned long __v0; \
+++	\
+++	__asm__ volatile ( \
+++	".set\tnoreorder\n\t" \
+++	"li\t$2, %3\t\t\t# " #fname "\n\t" \
+++	"syscall\n\t" \
+++	"move\t%0, $2\n\t" \
+++	".set\treorder" \
+++	: "=&r" (__v0), "=r" (__a3) \
+++	: "r" (__a0), "i" (__NR_##sname) \
+++	: "$2", "$8", "$9", "$10", "$11", "$12", "$13", "$14", "$15", "$24", \
+++	  "memory"); \
+++	\
+++	if (__a3 == 0) \
+++		return (type) __v0; \
+++	return (type) -1; \
+++}
+++
+++#define io_syscall2(type,fname,sname,atype,a,btype,b) \
+++type fname(atype a, btype b) \
+++{ \
+++	register unsigned long __a0 asm("$4") = (unsigned long) a; \
+++	register unsigned long __a1 asm("$5") = (unsigned long) b; \
+++	register unsigned long __a3 asm("$7"); \
+++	unsigned long __v0; \
+++	\
+++	__asm__ volatile ( \
+++	".set\tnoreorder\n\t" \
+++	"li\t$2, %4\t\t\t# " #fname "\n\t" \
+++	"syscall\n\t" \
+++	"move\t%0, $2\n\t" \
+++	".set\treorder" \
+++	: "=&r" (__v0), "=r" (__a3) \
+++	: "r" (__a0), "r" (__a1), "i" (__NR_##sname) \
+++	: "$2", "$8", "$9", "$10", "$11", "$12", "$13", "$14", "$15", "$24", \
+++	  "memory"); \
+++	\
+++	if (__a3 == 0) \
+++		return (type) __v0; \
+++	return (type) -1; \
+++}
+++
+++#define io_syscall3(type,fname,sname,atype,a,btype,b,ctype,c) \
+++type fname(atype a, btype b, ctype c) \
+++{ \
+++	register unsigned long __a0 asm("$4") = (unsigned long) a; \
+++	register unsigned long __a1 asm("$5") = (unsigned long) b; \
+++	register unsigned long __a2 asm("$6") = (unsigned long) c; \
+++	register unsigned long __a3 asm("$7"); \
+++	unsigned long __v0; \
+++	\
+++	__asm__ volatile ( \
+++	".set\tnoreorder\n\t" \
+++	"li\t$2, %5\t\t\t# " #fname "\n\t" \
+++	"syscall\n\t" \
+++	"move\t%0, $2\n\t" \
+++	".set\treorder" \
+++	: "=&r" (__v0), "=r" (__a3) \
+++	: "r" (__a0), "r" (__a1), "r" (__a2), "i" (__NR_##sname) \
+++	: "$2", "$8", "$9", "$10", "$11", "$12", "$13", "$14", "$15", "$24", \
+++	  "memory"); \
+++	\
+++	if (__a3 == 0) \
+++		return (type) __v0; \
+++	return (type) -1; \
+++}
+++
+++#define io_syscall4(type,fname,sname,atype,a,btype,b,ctype,c,dtype,d) \
+++type fname(atype a, btype b, ctype c, dtype d) \
+++{ \
+++	register unsigned long __a0 asm("$4") = (unsigned long) a; \
+++	register unsigned long __a1 asm("$5") = (unsigned long) b; \
+++	register unsigned long __a2 asm("$6") = (unsigned long) c; \
+++	register unsigned long __a3 asm("$7") = (unsigned long) d; \
+++	unsigned long __v0; \
+++	\
+++	__asm__ volatile ( \
+++	".set\tnoreorder\n\t" \
+++	"li\t$2, %5\t\t\t# " #fname "\n\t" \
+++	"syscall\n\t" \
+++	"move\t%0, $2\n\t" \
+++	".set\treorder" \
+++	: "=&r" (__v0), "+r" (__a3) \
+++	: "r" (__a0), "r" (__a1), "r" (__a2), "i" (__NR_##sname) \
+++	: "$2", "$8", "$9", "$10", "$11", "$12", "$13", "$14", "$15", "$24", \
+++	  "memory"); \
+++	\
+++	if (__a3 == 0) \
+++		return (type) __v0; \
+++	return (type) -1; \
+++}
+++
+++#if (_MIPS_SIM == _MIPS_SIM_ABI32)
+++
+++/*
+++ * Using those means your brain needs more than an oil change ;-)
+++ */
+++
+++#define io_syscall5(type,fname,sname,atype,a,btype,b,ctype,c,dtype,d,etype,e) \
+++type fname(atype a, btype b, ctype c, dtype d, etype e) \
+++{ \
+++	register unsigned long __a0 asm("$4") = (unsigned long) a; \
+++	register unsigned long __a1 asm("$5") = (unsigned long) b; \
+++	register unsigned long __a2 asm("$6") = (unsigned long) c; \
+++	register unsigned long __a3 asm("$7") = (unsigned long) d; \
+++	unsigned long __v0; \
+++	\
+++	__asm__ volatile ( \
+++	".set\tnoreorder\n\t" \
+++	"lw\t$2, %6\n\t" \
+++	"subu\t$29, 32\n\t" \
+++	"sw\t$2, 16($29)\n\t" \
+++	"li\t$2, %5\t\t\t# " #fname "\n\t" \
+++	"syscall\n\t" \
+++	"move\t%0, $2\n\t" \
+++	"addiu\t$29, 32\n\t" \
+++	".set\treorder" \
+++	: "=&r" (__v0), "+r" (__a3) \
+++	: "r" (__a0), "r" (__a1), "r" (__a2), "i" (__NR_##sname), \
+++	  "m" ((unsigned long)e) \
+++	: "$2", "$8", "$9", "$10", "$11", "$12", "$13", "$14", "$15", "$24", \
+++	  "memory"); \
+++	\
+++	if (__a3 == 0) \
+++		return (type) __v0; \
+++	return (type) -1; \
+++}
+++
+++#endif /* (_MIPS_SIM == _MIPS_SIM_ABI32) */
+++
+++#if (_MIPS_SIM == _MIPS_SIM_NABI32) || (_MIPS_SIM == _MIPS_SIM_ABI64)
+++
+++#define io_syscall5(type,fname,sname,atype,a,btype,b,ctype,c,dtype,d,etype,e) \
+++type fname (atype a,btype b,ctype c,dtype d,etype e) \
+++{ \
+++	register unsigned long __a0 asm("$4") = (unsigned long) a; \
+++	register unsigned long __a1 asm("$5") = (unsigned long) b; \
+++	register unsigned long __a2 asm("$6") = (unsigned long) c; \
+++	register unsigned long __a3 asm("$7") = (unsigned long) d; \
+++	register unsigned long __a4 asm("$8") = (unsigned long) e; \
+++	unsigned long __v0; \
+++	\
+++	__asm__ volatile ( \
+++	".set\tnoreorder\n\t" \
+++	"li\t$2, %6\t\t\t# " #fname "\n\t" \
+++	"syscall\n\t" \
+++	"move\t%0, $2\n\t" \
+++	".set\treorder" \
+++	: "=&r" (__v0), "+r" (__a3) \
+++	: "r" (__a0), "r" (__a1), "r" (__a2), "r" (__a4), "i" (__NR_##sname) \
+++	: "$2", "$9", "$10", "$11", "$12", "$13", "$14", "$15", "$24", \
+++	  "memory"); \
+++	\
+++	if (__a3 == 0) \
+++		return (type) __v0; \
+++	return (type) -1; \
+++}
+++
+++#endif /* (_MIPS_SIM == _MIPS_SIM_NABI32) || (_MIPS_SIM == _MIPS_SIM_ABI64) */
+++
++--- a/src/libaio.h
+++++ b/src/libaio.h
++@@ -73,6 +73,40 @@ typedef enum io_iocb_cmd {
++ #define PADDED(x, y)	unsigned y; x
++ #define PADDEDptr(x, y) unsigned y; x
++ #define PADDEDul(x, y)	unsigned y; unsigned long x
+++#elif defined(__arm__)
+++#  if defined (__ARMEB__) /* big endian, 32 bits */
+++#define PADDED(x, y)	unsigned y; x
+++#define PADDEDptr(x, y)	unsigned y; x
+++#define PADDEDul(x, y)	unsigned y; unsigned long x
+++#  else                   /* little endian, 32 bits */
+++#define PADDED(x, y)	x; unsigned y
+++#define PADDEDptr(x, y)	x; unsigned y
+++#define PADDEDul(x, y)	unsigned long x; unsigned y
+++#  endif
+++#elif defined(__m68k__) /* big endian, 32 bits */
+++#define PADDED(x, y)	unsigned y; x
+++#define PADDEDptr(x, y)	unsigned y; x
+++#define PADDEDul(x, y)	unsigned y; unsigned long x
+++#elif defined(__sparc__) /* big endian, 32 bits */
+++#define PADDED(x, y)	unsigned y; x
+++#define PADDEDptr(x, y)	unsigned y; x
+++#define PADDEDul(x, y)	unsigned y; unsigned long x
+++#elif defined(__hppa__) /* big endian, 32 bits */
+++#define PADDED(x, y)	unsigned y; x
+++#define PADDEDptr(x, y)	unsigned y; x
+++#define PADDEDul(x, y)	unsigned y; unsigned long x
+++#elif defined(__mips__)
+++#  if defined (__MIPSEB__) /* big endian, 32 bits */
+++#define PADDED(x, y)	unsigned y; x
+++#define PADDEDptr(x, y)	unsigned y; x
+++#define PADDEDul(x, y)	unsigned y; unsigned long x
+++#  elif defined(__MIPSEL__) /* little endian, 32 bits */
+++#define PADDED(x, y)	x; unsigned y
+++#define PADDEDptr(x, y)	x; unsigned y
+++#define PADDEDul(x, y)	unsigned long x; unsigned y
+++#  else
+++#    error "neither mipseb nor mipsel?"
+++#  endif
++ #else
++ #error	endian?
++ #endif
++--- /dev/null
+++++ b/src/syscall-parisc.h
++@@ -0,0 +1,146 @@
+++/*
+++ * Linux system call numbers.
+++ *
+++ * Cary Coutant says that we should just use another syscall gateway
+++ * page to avoid clashing with the HPUX space, and I think he's right:
+++ * it will would keep a branch out of our syscall entry path, at the
+++ * very least.  If we decide to change it later, we can ``just'' tweak
+++ * the LINUX_GATEWAY_ADDR define at the bottom and make __NR_Linux be
+++ * 1024 or something.  Oh, and recompile libc. =)
+++ *
+++ * 64-bit HPUX binaries get the syscall gateway address passed in a register
+++ * from the kernel at startup, which seems a sane strategy.
+++ */
+++
+++#define __NR_Linux                0
+++#define __NR_io_setup           (__NR_Linux + 215)
+++#define __NR_io_destroy         (__NR_Linux + 216)
+++#define __NR_io_getevents       (__NR_Linux + 217)
+++#define __NR_io_submit          (__NR_Linux + 218)
+++#define __NR_io_cancel          (__NR_Linux + 219)
+++
+++#define SYS_ify(syscall_name)   __NR_##syscall_name
+++
+++/* Assume all syscalls are done from PIC code just to be
+++ * safe. The worst case scenario is that you lose a register
+++ * and save/restore r19 across the syscall. */
+++#define PIC
+++
+++/* Definition taken from glibc 2.3.3
+++ * sysdeps/unix/sysv/linux/hppa/sysdep.h
+++ */
+++
+++#ifdef PIC
+++/* WARNING: CANNOT BE USED IN A NOP! */
+++# define K_STW_ASM_PIC	"       copy %%r19, %%r4\n"
+++# define K_LDW_ASM_PIC	"       copy %%r4, %%r19\n"
+++# define K_USING_GR4	"%r4",
+++#else
+++# define K_STW_ASM_PIC	" \n"
+++# define K_LDW_ASM_PIC	" \n"
+++# define K_USING_GR4
+++#endif
+++
+++/* GCC has to be warned that a syscall may clobber all the ABI
+++   registers listed as "caller-saves", see page 8, Table 2
+++   in section 2.2.6 of the PA-RISC RUN-TIME architecture
+++   document. However! r28 is the result and will conflict with
+++   the clobber list so it is left out. Also the input arguments
+++   registers r20 -> r26 will conflict with the list so they
+++   are treated specially. Although r19 is clobbered by the syscall
+++   we cannot say this because it would violate ABI, thus we say
+++   r4 is clobbered and use that register to save/restore r19
+++   across the syscall. */
+++
+++#define K_CALL_CLOB_REGS "%r1", "%r2", K_USING_GR4 \
+++			 "%r20", "%r29", "%r31"
+++
+++#undef K_INLINE_SYSCALL
+++#define K_INLINE_SYSCALL(name, nr, args...)	({			\
+++	long __sys_res;							\
+++	{								\
+++		register unsigned long __res __asm__("r28");		\
+++		K_LOAD_ARGS_##nr(args)					\
+++		/* FIXME: HACK stw/ldw r19 around syscall */		\
+++		__asm__ volatile(					\
+++			K_STW_ASM_PIC					\
+++			"	ble  0x100(%%sr2, %%r0)\n"		\
+++			"	ldi %1, %%r20\n"			\
+++			K_LDW_ASM_PIC					\
+++			: "=r" (__res)					\
+++			: "i" (SYS_ify(name)) K_ASM_ARGS_##nr		\
+++			: "memory", K_CALL_CLOB_REGS K_CLOB_ARGS_##nr	\
+++		);							\
+++		__sys_res = (long)__res;				\
+++	}								\
+++	__sys_res;							\
+++})
+++
+++#define K_LOAD_ARGS_0()
+++#define K_LOAD_ARGS_1(r26)					\
+++	register unsigned long __r26 __asm__("r26") = (unsigned long)(r26);   \
+++	K_LOAD_ARGS_0()
+++#define K_LOAD_ARGS_2(r26,r25)					\
+++	register unsigned long __r25 __asm__("r25") = (unsigned long)(r25);   \
+++	K_LOAD_ARGS_1(r26)
+++#define K_LOAD_ARGS_3(r26,r25,r24)				\
+++	register unsigned long __r24 __asm__("r24") = (unsigned long)(r24);   \
+++	K_LOAD_ARGS_2(r26,r25)
+++#define K_LOAD_ARGS_4(r26,r25,r24,r23)				\
+++	register unsigned long __r23 __asm__("r23") = (unsigned long)(r23);   \
+++	K_LOAD_ARGS_3(r26,r25,r24)
+++#define K_LOAD_ARGS_5(r26,r25,r24,r23,r22)			\
+++	register unsigned long __r22 __asm__("r22") = (unsigned long)(r22);   \
+++	K_LOAD_ARGS_4(r26,r25,r24,r23)
+++#define K_LOAD_ARGS_6(r26,r25,r24,r23,r22,r21)			\
+++	register unsigned long __r21 __asm__("r21") = (unsigned long)(r21);   \
+++	K_LOAD_ARGS_5(r26,r25,r24,r23,r22)
+++
+++/* Even with zero args we use r20 for the syscall number */
+++#define K_ASM_ARGS_0
+++#define K_ASM_ARGS_1 K_ASM_ARGS_0, "r" (__r26)
+++#define K_ASM_ARGS_2 K_ASM_ARGS_1, "r" (__r25)
+++#define K_ASM_ARGS_3 K_ASM_ARGS_2, "r" (__r24)
+++#define K_ASM_ARGS_4 K_ASM_ARGS_3, "r" (__r23)
+++#define K_ASM_ARGS_5 K_ASM_ARGS_4, "r" (__r22)
+++#define K_ASM_ARGS_6 K_ASM_ARGS_5, "r" (__r21)
+++
+++/* The registers not listed as inputs but clobbered */
+++#define K_CLOB_ARGS_6
+++#define K_CLOB_ARGS_5 K_CLOB_ARGS_6, "%r21"
+++#define K_CLOB_ARGS_4 K_CLOB_ARGS_5, "%r22"
+++#define K_CLOB_ARGS_3 K_CLOB_ARGS_4, "%r23"
+++#define K_CLOB_ARGS_2 K_CLOB_ARGS_3, "%r24"
+++#define K_CLOB_ARGS_1 K_CLOB_ARGS_2, "%r25"
+++#define K_CLOB_ARGS_0 K_CLOB_ARGS_1, "%r26"
+++
+++#define io_syscall1(type,fname,sname,type1,arg1)			\
+++type fname(type1 arg1)							\
+++{									\
+++    return K_INLINE_SYSCALL(sname, 1, arg1);				\
+++}
+++
+++#define io_syscall2(type,fname,sname,type1,arg1,type2,arg2)		\
+++type fname(type1 arg1, type2 arg2)					\
+++{									\
+++    return K_INLINE_SYSCALL(sname, 2, arg1, arg2);			\
+++}
+++
+++#define io_syscall3(type,fname,sname,type1,arg1,type2,arg2,type3,arg3)	\
+++type fname(type1 arg1, type2 arg2, type3 arg3)				\
+++{									\
+++    return K_INLINE_SYSCALL(sname, 3, arg1, arg2, arg3);		\
+++}
+++
+++#define io_syscall4(type,fname,sname,type1,arg1,type2,arg2,type3,arg3,type4,arg4) \
+++type fname(type1 arg1, type2 arg2, type3 arg3, type4 arg4)		\
+++{									\
+++    return K_INLINE_SYSCALL(sname, 4, arg1, arg2, arg3, arg4);		\
+++}
+++
+++#define io_syscall5(type,fname,sname,type1,arg1,type2,arg2,type3,arg3,type4,arg4,type5,arg5) \
+++type fname(type1 arg1, type2 arg2, type3 arg3, type4 arg4, type5 arg5)	\
+++{									\
+++    return K_INLINE_SYSCALL(sname, 5, arg1, arg2, arg3, arg4, arg5);	\
+++}
+++
++--- /dev/null
+++++ b/src/syscall-arm.h
++@@ -0,0 +1,116 @@
+++/*
+++ *  linux/include/asm-arm/unistd.h
+++ *
+++ *  Copyright (C) 2001-2005 Russell King
+++ *
+++ * This program is free software; you can redistribute it and/or modify
+++ * it under the terms of the GNU General Public License version 2 as
+++ * published by the Free Software Foundation.
+++ *
+++ * Please forward _all_ changes to this file to rmk@arm.linux.org.uk,
+++ * no matter what the change is.  Thanks!
+++ */
+++
+++#define __NR_OABI_SYSCALL_BASE	0x900000
+++
+++#if defined(__thumb__) || defined(__ARM_EABI__)
+++#define __NR_SYSCALL_BASE	0
+++#else
+++#define __NR_SYSCALL_BASE	__NR_OABI_SYSCALL_BASE
+++#endif
+++
+++#define __NR_io_setup			(__NR_SYSCALL_BASE+243)
+++#define __NR_io_destroy			(__NR_SYSCALL_BASE+244)
+++#define __NR_io_getevents		(__NR_SYSCALL_BASE+245)
+++#define __NR_io_submit			(__NR_SYSCALL_BASE+246)
+++#define __NR_io_cancel			(__NR_SYSCALL_BASE+247)
+++
+++#define __sys2(x) #x
+++#define __sys1(x) __sys2(x)
+++
+++#if defined(__thumb__) || defined(__ARM_EABI__)
+++#define __SYS_REG(name) register long __sysreg __asm__("r7") = __NR_##name;
+++#define __SYS_REG_LIST(regs...) "r" (__sysreg) , ##regs
+++#define __syscall(name) "swi\t0"
+++#else
+++#define __SYS_REG(name)
+++#define __SYS_REG_LIST(regs...) regs
+++#define __syscall(name) "swi\t" __sys1(__NR_##name) ""
+++#endif
+++
+++#define io_syscall1(type,fname,sname,type1,arg1)			\
+++type fname(type1 arg1) {						\
+++  __SYS_REG(sname)							\
+++  register long __r0 __asm__("r0") = (long)arg1;			\
+++  register long __res_r0 __asm__("r0");					\
+++  __asm__ __volatile__ (						\
+++  __syscall(sname)							\
+++	: "=r" (__res_r0)						\
+++	: __SYS_REG_LIST( "0" (__r0) )					\
+++	: "memory" );							\
+++  return (type) __res_r0;						\
+++}
+++
+++#define io_syscall2(type,fname,sname,type1,arg1,type2,arg2)		\
+++type fname(type1 arg1,type2 arg2) {					\
+++  __SYS_REG(sname)							\
+++  register long __r0 __asm__("r0") = (long)arg1;			\
+++  register long __r1 __asm__("r1") = (long)arg2;			\
+++  register long __res_r0 __asm__("r0");					\
+++  __asm__ __volatile__ (						\
+++  __syscall(sname)							\
+++	: "=r" (__res_r0)						\
+++	: __SYS_REG_LIST( "0" (__r0), "r" (__r1) )			\
+++	: "memory" );							\
+++  return (type) __res_r0;						\
+++}
+++
+++#define io_syscall3(type,fname,sname,type1,arg1,type2,arg2,type3,arg3)	\
+++type fname(type1 arg1,type2 arg2,type3 arg3) {				\
+++  __SYS_REG(sname)							\
+++  register long __r0 __asm__("r0") = (long)arg1;			\
+++  register long __r1 __asm__("r1") = (long)arg2;			\
+++  register long __r2 __asm__("r2") = (long)arg3;			\
+++  register long __res_r0 __asm__("r0");					\
+++  __asm__ __volatile__ (						\
+++  __syscall(sname)							\
+++	: "=r" (__res_r0)						\
+++	: __SYS_REG_LIST( "0" (__r0), "r" (__r1), "r" (__r2) )		\
+++	: "memory" );							\
+++  return (type) __res_r0;						\
+++}
+++
+++#define io_syscall4(type,fname,sname,type1,arg1,type2,arg2,type3,arg3,type4,arg4)\
+++type fname(type1 arg1, type2 arg2, type3 arg3, type4 arg4) {		\
+++  __SYS_REG(sname)							\
+++  register long __r0 __asm__("r0") = (long)arg1;			\
+++  register long __r1 __asm__("r1") = (long)arg2;			\
+++  register long __r2 __asm__("r2") = (long)arg3;			\
+++  register long __r3 __asm__("r3") = (long)arg4;			\
+++  register long __res_r0 __asm__("r0");					\
+++  __asm__ __volatile__ (						\
+++  __syscall(sname)							\
+++	: "=r" (__res_r0)						\
+++	: __SYS_REG_LIST( "0" (__r0), "r" (__r1), "r" (__r2), "r" (__r3) ) \
+++	: "memory" );							\
+++  return (type) __res_r0;						\
+++}
+++
+++#define io_syscall5(type,fname,sname,type1,arg1,type2,arg2,type3,arg3,type4,arg4,type5,arg5)	\
+++type fname(type1 arg1, type2 arg2, type3 arg3, type4 arg4, type5 arg5) {\
+++  __SYS_REG(sname)							\
+++  register long __r0 __asm__("r0") = (long)arg1;			\
+++  register long __r1 __asm__("r1") = (long)arg2;			\
+++  register long __r2 __asm__("r2") = (long)arg3;			\
+++  register long __r3 __asm__("r3") = (long)arg4;			\
+++  register long __r4 __asm__("r4") = (long)arg5;			\
+++  register long __res_r0 __asm__("r0");					\
+++  __asm__ __volatile__ (						\
+++  __syscall(sname)							\
+++	: "=r" (__res_r0)						\
+++	: __SYS_REG_LIST( "0" (__r0), "r" (__r1), "r" (__r2),		\
+++			  "r" (__r3), "r" (__r4) )			\
+++	: "memory" );							\
+++  return (type) __res_r0;						\
+++}
+++
++--- a/harness/main.c
+++++ b/harness/main.c
++@@ -11,8 +11,14 @@
++ 
++ #include <libaio.h>
++ 
++-#if defined(__i386__)
+++#if defined(__i386__) || defined(__powerpc__) || defined(__mips__)
++ #define KERNEL_RW_POINTER	((void *)0xc0010000)
+++#elif defined(__arm__) || defined(__m68k__) || defined(__s390__)
+++#define KERNEL_RW_POINTER	((void *)0x00010000)
+++#elif defined(__hppa__)
+++#define KERNEL_RW_POINTER	((void *)0x10100000)
+++#elif defined(__sparc__) && !defined(__arch64__)
+++#define KERNEL_RW_POINTER	((void *)0xf0010000)
++ #else
++ //#warning Not really sure where kernel memory is.  Guessing.
++ #define KERNEL_RW_POINTER	((void *)0xffffffffc0010000)
+--- libaio-0.3.107.orig/debian/patches/03_man_errors.patch
++++ libaio-0.3.107/debian/patches/03_man_errors.patch
+@@ -0,0 +1,2671 @@
++---
++ man/aio.3              |  180 ++++++++++++++++++++++---------------------------
++ man/aio_cancel.3       |   72 +++++++++----------
++ man/aio_cancel64.3     |   50 ++++++-------
++ man/aio_error64.3      |   54 +++++++-------
++ man/aio_fsync64.3      |   46 ++++++------
++ man/aio_init.3         |   50 ++++++-------
++ man/aio_read64.3       |   56 +++++++--------
++ man/aio_return64.3     |   46 ++++++------
++ man/aio_suspend64.3    |   46 ++++++------
++ man/aio_write64.3      |   52 +++++++-------
++ man/io.3               |   73 +++++++++----------
++ man/io_cancel.3        |   36 ++++-----
++ man/io_fsync.3         |   42 +++++------
++ man/io_getevents.1     |   38 +++++-----
++ man/io_getevents.3     |   76 ++++++++++----------
++ man/io_prep_fsync.3    |   69 +++++++++---------
++ man/io_prep_pread.3    |   70 ++++++++-----------
++ man/io_prep_pwrite.3   |   68 ++++++++----------
++ man/io_queue_init.3    |   38 +++++-----
++ man/io_queue_release.3 |   38 +++++-----
++ man/io_queue_run.3     |   46 ++++++------
++ man/io_queue_wait.3    |   50 ++++++-------
++ man/io_set_callback.3  |   36 +++++----
++ man/io_setup.1         |   30 ++++----
++ man/io_submit.1        |    6 -
++ man/io_submit.3        |   60 ++++++++--------
++ man/lio_listio.3       |  115 ++++++++++++++-----------------
++ man/lio_listio64.3     |   20 ++---
++ 28 files changed, 764 insertions(+), 799 deletions(-)
++
++--- a/man/aio.3
+++++ b/man/aio.3
++@@ -1,11 +1,11 @@
++-.TH aio 3 2002-09-12 "Linux 2.4" Linux AIO"
+++.TH aio 3 2009-06-09 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ aio \- Asynchronous IO
++ .SH SYNOPSIS
++ .nf
++ .B #include <errno.h>
++ .sp
++-.br 
+++.br
++ .B #include <aio.h>
++ .sp
++ .fi
++@@ -16,25 +16,23 @@ new functions allow a program to initiat
++ then immediately resume normal work while the I/O operations are
++ executed in parallel.  This functionality is available if the
++ .IR "unistd.h"
++-file defines the symbol 
++-.B "_POSIX_ASYNCHRONOUS_IO"
++-.
+++file defines the symbol
+++.BR "_POSIX_ASYNCHRONOUS_IO" .
++ 
++ These functions are part of the library with realtime functions named
++-.IR "librt"
++-.  They are not actually part of the 
++-.IR "libc" 
+++.IR "librt" .
+++They are not actually part of the
+++.IR "libc"
++ binary.
++ The implementation of these functions can be done using support in the
++ kernel (if available) or using an implementation based on threads at
++ userlevel.  In the latter case it might be necessary to link applications
++-with the thread library 
+++with the thread library
++ .IR "libpthread"
++-in addition to 
+++in addition to
++ .IR "librt"
++ and
++-.IR "libaio"
++-.
+++.IR "libaio" .
++ 
++ All AIO operations operate on files which were opened previously.  There
++ might be arbitrarily many operations running for one file.  The
++@@ -42,7 +40,7 @@ asynchronous I/O operations are controll
++ .IR "struct aiocb"
++ It is defined in
++ .IR "aio.h"
++- as follows.
+++as follows.
++ 
++ .nf
++ struct aiocb
++@@ -71,8 +69,8 @@ struct aiocb
++ };
++ 
++ .fi
++-The POSIX.1b standard mandates that the 
++-.IR "struct aiocb" 
+++The POSIX.1b standard mandates that the
+++.IR "struct aiocb"
++ structure
++ contains at least the members described in the following table.  There
++ might be more elements which are used by the implementation, but
++@@ -86,9 +84,9 @@ fail.
++ 
++ The device on which the file is opened must allow the seek operation.
++ I.e., it is not possible to use any of the AIO operations on devices
++-like terminals where an 
+++like terminals where an
++ .IR "lseek"
++- call would lead to an error.
+++call would lead to an error.
++ .TP
++ .IR "off_t aio_offset"
++ This element specifies the offset in the file at which the operation (input
++@@ -102,16 +100,15 @@ This is a pointer to the buffer with the
++ where the read data is stored.
++ .TP
++ .IR "size_t aio_nbytes"
++-This element specifies the length of the buffer pointed to by 
++-.IR "aio_buf"
++-.
+++This element specifies the length of the buffer pointed to by
+++.IR "aio_buf" .
++ .TP
++ .IR "int aio_reqprio"
++-If the platform has defined 
+++If the platform has defined
++ .B "_POSIX_PRIORITIZED_IO"
++ and
++-.B "_POSIX_PRIORITY_SCHEDULING"
++-, the AIO requests are
+++.BR "_POSIX_PRIORITY_SCHEDULING" ,
+++the AIO requests are
++ processed based on the current scheduling priority.  The
++ .IR "aio_reqprio"
++ element can then be used to lower the priority of the
++@@ -119,30 +116,28 @@ AIO operation.
++ .TP
++ .IR "struct sigevent aio_sigevent"
++ This element specifies how the calling process is notified once the
++-operation terminates.  If the 
+++operation terminates.  If the
++ .IR "sigev_notify"
++ element is
++-.B "SIGEV_NONE"
++-, no notification is sent.  If it is 
++-.B "SIGEV_SIGNAL"
++-,
++-the signal determined by 
+++.BR "SIGEV_NONE" ,
+++no notification is sent.  If it is
+++.BR "SIGEV_SIGNAL" ,
+++the signal determined by
++ .IR "sigev_signo"
++ is sent.  Otherwise,
++ .IR "sigev_notify"
++-must be 
++-.B "SIGEV_THREAD"
++-.  In this case, a thread
+++must be
+++.BR "SIGEV_THREAD" .
+++In this case, a thread
++ is created which starts executing the function pointed to by
++-.IR "sigev_notify_function"
++-.
+++.IR "sigev_notify_function" .
++ .TP
++ .IR "int aio_lio_opcode"
++-This element is only used by the 
+++This element is only used by the
++ .IR "lio_listio"
++- and
+++and
++ .IR "lio_listio64"
++- functions.  Since these functions allow an
+++functions.  Since these functions allow an
++ arbitrary number of operations to start at once, and each operation can be
++ input or output (or nothing), the information must be stored in the
++ control block.  The possible values are:
++@@ -150,47 +145,42 @@ control block.  The possible values are:
++ .B "LIO_READ"
++ Start a read operation.  Read from the file at position
++ .IR "aio_offset"
++- and store the next 
+++and store the next
++ .IR "aio_nbytes"
++- bytes in the
++-buffer pointed to by 
++-.IR "aio_buf"
++-.
+++bytes in the
+++buffer pointed to by
+++.IR "aio_buf" .
++ .TP
++ .B "LIO_WRITE"
++-Start a write operation.  Write 
++-.IR "aio_nbytes" 
+++Start a write operation.  Write
+++.IR "aio_nbytes"
++ bytes starting at
++ .IR "aio_buf"
++-into the file starting at position 
++-.IR "aio_offset"
++-.
+++into the file starting at position
+++.IR "aio_offset" .
++ .TP
++ .B "LIO_NOP"
++ Do nothing for this control block.  This value is useful sometimes when
++-an array of 
+++an array of
++ .IR "struct aiocb"
++ values contains holes, i.e., some of the
++ values must not be handled although the whole array is presented to the
++ .IR "lio_listio"
++ function.
++ 
++-When the sources are compiled using 
+++When the sources are compiled using
++ .B "_FILE_OFFSET_BITS == 64"
++-on a
++-32 bit machine, this type is in fact 
++-.IR "struct aiocb64"
++-, since the LFS
++-interface transparently replaces the 
+++on a 32 bit machine, this type is in fact
+++.IR "struct aiocb64" ,
+++since the LFS interface transparently replaces the
++ .IR "struct aiocb"
++ definition.
++ .PP
++ For use with the AIO functions defined in the LFS, there is a similar type
++ defined which replaces the types of the appropriate members with larger
++-types but otherwise is equivalent to 
++-.IR "struct aiocb"
++-.  Particularly,
++-all member names are the same.
+++types but otherwise is equivalent to
+++.IR "struct aiocb" ,
+++Particularly, all member names are the same.
++ 
++ .nf
++ /* The same for the 64bit offsets.  Please note that the members aio_fildes
++@@ -224,9 +214,9 @@ operation.  It must be a legal descripto
++ fails for obvious reasons.
++ The device on which the file is opened must allow the seek operation.
++ I.e., it is not possible to use any of the AIO operations on devices
++-like terminals where an 
+++like terminals where an
++ .IR "lseek"
++- call would lead to an error.
+++call would lead to an error.
++ .TP
++ .IR "off64_t aio_offset"
++ This element specifies at which offset in the file the operation (input
++@@ -240,12 +230,11 @@ This is a pointer to the buffer with the
++ where the read data is stored.
++ .TP
++ .IR "size_t aio_nbytes"
++-This element specifies the length of the buffer pointed to by 
++-.IR "aio_buf"
++-.
+++This element specifies the length of the buffer pointed to by
+++.IR "aio_buf" .
++ .TP
++ .IR "int aio_reqprio"
++-If for the platform 
+++If for the platform
++ .B "_POSIX_PRIORITIZED_IO"
++ and
++ .B "_POSIX_PRIORITY_SCHEDULING"
++@@ -257,59 +246,56 @@ AIO operation.
++ .TP
++ .IR "struct sigevent aio_sigevent"
++ This element specifies how the calling process is notified once the
++-operation terminates.  If the 
++-.IR "sigev_notify"
++-, element is
+++operation terminates.  If the
+++.IR "sigev_notify" ,
+++element is
++ .B "SIGEV_NONE"
++-no notification is sent.  If it is 
++-.B "SIGEV_SIGNAL"
++-,
++-the signal determined by 
+++no notification is sent.  If it is
+++.BR "SIGEV_SIGNAL" ,
+++the signal determined by
++ .IR "sigev_signo"
++ is sent.  Otherwise,
++ .IR "sigev_notify"
++- must be 
+++must be
++ .B "SIGEV_THREAD"
++ in which case a thread
++ which starts executing the function pointed to by
++-.IR "sigev_notify_function"
++-.
+++.IR "sigev_notify_function" .
++ .TP
++ .IR "int aio_lio_opcode"
++-This element is only used by the 
+++This element is only used by the
++ .IR "lio_listio"
++ and
++ .IR "lio_listio64"
++ functions.  Since these functions allow an
++ arbitrary number of operations to start at once, and since each operation can be
++ input or output (or nothing), the information must be stored in the
++-control block.  See the description of 
+++control block.  See the description of
++ .IR "struct aiocb"
++ for a description
++ of the possible values.
++ .PP
++-When the sources are compiled using 
+++When the sources are compiled using
++ .B "_FILE_OFFSET_BITS == 64"
++-on a
++-32 bit machine, this type is available under the name 
++-.IR "struct aiocb64"
++-, since the LFS transparently replaces the old interface.
+++on a 32 bit machine, this type is available under the name
+++.IR "struct aiocb64" ,
+++since the LFS transparently replaces the old interface.
++ .SH "RETURN VALUES"
++ .SH ERRORS
++ .SH "SEE ALSO"
++-.BR aio_cancel(3),
++-.BR aio_cancel64(3),
++-.BR aio_error(3),
++-.BR aio_error64(3),
++-.BR aio_fsync(3),
++-.BR aio_fsync64(3),
++-.BR aio_init(3),
++-.BR aio_read(3),
++-.BR aio_read64(3),
++-.BR aio_return(3),
++-.BR aio_return64(3),
++-.BR aio_suspend(3),
++-.BR aio_suspend64(3),
++-.BR aio_write(3),
++-.BR aio_write64(3),
++-.BR errno(3),
+++.BR aio_cancel (3),
+++.BR aio_cancel64 (3),
+++.BR aio_error (3),
+++.BR aio_error64 (3),
+++.BR aio_fsync (3),
+++.BR aio_fsync64 (3),
+++.BR aio_init (3),
+++.BR aio_read (3),
+++.BR aio_read64 (3),
+++.BR aio_return (3),
+++.BR aio_return64 (3),
+++.BR aio_suspend (3),
+++.BR aio_suspend64 (3),
+++.BR aio_write (3),
+++.BR aio_write64 (3),
+++.BR errno (3).
++--- a/man/aio_cancel.3
+++++ b/man/aio_cancel.3
++@@ -1,4 +1,4 @@
++-.TH aio_cancel 3 2002-09-12 "Linux 2.4" Linux AIO"
+++.TH aio_cancel 3 2009-06-09 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ aio_cancel - Cancel asynchronous I/O requests
++ .SH SYNOPSYS
++@@ -9,7 +9,7 @@ aio_cancel - Cancel asynchronous I/O req
++ .B #include <aio.h>
++ .sp
++ .br
++-.BI "int aio_cancel (int fildes " , struct aiocb *aiocbp " )"
+++.BI "int aio_cancel (int " fildes ", struct aiocb *" aiocbp ")"
++ .fi
++ .SH DESCRIPTION
++ When one or more requests are asynchronously processed, it might be
++@@ -23,7 +23,7 @@ is not capable of forcing the cancellati
++ implementation to decide whether it is possible to cancel the operation
++ or not.  Therefore using this function is merely a hint.
++ .B "The libaio implementation does not implement the cancel operation in the"
++-.B "POSIX libraries".
+++.B "POSIX libraries."
++ .PP
++ The 
++ .IR aio_cancel
++@@ -31,8 +31,8 @@ function can be used to cancel one or mo
++ outstanding requests.  If the 
++ .IR aiocbp 
++ parameter is 
++-.IR NULL
++-, the
+++.IR NULL ,
+++the
++ function tries to cancel all of the outstanding requests which would process
++ the file descriptor 
++ .IR fildes 
++@@ -40,11 +40,11 @@ the file descriptor 
++ .IR aio_fildes 
++ member
++ is 
++-.IR fildes
++-).  If 
++-.IR aiocbp is not 
++-.IR  NULL
++-,
+++.IR fildes ).
+++If
+++.IR aiocbp
+++is not
+++.IR NULL ,
++ .IR aio_cancel
++ attempts to cancel the specific request pointed to by 
++ .IR aiocbp.
++@@ -64,13 +64,13 @@ a reference to this request as the param
++ and a call to 
++ .IR aio_return
++ will return 
++-.IR -1.
+++.IR -1 .
++ If the request wasn't canceled and is still running the error status is
++ still 
++-.B EINPROGRESS.
+++.BR EINPROGRESS .
++ When the sources are compiled with 
++-.IR "_FILE_OFFSET_BITS == 64"
++-, this
+++.IR "_FILE_OFFSET_BITS == 64" ,
+++this
++ function is in fact 
++ .IR aio_cancel64
++ since the LFS interface
++@@ -83,22 +83,20 @@ If there were
++ requests which haven't terminated and which were successfully canceled.
++ .TP
++ .B AIO_NOTCANCELED
++-If there is one or more requests left which couldn't be canceled,
++-.  In this case
+++If there is one or more requests left which couldn't be canceled.
+++In this case
++ .IR aio_error
++ must be used to find out which of the, perhaps multiple, requests (in
++ .IR aiocbp
++ is 
++-.IR NULL
++-) weren't successfully canceled.  
+++.IR NULL )
+++weren't successfully canceled.
++ .TP
++ .B AIO_ALLDONE
++ If all
++ requests already terminated at the time 
++ .IR aio_cancel 
++-is called the
++-return value is 
++-.
+++is called.
++ .SH ERRORS
++ If an error occurred during the execution of 
++ .IR aio_cancel 
++@@ -119,19 +117,19 @@ is not valid.
++ .IR aio_cancel
++ is not implemented.
++ .SH "SEE ALSO"
++-.BR aio(3),
++-.BR aio_cancel64(3),
++-.BR aio_error(3),
++-.BR aio_error64(3),
++-.BR aio_fsync(3),
++-.BR aio_fsync64(3),
++-.BR aio_init(3),
++-.BR aio_read(3),
++-.BR aio_read64(3),
++-.BR aio_return(3),
++-.BR aio_return64(3),
++-.BR aio_suspend(3),
++-.BR aio_suspend64(3),
++-.BR aio_write(3),
++-.BR aio_write64(3),
++-.BR errno(3),
+++.BR aio (3),
+++.BR aio_cancel64 (3),
+++.BR aio_error (3),
+++.BR aio_error64 (3),
+++.BR aio_fsync (3),
+++.BR aio_fsync64 (3),
+++.BR aio_init (3),
+++.BR aio_read (3),
+++.BR aio_read64 (3),
+++.BR aio_return (3),
+++.BR aio_return64 (3),
+++.BR aio_suspend (3),
+++.BR aio_suspend64 (3),
+++.BR aio_write (3),
+++.BR aio_write64 (3),
+++.BR errno (3).
++--- a/man/aio_cancel64.3
+++++ b/man/aio_cancel64.3
++@@ -1,4 +1,4 @@
++-.TH aio_cancel64 3 2002-09-12 "Linux 2.4" Linux AIO"
+++.TH aio_cancel64 3 2002-09-12 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ aio_cancel64 \- Cancel asynchronous I/O requests
++ .SH SYNOPSYS
++@@ -9,42 +9,42 @@ aio_cancel64 \- Cancel asynchronous I/O 
++ .B #include <aio.h>
++ .sp
++ .br
++-.BI "int aio_cancel64 (int fildes, struct aiocb64 *aiocbp)"
+++.BI "int aio_cancel64(int " fildes ", struct aiocb64 *" aiocbp ");"
++ .fi
++ .SH DESCRIPTION
++ This function is similar to 
++ .IR aio_cancel
++ with the only difference
++ that the argument is a reference to a variable of type 
++-.IR struct aiocb64
++-.
++-
+++.IR "struct aiocb64" .
++ When the sources are compiled with 
++-.IR _FILE_OFFSET_BITS == 64
++-, this
+++.IR "_FILE_OFFSET_BITS == 64" ,
+++this
++ function is available under the name 
++ .IR aio_cancel
++ and so
++ transparently replaces the interface for small files on 32 bit
++ machines.
++ .SH "RETURN VALUES"
++-See aio_cancel(3).
+++See
+++.BR aio_cancel (3).
++ .SH ERRORS
++-See aio_cancel(3).
+++See
+++.BR aio_cancel (3).
++ .SH "SEE ALSO"
++-.BR aio(3),
++-.BR aio_cancel(3),
++-.BR aio_error(3),
++-.BR aio_error64(3),
++-.BR aio_fsync(3),
++-.BR aio_fsync64(3),
++-.BR aio_init(3),
++-.BR aio_read(3),
++-.BR aio_read64(3),
++-.BR aio_return(3),
++-.BR aio_return64(3),
++-.BR aio_suspend(3),
++-.BR aio_suspend64(3),
++-.BR aio_write(3),
++-.BR aio_write64(3),
++-.BR errno(3),
+++.BR aio (3),
+++.BR aio_cancel (3),
+++.BR aio_error (3),
+++.BR aio_error64 (3),
+++.BR aio_fsync (3),
+++.BR aio_fsync64 (3),
+++.BR aio_init (3),
+++.BR aio_read (3),
+++.BR aio_read64 (3),
+++.BR aio_return (3),
+++.BR aio_return64 (3),
+++.BR aio_suspend (3),
+++.BR aio_suspend64 (3),
+++.BR aio_write (3),
+++.BR aio_write64 (3),
+++.BR errno (3).
++--- a/man/aio_error64.3
+++++ b/man/aio_error64.3
++@@ -1,4 +1,4 @@
++-.TH aio_error64 3 2002-09-12 "Linux 2.4" Linux AIO"
+++.TH aio_error64 3 2009-06-09 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ aio_error64 \- Return errors
++ .SH SYNOPSYS
++@@ -9,14 +9,14 @@ aio_error64 \- Return errors
++ .B #include <aio.h>
++ .sp
++ .br
++-.BI "int aio_error64 (const struct aiocb64 *aiocbp)"
+++.BI "int aio_error64(const struct aiocb64 *" aiocbp ");"
++ .fi
++ .SH DESCRIPTION
++ This function is similar to 
++ .IR aio_error
++ with the only difference
++ that the argument is a reference to a variable of type 
++-.IR "struct aiocb64".
+++.IR "struct aiocb64" .
++ .PP
++ When the sources are compiled with 
++ .IR "_FILE_OFFSET_BITS == 64"
++@@ -28,37 +28,35 @@ transparently replaces the interface for
++ machines.
++ .SH "RETURN VALUES"
++ If the request has not yet terminated the value returned is always
++-.IR "EINPROGRESS"
++-.  Once the request has terminated the value
+++.IR "EINPROGRESS" .
+++Once the request has terminated the value
++ .IR "aio_error"
++ returns is either 
++ .I 0
++ if the request completed successfully or it returns the value which would be stored in the
++ .IR "errno"
++ variable if the request would have been done using
++-.IR "read"
++-, 
++-.IR "write"
++-, or 
++-.IR "fsync"
++-.
+++.IR "read" ,
+++.IR "write" ,
+++or
+++.IR "fsync" .
++ .SH ERRORS
++ See 
++-.IR aio_error(3).
+++.IR aio_error (3).
++ .SH "SEE ALSO"
++-.BR aio(3),
++-.BR aio_cancel(3),
++-.BR aio_cancel64(3),
++-.BR aio_error(3),
++-.BR aio_fsync(3),
++-.BR aio_fsync64(3),
++-.BR aio_init(3),
++-.BR aio_read(3),
++-.BR aio_read64(3),
++-.BR aio_return(3),
++-.BR aio_return64(3),
++-.BR aio_suspend(3),
++-.BR aio_suspend64(3),
++-.BR aio_write(3),
++-.BR aio_write64(3),
++-.BR errno(3),
+++.BR aio (3),
+++.BR aio_cancel (3),
+++.BR aio_cancel64 (3),
+++.BR aio_error (3),
+++.BR aio_fsync (3),
+++.BR aio_fsync64 (3),
+++.BR aio_init (3),
+++.BR aio_read (3),
+++.BR aio_read64 (3),
+++.BR aio_return (3),
+++.BR aio_return64 (3),
+++.BR aio_suspend (3),
+++.BR aio_suspend64 (3),
+++.BR aio_write (3),
+++.BR aio_write64 (3),
+++.BR errno (3).
++--- a/man/aio_fsync64.3
+++++ b/man/aio_fsync64.3
++@@ -1,4 +1,4 @@
++-.TH aio_fsync64 3 2002-09-12 "Linux 2.4" Linux AIO"
+++.TH aio_fsync64 3 2009-06-10 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ aio_fsync64 \- Synchronize a file's complete in-core state with that on disk
++ .SH SYNOPSYS
++@@ -9,43 +9,43 @@ aio_fsync64 \- Synchronize a file's comp
++ .B #include <aio.h>
++ .sp
++ .br
++-.BI "int aio_fsync64 (int op, struct aiocb64 *aiocbp)"
+++.BI "int aio_fsync64(int " op ", struct aiocb64 *" aiocbp ");"
++ .fi
++ .SH DESCRIPTION
++ This function is similar to 
++-.IR aio_fsync
+++.BR aio_fsync
++ with the only difference
++ that the argument is a reference to a variable of type 
++-.IR "struct aiocb64".
+++.IR "struct aiocb64" .
++ 
++ When the sources are compiled with 
++ .IR "_FILE_OFFSET_BITS == 64"
++ this
++ function is available under the name 
++-.IR aio_fsync
+++.BR aio_fsync
++ and so
++ transparently replaces the interface for small files on 32 bit
++ machines.
++ .SH "RETURN VALUES"
++ See 
++-.IR aio_fsync.
+++.BR aio_fsync (3).
++ .SH ERRORS
++ See 
++-.IR aio_fsync.
+++.BR aio_fsync (3).
++ .SH "SEE ALSO"
++-.BR aio(3),
++-.BR aio_cancel(3),
++-.BR aio_cancel64(3),
++-.BR aio_error(3),
++-.BR aio_error64(3),
++-.BR aio_fsync(3),
++-.BR aio_init(3),
++-.BR aio_read(3),
++-.BR aio_read64(3),
++-.BR aio_return(3),
++-.BR aio_return64(3),
++-.BR aio_suspend(3),
++-.BR aio_suspend64(3),
++-.BR aio_write(3),
++-.BR aio_write64(3),
++-.BR errno(3),
+++.BR aio (3),
+++.BR aio_cancel (3),
+++.BR aio_cancel64 (3),
+++.BR aio_error (3),
+++.BR aio_error64 (3),
+++.BR aio_fsync (3),
+++.BR aio_init (3),
+++.BR aio_read (3),
+++.BR aio_read64 (3),
+++.BR aio_return (3),
+++.BR aio_return64 (3),
+++.BR aio_suspend (3),
+++.BR aio_suspend64 (3),
+++.BR aio_write (3),
+++.BR aio_write64 (3),
+++.BR errno (3).
++--- a/man/aio_init.3
+++++ b/man/aio_init.3
++@@ -1,4 +1,4 @@
++-.TH  aio_init 3 2002-09-12 "Linux 2.4" Linux AIO"
+++.TH  aio_init 3 2009-06-09 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ aio_init \-  How to optimize the AIO implementation
++ .SH SYNOPSYS
++@@ -9,7 +9,7 @@ aio_init \-  How to optimize the AIO imp
++ .B #include <aio.h>
++ .sp
++ .br
++-.BI "void aio_init (const struct aioinit *init)"
+++.BI "void aio_init (const struct aioinit *" init )
++ .fi
++ .SH DESCRIPTION
++ 
++@@ -29,7 +29,7 @@ for tuning the AIO implementation accord
++ This data type is used to pass the configuration or tunable parameters
++ to the implementation.  The program has to initialize the members of
++ this struct and pass it to the implementation using the 
++-.IR aio_init
+++.BR aio_init
++ function.
++ .TP
++ .B "int aio_threads"
++@@ -60,37 +60,37 @@ is completely voluntary, as it is only m
++ implementation perform better.
++ 
++ Before calling the 
++-.IR aio_init
++-, function the members of a variable of
+++.BR aio_init ,
+++function the members of a variable of
++ type 
++-.IR "struct aioinit"
+++.BR "struct aioinit"
++ must be initialized.  Then a reference to
++ this variable is passed as the parameter to 
++-.IR aio_init
+++.BR aio_init
++ which itself
++ may or may not pay attention to the hints.
++ 
++ It is a extension which follows a proposal from the SGI implementation in
++-.IR Irix 6
++-.  It is not covered by POSIX.1b or Unix98.
+++.IR "Irix 6" .
+++It is not covered by POSIX.1b or Unix98.
++ .SH "RETURN VALUES"
++ The function has no return value.
++ .SH ERRORS
++ The function has no error cases defined.
++ .SH "SEE ALSO"
++-.BR aio(3),
++-.BR aio_cancel(3),
++-.BR aio_cancel64(3),
++-.BR aio_error(3),
++-.BR aio_error64(3),
++-.BR aio_fsync(3),
++-.BR aio_fsync64(3),
++-.BR aio_read(3),
++-.BR aio_read64(3),
++-.BR aio_return(3),
++-.BR aio_return64(3),
++-.BR aio_suspend(3),
++-.BR aio_suspend64(3),
++-.BR aio_write(3),
++-.BR aio_write64(3),
++-.BR errno(3),
+++.BR aio (3),
+++.BR aio_cancel (3),
+++.BR aio_cancel64 (3),
+++.BR aio_error (3),
+++.BR aio_error64 (3),
+++.BR aio_fsync (3),
+++.BR aio_fsync64 (3),
+++.BR aio_read (3),
+++.BR aio_read64 (3),
+++.BR aio_return (3),
+++.BR aio_return64 (3),
+++.BR aio_suspend (3),
+++.BR aio_suspend64 (3),
+++.BR aio_write (3),
+++.BR aio_write64 (3),
+++.BR errno (3).
++--- a/man/aio_read64.3
+++++ b/man/aio_read64.3
++@@ -1,4 +1,4 @@
++-.TH aio_read64 3 2002-09-12 "Linux 2.4" Linux AIO"
+++.TH aio_read64 3 2009-06-10 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ aio_read64 \- Initiate an asynchronous read operation
++ .SH SYNOPSYS
++@@ -8,53 +8,53 @@ aio_read64 \- Initiate an asynchronous r
++ .B #include <aio.h>
++ .sp
++ .br
++-.BI "int aio_read64 (struct aiocb *aiocbp)"
+++.BI "int aio_read64(struct aiocb *" aiocbp ");"
++ .fi
++ .SH DESCRIPTION
++ This function is similar to the 
++-.IR "aio_read"
+++.BR "aio_read"
++ function.  The only
++ difference is that on 
++ .IR "32 bit"
++ machines, the file descriptor should
++ be opened in the large file mode.  Internally, 
++-.IR "aio_read64"
+++.BR "aio_read64"
++ uses
++ functionality equivalent to 
++-.IR "lseek64"
+++.BR "lseek64"
++ to position the file descriptor correctly for the reading,
++ as opposed to 
++-.IR "lseek"
+++.BR "lseek"
++ functionality used in 
++-.IR "aio_read".
+++.BR "aio_read" .
++ 
++ When the sources are compiled with 
++-.IR "_FILE_OFFSET_BITS == 64"
++-, this
+++.IR "_FILE_OFFSET_BITS == 64" ,
+++this
++ function is available under the name 
++-.IR "aio_read"
+++.BR "aio_read"
++ and so transparently
++ replaces the interface for small files on 32 bit machines.
++ .SH "RETURN VALUES"
++ See
++-.IR aio_read.
+++.BR aio_read (3).
++ .SH ERRORS
++ See
++-.IR aio_read.
+++.BR aio_read (3).
++ .SH "SEE ALSO"
++-.BR aio(3),
++-.BR aio_cancel(3),
++-.BR aio_cancel64(3),
++-.BR aio_error(3),
++-.BR aio_error64(3),
++-.BR aio_fsync(3),
++-.BR aio_fsync64(3),
++-.BR aio_init(3),
++-.BR aio_read(3),
++-.BR aio_return(3),
++-.BR aio_return64(3),
++-.BR aio_suspend(3),
++-.BR aio_suspend64(3),
++-.BR aio_write(3),
++-.BR aio_write64(3),
++-.BR errno(3),
+++.BR aio (3),
+++.BR aio_cancel (3),
+++.BR aio_cancel64 (3),
+++.BR aio_error (3),
+++.BR aio_error64 (3),
+++.BR aio_fsync (3),
+++.BR aio_fsync64 (3),
+++.BR aio_init (3),
+++.BR aio_read (3),
+++.BR aio_return (3),
+++.BR aio_return64 (3),
+++.BR aio_suspend (3),
+++.BR aio_suspend64 (3),
+++.BR aio_write (3),
+++.BR aio_write64 (3),
+++.BR errno (3).
++--- a/man/aio_return64.3
+++++ b/man/aio_return64.3
++@@ -1,4 +1,4 @@
++-.TH aio_read64 3 2002-09-12 "Linux 2.4" Linux AIO"
+++.TH aio_read64 3 2009-06-10 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ aio_read64 \- Retrieve status of asynchronous I/O operation
++ .SH SYNOPSYS
++@@ -9,43 +9,43 @@ aio_read64 \- Retrieve status of asynchr
++ .B #include <aio.h>
++ .sp
++ .br
++-.BI "int aio_return64 (const struct aiocb64 *aiocbp)"
+++.BI "int aio_return64(const struct aiocb64 *" aiocbp ");"
++ .fi
++ .SH DESCRIPTION
++ This function is similar to 
++-.IR "aio_return"
+++.BR "aio_return"
++ with the only difference
++ that the argument is a reference to a variable of type 
++-.IR "struct aiocb64".
+++.BR "struct aiocb64" .
++ 
++ When the sources are compiled with 
++ .IR "_FILE_OFFSET_BITS == 64"
++ this
++ function is available under the name 
++-.IR "aio_return"
+++.BR "aio_return"
++ and so
++ transparently replaces the interface for small files on 32 bit
++ machines.
++ .SH "RETURN VALUES"
++ See 
++-.IR aio_return.
+++.BR aio_return (3).
++ .SH ERRORS
++ See
++-.IR aio_return.
+++.BR aio_return (3).
++ .SH "SEE ALSO"
++-.BR aio(3),
++-.BR aio_cancel(3),
++-.BR aio_cancel64(3),
++-.BR aio_error(3),
++-.BR aio_error64(3),
++-.BR aio_fsync(3),
++-.BR aio_fsync64(3),
++-.BR aio_init(3),
++-.BR aio_read(3),
++-.BR aio_read64(3),
++-.BR aio_return(3),
++-.BR aio_suspend(3),
++-.BR aio_suspend64(3),
++-.BR aio_write(3),
++-.BR aio_write64(3),
++-.BR errno(3),
+++.BR aio (3),
+++.BR aio_cancel (3),
+++.BR aio_cancel64 (3),
+++.BR aio_error (3),
+++.BR aio_error64 (3),
+++.BR aio_fsync (3),
+++.BR aio_fsync64 (3),
+++.BR aio_init (3),
+++.BR aio_read (3),
+++.BR aio_read64 (3),
+++.BR aio_return (3),
+++.BR aio_suspend (3),
+++.BR aio_suspend64 (3),
+++.BR aio_write (3),
+++.BR aio_write64 (3),
+++.BR errno (3).
++--- a/man/aio_suspend64.3
+++++ b/man/aio_suspend64.3
++@@ -1,4 +1,4 @@
++-.TH aio_suspend64 3 2002-09-12 "Linux 2.4" Linux AIO"
+++.TH aio_suspend64 3 2009-06-10 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ aio_suspend64 \- Wait until one or more requests of a specific set terminates
++ .SH SYNOPSYS
++@@ -9,43 +9,43 @@ aio_suspend64 \- Wait until one or more 
++ .B #include <aio.h>
++ .sp
++ .br
++-.BI "int aio_suspend64 (const struct aiocb64 *const list[], int nent, const struct timespec *timeout)"
+++.BI "int aio_suspend64(const struct aiocb64 *const " list "[], int " nent ", const struct timespec *" timeout ");"
++ .fi
++ .SH DESCRIPTION
++ This function is similar to 
++-.IR "aio_suspend"
+++.BR "aio_suspend"
++ with the only difference
++ that the argument is a reference to a variable of type 
++-.IR "struct aiocb64".
+++.BR "struct aiocb64" .
++ 
++ When the sources are compiled with 
++ .IR "_FILE_OFFSET_BITS == 64"
++ this
++ function is available under the name 
++-.IR "aio_suspend"
+++.BR "aio_suspend"
++ and so
++ transparently replaces the interface for small files on 32 bit
++ machines.
++ .SH "RETURN VALUES"
++ See
++-.IR aio_suspend.
+++.BR aio_suspend (3).
++ .SH ERRORS
++ See
++-.IR aio_suspend.
+++.BR aio_suspend (3).
++ .SH "SEE ALSO"
++-.BR aio(3),
++-.BR aio_cancel(3),
++-.BR aio_cancel64(3),
++-.BR aio_error(3),
++-.BR aio_error64(3),
++-.BR aio_fsync(3),
++-.BR aio_fsync64(3),
++-.BR aio_init(3),
++-.BR aio_read(3),
++-.BR aio_read64(3),
++-.BR aio_return(3),
++-.BR aio_return64(3),
++-.BR aio_suspend(3),
++-.BR aio_write(3),
++-.BR aio_write64(3),
++-.BR errno(3),
+++.BR aio (3),
+++.BR aio_cancel (3),
+++.BR aio_cancel64 (3),
+++.BR aio_error (3),
+++.BR aio_error64 (3),
+++.BR aio_fsync (3),
+++.BR aio_fsync64 (3),
+++.BR aio_init (3),
+++.BR aio_read (3),
+++.BR aio_read64 (3),
+++.BR aio_return (3),
+++.BR aio_return64 (3),
+++.BR aio_suspend (3),
+++.BR aio_write (3),
+++.BR aio_write64 (3),
+++.BR errno (3).
++--- a/man/aio_write64.3
+++++ b/man/aio_write64.3
++@@ -1,4 +1,4 @@
++-.TH aio_write64 3 2002-09-12 "Linux 2.4" Linux AIO"
+++.TH aio_write64 3 2009-06-10 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ aio_write64 \- Initiate an asynchronous write operation
++ .SH SYNOPSYS
++@@ -9,53 +9,53 @@ aio_write64 \- Initiate an asynchronous 
++ .B #include <aio.h>
++ .sp
++ .br
++-.BI  "int aio_write64 (struct aiocb *aiocbp)"
+++.BI "int aio_write64(struct aiocb *" aiocbp ");"
++ .fi
++ .SH DESCRIPTION
++ This function is similar to the 
++-.IR "aio_write"
+++.BR "aio_write"
++ function.  The only
++ difference is that on 
++ .IR "32 bit"
++ machines the file descriptor should
++ be opened in the large file mode.  Internally 
++-.IR "aio_write64"
+++.BR "aio_write64"
++ uses
++ functionality equivalent to 
++-.IR "lseek64"
+++.BR "lseek64"
++ to position the file descriptor correctly for the writing,
++ as opposed to 
++-.IR "lseek"
+++.BR "lseek"
++ functionality used in 
++-.IR "aio_write".
+++.BR "aio_write" .
++ 
++ When the sources are compiled with 
++ .IR "_FILE_OFFSET_BITS == 64"
++ , this
++ function is available under the name 
++-.IR "aio_write"
+++.BR "aio_write"
++ and so transparently
++ replaces the interface for small files on 32 bit machines.
++ .SH "RETURN VALUES"
++ See
++-.IR aio_write.
+++.BR aio_write (3).
++ .SH ERRORS
++ See
++-.IR aio_write.
+++.BR aio_write (3).
++ .SH "SEE ALSO"
++-.BR aio(3),
++-.BR aio_cancel(3),
++-.BR aio_cancel64(3),
++-.BR aio_error(3),
++-.BR aio_error64(3),
++-.BR aio_fsync(3),
++-.BR aio_fsync64(3),
++-.BR aio_init(3),
++-.BR aio_read(3),
++-.BR aio_read64(3),
++-.BR aio_return(3),
++-.BR aio_return64(3),
++-.BR aio_suspend(3),
++-.BR aio_suspend64(3),
++-.BR aio_write(3),
++-.BR errno(3),
+++.BR aio (3),
+++.BR aio_cancel (3),
+++.BR aio_cancel64 (3),
+++.BR aio_error (3),
+++.BR aio_error64 (3),
+++.BR aio_fsync (3),
+++.BR aio_fsync64 (3),
+++.BR aio_init (3),
+++.BR aio_read (3),
+++.BR aio_read64 (3),
+++.BR aio_return (3),
+++.BR aio_return64 (3),
+++.BR aio_suspend (3),
+++.BR aio_suspend64 (3),
+++.BR aio_write (3),
+++.BR errno (3).
++--- a/man/lio_listio.3
+++++ b/man/lio_listio.3
++@@ -1,4 +1,4 @@
++-.TH  lio_listio 3 2002-09-12 "Linux 2.4" Linux AIO"
+++.TH  lio_listio 3 2009-06-10 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ lio_listio - List directed I/O
++ .SH SYNOPSYS
++@@ -6,7 +6,7 @@ lio_listio - List directed I/O
++ .br
++ .B #include <libaio.h>
++ .LP
++-.BI "int lio_listio (int mode, struct aiocb *const list[], int nent, struct sigevent *sig)"
+++.BI "int lio_listio(int " mode ", struct aiocb *const " list "[], int " nent ", struct sigevent *" sig ");"
++ .nf
++ .SH DESCRIPTION
++ 
++@@ -14,34 +14,33 @@ Besides these functions with the more or
++ POSIX.1b also defines a function which can initiate more than one
++ operation at a time, and which can handle freely mixed read and write
++ operations.  It is therefore similar to a combination of 
++-.IR readv
+++.BR readv (2)
++ and
++-.IR "writev"
++-.
+++.BR writev (2).
++ 
++ The 
++-.IR "lio_listio"
+++.BR "lio_listio"
++ function can be used to enqueue an arbitrary
++ number of read and write requests at one time.  The requests can all be
++ meant for the same file, all for different files or every solution in
++ between.
++ 
++-.IR "lio_listio"
+++.BR "lio_listio"
++ gets the 
++ .IR "nent"
++ requests from the array pointed to
++ by 
++-.IR "list"
++-.  The operation to be performed is determined by the
+++.IR "list" .
+++The operation to be performed is determined by the
++ .IR "aio_lio_opcode"
++ member in each element of 
++-.IR "list"
++-.  If this
+++.IR "list" .
+++If this
++ field is 
++ .B "LIO_READ"
++ a read operation is enqueued, similar to a call
++ of 
++-.IR "aio_read"
+++.BR "aio_read"
++ for this element of the array (except that the way
++ the termination is signalled is different, as we will see below).  If
++ the 
++@@ -57,10 +56,10 @@ in which case this element of 
++ .IR "list"
++ is simply ignored.  This
++ ``operation'' is useful in situations where one has a fixed array of
++-.IR "struct aiocb"
+++.BR "struct aiocb"
++ elements from which only a few need to be handled at
++ a time.  Another situation is where the 
++-.IR "lio_listio"
+++.BR "lio_listio"
++ call was
++ canceled before all requests are processed  and the remaining requests have to be reissued.
++ 
++@@ -68,15 +67,15 @@ The other members of each element of the
++ .IR "list"
++ must have values suitable for the operation as described in
++ the documentation for 
++-.IR "aio_read"
+++.BR "aio_read"
++ and 
++-.IR "aio_write"
+++.BR "aio_write"
++ above.
++ 
++ The 
++ .IR "mode"
++ argument determines how 
++-.IR "lio_listio"
+++.BR "lio_listio"
++ behaves after
++ having enqueued all the requests.  If 
++ .IR "mode"
++@@ -98,25 +97,24 @@ is 
++ no notification is
++ send.  Otherwise a signal is sent or a thread is started, just as
++ described in the description for 
++-.IR "aio_read"
+++.BR "aio_read"
++ or 
++-.IR "aio_write"
++-.
+++.BR "aio_write" .
++ 
++ When the sources are compiled with 
++-.B "_FILE_OFFSET_BITS == 64"
++-, this
+++.IR "_FILE_OFFSET_BITS == 64" ,
+++this
++ function is in fact 
++-.IR "lio_listio64"
+++.BR "lio_listio64"
++ since the LFS interface
++ transparently replaces the normal implementation.
++ .SH "RETURN VALUES"
++ If 
++ .IR "mode"
++ is 
++-.B "LIO_WAIT"
++-, the return value of 
++-.IR "lio_listio"
+++.BR "LIO_WAIT" ,
+++the return value of
+++.BR "lio_listio"
++ is 
++ .IR 0
++ when all requests completed successfully.  Otherwise the
++@@ -126,10 +124,9 @@ and 
++ .IR "errno"
++ is set accordingly.  To find
++ out which request or requests failed one has to use the 
++-.IR "aio_error"
+++.BR "aio_error"
++ function on all the elements of the array 
++-.IR "list"
++-.
+++.IR "list" .
++ 
++ In case 
++ .IR "mode"
++@@ -140,12 +137,12 @@ is 
++ if
++ all requests were enqueued correctly.  The current state of the requests
++ can be found using 
++-.IR "aio_error"
+++.BR "aio_error"
++ and 
++-.IR "aio_return"
+++.BR "aio_return"
++ as described
++ above.  If 
++-.IR "lio_listio"
+++.BR "lio_listio"
++ returns 
++ .IR -1
++ in this mode, the
++@@ -153,16 +150,15 @@ global variable 
++ .IR "errno"
++ is set accordingly.  If a request did not
++ yet terminate, a call to 
++-.IR "aio_error"
+++.BR "aio_error"
++ returns 
++-.B "EINPROGRESS"
++-.  If
+++.BR "EINPROGRESS" .
+++If
++ the value is different, the request is finished and the error value (or
++-
++-.IR 0
++-) is returned and the result of the operation can be retrieved
+++.IR 0 )
+++is returned and the result of the operation can be retrieved
++ using 
++-.IR "aio_return"
+++.BR "aio_return" .
++ .
++ .SH ERRORS
++ Possible values for 
++@@ -187,8 +183,7 @@ The 
++ parameter is invalid or 
++ .IR "nent"
++ is larger than
++-.B "AIO_LISTIO_MAX"
++-.
+++.BR "AIO_LISTIO_MAX" .
++ .TP
++ .B EIO
++ One or more of the request's I/O operations failed.  The error status of
++@@ -196,7 +191,7 @@ each request should be checked to determ
++ .TP
++ .B ENOSYS
++ The 
++-.IR "lio_listio"
+++.BR "lio_listio"
++ function is not supported.
++ .PP
++ 
++@@ -206,24 +201,24 @@ parameter is 
++ .B "LIO_NOWAIT"
++ and the caller cancels
++ a request, the error status for this request returned by
++-.IR "aio_error"
+++.BR "aio_error"
++ is 
++-.B "ECANCELED"
+++.BR "ECANCELED" .
++ .
++ .SH "SEE ALSO"
++-.BR aio(3),
++-.BR aio_cancel(3),
++-.BR aio_cancel64(3),
++-.BR aio_error(3),
++-.BR aio_error64(3),
++-.BR aio_fsync(3),
++-.BR aio_fsync64(3),
++-.BR aio_init(3),
++-.BR aio_read(3),
++-.BR aio_read64(3),
++-.BR aio_return(3),
++-.BR aio_return64(3),
++-.BR aio_suspend(3),
++-.BR aio_suspend64(3),
++-.BR aio_write(3),
++-.BR aio_write64(3)
+++.BR aio (3),
+++.BR aio_cancel (3),
+++.BR aio_cancel64 (3),
+++.BR aio_error (3),
+++.BR aio_error64 (3),
+++.BR aio_fsync (3),
+++.BR aio_fsync64 (3),
+++.BR aio_init (3),
+++.BR aio_read (3),
+++.BR aio_read64 (3),
+++.BR aio_return (3),
+++.BR aio_return64 (3),
+++.BR aio_suspend (3),
+++.BR aio_suspend64 (3),
+++.BR aio_write (3),
+++.BR aio_write64 (3).
++--- a/man/io.3
+++++ b/man/io.3
++@@ -1,4 +1,4 @@
++-.TH io 3 2002-09-12 "Linux 2.4" Linux IO"
+++.TH io 3 2009-06-10 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ io \- Asynchronous IO
++ .SH SYNOPSYS
++@@ -6,7 +6,7 @@ io \- Asynchronous IO
++ .B #include <errno.h>
++ .sp
++ .br 
++-.B #include <libio.h>
+++.B #include <libaio.h>
++ .sp
++ .fi
++ .SH DESCRIPTION
++@@ -17,9 +17,9 @@ then immediately resume normal work whil
++ executed in parallel.  
++ 
++ These functions are part of the library with realtime functions named
++-.IR "libaio"
++-.  They are not actually part of the 
++-.IR "libc" 
+++.IR libaio .
+++They are not actually part of the 
+++.I "libc"
++ binary.
++ The implementation of these functions can be done using support in the
++ kernel.
++@@ -27,9 +27,9 @@ kernel.
++ All IO operations operate on files which were opened previously.  There
++ might be arbitrarily many operations running for one file.  The
++ asynchronous I/O operations are controlled using a data structure named
++-.IR "struct iocb"
+++.B "struct iocb"
++ It is defined in
++-.IR "libio.h"
+++.I "libaio.h"
++ as follows.
++ 
++ .nf
++@@ -74,7 +74,7 @@ struct iocb {
++ 
++ .fi
++ .TP
++-.IR "int aio_fildes"
+++.BI int " aio_fildes"
++ This element specifies the file descriptor to be used for the
++ operation.  It must be a legal descriptor, otherwise the operation will
++ fail.
++@@ -82,54 +82,51 @@ fail.
++ The device on which the file is opened must allow the seek operation.
++ I.e., it is not possible to use any of the IO operations on devices
++ like terminals where an 
++-.IR "lseek"
+++.BR lseek (2)
++ call would lead to an error.
++ .TP
++-.IR "long u.c.offset"
+++.BI long " u.c.offset"
++ This element specifies the offset in the file at which the operation (input
++ or output) is performed.  Since the operations are carried out in arbitrary
++ order and more than one operation for one file descriptor can be
++ started, one cannot expect a current read/write position of the file
++ descriptor.
++ .TP
++-.IR "void *buf"
+++.BI "void *" buf
++ This is a pointer to the buffer with the data to be written or the place
++ where the read data is stored.
++ .TP
++-.IR "long u.c.nbytes"
+++.BI long " u.c.nbytes"
++ This element specifies the length of the buffer pointed to by 
++-.IR "io_buf"
++-.
+++.IR io_buf .
++ .TP
++-.IR "int aio_reqprio"
+++.BI int " aio_reqprio"
++ Is not currently used.
++ .TP
++ .B "IO_CMD_PREAD"
++ Start a read operation.  Read from the file at position
++-.IR "u.c.offset"
+++.I u.c.offset
++ and store the next 
++-.IR "u.c.nbytes"
+++.I u.c.nbytes
++ bytes in the
++ buffer pointed to by 
++-.IR "buf"
++-.
+++.IR buf .
++ .TP
++ .B "IO_CMD_PWRITE"
++ Start a write operation.  Write 
++-.IR "u.c.nbytes" 
+++.I u.c.nbytes
++ bytes starting at
++-.IR "buf"
+++.I buf
++ into the file starting at position 
++-.IR "u.c.offset"
++-.
+++.IR u.c.offset .
++ .TP
++ .B "IO_CMD_NOP"
++ Do nothing for this control block.  This value is useful sometimes when
++ an array of 
++-.IR "struct iocb"
+++.I struct iocb
++ values contains holes, i.e., some of the
++ values must not be handled although the whole array is presented to the
++-.IR "io_submit"
+++.I io_submit
++ function.
++ .TP 
++ .B "IO_CMD_FSYNC"
++@@ -336,16 +333,16 @@ int main(int argc, char *const *argv)
++  */
++ .fi
++ .SH "SEE ALSO"
++-.BR io_cancel(3),
++-.BR io_fsync(3),
++-.BR io_getevents(3),
++-.BR io_prep_fsync(3),
++-.BR io_prep_pread(3),
++-.BR io_prep_pwrite(3),
++-.BR io_queue_init(3),
++-.BR io_queue_release(3),
++-.BR io_queue_run(3),
++-.BR io_queue_wait(3),
++-.BR io_set_callback(3),
++-.BR io_submit(3),
++-.BR errno(3)
+++.BR io_cancel (3),
+++.BR io_fsync (3),
+++.BR io_getevents (3),
+++.BR io_prep_fsync (3),
+++.BR io_prep_pread (3),
+++.BR io_prep_pwrite (3),
+++.BR io_queue_init (3),
+++.BR io_queue_release (3),
+++.BR io_queue_run (3),
+++.BR io_queue_wait (3),
+++.BR io_set_callback (3),
+++.BR io_submit (3),
+++.BR errno (3).
++--- a/man/io_cancel.3
+++++ b/man/io_cancel.3
++@@ -1,4 +1,4 @@
++-.TH io_cancel 2 2002-09-03 "Linux 2.4" "Linux AIO"
+++.TH io_cancel 2 2009-06-10 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ io_cancel \- Cancel io requests
++ .SH SYNOPSIS
++@@ -9,7 +9,7 @@ io_cancel \- Cancel io requests
++ .B #include <libaio.h>
++ .sp
++ .br
++-.BI "int io_cancel(io_context_t ctx, struct iocb *iocb)"
+++.BI "int io_cancel(io_context_t " ctx ", struct iocb *" iocb ");"
++ .br
++ .sp
++ struct iocb {
++@@ -33,7 +33,7 @@ have to be overwritten soon.  As an exam
++ writes data in files in a situation where new incoming data would have
++ to be written in a file which will be updated by an enqueued request.
++ .SH "RETURN VALUES"
++-0 is returned on success , otherwise returns Errno.
+++\fI0\fP is returned on success, otherwise returns \fIerrno\fP.
++ .SH ERRORS
++ .TP
++ .B EFAULT 
++@@ -44,22 +44,22 @@ If aio_context specified by ctx_id is
++ invalid.  
++ .TP
++ .B EAGAIN
++-If the iocb specified was not
+++If the \fIiocb\fP specified was not
++ cancelled.  
++ .TP
++ .B ENOSYS 
++-if not implemented.
+++If not implemented.
++ .SH "SEE ALSO"
++-.BR io(3),
++-.BR io_fsync(3),
++-.BR io_getevents(3),
++-.BR io_prep_fsync(3),
++-.BR io_prep_pread(3),
++-.BR io_prep_pwrite(3),
++-.BR io_queue_init(3),
++-.BR io_queue_release(3),
++-.BR io_queue_run(3),
++-.BR io_queue_wait(3),
++-.BR io_set_callback(3),
++-.BR io_submit(3),
++-.BR errno(3)
+++.BR io (3),
+++.BR io_fsync (3),
+++.BR io_getevents (3),
+++.BR io_prep_fsync (3),
+++.BR io_prep_pread (3),
+++.BR io_prep_pwrite (3),
+++.BR io_queue_init (3),
+++.BR io_queue_release (3),
+++.BR io_queue_run (3),
+++.BR io_queue_wait (3),
+++.BR io_set_callback (3),
+++.BR io_submit (3),
+++.BR errno (3).
++--- a/man/io_fsync.3
+++++ b/man/io_fsync.3
++@@ -1,10 +1,10 @@
++-./" static inline int io_fsync(io_context_t ctx, struct iocb *iocb, io_callback_t cb, int fd)
++-./" {
++-./" 	io_prep_fsync(iocb, fd);
++-./" 	io_set_callback(iocb, cb);
++-./" 	return io_submit(ctx, 1, &iocb);
++-./" }
++-.TH io_fsync 3 2002-09-12 "Linux 2.4" Linux AIO"
+++.\" static inline int io_fsync(io_context_t ctx, struct iocb *iocb, io_callback_t cb, int fd)
+++.\" {
+++.\" 	io_prep_fsync(iocb, fd);
+++.\" 	io_set_callback(iocb, cb);
+++.\" 	return io_submit(ctx, 1, &iocb);
+++.\" }
+++.TH io_fsync 3 2009-06-10 "Linux 2.4" Linux AIO"
++ .SH NAME
++ io_fsync \- Synchronize a file's complete in-core state with that on disk
++ .SH SYNOPSYS
++@@ -15,7 +15,7 @@ io_fsync \- Synchronize a file's complet
++ .B #include <libaio.h>
++ .sp
++ .br
++-.BI "int io_fsync(io_context_t ctx, struct iocb *iocb, io_callback_t cb, int fd)"
+++.BI "int io_fsync(io_context_t " ctx ", struct iocb *" iocb ", io_callback_t " cb ", int " fd ");"
++ .sp
++ struct iocb {
++ 	void		*data;
++@@ -49,7 +49,7 @@ file descriptor have terminated and the 
++ means that requests for this very same file descriptor which are queued
++ after the synchronization request are not affected.
++ .SH "RETURN VALUES"
++-Returns 0, otherwise returns errno.
+++Returns \fI0\fP, otherwise returns \fIerrno\fP.
++ .SH ERRORS
++ .TP
++ .B EFAULT
++@@ -68,15 +68,15 @@ The iocb contains a file descriptor that
++ .B EINVAL
++ The file specified in the iocb does not support the given io operation.
++ .SH "SEE ALSO"
++-.BR io(3),
++-.BR io_cancel(3),
++-.BR io_getevents(3),
++-.BR io_prep_pread(3),
++-.BR io_prep_pwrite(3),
++-.BR io_queue_init(3),
++-.BR io_queue_release(3),
++-.BR io_queue_run(3),
++-.BR io_queue_wait(3),
++-.BR io_set_callback(3),
++-.BR io_submit(3),
++-.BR errno(3)
+++.BR io (3),
+++.BR io_cancel (3),
+++.BR io_getevents (3),
+++.BR io_prep_pread (3),
+++.BR io_prep_pwrite (3),
+++.BR io_queue_init (3),
+++.BR io_queue_release (3),
+++.BR io_queue_run (3),
+++.BR io_queue_wait (3),
+++.BR io_set_callback (3),
+++.BR io_submit (3),
+++.BR errno (3).
++--- a/man/io_getevents.1
+++++ b/man/io_getevents.1
++@@ -1,22 +1,22 @@
++-./"/* io_getevents:
++-./" *      Attempts to read at least min_nr events and up to nr events from
++-./" *      the completion queue for the aio_context specified by ctx_id.  May
++-./" *      fail with -EINVAL if ctx_id is invalid, if min_nr is out of range,
++-./" *      if nr is out of range, if when is out of range.  May fail with
++-./" *      -EFAULT if any of the memory specified to is invalid.  May return
++-./" *      0 or < min_nr if no events are available and the timeout specified
++-./" *      by when has elapsed, where when == NULL specifies an infinite
++-./" *      timeout.  Note that the timeout pointed to by when is relative and
++-./" *      will be updated if not NULL and the operation blocks.  Will fail
++-./" *      with -ENOSYS if not implemented.
++-./" */
++-./"asmlinkage long sys_io_getevents(io_context_t ctx_id,
++-./"                                 long min_nr,
++-./"                                 long nr,
++-./"                                 struct io_event *events,
++-./"                                 struct timespec *timeout)
++-./"
++-.TH io_getevents 2 2002-09-03 "Linux 2.4" "Linux AIO"
+++.\"/* io_getevents:
+++.\" *      Attempts to read at least min_nr events and up to nr events from
+++.\" *      the completion queue for the aio_context specified by ctx_id.  May
+++.\" *      fail with -EINVAL if ctx_id is invalid, if min_nr is out of range,
+++.\" *      if nr is out of range, if when is out of range.  May fail with
+++.\" *      -EFAULT if any of the memory specified to is invalid.  May return
+++.\" *      0 or < min_nr if no events are available and the timeout specified
+++.\" *      by when has elapsed, where when == NULL specifies an infinite
+++.\" *      timeout.  Note that the timeout pointed to by when is relative and
+++.\" *      will be updated if not NULL and the operation blocks.  Will fail
+++.\" *      with -ENOSYS if not implemented.
+++.\" */
+++.\"asmlinkage long sys_io_getevents(io_context_t ctx_id,
+++.\"                                 long min_nr,
+++.\"                                 long nr,
+++.\"                                 struct io_event *events,
+++.\"                                 struct timespec *timeout)
+++.\"
+++.TH io_getevents 2 2009-06-10 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ io_getevents \- read resulting events from io requests
++ .SH SYNOPSIS
++--- a/man/io_getevents.3
+++++ b/man/io_getevents.3
++@@ -1,22 +1,22 @@
++-./"/* io_getevents:
++-./" *      Attempts to read at least min_nr events and up to nr events from
++-./" *      the completion queue for the aio_context specified by ctx_id.  May
++-./" *      fail with -EINVAL if ctx_id is invalid, if min_nr is out of range,
++-./" *      if nr is out of range, if when is out of range.  May fail with
++-./" *      -EFAULT if any of the memory specified to is invalid.  May return
++-./" *      0 or < min_nr if no events are available and the timeout specified
++-./" *      by when has elapsed, where when == NULL specifies an infinite
++-./" *      timeout.  Note that the timeout pointed to by when is relative and
++-./" *      will be updated if not NULL and the operation blocks.  Will fail
++-./" *      with -ENOSYS if not implemented.
++-./" */
++-./"asmlinkage long sys_io_getevents(io_context_t ctx_id,
++-./"                                 long min_nr,
++-./"                                 long nr,
++-./"                                 struct io_event *events,
++-./"                                 struct timespec *timeout)
++-./"
++-.TH io_getevents 2 2002-09-03 "Linux 2.4" "Linux AIO"
+++.\"/* io_getevents:
+++.\" *      Attempts to read at least min_nr events and up to nr events from
+++.\" *      the completion queue for the aio_context specified by ctx_id.  May
+++.\" *      fail with -EINVAL if ctx_id is invalid, if min_nr is out of range,
+++.\" *      if nr is out of range, if when is out of range.  May fail with
+++.\" *      -EFAULT if any of the memory specified to is invalid.  May return
+++.\" *      0 or < min_nr if no events are available and the timeout specified
+++.\" *      by when has elapsed, where when == NULL specifies an infinite
+++.\" *      timeout.  Note that the timeout pointed to by when is relative and
+++.\" *      will be updated if not NULL and the operation blocks.  Will fail
+++.\" *      with -ENOSYS if not implemented.
+++.\" */
+++.\"asmlinkage long sys_io_getevents(io_context_t ctx_id,
+++.\"                                 long min_nr,
+++.\"                                 long nr,
+++.\"                                 struct io_event *events,
+++.\"                                 struct timespec *timeout)
+++.\"
+++.TH io_getevents 2 2009-06-10 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ io_getevents \- Read resulting events from io requests
++ .SH SYNOPSIS
++@@ -42,38 +42,38 @@ struct io_event {
++         unsigned        PADDED(res2, __pad4);
++ };
++ .sp
++-.BI "int io_getevents(io_context_t " ctx ",  long " nr ", struct io_event *" events "[], struct timespec *" timeout ");"
+++.BI "int io_getevents(io_context_t " ctx ", long " nr ", struct io_event *" events "[], struct timespec *" timeout ");"
++ 
++ .fi
++ .SH DESCRIPTION
++ Attempts to read  up to nr events from
++-the completion queue for the aio_context specified by ctx.  
+++the completion queue for the aio_context specified by \fIctx\fP.
++ .SH "RETURN VALUES"
++ May return
++-0 if no events are available and the timeout specified
+++\fI0\fP if no events are available and the timeout specified
++ by when has elapsed, where when == NULL specifies an infinite
++ timeout.  Note that the timeout pointed to by when is relative and
++ will be updated if not NULL and the operation blocks.  Will fail
++-with ENOSYS if not implemented.
+++with \fBENOSYS\fP if not implemented.
++ .SH ERRORS
++ .TP
++ .B EINVAL 
++-if ctx_id is invalid, if min_nr is out of range,
+++If ctx_id is invalid, if min_nr is out of range,
++ if nr is out of range, if when is out of range.  
++ .TP
++ .B EFAULT 
++-if any of the memory specified to is invalid.  
+++If any of the memory specified to is invalid.
++ .SH "SEE ALSO"
++-.BR io(3),
++-.BR io_cancel(3),
++-.BR io_fsync(3),
++-.BR io_prep_fsync(3),
++-.BR io_prep_pread(3),
++-.BR io_prep_pwrite(3),
++-.BR io_queue_init(3),
++-.BR io_queue_release(3),
++-.BR io_queue_run(3),
++-.BR io_queue_wait(3),
++-.BR io_set_callback(3),
++-.BR io_submit(3),
++-.BR errno(3)
+++.BR io (3),
+++.BR io_cancel (3),
+++.BR io_fsync (3),
+++.BR io_prep_fsync (3),
+++.BR io_prep_pread (3),
+++.BR io_prep_pwrite (3),
+++.BR io_queue_init (3),
+++.BR io_queue_release (3),
+++.BR io_queue_run (3),
+++.BR io_queue_wait (3),
+++.BR io_set_callback (3),
+++.BR io_submit (3),
+++.BR errno (3).
++--- a/man/io_prep_fsync.3
+++++ b/man/io_prep_fsync.3
++@@ -1,11 +1,11 @@
++-./" static inline void io_prep_fsync(struct iocb *iocb, int fd)
++-./" {
++-./" 	memset(iocb, 0, sizeof(*iocb));
++-./" 	iocb->aio_fildes = fd;
++-./" 	iocb->aio_lio_opcode = IO_CMD_FSYNC;
++-./" 	iocb->aio_reqprio = 0;
++-./" }
++-.TH io_prep_fsync 3 2002-09-12 "Linux 2.4" Linux AIO"
+++.\" static inline void io_prep_fsync(struct iocb *iocb, int fd)
+++.\" {
+++.\" 	memset(iocb, 0, sizeof(*iocb));
+++.\" 	iocb->aio_fildes = fd;
+++.\" 	iocb->aio_lio_opcode = IO_CMD_FSYNC;
+++.\" 	iocb->aio_reqprio = 0;
+++.\" }
+++.TH io_prep_fsync 3 2009-06-10 "Linux 2.4" Linux AIO"
++ .SH NAME
++ io_prep_fsync \- Synchronize a file's complete in-core state with that on disk
++ .SH SYNOPSYS
++@@ -16,7 +16,7 @@ io_prep_fsync \- Synchronize a file's co
++ .B #include <libaio.h>
++ .br
++ .sp
++-.BI "static inline void io_prep_fsync(struct iocb *iocb, int fd)"
+++.BI "static inline void io_prep_fsync(struct iocb *" iocb ", int " fd ");"
++ .sp
++ struct iocb {
++ 	void		*data;
++@@ -28,7 +28,8 @@ struct iocb {
++ .sp
++ .fi
++ .SH DESCRIPTION
++-This is an inline convenience function for setting up an iocbv for a FSYNC request.
+++This is an inline convenience function for setting up an \fIiocbv\fP for a
+++\fBFSYNC\fP request.
++ .br
++ The file for which
++ .TP 
++@@ -36,33 +37,33 @@ The file for which
++ is a descriptor is set up with
++ the command
++ .TP 
++-.IR "iocb->aio_lio_opcode = IO_CMD_FSYNC:
+++.IR "iocb->aio_lio_opcode = IO_CMD_FSYNC"
++ .
++ .PP
++-The io_prep_fsync() function shall set up an IO_CMD_FSYNC operation
+++The \fBio_prep_fsync\fP() function shall set up an \fBIO_CMD_FSYNC\fP operation
++ to asynchronously force all I/O
++ operations associated with the file indicated by the file
++-descriptor aio_fildes member of the iocb structure referenced by
+++descriptor \fIaio_fildes\fP member of the \fIiocb\fP structure referenced by
++ the iocb argument and queued at the time of the call to
++-io_submit() to the synchronized I/O completion state. The function
+++\fBio_submit\fP() to the synchronized I/O completion state. The function
++ call shall return when the synchronization request has been
++ initiated or queued to the file or device (even when the data
++ cannot be synchronized immediately).
++ 
++ All currently queued I/O operations shall be completed as if by a call
++-to fsync(); that is, as defined for synchronized I/O file
+++to \fBfsync\fP(); that is, as defined for synchronized I/O file
++ integrity completion. If the
++-operation queued by io_prep_fsync() fails, then, as for fsync(),
+++operation queued by \fBio_prep_fsync\fP() fails, then, as for \fBfsync\fP(),
++ outstanding I/O operations are not guaranteed to have
++ been completed.
++ 
++-If io_prep_fsync() succeeds, then it is only the I/O that was queued
++-at the time of the call to io_submit() that is guaranteed to be
+++If \fBio_prep_fsync\fP() succeeds, then it is only the I/O that was queued
+++at the time of the call to \fBio_submit\fP() that is guaranteed to be
++ forced to the relevant completion state. The completion of
++ subsequent I/O on the file descriptor is not guaranteed to be
++ completed in a synchronized fashion.
++ .PP
++-This function returns immediately . To schedule the operation, the
+++This function returns immediately. To schedule the operation, the
++ function
++ .IR io_submit
++ must be called.
++@@ -70,20 +71,20 @@ must be called.
++ Simultaneous asynchronous operations using the same iocb produce
++ undefined results.
++ .SH "RETURN VALUES"
++-None
+++None.
++ .SH ERRORS
++-None
+++None.
++ .SH "SEE ALSO"
++-.BR io(3),
++-.BR io_cancel(3),
++-.BR io_fsync(3),
++-.BR io_getevents(3),
++-.BR io_prep_pread(3),
++-.BR io_prep_pwrite(3),
++-.BR io_queue_init(3),
++-.BR io_queue_release(3),
++-.BR io_queue_run(3),
++-.BR io_queue_wait(3),
++-.BR io_set_callback(3),
++-.BR io_submit(3),
++-.BR errno(3)
+++.BR io (3),
+++.BR io_cancel (3),
+++.BR io_fsync (3),
+++.BR io_getevents (3),
+++.BR io_prep_pread (3),
+++.BR io_prep_pwrite (3),
+++.BR io_queue_init (3),
+++.BR io_queue_release (3),
+++.BR io_queue_run (3),
+++.BR io_queue_wait (3),
+++.BR io_set_callback (3),
+++.BR io_submit (3),
+++.BR errno (3).
++--- a/man/io_prep_pread.3
+++++ b/man/io_prep_pread.3
++@@ -1,14 +1,14 @@
++-./" static inline void io_prep_pread(struct iocb *iocb, int fd, void *buf, size_t count, long long offset)
++-./" {
++-./" 	memset(iocb, 0, sizeof(*iocb));
++-./" 	iocb->aio_fildes = fd;
++-./" 	iocb->aio_lio_opcode = IO_CMD_PREAD;
++-./" 	iocb->aio_reqprio = 0;
++-./" 	iocb->u.c.buf = buf;
++-./" 	iocb->u.c.nbytes = count;
++-./" 	iocb->u.c.offset = offset;
++-./" }
++-.TH io_prep_pread 3 2002-09-12 "Linux 2.4" Linux AIO"
+++.\" static inline void io_prep_pread(struct iocb *iocb, int fd, void *buf, size_t count, long long offset)
+++.\" {
+++.\" 	memset(iocb, 0, sizeof(*iocb));
+++.\" 	iocb->aio_fildes = fd;
+++.\" 	iocb->aio_lio_opcode = IO_CMD_PREAD;
+++.\" 	iocb->aio_reqprio = 0;
+++.\" 	iocb->u.c.buf = buf;
+++.\" 	iocb->u.c.nbytes = count;
+++.\" 	iocb->u.c.offset = offset;
+++.\" }
+++.TH io_prep_pread 3 2009-06-10 "Linux 2.4" Linux AIO"
++ .SH NAME
++ io_prep_pread \- Set up asynchronous read
++ .SH SYNOPSYS
++@@ -19,7 +19,7 @@ io_prep_pread \- Set up asynchronous rea
++ .B #include <libaio.h>
++ .br
++ .sp
++-.BI "inline void io_prep_pread(struct iocb *iocb, int fd, void *buf, size_t count, long long offset)
+++.BI "inline void io_prep_pread(struct iocb *" iocb ", int " fd ", void *" buf ", size_t " count ", long long " offset ");"
++ "
++ .sp
++ struct iocb {
++@@ -31,49 +31,43 @@ struct iocb {
++ };
++ .fi
++ .SH DESCRIPTION
++-.IR io_prep_pread 
+++.B io_prep_pread
++ is an inline convenience function designed to facilitate the initialization of
++ the iocb for an asynchronous read operation.
++ 
++ The first
++-.TP
++ .IR "iocb->u.c.nbytes = count"
++ bytes of the file for which
++-.TP
++ .IR "iocb->aio_fildes = fd"
++ is a descriptor are written to the buffer
++ starting at
++-.TP
++-.IR "iocb->u.c.buf = buf"
++-.
++-.br
+++.IR "iocb->u.c.buf = buf" .
++ Reading starts at the absolute position
++-.TP
++ .IR "ioc->u.c.offset = offset"
++ in the file.
++ .PP
++-This function returns immediately . To schedule the operation, the
+++This function returns immediately. To schedule the operation, the
++ function 
++-.IR io_submit
+++.B io_submit
++ must be called.
++ .PP
++-Simultaneous asynchronous operations using the same iocb produce
+++Simultaneous asynchronous operations using the same \fIiocb\fP produce
++ undefined results.
++ .SH "RETURN VALUES"
++-None
+++None.
++ .SH ERRORS
++-None
+++None.
++ .SH "SEE ALSO"
++-.BR io(3),
++-.BR io_cancel(3),
++-.BR io_fsync(3),
++-.BR io_getevents(3),
++-.BR io_prep_fsync(3),
++-.BR io_prep_pwrite(3),
++-.BR io_queue_init(3),
++-.BR io_queue_release(3),
++-.BR io_queue_run(3),
++-.BR io_queue_wait(3),
++-.BR io_set_callback(3),
++-.BR io_submit(3),
++-.BR errno(3)
+++.BR io (3),
+++.BR io_cancel (3),
+++.BR io_fsync (3),
+++.BR io_getevents (3),
+++.BR io_prep_fsync (3),
+++.BR io_prep_pwrite (3),
+++.BR io_queue_init (3),
+++.BR io_queue_release (3),
+++.BR io_queue_run (3),
+++.BR io_queue_wait (3),
+++.BR io_set_callback (3),
+++.BR io_submit (3),
+++.BR errno (3).
++--- a/man/io_prep_pwrite.3
+++++ b/man/io_prep_pwrite.3
++@@ -1,14 +1,14 @@
++-./" static inline void io_prep_pwrite(struct iocb *iocb, int fd, void *buf, size_t count, long long offset)
++-./" {
++-./" 	memset(iocb, 0, sizeof(*iocb));
++-./" 	iocb->aio_fildes = fd;
++-./" 	iocb->aio_lio_opcode = IO_CMD_PWRITE;
++-./" 	iocb->aio_reqprio = 0;
++-./" 	iocb->u.c.buf = buf;
++-./" 	iocb->u.c.nbytes = count;
++-./" 	iocb->u.c.offset = offset;
++-./" }
++-.TH io_prep_pwrite 3 2002-09-12 "Linux 2.4" Linux AIO"
+++.\" static inline void io_prep_pwrite(struct iocb *iocb, int fd, void *buf, size_t count, long long offset)
+++.\" {
+++.\" 	memset(iocb, 0, sizeof(*iocb));
+++.\" 	iocb->aio_fildes = fd;
+++.\" 	iocb->aio_lio_opcode = IO_CMD_PWRITE;
+++.\" 	iocb->aio_reqprio = 0;
+++.\" 	iocb->u.c.buf = buf;
+++.\" 	iocb->u.c.nbytes = count;
+++.\" 	iocb->u.c.offset = offset;
+++.\" }
+++.TH io_prep_pwrite 3 2009-06-10 "Linux 2.4" Linux AIO"
++ .SH NAME
++ io_prep_pwrite \- Set up iocb for asynchronous writes
++ .SH SYNOPSYS
++@@ -19,8 +19,8 @@ io_prep_pwrite \- Set up iocb for asynch
++ .B #include <libaio.h>
++ .br
++ .sp
++-.BI "inline void io_prep_pwrite(struct iocb *iocb, int fd, void *buf, size_t count, long long offset)
++-"
+++.BI "inline void io_prep_pwrite(struct iocb *" iocb ", int " fd ", void *" buf ", size_t " count ", long long " offset ");"
+++.
++ .sp
++ struct iocb {
++ 	void		*data;
++@@ -31,26 +31,20 @@ struct iocb {
++ };
++ .fi
++ .SH DESCRIPTION
++-io_prep_write is a convenicence function for setting up parallel writes.
+++\fBio_prep_write\fP is a convenicence function for setting up parallel writes.
++ 
++ The first
++-.TP
++ .IR "iocb->u.c.nbytes = count"
++ bytes of the file for which
++-.TP
++ .IR "iocb->aio_fildes = fd"
++ is a descriptor are written from the buffer
++ starting at
++-.TP
++-.IR "iocb->u.c.buf = buf"
++-.
++-.br
+++.IR "iocb->u.c.buf = buf" .
++ Writing starts at the absolute position
++-.TP
++ .IR "ioc->u.c.offset = offset"
++ in the file.
++ .PP
++-This function returns immediately . To schedule the operation, the
+++This function returns immediately. To schedule the operation, the
++ function
++ .IR io_submit
++ must be called.
++@@ -58,20 +52,20 @@ must be called.
++ Simultaneous asynchronous operations using the same iocb produce
++ undefined results.
++ .SH "RETURN VALUES"
++-None
+++None.
++ .SH ERRORS
++-None
+++None.
++ .SH "SEE ALSO"
++-.BR io(3),
++-.BR io_cancel(3),
++-.BR io_fsync(3),
++-.BR io_getevents(3),
++-.BR io_prep_fsync(3),
++-.BR io_prep_pread(3),
++-.BR io_queue_init(3),
++-.BR io_queue_release(3),
++-.BR io_queue_run(3),
++-.BR io_queue_wait(3),
++-.BR io_set_callback(3),
++-.BR io_submit(3),
++-.BR errno(3)
+++.BR io (3),
+++.BR io_cancel (3),
+++.BR io_fsync (3),
+++.BR io_getevents (3),
+++.BR io_prep_fsync (3),
+++.BR io_prep_pread (3),
+++.BR io_queue_init (3),
+++.BR io_queue_release (3),
+++.BR io_queue_run (3),
+++.BR io_queue_wait (3),
+++.BR io_set_callback (3),
+++.BR io_submit (3),
+++.BR errno (3).
++--- a/man/io_queue_init.3
+++++ b/man/io_queue_init.3
++@@ -1,4 +1,4 @@
++-.TH io_queue_init 2 2002-09-03 "Linux 2.4" "Linux AIO"
+++.TH io_queue_init 2 2009-06-10 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ io_queue_init \- Initialize asynchronous io state machine
++ 
++@@ -10,7 +10,7 @@ io_queue_init \- Initialize asynchronous
++ .B #include <libaio.h>
++ .br
++ .sp
++-.BI "int io_queue_init(int maxevents, io_context_t  *ctx );"
+++.BI "int io_queue_init(int " maxevents ", io_context_t *" ctx ");"
++ .sp
++ .fi
++ .SH DESCRIPTION
++@@ -27,7 +27,7 @@ If the operation is successful, *cxtp is
++ .SH "RETURN VALUES"
++ On success,
++ .B io_queue_init
++-returns 0.  Otherwise, -error is return, where
+++returns \fI0\fP.  Otherwise, -error is return, where
++ error is one of the Exxx values defined in the Errors section.
++ .SH ERRORS
++ .TP
++@@ -37,27 +37,27 @@ referenced data outside of the program's
++ .TP
++ .B EINVAL
++ .I maxevents
++-is <= 0 or 
+++is <= \fI0\fP or
++ .IR ctx
++-is an invalid memory locattion.
+++is an invalid memory location.
++ .TP
++ .B ENOSYS 
++-Not implemented
+++Not implemented.
++ .TP
++ .B EAGAIN
++ .IR "maxevents > max_aio_reqs"
++ where max_aio_reqs is a tunable value.
++ .SH "SEE ALSO"
++-.BR io(3),
++-.BR io_cancel(3),
++-.BR io_fsync(3),
++-.BR io_getevents(3),
++-.BR io_prep_fsync(3),
++-.BR io_prep_pread(3),
++-.BR io_prep_pwrite(3),
++-.BR io_queue_release(3),
++-.BR io_queue_run(3),
++-.BR io_queue_wait(3),
++-.BR io_set_callback(3),
++-.BR io_submit(3),
++-.BR errno(3)
+++.BR io (3),
+++.BR io_cancel (3),
+++.BR io_fsync (3),
+++.BR io_getevents (3),
+++.BR io_prep_fsync (3),
+++.BR io_prep_pread (3),
+++.BR io_prep_pwrite (3),
+++.BR io_queue_release (3),
+++.BR io_queue_run (3),
+++.BR io_queue_wait (3),
+++.BR io_set_callback (3),
+++.BR io_submit (3),
+++.BR errno (3).
++--- a/man/io_queue_release.3
+++++ b/man/io_queue_release.3
++@@ -1,4 +1,4 @@
++-.TH io_queue_release 2 2002-09-03 "Linux 2.4" "Linux AIO"
+++.TH io_queue_release 2 2009-06-10 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ io_queue_release \- Release the context associated with the userspace handle
++ .SH SYNOPSIS
++@@ -8,41 +8,41 @@ io_queue_release \- Release the context 
++ .B #include <libaio.h>
++ .br
++ .sp
++-.BI "int io_queue_release(io_context_t ctx)"
+++.BI "int io_queue_release(io_context_t " ctx ");"
++ .sp
++ .SH DESCRIPTION
++ .B io_queue_release
++-destroys the context associated with the userspace handle.    May cancel any outstanding
+++destroys the context associated with the userspace handle. May cancel any outstanding
++ AIOs and block on completion.
++ 
++ .B cts.
++ .SH "RETURN VALUES"
++ On success,
++ .B io_queue_release
++-returns 0.  Otherwise, -error is return, where
+++returns \fI0\fP. Otherwise, -error is return, where
++ error is one of the Exxx values defined in the Errors section.
++ .SH ERRORS
++ .TP
++ .B EINVAL
++ .I ctx 
++-refers to an unitialized aio context, the iocb pointed to by
+++refers to an unitialized aio context, the \fIiocb\fP pointed to by
++ .I iocbs 
++-contains an improperly initialized iocb,
+++contains an improperly initialized \fIiocb\fP.
++ .TP
++ .B ENOSYS 
++-Not implemented
+++Not implemented.
++ .SH "SEE ALSO"
++-.BR io(3),
++-.BR io_cancel(3),
++-.BR io_fsync(3),
++-.BR io_getevents(3),
++-.BR io_prep_fsync(3),
++-.BR io_prep_pread(3),
++-.BR io_prep_pwrite(3),
++-.BR io_queue_init(3),
++-.BR io_queue_run(3),
+++.BR io (3),
+++.BR io_cancel (3),
+++.BR io_fsync (3),
+++.BR io_getevents (3),
+++.BR io_prep_fsync (3),
+++.BR io_prep_pread (3),
+++.BR io_prep_pwrite (3),
+++.BR io_queue_init (3),
+++.BR io_queue_run (3),
++ .BR io_queue_wait(3),
++-.BR io_set_callback(3),
++-.BR io_submit(3),
++-.BR errno(3)
+++.BR io_set_callback (3),
+++.BR io_submit (3),
+++.BR errno (3).
++ 
++--- a/man/io_queue_run.3
+++++ b/man/io_queue_run.3
++@@ -1,4 +1,4 @@
++-.TH io_queue_run 2 2002-09-03 "Linux 2.4" "Linux AIO"
+++.TH io_queue_run 2 2009-06-10 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ io_queue_run \- Handle completed io requests
++ .SH SYNOPSIS
++@@ -9,17 +9,17 @@ io_queue_run \- Handle completed io requ
++ .B #include <libaio.h>
++ .br
++ .sp
++-.BI "int io_queue_run(io_context_t  ctx );"
+++.BI "int io_queue_run(io_context_t " ctx_id ");"
++ .sp
++ .fi
++ .SH DESCRIPTION
++ .B io_queue_run
++-Attempts to read  all the events events from
++-the completion queue for the aio_context specified by ctx_id.
+++Attempts to read all the events events from
+++the completion queue for the aio_context specified by \fIctx_id\fP.
++ .SH "RETURN VALUES"
++ May return
++-0 if no events are available.
++-Will fail with -ENOSYS if not implemented.
+++\fI0\fP if no events are available.
+++Will fail with -\fBENOSYS\fP if not implemented.
++ .SH ERRORS
++ .TP
++ .B EFAULT
++@@ -27,24 +27,24 @@ Will fail with -ENOSYS if not implemente
++ referenced data outside of the program's accessible address space.
++ .TP
++ .B EINVAL
++-.I ctx 
++-refers to an unitialized aio context, the iocb pointed to by
+++.I ctx_id
+++refers to an unitialized aio context, the \fIiocb\fP pointed to by
++ .I iocbs 
++-contains an improperly initialized iocb,
+++contains an improperly initialized iocb.
++ .TP
++ .B ENOSYS 
++-Not implemented
+++Not implemented.
++ .SH "SEE ALSO"
++-.BR io(3),
++-.BR io_cancel(3),
++-.BR io_fsync(3),
++-.BR io_getevents(3),
++-.BR io_prep_fsync(3),
++-.BR io_prep_pread(3),
++-.BR io_prep_pwrite(3),
++-.BR io_queue_init(3),
++-.BR io_queue_release(3),
++-.BR io_queue_wait(3),
++-.BR io_set_callback(3),
++-.BR io_submit(3),
++-.BR errno(3)
+++.BR io (3),
+++.BR io_cancel (3),
+++.BR io_fsync (3),
+++.BR io_getevents (3),
+++.BR io_prep_fsync (3),
+++.BR io_prep_pread (3),
+++.BR io_prep_pwrite (3),
+++.BR io_queue_init (3),
+++.BR io_queue_release (3),
+++.BR io_queue_wait (3),
+++.BR io_set_callback (3),
+++.BR io_submit (3),
+++.BR errno (3).
++--- a/man/io_queue_wait.3
+++++ b/man/io_queue_wait.3
++@@ -1,4 +1,4 @@
++-.TH io_queue_wait 2 2002-09-03 "Linux 2.4" "Linux AIO"
+++.TH io_queue_wait 2 2009-06-10 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ io_queue_wait \- Wait for io requests to complete
++ .SH SYNOPSIS
++@@ -9,22 +9,22 @@ io_queue_wait \- Wait for io requests to
++ .B #include <libaio.h>
++ .br
++ .sp
++-.BI "int io_queue_wait(io_context_t ctx, const struct timespec *timeout);"
+++.BI "int io_queue_wait(io_context_t " ctx_id ", const struct timespec *" timeout ");"
++ .fi
++ .SH DESCRIPTION
++-Attempts to read  an event from
++-the completion queue for the aio_context specified by ctx_id.
+++Attempts to read an event from
+++the completion queue for the aio_context specified by \fIctx_id\fP.
++ .SH "RETURN VALUES"
++ May return
++-0 if no events are available and the timeout specified
+++\fI0\fP if no events are available and the timeout specified
++ by when has elapsed, where when == NULL specifies an infinite
++-timeout.  Note that the timeout pointed to by when is relative and
+++\fItimeout\fP. Note that the \fItimeout\fP pointed to by when is relative and
++ will be updated if not NULL and the operation blocks.  Will fail
++-with -ENOSYS if not implemented.
+++with -\fBENOSYS\fP if not implemented.
++ .SH "RETURN VALUES"
++ On success,
++ .B io_queue_wait
++-returns 0.  Otherwise, -error is return, where
+++returns \fI0\fP. Otherwise, -error is return, where
++ error is one of the Exxx values defined in the Errors section.
++ .SH ERRORS
++ .TP
++@@ -33,24 +33,24 @@ error is one of the Exxx values defined 
++ referenced data outside of the program's accessible address space.
++ .TP
++ .B EINVAL
++-.I ctx 
++-refers to an unitialized aio context, the iocb pointed to by
+++.I ctx_id
+++refers to an unitialized aio context, the \fIiocb\fP pointed to by
++ .I iocbs 
++-contains an improperly initialized iocb,
+++contains an improperly initialized iocb.
++ .TP
++ .B ENOSYS 
++-Not implemented
+++Not implemented.
++ .SH "SEE ALSO"
++-.BR io(3),
++-.BR io_cancel(3),
++-.BR io_fsync(3),
++-.BR io_getevents(3),
++-.BR io_prep_fsync(3),
++-.BR io_prep_pread(3),
++-.BR io_prep_pwrite(3),
++-.BR io_queue_init(3),
++-.BR io_queue_release(3),
++-.BR io_queue_run(3),
++-.BR io_set_callback(3),
++-.BR io_submit(3),
++-.BR errno(3)
+++.BR io (3),
+++.BR io_cancel (3),
+++.BR io_fsync (3),
+++.BR io_getevents (3),
+++.BR io_prep_fsync (3),
+++.BR io_prep_pread (3),
+++.BR io_prep_pwrite (3),
+++.BR io_queue_init (3),
+++.BR io_queue_release (3),
+++.BR io_queue_run (3),
+++.BR io_set_callback (3),
+++.BR io_submit (3),
+++.BR errno (3).
++--- a/man/io_set_callback.3
+++++ b/man/io_set_callback.3
++@@ -1,5 +1,5 @@
++-./"static inline void io_set_callback(struct iocb *iocb, io_callback_t cb)
++-.TH io_set_callback 3 2002-09-12 "Linux 2.4" Linux AIO"
+++.\"static inline void io_set_callback(struct iocb *iocb, io_callback_t cb)
+++.TH io_set_callback 3 2009-06-10 "Linux 2.4" Linux AIO"
++ .SH NAME
++ io_set_callback \- Set up io completion callback function
++ .SH SYNOPSYS
++@@ -10,7 +10,7 @@ io_set_callback \- Set up io completion 
++ .B #include <libaio.h>
++ .br
++ .sp
++-.BI "static inline void io_set_callback(struct iocb *iocb, io_callback_t cb)"
+++.BI "static inline void io_set_callback(struct iocb *" iocb ", io_callback_t " cb ");"
++ .sp
++ struct iocb {
++ 	void		*data;
++@@ -25,20 +25,22 @@ typedef void (*io_callback_t)(io_context
++ .fi
++ .SH DESCRIPTION
++ The callback is not done if the caller uses raw events from 
++-io_getevents, only with the library helpers
+++\fBio_getevents\fP, only with the library helpers.
++ .SH "RETURN VALUES"
+++None.
++ .SH ERRORS
+++None.
++ .SH "SEE ALSO"
++-.BR io(3),
++-.BR io_cancel(3),
++-.BR io_fsync(3),
++-.BR io_getevents(3),
++-.BR io_prep_fsync(3),
++-.BR io_prep_pread(3),
++-.BR io_prep_pwrite(3),
++-.BR io_queue_init(3),
++-.BR io_queue_release(3),
++-.BR io_queue_run(3),
++-.BR io_queue_wait(3),
++-.BR io_submit(3),
++-.BR errno(3)
+++.BR io (3),
+++.BR io_cancel (3),
+++.BR io_fsync (3),
+++.BR io_getevents (3),
+++.BR io_prep_fsync (3),
+++.BR io_prep_pread (3),
+++.BR io_prep_pwrite (3),
+++.BR io_queue_init (3),
+++.BR io_queue_release (3),
+++.BR io_queue_run (3),
+++.BR io_queue_wait (3),
+++.BR io_submit (3),
+++.BR errno (3).
++--- a/man/io_setup.1
+++++ b/man/io_setup.1
++@@ -1,15 +1,15 @@
++-./"/* sys_io_setup:
++-./" *      Create an aio_context capable of receiving at least nr_events.
++-./" *      ctxp must not point to an aio_context that already exists, and
++-./" *      must be initialized to 0 prior to the call.  On successful
++-./" *      creation of the aio_context, *ctxp is filled in with the resulting 
++-./" *      handle.  May fail with -EINVAL if *ctxp is not initialized,
++-./" *      if the specified nr_events exceeds internal limits.  May fail 
++-./" *      with -EAGAIN if the specified nr_events exceeds the user's limit 
++-./" *      of available events.  May fail with -ENOMEM if insufficient kernel
++-./" *      resources are available.  May fail with -EFAULT if an invalid
++-./" *      pointer is passed for ctxp.  Will fail with -ENOSYS if not
++-./" *      implemented.
++-./" */
++-./" -- note: libaio is actually providing io_queue_init and io_queue_grow
++-./" as separate functions.  For now io_setup is the same as io_queue_grow.
+++.\"/* sys_io_setup:
+++.\" *      Create an aio_context capable of receiving at least nr_events.
+++.\" *      ctxp must not point to an aio_context that already exists, and
+++.\" *      must be initialized to 0 prior to the call.  On successful
+++.\" *      creation of the aio_context, *ctxp is filled in with the resulting 
+++.\" *      handle.  May fail with -EINVAL if *ctxp is not initialized,
+++.\" *      if the specified nr_events exceeds internal limits.  May fail 
+++.\" *      with -EAGAIN if the specified nr_events exceeds the user's limit 
+++.\" *      of available events.  May fail with -ENOMEM if insufficient kernel
+++.\" *      resources are available.  May fail with -EFAULT if an invalid
+++.\" *      pointer is passed for ctxp.  Will fail with -ENOSYS if not
+++.\" *      implemented.
+++.\" */
+++.\" -- note: libaio is actually providing io_queue_init and io_queue_grow
+++.\" as separate functions.  For now io_setup is the same as io_queue_grow.
++--- a/man/io_submit.1
+++++ b/man/io_submit.1
++@@ -1,4 +1,4 @@
++-.TH io_submit 2 2002-09-02 "Linux 2.4" "Linux AIO"
+++.TH io_submit 2 2009-06-10 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ io_submit \- submit io requests
++ .SH SYNOPSIS
++@@ -44,7 +44,7 @@ callback function.
++ .I aio_lio_opcode
++ is the I/O operation requested.  Callers will typically set this and the
++ arguments to the I/O operation calling the
++-.BR io_prep_ (3)
+++.BR io_prep_ *(3)
++ function corresponding to the operation.
++ .sp
++ .I aio_reqprio
++@@ -106,4 +106,4 @@ Insufficient resources were available to
++ .BR io_prep_fdsync (3),
++ .BR io_prep_noop (3),
++ .BR io_cancel (2),
++-.BR errno (3)
+++.BR errno (3).
++--- a/man/io_submit.3
+++++ b/man/io_submit.3
++@@ -1,16 +1,16 @@
++-./"/* sys_io_submit:
++-./" *      Queue the nr iocbs pointed to by iocbpp for processing.  Returns
++-./" *      the number of iocbs queued.  May return -EINVAL if the aio_context
++-./" *      specified by ctx_id is invalid, if nr is < 0, if the iocb at
++-./" *      *iocbpp[0] is not properly initialized, if the operation specified
++-./" *      is invalid for the file descriptor in the iocb.  May fail with
++-./" *      -EFAULT if any of the data structures point to invalid data.  May
++-./" *      fail with -EBADF if the file descriptor specified in the first
++-./" *      iocb is invalid.  May fail with -EAGAIN if insufficient resources
++-./" *      are available to queue any iocbs.  Will return 0 if nr is 0.  Will
++-./" *      fail with -ENOSYS if not implemented.
++-./" */
++-.TH io_submit 2 2002-09-02 "Linux 2.4" "Linux AIO"
+++.\"/* sys_io_submit:
+++.\" *      Queue the nr iocbs pointed to by iocbpp for processing.  Returns
+++.\" *      the number of iocbs queued.  May return -EINVAL if the aio_context
+++.\" *      specified by ctx_id is invalid, if nr is < 0, if the iocb at
+++.\" *      *iocbpp[0] is not properly initialized, if the operation specified
+++.\" *      is invalid for the file descriptor in the iocb.  May fail with
+++.\" *      -EFAULT if any of the data structures point to invalid data.  May
+++.\" *      fail with -EBADF if the file descriptor specified in the first
+++.\" *      iocb is invalid.  May fail with -EAGAIN if insufficient resources
+++.\" *      are available to queue any iocbs.  Will return 0 if nr is 0.  Will
+++.\" *      fail with -ENOSYS if not implemented.
+++.\" */
+++.TH io_submit 2 2009-06-10 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ io_submit \- Submit io requests
++ .SH SYNOPSIS
++@@ -49,12 +49,12 @@ gets the 
++ .IR "nr"
++ requests from the array pointed to
++ by 
++-.IR "iocbs"
++-.  The operation to be performed is determined by the
+++.IR "iocbs" .
+++The operation to be performed is determined by the
++ .IR "aio_lio_opcode"
++ member in each element of 
++-.IR "iocbs"
++-.  If this
+++.IR "iocbs" .
+++If this
++ field is 
++ .B "IO_CMD_PREAD"
++ a read operation is enqueued, similar to a call
++@@ -120,16 +120,16 @@ The iocb contains a file descriptor that
++ .B EINVAL
++ The file specified in the iocb does not support the given io operation.
++ .SH "SEE ALSO"
++-.BR io(3),
++-.BR io_cancel(3),
++-.BR io_fsync(3),
++-.BR io_getevents(3),
++-.BR io_prep_fsync(3),
++-.BR io_prep_pread(3),
++-.BR io_prep_pwrite(3),
++-.BR io_queue_init(3),
++-.BR io_queue_release(3),
++-.BR io_queue_run(3),
++-.BR io_queue_wait(3),
++-.BR io_set_callback(3),
++-.BR errno(3)
+++.BR io (3),
+++.BR io_cancel (3),
+++.BR io_fsync (3),
+++.BR io_getevents (3),
+++.BR io_prep_fsync (3),
+++.BR io_prep_pread (3),
+++.BR io_prep_pwrite (3),
+++.BR io_queue_init (3),
+++.BR io_queue_release (3),
+++.BR io_queue_run (3),
+++.BR io_queue_wait (3),
+++.BR io_set_callback (3),
+++.BR errno (3).
++--- a/man/lio_listio64.3
+++++ b/man/lio_listio64.3
++@@ -1,4 +1,4 @@
++-.TH lio_listio64 3 2002-09-12 "Linux 2.4" Linux AIO"
+++.TH lio_listio64 3 2009-06-10 "Linux 2.4" "Linux AIO"
++ .SH NAME
++ lio_listio64 \- List directed I/O
++ .SH SYNOPSYS
++@@ -6,31 +6,31 @@ lio_listio64 \- List directed I/O
++ .br
++ .B #include <libaio.h>
++ .LP
++-.BI "int lio_listio64 (int mode, struct aiocb *const list[], int nent, struct sigevent *sig)"
+++.BI "int lio_listio64 (int " mode ", struct aiocb *const " list "[], int " nent ", struct sigevent *" sig ");"
++ .nf
++ .SH DESCRIPTION
++ This function is similar to the 
++-.IR "code{lio_listio"
+++.BR lio_listio
++ function.  The only
++ difference is that on 
++ .IR "32 bit"
++ machines, the file descriptor should
++ be opened in the large file mode.  Internally, 
++-.IR "lio_listio64"
+++.BR lio_listio64
++ uses
++ functionality equivalent to 
++-.IR lseek64"
+++.BR lseek64
++ to position the file descriptor correctly for the reading or
++ writing, as opposed to 
++-.IR "lseek"
+++.BR lseek
++ functionality used in
++-.IR "lio_listio".
+++.BR lio_listio .
++ 
++ When the sources are compiled with 
++-.IR "_FILE_OFFSET_BITS == 64"
++-, this
+++.IR "_FILE_OFFSET_BITS == 64" ,
+++this
++ function is available under the name 
++-.IR "lio_listio"
+++.BR lio_listio
++ and so
++ transparently replaces the interface for small files on 32 bit
++ machines.

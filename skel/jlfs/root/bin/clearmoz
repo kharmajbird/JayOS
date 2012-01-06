@@ -1,0 +1,5 @@
+#!/bin/sh
+
+rm -rf /tmp/.mozilla/*
+tar jxf /etc/mozilla/seamonkey.tbz -C /tmp/.mozilla
+cp -a /etc/mozilla/user.js /tmp/.mozilla/seamonkey/*Default*/

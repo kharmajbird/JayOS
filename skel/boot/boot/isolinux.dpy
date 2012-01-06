@@ -1,0 +1,24 @@
+
+                    Welcome to what I call JayOS
+
+JayOS is an operating system distribution based on Linux From Scratch.
+It integrates in-RAM filesystem encryption with plausible deniability
+for a non-intrusive, secure mobile workstation. Source and build
+instructions for x86 and Intel Macs are included and easily modified.
+
+Features a 2.6 kernel, many network security and filesystem tools, and QEMU. 
+It is also a full-blown development environment with many programming tools 
+and libraries including gcc, gdb, ddd, perl, gtk, tcl/tk, python, and glade-3. 
+
+A small footprint lets it run well on low-end hardware, yet it is able to
+take advantage of extra RAM to run entirely from memory. Instructions are
+available to demonstrate installation to internal and external disk storage.
+
+         Please wait for a minimal graphical environment to launch. 
+      or Enter   "jayos"   for the bleeding-edge kernel,
+                 "qemu"    for booting under QEMU or other emulation
+
+If anything breaks, you get to keep both pieces :) Jedi Knights see /src. 
+
+VERSION                        Copyright (c) 2002-2011, Jay Lewis
+Press F1 for help                                   All rights reserved

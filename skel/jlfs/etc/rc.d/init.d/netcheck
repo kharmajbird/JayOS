@@ -1,0 +1,14 @@
+#!/bin/sh
+
+for i in `cat /proc/cmdline`; do
+    case $i in
+        nonet*)
+            sed -i -e 's/^NETWORKING=.*$/NETWORKING=no/' \
+                /etc/sysconfig/network
+
+            sed -i -e 's/^ONBOOT=.*$/ONBOOT=no/' \
+                /etc/sysconfig/network-devices/ifconfig.wlan0/* \
+                /etc/sysconfig/network-devices/ifconfig.eth0/*
+            ;;
+    esac
+done

@@ -1,0 +1,880 @@
+##
+## Package list and version information included by Makefile
+##
+## You probably will want to edit Makefile.depends next
+##
+########################################################################
+
+#
+# Kernel
+#
+
+KERNEL = linux-2.6.34
+KERNEL-VER = 2.6.34
+KERNEL-MOD-VER = $(KERNEL-VER)
+
+KERNEL-XEN=linux-2.6.18
+KERNEL-VER-XEN=2.6.18
+KERNEL-DIR-XEN=$(KERNEL-XEN)-xen-3.3.0
+
+KERNEL-VANILLA-VER = 2.6.22
+KERNEL-VANILLA-MOD-VER = $(KERNEL-VANILLA-VER).5
+
+SQUASHFS = squashfs4.0
+LOOP-AES = loop-AES-v3.6b
+LOOP-AES-XEN = loop-AES-v3.2a
+UTIL-LINUX = util-linux-2.12r
+UNIONFS = unionfs-2.3.3_for_$(KERNEL-VER)
+# need userland tools for full unionfs support?
+
+########################################################################
+#
+# Packages not found in LFS or BLFS
+#
+########################################################################
+
+#
+# Begin Custom-CLI
+#
+
+EJECT = eject-2.1.5
+SYSLINUX = syslinux-3.63
+#j#BUSYBOX = busybox-1.8.2
+HFSUTILS = hfsutils-3.2.6
+HFSPLUS = hfsplus-1.0.4
+DISKDEV-CMDS = diskdev-cmds-332.14
+AESPIPE = aespipe-v2.4c
+RUNEFS = runefs
+TCSH = tcsh-6.12.00
+IWLWIFI-3945-UCODE = iwlwifi-3945-ucode-2.14.1.5
+IWLWIFI = iwlwifi-1.2.25
+STRACE = strace-4.5.20
+LSOF = lsof_4.78
+AFIO = afio-2.4.7
+NETCAT = netcat-0.7.1
+PARTED = parted-2.2
+MINICOM = minicom-2.4
+UUDEVIEW = uudeview-0.5.18
+MJPEGTOOLS = mjpegtools-1.9.0
+LSDVD = lsdvd-0.16
+DOSFSTOOLS = dosfstools-2.11
+WPA-SUPPLICANT = wpa_supplicant-0.6.2
+GIT = git-1.7.7.5
+XVID4CONF = xvid4conf-1.12
+IFTOP = iftop-0.17
+MP3GAIN = mp3gain-1_4_6
+MADPLAY = madplay-0.15.2b
+IVMAN = ivman-0.6.14
+FETCHYAHOO = fetchyahoo-2.10.9
+NTFSPROGS = ntfsprogs-2.0.0
+GDB = gdb-7.1
+FDISK = fdisk-1.2.4
+TIGHTVNC = tightvnc-1.3.9
+PCMCIA-UTILS = pcmciautils-015
+EXIF = exif-0.6.15
+LUA = lua-5.1.3
+MACCHANGER = macchanger-1.5.0
+POWERTOP = powertop-1.9
+MINGETTY = mingetty-1.06
+SOX = sox-14.3.2
+MTOOLS = mtools-3.9.11
+FUSE = fuse-2.7.3
+FUSEISO = fuseiso-20070708
+ANYFS-TOOLS = anyfs-tools-0.85.1c
+BLUEZ-HCIDUMP = bluez-hcidump-2.1
+LATENCYTOP = latencytop-0.4
+BRIDGE-UTILS = bridge-utils-1.4
+MADWIFI = madwifi-0.9.4
+MADWIFI-VER = r4136-20110304
+DMIDECODE = dmidecode-2.9
+UNRAR = unrarsrc-3.7.8
+GPART = gpart-0.1f
+MULTIPATH-TOOLS = multipath-tools-0.4.9
+YOUTUBE-DL = youtube-dl-2011.09.27
+DRDB = drbd-8.3.10
+KEEPALIVED = keepalived-1.2.2
+EC2-AMI-TOOLS = ec2-ami-tools-1.3-66634
+RAR = rarlinux-3.0
+MERCURIAL = mercurial-1.9.3
+PYTHON3 = Python-3.2.2
+PYTHON3-VER = python3.2
+KEYFUZZ = keyfuzz-0.2
+MCRYPT = mcrypt-2.6.8
+CMAKE = cmake-2.8.6
+YASM = yasm-1.2.0
+DVDAUTHOR = dvdauthor-0.7.0
+IPVSADM = ipvsadm-1.26
+S3CMD = s3cmd-1.0.1
+
+#
+# End JLFS Custom-CLI
+# Begin JFLS Custom-Lib
+#
+
+NEWT = newt-0.52.14
+TMAKE = tmake-1.13
+LIBGPOD = libgpod-0.8.2
+GTK2-PERL = Gtk2-1.164
+GTK2-GLADEXML = Gtk2-GladeXML-1.006
+GETTEXT-PERL = gettext-1.05
+GLIB-PERL = Glib-1.164
+EXTUTILS-DEPENDS = ExtUtils-Depends-0.205
+EXTUTILS-PKGCONFIG = ExtUtils-PkgConfig-1.09
+CAIRO-PERL = Cairo-1.045
+EVENT-PERL = Event-1.10
+LIBINTL-PERL = libintl-perl-1.16
+WXWIDGETS = wxWidgets-2.8.10
+MUTAGEN = mutagen-1.18
+GST-PYTHON = gst-python-0.10.22
+LIBID3TAG = libid3tag-0.15.1b
+LIBGTOP = libgtop-2.28.1
+NEON = neon-0.29.5
+IO-STRINGY-PERL = IO-stringy-2.110
+MIME-BASE64-PERL = MIME-Base64-3.07
+MIME-TOOLS-PERL = MIME-tools-5.420
+MAILTOOLS-PERL = MailTools-1.74
+LIBNET = libnet-1.1.2.1
+LIBFWBUILDER = libfwbuilder-4.1.3
+LIBOOBS = liboobs-3.0.0
+SYSTEM-TOOLS-BACKENDS = system-tools-backends-2.10.2
+GNOME-SYSTEM-TOOLS = gnome-system-tools-3.0.0
+DIETLIBC = dietlibc-0.31
+GDK-PIXBUF = gdk-pixbuf-2.24.0
+GDK-PIXBUF1 = gdk-pixbuf-0.22.0
+LIBCDDB = libcddb-1.3.0
+LIBUNGIF = libungif-4.1.0b1
+PYSQLITE2 = pysqlite-2.4.1
+LIBGPHOTO2 = libgphoto2-2.4.9.1
+SYSFS-UTILS = sysfsutils-2.1.0
+LIBEXIF-GTK = libexif-gtk-0.3.5
+SDL-IMAGE = SDL_image-1.2.6
+LIBDVDNAV = libdvdnav-4.1.2
+LIBCDIO = libcdio-0.80
+LIBDVBPSI = libdvbpsi5-0.1.6
+VCDIMAGER = vcdimager-0.7.23
+TAGLIB = taglib-1.5
+LIBDAEMON = libdaemon-0.12
+AVAHI = avahi-0.6.22
+LIBMOWGLI = libmowgli-1.0.0
+DIVX4LINUX = divx4linux-20020418
+GTKMM = gtkmm-3.3.2
+GTKMM2 = gtkmm-2.8.12
+GLIBMM = glibmm-2.31.0
+LIBSIGC = libsigc++-2.2.8
+CAIROMM = cairomm-1.10.0
+LIBDVBCSA = libdvbcsa-1.0.0
+LIBSAMPLERATE = libsamplerate-0.1.4
+BLUEZ = bluez-4.96
+LIBNOTIFY = libnotify-0.7.4
+BABL = babl-0.1.2
+GEGL = gegl-0.1.2
+MLTFRAMEWORK = mlt-0.7.6
+MLT-VER = 0.7.6
+GOOCANVAS = goocanvas-0.15
+LIBMCS = libmcs-0.7.0
+SWIG = swig-2.0.4
+FREI0R-PLUGINS = frei0r-plugins-1.2.1
+LIBAIO = libaio-0.3.107
+LIBEVENT = libevent-2.0.10-stable
+JOBPROGRESS = jobprogress-1.0.2
+HSAUDIOTAG = hsaudiotag-1.1.2
+SIP = sip-4.12.4
+PY = py-1.4.5
+PYTEST = pytest-2.1.2
+SEND2TRASH = send2trash-1.2.0
+SPHINX = Sphinx-1.0.8
+PYQT = PyQt-x11-gpl-4.8.5
+SETUPTOOLS = setuptools-0.6c11
+DOCUTILS = docutils-0.8.1
+JINJA2 = Jinja2-2.6
+PYGMENTS = Pygments-1.4
+DISTRIBUTE = distribute-0.6.21
+LIBMCRYPT = libmcrypt-2.5.7
+LIBMHASH = mhash-0.9.9.9
+DBI = DBI-1.616
+DBD-MYSQL = DBD-mysql-2.9007
+DATE-SHOWTABLE = Data-ShowTable-3.3
+PIL = Imaging-1.1.7
+PYGRAPHVIZ = pygraphviz-1.1
+PYXDG = pyxdg-0.19
+PYGOOCANVAS = pygoocanvas-0.14.1
+ILMBASE = ilmbase-1.0.1
+OPENEXR = openexr-1.6.1
+LIBSNDFILE = libsndfile-1.0.25
+FFTW = fftw-3.3
+LIBPLIST = libplist-1.3
+GTKGLEXT = gtkglext-1.2.0
+FARSIGHT2 = farsight2-0.0.31
+LIBNICE = libnice-0.1.1
+ATKMM = atkmm-2.22.2
+LIBCANBERRA = libcanberra-0.28
+LIBVPX = libvpx-v0.9.7
+GST-FFMPEG = gst-ffmpeg-0.10.13
+LIBNL = libnl-3.2.3
+
+#
+# End JLFS Custom-Lib
+# Begin JLFS Custom-GUI
+#
+
+SEAMONKEY = seamonkey-2.5
+#FIREFOX = firefox-8.0.1
+GIMP = gimp-2.6.8
+FVWM95 = fvwm95-2.0.43f
+XWC = xwc-0.91.5a
+XV = xv-3.10a
+GKRELLM = gkrellm-2.3.2
+XDALICLOCK = xdaliclock-2.20
+WIFI-RADAR = wifi-radar-1.9.8
+XXDIFF = xxdiff-3.2
+QEMU = qemu-1.0
+KQEMU = kqemu-1.4.0pre1
+QEMU-EFI = qemu-efi-bios
+VIRTUALBRICKS = virtualbricks-0.4.276
+PARTIMAGE = partimage-0.6.9
+DVDRIP = dvdrip-0.98.10
+VLC = vlc-1.1.7
+VLC-SKINS = vlc-skins
+KISMET = kismet-2007-10-R1
+ESVN = esvn-0.6.12-1
+GQVIEW = gqview-2.1.5
+GLADE3 = glade3-3.8.1
+GTKLP = gtklp-1.2.8
+QUODLIBET = quodlibet-2.2.1
+LINNEIGHBORHOOD = LinNeighborhood-0.6.5
+LSHW = lshw-B.02.12.01
+PINENTRY = pinentry-0.7.6
+DIA = dia-0.97.1
+LAVAPS = lavaps-2.7
+DDD = ddd-3.3.11
+FWBUILDER = fwbuilder-4.1.3
+XCDROAST = xcdroast-0.98alpha15
+ETHERAPE = etherape-0.9.9
+FIRESTARTER = firestarter-1.0.3
+ASUNDER = asunder-1.5
+GTKAM = gtkam-0.1.17
+GPHOTO = gphoto2-2.4.1
+#
+# Win_GParted.cc: In constructor 'GParted::Win_GParted::Win_GParted(const
+# std::vector<Glib::ustring>&)':
+# Win_GParted.cc:78:2: error: expected '{' before '}' token
+#
+# same error in version 0.8.0
+# introduced after upgrading glib; author needs to upgrade his shit
+#
+#j#GPARTED = gparted-0.10.0
+ACETONEISO2 = acetoneiso2_2.0.2
+GWHERE = gwhere-0.2.3
+POWERISO = poweriso-1.3
+X3270 = x3270-3.3
+X3270-PATCHLEVEL = 8p2
+CINELERRA = cinelerra-2.1.5-cv981
+OPENSHOT = openshot-1.4.0
+XVIDCAP = xvidcap-1.1.7
+TRANSMISSION = transmission-2.21
+DUPEGURU = dupeguru-5.7.2
+PHPMYADMIN = phpMyAdmin-3.4.6-english
+AVIDEMUX = avidemux_2.5.5
+GRAPHVIZ = graphviz-2.28.0
+QDVDAUTHOR = qdvdauthor-2.2.2
+CELESTIA = celestia-1.6.1
+#
+# no online for you!!!
+#j#HANDBRAKE = HandBrake-0.9.5
+#
+# no Spidermonkey Javascript library for you!!
+#j#GXINE = gxine-0.5.905
+#
+#
+# requires gtk+3 and anjunta dev env; 
+# slick, but I'm not ready to move to gtk+3 yet (Thu Nov 10 19:34:56 PST # 2011)
+# gtk+3 installed; thinking about anjunta (Fri Nov 25 22:07:02 PST 2011)
+#
+#j#GTKPOD = gtkpod-2.0.0
+BALSA = balsa-2.3.28
+
+#
+# End JLFS Custom-GUI
+# Begin JLFS Custom-Blackhat-Tools
+#
+
+AUTOPSY = autopsy-2.08
+DDRESCUE = ddrescue-1.0-pre1
+DRIFTNET = driftnet-0.1.6
+DSNIFF = dsniff-2.4b2
+ETTERCAP-NG = ettercap-NG-0.7.3
+FOREMOST = foremost-0.69
+HYDRA = hydra-5.4
+NESSUS-CORE = nessus-core-2.1.3
+TCT = tct-1.18
+#j#TCTUTILS = tctutils-1.01
+#
+SLEUTHKIT = sleuthkit-3.2.0
+AIRCRACK = aircrack-ng-1.0-rc1
+#j#WEPCRACK = WEPCrack-0.1.0
+
+#
+# End JLFS Custom-Blackhat-Tools
+# Begin JLFS Custom-Blackhat-Lib
+#
+
+LIBNASL = libnasl-2.1.3
+LIBNIDS = libnids-1.18
+LIBSSH = libssh-0.11
+LIBSSH2 = libssh2-1.2.7
+NESSUS-LIBRARIES = nessus-libraries-2.1.3
+NESSUS-PLUGINS = nessus-plugins-2.1.3
+TERMREADKEY = TermReadKey-2.14
+#j#NET-PCAP = Net-Pcap-0.16
+AFFLIB= afflib-3.6.6
+
+########################################################################
+#
+# Begin BLFS packages
+#
+########################################################################
+
+#
+# Xen kernel doesn't play with new kernel headers
+#
+#j#XEN = xen-3.4.1
+#j#XEN-KERNEL = linux-2.6.18-xen-3.3.0
+#j#XEN-VER = 3.4.1
+
+OPENVZ-CTL = vzctl-3.0.23
+OPENVZ-PKG = vzpkg-3.0.0
+OPENVZ-QUOTA = vzquota-20091121
+#j#OPENVZ-KERNEL = linux-2.6.26-openvz-20091121
+OPENVZ-VER = 2.6.26
+
+AUTOFS = autofs-5.0.3
+AUTOFS-VER = 5.0.3
+ED = ed-0.8
+BLFSBOOT = blfs-bootscripts-20080816
+
+#
+# Security
+#
+
+OPENSSL = openssl-1.0.0d
+OPENSSL-CA = BLFS-ca-bundle-3.12.9.0
+PAM = Linux-PAM-1.1.1
+SHADOW = shadow-4.1.4.2
+IPTABLES = iptables-1.4.9
+GNUPG = gnupg-1.4.8
+NSS = nss-3.13.1
+NSPR = nspr-4.8.9
+POLKIT = polkit-0.102
+LIBFFI = libffi-3.0.10
+GNUTLS = gnutls-2.10.2
+POLKIT-GNOME = polkit-gnome-0.105
+
+#
+# General Libraries
+#
+
+PCRE = pcre-8.10
+POPT = popt-1.16
+SLANG = slang-2.1.1
+LIBXML = libxml-1.8.17
+LIBXML2 = libxml2-2.7.8
+LIBXSLT = libxslt-1.1.26
+LIBGTKHTML = libgtkhtml-2.11.1
+GLIB = glib-1.2.10
+GLIB2 = glib-2.31.2
+#
+LIBIDL = libIDL-0.8.14
+LIBCROCO = libcroco-0.6.1
+LIBGSF = libgsf-1.14.21
+LIBGLADE = libglade-2.6.4
+EXPAT = expat-2.0.1
+LIBESMTP = libesmtp-1.0.4
+ASPELL = aspell-0.60.6
+ASPELL-DICT = aspell6-en-7.1-0
+#slib-3a4
+#gwrap-1.3.4
+LZO = lzo-2.02
+LIBUSB = libusb-1.0.8
+LIBUSB-COMPAT = libusb-compat-0.1.3
+ISO-CODES = iso-codes-3.23
+GMIME-OLD = gmime-2.1.9
+GMIME = gmime-2.4.7
+LIBIDN = libidn-1.19
+LIBDRM = libdrm-2.4.14
+DBUS = dbus-1.5.8
+DBUS-GLIB = dbus-glib-0.98
+DBUS-PYTHON = dbus-python-0.84.0
+DBUS-QT3 = dbus-qt3-0.62
+EGGDBUS = eggdbus-0.6
+LIBPTHREAD-STUBS = libpthread-stubs-0.1
+PTH = pth-2.0.7
+LIBASSUAN = libassuan-1.0.2
+LIBGPG-ERROR = libgpg-error-1.7
+LIBGCRYPT = libgcrypt-1.4.6
+LIBKSBA = libksba-1.0.2
+ENCHANT = enchant-1.6.0
+LIBGDATA = libgdata-0.5.1
+LIBSOUP = libsoup-2.30.2
+SQLITE = sqlite-3.7.9
+LIBXCB = libxcb-1.4
+
+#
+# Graphics and Font Libraries
+#
+
+LIBJPEG = jpeg-8b
+LIBPNG = libpng-1.2.44
+LIBTIFF = tiff-3.9.4
+GIFLIB = giflib-4.1.6
+LCMS = lcms-1.18
+LIBMNG = libmng-1.0.10
+FREETYPE = freetype-2.3.12
+FONTCONFIG = fontconfig-2.8.0
+LIBART = libart_lgpl-2.3.21
+LIBRSVG = librsvg-2.26.0
+AALIB = aalib-1.4.0
+IMLIB2 = imlib2-1.4.3
+LIBEXIF = libexif-0.6.19
+FRIBIDI = fribidi-0.10.8
+PIXMAN = pixman-0.24.0
+
+#
+# General Utilities
+#
+
+BC = bc-1.06
+#rep-gtk-0.18
+#compface-1.5.2
+IMAGEMAGICK = ImageMagick-6.6.1-10
+HD2U = hd2u-1.0.1
+#gtk-doc-1.8
+#scrollkeeper-0.3.14
+INTLTOOL = intltool-0.41.1
+SCREEN = screen-4.0.3
+#HTML-Tidy
+#desktop-file-utils-0.13
+XSCREENSAVER = xscreensaver-5.10
+#pilot-link-0.12.2
+#unixodbc-2.2.12
+#graphviz-2.12
+#rman-3.2
+#recode-3.6
+ICON-NAMING-UTILS = icon-naming-utils-0.8.90
+#rxvt-unicode-8.4
+#pin-entry-0.7.3
+GPERF = gperf-3.0.4
+XCB-UTIL = xcb-util-0.3.6
+
+#
+# System Utilities
+#
+
+GPM = gpm-1.20.6
+FCRON = fcron-3.0.3
+HDPARM = hdparm-9.6
+WHICH = which-2.16
+UNZIP = unzip60
+ZIP = zip30
+PCIUTILS = pciutils-3.1.7
+USBUTILS = usbutils-0.86
+CPIO = cpio-2.11
+#MC-4.6.1
+SYSSTAT = sysstat-7.0.4
+#Apache Ant-1.7.0
+HAL = hal-0.5.14
+HAL-INFO = hal-info-20091130
+DEVICE-MAPPER = LVM2.2.02.62
+
+
+#
+# Programming
+#
+
+#DEJAGNU = dejagnu-1.4.4
+#DOXYGEN = doxygen-1.5.2
+# binary located in LFS-land
+EXPECT = expect-5.44.1.15
+EXPECT-VER = 5.44.1.15
+#
+#GC-6.8
+GCC3 = gcc-3.3.6
+GCC3-VER = 3.3.6
+GCC4-OLD = gcc-4.1.2
+GCC4-OLD-VER = 4.1.2
+#guile-1.8.2
+#JDK-6
+#JUnit-4.3.1
+#Librep-0.17
+NASM = nasm-0.98.39
+#PDL-2.4.2
+PHP5 = php-5.3.7
+PYTHON = Python-2.6.4
+PYTHON-VER=python2.6
+RUBY = ruby-1.9.1-p376
+TCL = tcl8.5.8
+TK = tk8.5.8
+
+#
+# Perl Modules
+#
+
+#Test-Pod-1.26
+#Pod-Simple-3.05
+#Pod-Escapes-1.04
+#Test-Simple-0.70
+XML-PARSER = XML-Parser-2.40
+ARCHIVE-ZIP = Archive-Zip-1.20
+COMPRESS-ZLIB = Compress-Zlib-2.005
+IO-COMPRESS-ZLIB = IO-Compress-Zlib-2.005
+COMPRESS-RAW-ZLIB = Compress-Raw-Zlib-2.005
+IO-COMPRESS-BASE = IO-Compress-Base-2.005
+IO-COMPRESS-BZIP2 = IO-Compress-Bzip2-2.005
+COMPRESS-RAW-BZIP2 = Compress-Raw-Bzip2-2.005
+DATE-MANIP = Date-Manip-5.48
+HTML-PARSER = HTML-Parser-3.56
+HTML-TAGSET = HTML-Tagset-3.10
+LIBWWW-PERL = libwww-perl-5.806
+URI = URI-1.35
+HTML-PARSER = HTML-Parser-3.56
+CRYPT-SSLEAY = Crypt-SSLeay-0.58
+TK-PERL = Tk-804.028
+XML-SIMPLE = XML-Simple-2.18
+TIE-IXHASH = Tie-IxHash-1.21
+
+#
+# Python Modules
+#
+
+PYXML = PyXML-0.8.4
+PYCAIRO = pycairo-1.10.2
+PYCAIRO-OLD = pycairo-1.8.8
+PYGOBJECT2 = pygobject-2.21.5
+PYGOBJECT3 = pygobject-3.0.2
+PYGTK2 = pygtk-2.24.0
+PYORBIT = pyorbit-2.24.0
+GNOME-PYTHON = gnome-python-2.28.1
+
+#
+# Networking
+#
+
+PPP = ppp-2.4.4
+DHCP = dhcp-3.0.6
+DHCPCD = dhcpcd-3.0.19
+RP-PPPOE = rp-pppoe-3.8
+CURL = curl-7.21.2
+GNET = gnet-2.0.7
+LIBPROXY = libproxy-0.2.3
+LIBPCAP = libpcap-1.1.1
+LYNX = lynx-2.8.6
+#w3m-0.5.2
+#CVS-1.11.22
+NCFTP = ncftp-3.2.1
+NET-TOOLS = net-tools-1.60
+NTP = ntp-4.2.4p7
+PORTMAP = portmap-6.0
+PORTMAP-VER = portmap_6.0
+RSYNC = rsync-3.0.7
+SAMBA = samba-3.5.1
+SUBVERSION = subversion-1.7.1
+TCP-WRAPPER = tcp_wrappers_7.6
+TCPDUMP = tcpdump-4.1.1
+WGET = wget-1.12
+WIRELESS-TOOLS = wireless_tools.29
+TRACEROUTE = traceroute-1.4a12
+NMAP = nmap-4.53
+WHOIS = whois-4.7.24
+BIND = bind-9.4.1-P1
+WIRESHARK = wireshark-0.99.7
+MAILX = mailx-12.4
+PROCMAIL = procmail-3.22
+FETCHMAIL = fetchmail-6.3.8
+#mutt-1.5.17
+#pine-4.64
+#tin-1.8.2
+PIDGIN = pidgin-2.10.0
+
+#
+# Servers
+#
+
+APACHE = httpd-2.2.17
+NFS-UTILS = nfs-utils-1.1.4
+OPENSSH = openssh-5.6p1
+#proftpd-1.3.0
+#vsftpd-2.0.5
+#xinetd-2.3.14
+#exim-4.67
+#postfix-2.3.3
+#qpopper-4.0.9
+#j#SENDMAIL = sendmail-8.14.1
+BDB4 = db-4.8.26
+MYSQL = mysql-5.1.52
+#postgresql-8.2.4
+OPENLDAP = openldap-2.4.23
+
+#
+# X11
+#
+# I'm tracking the bleeding edge of Xorg so close, 
+# we're liable to burn up on re-entry
+#
+
+MESA-VER = 7.6
+#
+MESA = Mesa-$(MESA-VER)
+MESALIB = MesaLib-$(MESA-VER)
+MESADEMO = MesaDemos-$(MESA-VER)
+
+XORG7 = Xorg-7.5
+XORG7-VER = 7.5-2
+#
+XORG7-PROTO = $(XORG7)-proto
+XORG7-UTIL = $(XORG7)-util
+XORG7-LIB = $(XORG7)-lib
+XORG7-APP = $(XORG7)-app
+XORG7-FONT = $(XORG7)-font
+XORG7-SERVER = $(XORG7)-server
+XSERVER = xorg-server-1.7.1
+XORG7-DRIVER = $(XORG7)-driver
+#
+XKEYBOARD-CONFIG = xkeyboard-config-1.7
+BITSTREAM-VERA-FONTS = ttf-bitstream-vera-1.10
+WEBCORE-FONTS = webcore-fonts-3.0
+LIBXAU = libXau-1.0.5
+LIBXDMCP = libXdmcp-1.0.3
+#
+XTERM = xterm-267
+
+#
+# X11 Libraries
+#
+
+QT3 = qt-x11-free-3.3.8b
+QT4 = qt-everywhere-opensource-src-4.7.1
+QT4-VER = qt-4.7.1
+GTK = gtk+-1.2.10
+CAIRO = cairo-1.10.2
+PANGO = pango-1.29.5
+PANGOMM = pangomm-2.28.4
+ATK = atk-2.2.0
+GTK2 = gtk+-2.24.8
+GTK3 = gtk+-3.3.4
+LESSTIF = lesstif-0.95.2
+STARTUP-NOTIFICATION = startup-notification-0.9
+SHARED-MIME-INFO = shared-mime-info-0.70
+HICOLOR-ICON-THEME = hicolor-icon-theme-0.12
+#libxklavier-3.2
+#freeglut-2.4.0
+#goffice-0.4.2 
+
+#
+# GNOME Core
+#
+
+ORBIT2 = ORBit2-2.14.19
+LIBBONOBO = libbonobo-2.24.3
+GCONF = GConf-2.32.4
+GNOME-MIME-DATA = gnome-mime-data-2.18.0
+DESKTOP-FILE-UTILS = desktop-file-utils-0.17
+GNOME-VFS = gnome-vfs-2.24.4
+LIBGNOME = libgnome-2.30.0
+LIBGNOMECANVAS = libgnomecanvas-2.30.1
+LIBBONOBOUI = libbonoboui-2.24.3
+GNOME-KEYRING = gnome-keyring-2.30.3
+GNOME-ICON-THEME = gnome-icon-theme-2.30.3
+LIBGNOMEUI = libgnomeui-2.24.3
+VTE = vte-0.24.2
+GAIL = gail-1.22.3
+GNOME-DESKTOP = gnome-desktop-3.3.2
+GNOME-DOC-UTILS = gnome-doc-utils-0.18.1
+GNOME-MENUS = gnome-menus-2.30.2
+NAUTILUS = nautilus-3.3.1
+GOBJECT-INTROSPECTION = gobject-introspection-1.31.0
+LIBTASN1 = libtasn1-2.8
+LIBUNIQUE = libunique-1.1.6
+GTK-ENGINES = gtk-engines-2.18.4
+GSETTINGS-DESKTOP-SCHEMA = gsettings-desktop-schemas-3.3.2
+GNOME-BLUETOOTH = gnome-bluetooth-3.3.2
+
+#
+# GNOME Libraries
+#
+
+#EVOLUTION-DATA-SERVER = evolution-data-server-1.10.3
+#GNOME-AUDIO = gnome-audio-2.0.0
+GTKHTML = gtkhtml-4.3.2
+GTKSOURCEVIEW = gtksourceview-2.10.4
+LIBGNOMECUPS = libgnomecups-0.2.3-3.fc9.i386
+LIBGNOMECUPS-SRC = libgnomecups-0.2.3
+LIBGNOMEPRINT = libgnomeprint-2.18.7
+LIBGNOMEPRINTUI = libgnomeprintui-2.18.5
+LIBGNOME-KEYRING = libgnome-keyring-2.30.1
+
+#
+# GNOME Utilities
+#
+
+#BUG-BUDDY = bug-buddy-2.18.1
+#EKIGA = ekiga-2.0.9
+#EOG = eog-2.18.2
+#EPIPHANY = epiphany-2.18.3
+#EVINCE = evince-0.8.3
+#FILE-ROLLER = file-roller-2.18.4
+#gcalctool-5.9.14
+#GCONF-EDITOR = gconf-editor-2.28.0
+#GDM = gdm-2.18.3
+GEDIT = gedit-2.30.3
+#GNOME-GAMES = gnome-games-2.18.2.1
+#GNOME-KEYRING-MANAGER = gnome-keyring-manager-2.18.0
+#GNOME-MEDIA = gnome-media-2.18.0
+#GNOME-MOUNT = gnome-mount-0.6
+#GNOME-NETSTATUS = gnome-netstatus-2.12.1
+#GNOME-SCREENSAVER = gnome-screensaver-2.18.2
+#GNOME-SYSTEM-MONITOR = gnome-system-monitor-2.18.2
+#GNOME-VOLUME-MANAGER = gnome-volume-manager-2.17.0
+#GUCHARMAP = gucharmap-1.10.0
+#NAUTILUS-CD-BURNER = nautilus-cd-burner-2.18.2
+#SOUND-JUICER = sound-juicer-2.16.4
+TOTEM = totem-2.30.2
+TOTEM-PL-PARSER = totem-pl-parser-2.32.6
+ZENITY = zenity-3.2.0
+GNOME-UTILITIES = gnome-utils-3.2.1
+
+
+
+#
+# Multimedia Libraries
+#
+
+ALSA-LIB = alsa-lib-1.0.24.1
+ALSA-PLUGINS = alsa-plugins-1.0.24
+ALSA-UTILS = alsa-utils-1.0.24.2
+ALSA-OSS = alsa-oss-1.0.17
+ARTS = arts-1.5.10
+AUDIOFILE = audiofile-0.2.6
+ESOUND = esound-0.2.37
+SDL = SDL-1.2.13
+LIBAO = libao-0.8.8
+LIBOGG = libogg-1.1.4
+LIBVORBIS = libvorbis-1.2.3
+FAAC = faac-1.26
+FAAD2 = faad2-2.7
+NAS = nas-1.9
+LIBMPEG2 = libmpeg2-0.5.1
+LIBMPEG3 = libmpeg3-1.7
+LIBMAD = libmad-0.15.1b
+LIBQUICKTIME = libquicktime-1.2.3
+LIBFAME = libfame-0.9.1
+SPEEX = speex-1.0.5
+ID3LIB = id3lib-3.8.3
+FLAC = flac-1.2.1
+LIBDVDCSS = libdvdcss-1.2.9
+LIBDVDREAD = libdvdread-0.9.7
+LIBDV = libdv-1.0.0
+A52DEC = a52dec-0.7.4
+XVIDCORE = xvidcore-1.2.2
+XINE-LIB = xine-lib-1.1.19
+LIBMIKMOD = libmikmod-3.1.11
+GSTREAMER = gstreamer-0.10.35
+LIBOIL = liboil-0.3.16
+GST-PLUGINS-BASE = gst-plugins-base-0.10.33
+GST-PLUGINS-GOOD = gst-plugins-good-0.10.30
+GST-PLUGINS-UGLY = gst-plugins-ugly-0.10.18
+LIBMUSICBRAINZ = libmusicbrainz-2.1.5
+MPEG2DEC = mpeg2dec-0.4.1
+X264 = x264-snapshot-20110131-2245
+LIBTHEORA = libtheora-1.1.1
+
+#
+# Audio Utilities
+#
+
+MPG123 = mpg123-1.4.2
+VORBIS-TOOLS = vorbis-tools-1.2.0
+XMMS = xmms-1.2.11
+LAME = lame-398-2
+CDPARANOIA = cdparanoia-III-10.2
+#FREETTS = freetts-1.2.1
+AUDACIOUS = audacious-3.1
+AUDACIOUS-PLUGINS = audacious-plugins-3.1-fedora
+
+#
+# Video Utilities
+#
+
+FFMPEG = ffmpeg-0.6.1
+#6#AVIFILE = avifile-0.7-0.7.45
+AVIFILE-BINS = avifile-binaries-011002
+MPLAYER = MPlayer-1.0rc4
+MPLAYER-CODECS-ALL = MPlayer-all-20061022
+MPLAYER-CODECS-ESSENTIAL = MPlayer-essential-20061022
+MPLAYER-CODECS-QT5DLLS = MPlayer-qt5dlls-20040626
+MPLAYER-CODECS-QT6DLLS = MPlayer-qt6dlls-20040626
+MPLAYER-CODECS-QT63DLLS = MPlayer-qt63dlls-20050115
+MPLAYER-CODECS-QT65DLLS = MPlayer-qt65dlls-20040704
+MPLAYER-CODECS-QTEXTRAS = MPlayer-qtextras-20041107
+MPLAYER-CODECS-RP8 = MPlayer-rp8codecs-20040626
+MPLAYER-CODECS-RP9 = MPlayer-rp9codecs-20050115
+MPLAYER-CODECS-UNSUPPORTED = MPlayer-unsupported-20040809
+MPLAYER-CODECS-WIN32 = MPlayer-win32codecs-20040703
+MPLAYER-CODECS-WINDOWS-ALL = MPlayer-windows-all-20071007
+MPLAYER-CODECS-XANIMDLLS = MPlayer-xanimdlls-20040626
+MPLAYER-BLUE-SKIN = MPlayer-Blue-1.7
+MPLAYER-FONT = MPlayer-font-arial-iso-8859-1
+XINE-UI = xine-ui-0.99.5
+TRANSCODE = transcode-1.1.4
+
+#
+# CDDVD Utilities
+#
+
+CDRTOOLS = cdrtools-2.01
+CDRDAO = cdrdao-1.2.2
+UDFTOOLS = udftools-1.0.0b3
+DVD-RW-TOOLS = dvd+rw-tools-7.1
+
+#
+# Printing
+#
+
+CUPS = cups-1.4.5
+LPRNG = LPRng-3.8.33
+#ghostscript-8.53
+ESPGS = espgs-8.15.4
+GNU-GS-FONTS-OTHER = gnu-gs-fonts-other-6.0
+GHOSTSCRIPT-FONTS-STD = ghostscript-fonts-std-8.11
+GUTENPRINT = gutenprint-5.0.1
+
+#
+# Scanning
+#
+
+SANE-BACKENDS = sane-backends-1.0.17
+XSANE = xsane-0.994
+
+#
+# Typesetting
+#
+
+#SGML Common-0.6.3
+#DocBook SGML DTD-3.1
+#DocBook SGML DTD-4.5
+#OpenSP-1.5.2
+#OpenJade-1.3.2
+#DocBook DSSSL Stylesheets-1.79
+#DocBook-utils-0.6.14
+DOCBOOK-XML-DTD = docbook-xml-4.5
+DOCBOOK-XSL = docbook-xsl-1.75.2
+XSL-VER = 1.75.2
+DTD-VER = 4.5
+A2PS = a2ps-4.13
+I18N-FONTS = i18n-fonts-0.1
+#ENSCRIPT = enscript-1.6.4
+PSUTILS = psutils-p17
+GSVIEW = gsview-4.9
+XPDF = xpdf-3.02
+#FOP = fop-0.93
+#PAPS = paps-0.6.6
+#TETEX = tetex-3.0
+#JADETEX = jadetex-3.13

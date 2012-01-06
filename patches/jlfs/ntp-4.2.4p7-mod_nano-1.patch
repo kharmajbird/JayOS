@@ -1,0 +1,25 @@
+Submitted By: Guy Dalziel <gdalziel at linuxfromscratch dot org>
+Date: 2009-08-05 
+Initial Package Version: 4.2.4p7 
+Upstream Status: unknown
+Origin: Gentoo (Chris Smith)
+Description: MOD_NANO has been replaced by ADJ_NANO in timex.h. This breaks NTP as
+             it expects to find MOD_NANO.
+
+diff -Naur ntp-4.2.4p7-orig/include/ntp_syscall.h ntp-4.2.4p7/include/ntp_syscall.h
+--- ntp-4.2.4p7-orig/include/ntp_syscall.h	2004-02-25 05:57:56.000000000 +0000
++++ ntp-4.2.4p7/include/ntp_syscall.h	2009-08-05 20:57:04.743899066 +0100
+@@ -14,6 +14,13 @@
+ # include <sys/timex.h>
+ #endif
+ 
++#if defined(ADJ_NANO) && !defined(MOD_NANO)
++#define MOD_NANO ADJ_NANO
++#endif                                                                                                                   
++#if defined(ADJ_TAI) && !defined(MOD_TAI)
++#define MOD_TAI ADJ_TAI
++#endif
++
+ #ifndef NTP_SYSCALLS_LIBC
+ #ifdef NTP_SYSCALLS_STD
+ # define ntp_adjtime(t)		syscall(SYS_ntp_adjtime, (t))

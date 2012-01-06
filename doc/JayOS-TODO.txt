@@ -1,0 +1,124 @@
+
+JayOS TODO list, in no particular order:
+
+A) hardware recognition
+Make probing of video card and graphics resolution more robust. Currently,
+you have to boot with "newvid" option to force probing, and optionally 
+adjust your XF86Config.conf for greater depth. I would like the system
+to boot into 1280x1024 or the next highest supported resolution.
+
+B) install scripts
+Need scripts written which will copy the boot loader, initial ramdisk, 
+root and usr filesystems to the hard drive or USB storage devices. Will
+also need options added to /linuxrc to accomplish booting from other
+devices.
+
+
+C) Makefile cleanup
+Need to complete migration from LFS-5.0-style Makefile to the new nALFS
+profile for LFS-6.1. I would also like to create and/or make use of a 
+BLFS profile instead of continuing to use a monolithic Makefile, but that
+would mean a whole lot of work for very little functional gain. 
+
+The main advantage I see that nALFS has over a Makefile is the ease in 
+upgrading package versions. In the nALFS profile, the version and tarball 
+name are adjusted once whereas the Makefile uses a hard-coded version that 
+is duplicated many times within a particular target. 
+
+The BLFS Makefile could stand to use a little reorganization and cleanup. 
+In particular, the order the targets occur in is not always the order they 
+are built in. Hard-coded version numbers could be replaced with variables 
+and sourced like the LFS Makefile handles things.
+
+Also, I need to include a template (currently in /src/Build) that builds a
+typical makefile target stanza for a given tarball. Otherwise, you have to
+copy the last stanza and change all references to the package and version
+names.o
+
+Another nice addition would be to integrate the x86 and PowerPC Makefiles
+into a single Makefile with architecture detection capabilities.
+
+
+D) PowerPC boot sequence
+Kernel hangs when passing control from initial ramdisk to /sbin/init on
+real root device. The last messages written on the console are:
+
+	pivot_root: pivot_root:  No such file or directory
+	chroot:  cannot exec /sbin/init:  no such file or directory
+	Freeing unused kernel memory:  180k init 4k chrp 8k prep
+
+** Resolved [ 20060219 ]
+
+E) Java, QT, and video library removal
+Rebuild x86 wthout qt, fwbuilder, qtparted, libdvdcss and MPlayer 
+extra codecs. Place tarballs (including OpenOffice) on a "members-only" CD.
+
+
+F) Qemu
+I would like to provide a windows and linux Qemu binary so the user can 
+launch JayOS under windows, but it needs to be correctly implemented. 
+
+First, in keeping with the spirit of a source-based distro, qemu.exe 
+needs to be cross-compiled with mingw, which is currently not included in
+the distro. The mingw libraries are about the size of a kernel tarball, and 
+I don't know if a single use justifies the space it requires.
+
+Now, assuming that I have a properly compiled windows binary, Qemu will want
+to load JayOS from either cdrom (an ISO image) or hard disk (another image).
+Which will it be? I think it's a stupid idea to create an ISO within an ISO
+because it makes disassembly a pain. Also, it would mean modifying the
+Makefile, linuxrc and some boot scripts to change the startup logic, 
+something I'd rather not do at this stage.
+
+A better idea is to create a hard-disk image large enough to hold the 
+(expanded) root filesystem, probably no bigger than 100MB. Command line
+arguments to qemu would look something like: -hda hdisk.img.  Also, a qemu 
+target will need to be added to Makefile for building the executable and 
+disk image. This is much cleaner than the ISO within an ISO approach, but 
+now the problem is how to access the usr filesystem (stored on the host CD 
+as /fs/usr.fs). 
+
+usr.fs cannout be specified as an argument to -hdb because it is a
+filesystem, not a proper disk image with partitions and such. Mounting
+usr.fs will probably entail creating and partitioning a second disk 
+image, and loading it with the uncompressed(!) usr files. Now we have a
+space issue because usr is over 1 gig uncompressed. 
+
+So the problem of how to add Qemu is not straight-forward at all. I might
+resort to generating a different kind of CD specifically for use under 
+Windows. In that case, the whole OS would be pre-installed onto a hard
+disk image and booted from there. Not really a bad idea, it only requires
+writing a qemu-image Makefile stanza.
+
+** Resolved [ 20051015 ]
+
+G) Multi-boot DVD
+Since I am building JayOS for two architectures, my vision is to create
+a CD that will boot on both PowerPC and x86 hardware. Right away, size
+will be an issue because each arch will need a large (400MB) usr 
+filesystem. This will necessitate the use of DVD media. 
+
+Changes I anticipate making are to the Makefile (need to include logic
+detecting architecture, and a hybrid-boot stanza).
+
+
+H) Root filesystem within initial ramdisk
+I am experimenting around with storing the compressed root filesystem
+within the initrd. That is why you see such a long "loading initrd"
+message when booting the kernel. The problem I've run into is I
+haven't been able to free initrd memory after its been loaded because
+the loop driver keeps /initrd busy. I need loop loaded within the
+initrd to support encryption of the root filesystem.
+
+So anyway, don't be alarmed that there is a 17M file within /initrd.
+Yeah, it *is* just sitting there taking up RAM, but you're a
+ueberadmin; you've got loads of RAM, right? :) I'll get it all
+straightened out soon.
+
+** Resolved [ 20051015 ]
+
+I) Clean up/update documentation on CD
+/doc on the ISOs should be disregarded in favor of the continually updated
+content at http://jayos.lfs-matrix.net/jayos. 
+
+

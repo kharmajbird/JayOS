@@ -1,0 +1,11 @@
+--- hfsplus-1.0.4/src/glob.c.orig	2004-04-11 11:41:08.548869364 +0100
++++ hfsplus-1.0.4/src/glob.c	2004-04-11 11:41:16.819249584 +0100
+@@ -48,7 +48,7 @@
+ 
+ 	switch (*pat)
+ 	{
+-	    case NULL:	// pattern at end
++	    case 0:	// pattern at end
+ 		return (!*str); // String at end ?
+ 
+ 	    case '*':  // match all

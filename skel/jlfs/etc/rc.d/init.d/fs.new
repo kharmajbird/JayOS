@@ -1,0 +1,98 @@
+#!/bin/sh
+
+#
+# Script to mount system filesystems (excluding root)
+# Devices are either specified or probed for at boot time
+#
+# Example:
+# boot:  vmlinuz rootfs=/dev/sda4  usrfs=/dev/hda2   localfs=/dev/hda2
+#
+
+# device search order, when not specified, is:
+#     /etc/mtab
+#     ROOTFS as set by linuxrc
+#     SCSI DISKS (includes CDROM and USB storage devs)
+#     IDE DISKS (includes CDROM)
+
+MNT=/usb
+USR=usr.fs
+OPT=opt.fs
+LOCAL=local.fs
+
+# cycle through command line to extract parms
+#for i in `cat /proc/cmdline`; do
+for i in vmlinuz rootfs=/dev/sda4 usrfs=/dev/hda2 localfs=/dev/hda2; do
+	case $i in
+		rootfs=*)   ROOTFS=`echo $i| sed 's/^.*=//'` ;;
+
+		usrfs=*)    USRFS=`echo $i| sed 's/^.*=//'` ;;
+
+		optfs=*)    OPTFS=`echo $i| sed 's/^.*=//'` ;;
+
+		localfs=*)  LOCALFS=`echo $i| sed 's/^.*=//'` ;;
+	esac
+done
+
+# forgot shell syntax to accomplish the same(!)
+if ! [ $USRFS ]; then USRFS=$ROOTFS; fi
+if ! [ $OPTFS ]; then OPTFS=$ROOTFS; fi
+if ! [ $LOCALFS ]; then LOCALFS=$ROOTFS; fi
+
+#
+# create a list of available devices in CDROM_LIST
+#
+#for scsi_cdrom in /dev/sr[0-9] /dev/scd[0-9] /dev/sd[a-n]; do
+#	if [ -e "$scsi_cdrom" ]; then
+#		CDROM_LIST="$CDROM_LIST $scsi_cdrom"
+#		fi
+#done
+#for ide_channel in /proc/ide/ide[0-9]; do
+#	if [ ! -d "$ide_channel" ]; then break; fi
+#
+#	for ide_device in hd[a-n]; do
+#		device_media_file="$ide_channel/$ide_device/media"
+#
+#		if [ -e "$device_media_file" ]; then
+#			CDROM_LIST="$CDROM_LIST /dev/$ide_device"
+#		fi
+#	done
+#done
+
+#
+# attempt to mount each filesystem from the specified device
+#
+for DEV in $USRFS $OPTFS $LOCALFS; do
+	mount -t auto $DEV $MNT 2>/dev/null
+
+	if [ $? -eq 0 ]; then
+		echo -n "Disk found at $DEV"
+
+		# add mountpoints here
+		case $FS in
+			usr.fs)		PT=/usr
+					DEV=$USR
+					;;
+
+			opt.fs)		PT=/opt
+					DEV=$OPT
+					;;
+
+			local.fs)	PT=/usr/local
+					DEV=$LOCALFS
+					;;
+		esac
+
+		echo -n "...mounting $PT..."
+echo		mount -o loop $MNT/fs/$FS $PT
+
+		if [ $? -eq 0 ]; then
+			echo "OK"
+			break;
+		else
+			echo "Unsuccessful! Mother may I?"
+		fi
+
+	else
+		echo "Error mounting $PT from $cdrom_device"
+	fi
+done

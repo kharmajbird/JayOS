@@ -1,0 +1,53 @@
+# /etc/profile
+
+# System wide environment and startup programs, for login setup
+# Functions and aliases go in /etc/bashrc
+
+# Path manipulation
+if [ `id -u` = 0 ] && ! echo $PATH | /bin/grep -q "/sbin" ; then
+    PATH=/sbin:$PATH
+fi
+
+if [ `id -u` = 0 ] && ! echo $PATH | /bin/grep -q "/usr/sbin" ; then
+    PATH=/usr/sbin:$PATH
+fi
+
+if [ `id -u` = 0 ] && ! echo $PATH | /bin/grep -q "/usr/local/sbin" ; then
+    PATH=/usr/local/sbin:$PATH
+fi
+
+# No core files by default
+ulimit -S -c 0 > /dev/null 2>&1
+
+USER=`id -un`
+LOGNAME=$USER
+MAIL="/var/spool/mail/$USER"
+
+HOSTNAME=`/bin/hostname`
+HISTSIZE=1000
+
+if [ -z "$INPUTRC" -a ! -f "$HOME/.inputrc" ]; then
+    INPUTRC=/etc/inputrc
+fi
+
+XDG_DATA_DIRS=/usr/share
+LIBGLADE_MODULE_PATH=/usr/lib/libglade/2.0
+PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/opt/qt/lib/pkgconfig
+
+PYTHONPATH=/usr/lib/python2.6/site-packages
+PYTHON_INCLUDE=/usr/include/python2.6
+
+EC2_HOME=/usr
+
+export XDG_DATA_DIRS LIBGLADE_MODULE_PATH PKG_CONFIG_PATH
+export PATH USER LOGNAME MAIL HOSTNAME HISTSIZE INPUTRC
+export PYTHONPATH
+export EC2_HOME
+
+for i in /etc/profile.d/*.sh ; do
+    if [ -r $i ]; then
+    	. $i
+    fi
+done
+
+unset i

@@ -1,0 +1,75 @@
+diff --git a/CHANGELOG b/CHANGELOG
+index 98855f5..8d09e93 100644
+--- a/CHANGELOG
++++ b/CHANGELOG
+@@ -1,6 +1,7 @@
+ ??/??/2008 autofs-5.0.4
+ -----------------------
+ - correct configure test for ldapr page control functions.
++- catch "-xfn" map type and issue "no supported" message.
+  
+ 14/01/2008 autofs-5.0.3
+ -----------------------
+diff --git a/lib/master_parse.y b/lib/master_parse.y
+index b450122..2184b4f 100644
+--- a/lib/master_parse.y
++++ b/lib/master_parse.y
+@@ -50,6 +50,7 @@ static int add_multi_mapstr(void);
+ 
+ static int master_error(const char *s);
+ static int master_notify(const char *s);
++static int master_msg(const char *s);
+  
+ static char *path;
+ static char *type;
+@@ -119,6 +120,7 @@ static int master_fprintf(FILE *, char *, ...);
+ %token <strtype> DNNAME
+ %token <strtype> MAPHOSTS
+ %token <strtype> MAPNULL
++%token <strtype> MAPXFN
+ %token <strtype> MAPNAME
+ %token <inttype> NUMBER
+ %token <strtype> OPTION
+@@ -283,6 +285,12 @@ map:	PATH
+ 			YYABORT;
+ 		}
+ 	}
++	| MAPXFN
++	{
++		master_notify($1);
++		master_msg("X/Open Federated Naming service not supported");
++		YYABORT;
++	}
+ 	| MAPNULL
+ 	{
+ 		type = master_strdup($1 + 1);
+@@ -598,6 +606,12 @@ static int master_notify(const char *s)
+ 	return(0);
+ }
+ 
++static int master_msg(const char *s)
++{
++	logmsg("%s", s);
++	return 0;
++}
++
+ static void local_init_vars(void)
+ {
+ 	path = NULL;
+diff --git a/lib/master_tok.l b/lib/master_tok.l
+index d908047..2a6fdf9 100644
+--- a/lib/master_tok.l
++++ b/lib/master_tok.l
+@@ -215,6 +215,12 @@ OPTNTOUT	(-n{OPTWS}|-n{OPTWS}={OPTWS}|--negative-timeout{OPTWS}|--negative-timeo
+ 		return MAPNULL;
+ 	}
+ 
++	"-xfn" {
++		BEGIN(OPTSTR);
++		strcpy(master_lval.strtype, master_text);
++		return MAPXFN;
++	}
++
+ 	"//" {
+ 		BEGIN(DNSTR);
+ 		yyless(0);

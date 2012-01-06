@@ -1,0 +1,43 @@
+diff --git a/ext/openssl/ossl.c b/ext/openssl/ossl.c
+index a3b612b..b75796e 100644
+--- a/ext/openssl/ossl.c
++++ b/ext/openssl/ossl.c
+@@ -92,7 +92,7 @@ ossl_x509_ary2sk(VALUE ary)
+ 
+ #define OSSL_IMPL_SK2ARY(name, type)	        \
+ VALUE						\
+-ossl_##name##_sk2ary(STACK *sk)			\
++ossl_##name##_sk2ary(STACK_OF(type) *sk)			\
+ {						\
+     type *t;					\
+     int i, num;					\
+diff --git a/ext/openssl/ossl_pkcs7.c b/ext/openssl/ossl_pkcs7.c
+index f7cd156..aec0023 100644
+--- a/ext/openssl/ossl_pkcs7.c
++++ b/ext/openssl/ossl_pkcs7.c
+@@ -572,7 +572,7 @@ ossl_pkcs7_add_certificate(VALUE self, VALUE cert)
+     return self;
+ }
+ 
+-static STACK *
++static void *
+ pkcs7_get_certs_or_crls(VALUE self, int want_certs)
+ {
+     PKCS7 *pkcs7;
+diff --git a/ext/openssl/ossl_ssl.c b/ext/openssl/ossl_ssl.c
+index c278edc..e74e891 100644
+--- a/ext/openssl/ossl_ssl.c
++++ b/ext/openssl/ossl_ssl.c
+@@ -623,10 +623,10 @@ ossl_sslctx_get_ciphers(VALUE self)
+     if (!ciphers)
+         return rb_ary_new();
+ 
+-    num = sk_num((STACK*)ciphers);
++    num = sk_num((STACK_OF(SSL_CIPHER)*)ciphers);
+     ary = rb_ary_new2(num);
+     for(i = 0; i < num; i++){
+-        cipher = (SSL_CIPHER*)sk_value((STACK*)ciphers, i);
++        cipher = (SSL_CIPHER*)sk_value((STACK_OF(SSL_CIPHER)*)ciphers, i);
+         rb_ary_push(ary, ossl_ssl_cipher_to_ary(cipher));
+     }
+     return ary;

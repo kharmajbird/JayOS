@@ -1,0 +1,4 @@
+The SeaMonkey user environment is cleared out and replaced by
+seamonkey.tbz when running "Clear Firefox" from the FVWM95 Utilities menu.
+
+Also see /root/bin/mozclear

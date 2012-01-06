@@ -1,0 +1,3 @@
+#!/bin/sh
+
+tar jxf /dev/fd0 -C /

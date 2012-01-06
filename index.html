@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+
+  <title>kharmajbird/JayOS @ GitHub</title>
+
+  <style type="text/css">
+    body {
+      margin-top: 1.0em;
+<!--
+      background-color: #f9e86a;
+-->
+      font-family: Helvetica, Arial, FreeSans, san-serif;
+      color: #000000;
+    }
+    #container {
+      margin: 0 auto;
+      width: 700px;
+    }
+    h1 { font-size: 3.8em; color: #061795; margin-bottom: 3px; }
+    h1 .small { font-size: 0.4em; }
+    h1 a { text-decoration: none }
+    h2 { font-size: 1.5em; color: #061795; }
+    h3 { text-align: center; color: #061795; }
+    a { color: #061795; }
+    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
+    .download { float: right; }
+    pre { background: #000; color: #fff; padding: 15px;}
+    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
+    .footer { text-align:center; padding-top:30px; font-style: italic; }
+  </style>
+</head>
+
+<body>
+<!--
+  <a href="https://github.com/kharmajbird/JayOS"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+-->
+
+  <div id="container">
+
+<!--
+    <div class="download">
+      <a href="https://github.com/kharmajbird/JayOS/zipball/master">
+        <img border="0" width="90" src="https://github.com/images/modules/download/zip.png"></a>
+      <a href="https://github.com/kharmajbird/JayOS/tarball/master">
+        <img border="0" width="90" src="https://github.com/images/modules/download/tar.png"></a>
+    </div>
+
+    <h1><a href="https://github.com/kharmajbird/JayOS">JayOS</a>
+      <span class="small">by <a href="https://github.com/kharmajbird">kharmajbird</a></span></h1>
+-->
+    <img src=doc/JayOS.gif>
+
+    <div class="description">
+     <p align="right">
+      Based on <a href="http://www.linuxfromscratch.org">Linux From
+Scratch</a></p>
+     
+      <h4><p align="right"><a href="doc/Changelog.txt">Changelog</a></p></h4>
+    
+     </p>
+    </div>
+
+    
+<br>
+
+<p align=center><b> Welcome to what I call JayOS </b></p>
+
+<p>
+This project uses GNU makefiles and Bash shell scripts to build a complete 
+Linux distribution.  All of its components are built from source.
+The result is a turnkey solution to creating a compact, highly-customizable 
+operating system.
+</p>
+
+<p>
+JayOS includes a lot of standard network security and filesystem tools, along with a
+full-blown development environment with many programming tools 
+and libraries including gcc, gdb, ddd, perl, gtk, tcl/tk, ruby, python,
+qt3/4, and glade-3.  See the <a href="doc/PACKAGES.txt">package list</a>
+for details.
+</p>
+
+<p>
+A small footprint lets it run well on commodity hardware, but it can be 
+configured to use extra RAM to run entirely from memory. 
+And for the security-conscious among us, it offers in-RAM filesystem encryption with plausible deniability
+to provide a more secure mobile workstation.  
+</p>
+<br>
+
+      <h2>Download</h2>
+<p> Bootable
+<a href="http://jayosrc.s3.amazonaws.com/iso/jlfs-x86-20111225.iso">Live CD</a> 
+image and its
+<a href="http://jayosrc.s3.amazonaws.com/iso/jlfs-x86-20111225.iso.md5">md5</a>
+checksum.
+
+<br>
+Thumbdrive
+<a href="http://jayosrc.s3.amazonaws.com/iso/jlfs-USB-stick2.img.gz">image</a> 
+for regular Intel hardware
+<br>
+Additional rEFIt thumbdrive
+<a href="http://jayosrc.s3.amazonaws.com/iso/jlfs-USB-stick1.img.gz">image</a> 
+for booting Apple hardware
+ </p>
+<br>
+    <p>
+      You can download this project in either
+      <a href="https://github.com/kharmajbird/JayOS/zipball/master">zip</a> or
+      <a href="https://github.com/kharmajbird/JayOS/tarball/master">tar</a> formats.
+    </p>
+    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
+      by running:
+      <pre>$ mkdir -p /lfs/build && cd /lfs/build
+$ git clone git://github.com/kharmajbird/JayOS</pre>
+    </p>
+<p>
+If you have a Mac Mini (my development platform of choice :)
+grab two 1 gigabyte USB thumbdrives
+and follow <a href="doc/JayOS-MacMini.txt">
+these</a> instructions to try out JayOS without
+disturbing your OS X drive. 
+</p>
+
+<p>
+Otherwise, I recommend downloading the latest ISO and either burning it to 
+CDROM, or booting it under QEMU emulation.
+</p>
+
+    
+<br>
+      <h2>Build/Install</h2>
+<p>
+A brief <a href="doc/Building.txt">HOWTO</a>
+</p>
+
+<p>
+The install documentation is still very much a work in progress, but hints can be found
+<a href="doc/JayOS-Install.txt">here</a>. Some of the docs are a little old
+and a half step behind what is current, so when in doubt, use the source.
+</p>
+<p>Security
+<a href="doc/JayOS-Encryption.txt">policy</a> and 
+<a href="doc/JayOS-Encryption-HOWTO.txt">practices</a>.
+</p>
+<br>
+<p> Additional resources for the official
+<a href="http://www.linuxfromscratch.org/livecd/">LFS Live CD</a>.</p>
+    
+
+<br>
+      <h2>Development</h2>
+If you want to build your own ISO image from source, 
+(see <a
+href="https://raw.github.com/kharmajbird/JayOS/master/doc/WHY.txt">why</a>) you will need LFS, BLFS, 
+and various other tarballs.  
+So first clone the git repo as described above.  Then download the
+tarballs all at once with wget by running
+<a href="https://raw.github.com/kharmajbird/JayOS/master/scripts/dl.sh">dl.sh </a>
+</p>
+<pre>$ /lfs/build/JayOS/scripts/dl.sh</pre>
+
+<br>
+Then to initiate the build, run
+<a href="https://raw.github.com/kharmajbird/JayOS/master/scripts/build.sh">build.sh</a>
+<pre>$ /lfs/build/JayOS/scripts/build.sh</pre>
+
+This works best when launched from the shell prompt of the Live CD.
+Building from other Linux distributions has yet to be tested, so YMMV.
+
+<br>
+      <h2><a href="doc/PACKAGES.txt">Package List</a></h2>
+
+<br>
+      <h2><a href="doc/LICENSE.txt">License</a></h2>
+<br>
+
+      <h2>Contact</h2> <p>James Lewis (fred.gee.sanford@gmail.com)<br/>
+      </p>
+
+    <div class="footer">
+      get the source code on GitHub : <a href="https://github.com/kharmajbird/JayOS">kharmajbird/JayOS</a>
+    </div>
+
+  </div>
+
+  <a href="https://github.com/kharmajbird/JayOS"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+</body>
+</html>

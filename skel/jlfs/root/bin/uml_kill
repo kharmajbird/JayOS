@@ -1,0 +1,2 @@
+#!/bin/sh
+kill -9 `ps ax| grep [l]inux| awk '{print $1}'`

@@ -1,0 +1,13 @@
+# Begin /etc/hosts (network card version)
+
+127.0.0.1 localhost
+
+# block google analytics
+127.0.0.1 www.google-analytics.com
+127.0.0.1 google-analytics.com
+127.0.0.1 ssl.google-analytics.com
+
+# for UML host
+192.168.1.1 vaio.jaynet.org vaio
+
+# End /etc/hosts (network card version)

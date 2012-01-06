@@ -1,0 +1,99 @@
+Submitted By:            Randy McMurchy <randy_at_linuxfromscratch_dot_org>
+Date:                    2007-08-05
+Initial Package Version: 0.10.8
+Upstream Status:         Unknown
+Origin:                  Randy McMurchy (comparing what is in the tarball with
+                         what should be there according to CVS)
+Description:             Fixes the test reference files so the tests pass
+
+$Id: fribidi-0.10.8-test_fixes-1.patch 1856 2007-08-05 23:32:06Z randy $
+
+
+diff -Naur fribidi-0.10.8-orig/tests/test_CapRTL_explicit.reference fribidi-0.10.8/tests/test_CapRTL_explicit.reference
+--- fribidi-0.10.8-orig/tests/test_CapRTL_explicit.reference	2007-05-25 17:02:02.000000000 +0000
++++ fribidi-0.10.8/tests/test_CapRTL_explicit.reference	2007-08-05 23:17:36.000000000 +0000
+@@ -1,14 +1,14 @@
+-this is _LJUST_o                    => 
+-a _lsimple _RteST_o th_oat          => 
+-HAS A _LPDF missing                 => 
+-AnD hOw_L AbOuT, 123,987 tHiS_o     => 
+-a GOOD - _L_oTEST.                  => 
+-here_L is_o_o_o _R a good one_o     => 
+-And _r 123,987_LTHE_R next_o oNE:   => 
+-_R_r and the last _LONE_o IS        => 
+-THE _rbest _lONE and                => 
+-A REAL BIG_l_o BUG!                 => 
+-a _L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_Rbug => 
+-AN ARABIC _l_o 123-456 NICE ONE!    => 
+-AN ARABIC _l _o 123-456 PAIR        => 
+-this bug 67_r_o89 catched!          => 
++this is _LJUST_o                    => this is JUST
++a _lsimple _RteST_o th_oat          => a simple TSet that
++HAS A _LPDF missing                 =>                   PDF missing A SAH
++AnD hOw_L AbOuT, 123,987 tHiS_o     =>         w AbOuT, 123,987 tHiSOh DnA
++a GOOD - _L_oTEST.                  => a TSET - DOOG.
++here_L is_o_o_o _R a good one_o     => here is eno doog a 
++And _r 123,987_LTHE_R next_o oNE:   =>           987THEtxen  oNE:,123  ndA
++_R_r and the last _LONE_o IS        => SI and the last ONE  
++THE _rbest _lONE and                =>                    best ENO and EHT
++A REAL BIG_l_o BUG!                 =>                     !GUB GIB LAER A
++a _L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_L_Rbug => a gub
++AN ARABIC _l_o 123-456 NICE ONE!    =>        !ENO ECIN 456-123  CIBARA NA
++AN ARABIC _l _o 123-456 PAIR        =>            RIAP   123-456 CIBARA NA
++this bug 67_r_o89 catched!          => this bug 6789 catched!
+diff -Naur fribidi-0.10.8-orig/tests/test_CapRTL_implicit.reference fribidi-0.10.8/tests/test_CapRTL_implicit.reference
+--- fribidi-0.10.8-orig/tests/test_CapRTL_implicit.reference	2007-05-25 17:02:02.000000000 +0000
++++ fribidi-0.10.8/tests/test_CapRTL_implicit.reference	2007-08-05 23:17:36.000000000 +0000
+@@ -1,26 +1,26 @@
+-car is THE CAR in arabic            => 
+-CAR IS the car IN ENGLISH           => 
+-he said "IT IS 123, 456, OK"        => 
+-he said "IT IS (123, 456), OK"      => 
+-he said "IT IS 123,456, OK"         => 
+-he said "IT IS (123,456), OK"       => 
+-HE SAID "it is 123, 456, ok"        => 
+-he said "IT IS 789, 678, OK"        => 
+-he said "IT IS (789, 678), OK"      => 
+-he said "IT IS 789,678, OK"         => 
+-he said "IT IS (789,678), OK"       => 
+-HE SAID "it is 789, 678, ok"        => 
+-<H123>shalom</H123>                 => <
+-<h123>SALAAM</h123>                 => <
+-HE SAID "it is a car!" AND RAN      => 
+-HE SAID "it is a car!_>" AND RAN    => 
+--2 CELSIUS IS COLD                  => 
+-SOLVE 1*5 1-5 1/5 1+5               => 
+-THE RANGE IS 2.5..5                 => 
+-IOU $10                             => 
+-CHANGE -10%                         => 
+--10% CHANGE                         => 
+-A TEST FOR WEAK TYPES: 123+,456     => 
+-ANOTHER FOR WEAK TYPES: A123,456    => 
+-MORE WEAK TYPES: hooloo123,456      => 
+-and TEST|L1 ||too                   => 
++car is THE CAR in arabic            => car is RAC EHT in arabic
++CAR IS the car IN ENGLISH           =>           HSILGNE NI the car SI RAC
++he said "IT IS 123, 456, OK"        => he said "KO ,456 ,123 SI TI"
++he said "IT IS (123, 456), OK"      => he said "KO ,(456 ,123) SI TI"
++he said "IT IS 123,456, OK"         => he said "KO ,123,456 SI TI"
++he said "IT IS (123,456), OK"       => he said "KO ,(123,456) SI TI"
++HE SAID "it is 123, 456, ok"        =>        "ok ,it is 123, 456" DIAS EH
++he said "IT IS 789, 678, OK"        => he said "KO ,678 ,789 SI TI"
++he said "IT IS (789, 678), OK"      => he said "KO ,(678 ,789) SI TI"
++he said "IT IS 789,678, OK"         => he said "KO ,789,678 SI TI"
++he said "IT IS (789,678), OK"       => he said "KO ,(789,678) SI TI"
++HE SAID "it is 789, 678, ok"        =>        "ok ,678 ,789 it is" DIAS EH
++<H123>shalom</H123>                 =>                 <123H/>shalom<123H>
++<h123>SALAAM</h123>                 => <h123>MAALAS</h123>
++HE SAID "it is a car!" AND RAN      =>      NAR DNA "!it is a car" DIAS EH
++HE SAID "it is a car!_>" AND RAN    =>      NAR DNA "it is a car!" DIAS EH
++-2 CELSIUS IS COLD                  =>                  DLOC SI SUISLEC 2-
++SOLVE 1*5 1-5 1/5 1+5               =>               5+1 5/1 5-1 5*1 EVLOS
++THE RANGE IS 2.5..5                 =>                 5..2.5 SI EGNAR EHT
++IOU $10                             =>                             $10 UOI
++CHANGE -10%                         =>                         %10- EGNAHC
++-10% CHANGE                         =>                         EGNAHC %10-
++A TEST FOR WEAK TYPES: 123+,456     =>     456,123+ :SEPYT KAEW ROF TSET A
++ANOTHER FOR WEAK TYPES: A123,456    =>    123,456A :SEPYT KAEW ROF REHTONA
++MORE WEAK TYPES: hooloo123,456      =>      hooloo123,456 :SEPYT KAEW EROM
++and TEST|L1 ||too                   => and TSET|1L ||too

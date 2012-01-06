@@ -1,0 +1,12 @@
+--- hfsplus-1.0.4/src/hpmkdir.c.orig	2004-04-11 11:44:32.058225648 +0100
++++ hfsplus-1.0.4/src/hpmkdir.c	2004-04-11 11:45:03.001648298 +0100
+@@ -46,8 +46,8 @@
+ # include <string.h>
+ # include <time.h>
+ # include <ctype.h>
+-# include <errno.h>
+ */
++# include <errno.h>
+ # include <stdio.h>
+ # include <stdlib.h>
+ 

@@ -1,0 +1,13 @@
+diff -Naur lavaps-2.7.orig/src/linux/proc/ps.h lavaps-2.7/src/linux/proc/ps.h
+--- lavaps-2.7.orig/src/linux/proc/ps.h	1998-10-02 16:34:07.000000000 -0500
++++ lavaps-2.7/src/linux/proc/ps.h	2008-05-09 09:45:59.000000000 -0500
+@@ -5,9 +5,6 @@
+ /* get definition of HZ */
+ #include <asm/param.h>
+ 
+-/* get page info */
+-#include <asm/page.h>
+-
+ char *wchan(unsigned long);
+ char *find_func(unsigned long address);
+ void *xcalloc(void *pointer, int size);

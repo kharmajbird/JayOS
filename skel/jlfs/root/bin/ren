@@ -1,0 +1,33 @@
+#!/bin/sh
+
+#
+# script to rename many files at once
+#
+# no sanity checks!
+#
+
+TEST=
+if [ "$1" = "-t" ]; then TEST=y; shift; fi
+
+if [ "$1" != "-s" ] || [ "$3" != "-d" ]; then
+  echo "Usage: `basename $0` -s src_pattern -d dest_pattern file_list"
+  echo "       Renames multiple files by changing a pattern in the filename."
+  echo
+  echo "       ren -s \! -d \"\" *.jpg to remove exclamation pts from jpgs"
+  echo "Hint:  use -t to test first\!"
+  exit
+fi
+
+FROM=$2
+TO=$4
+shift; shift; shift; shift
+
+while [ $# -gt 0 ]; do
+  if [ $TEST = "y" ]; then
+    echo move "$1" `echo $1| sed "s/$FROM/$TO/g"`
+  else
+    mv "$1" `echo $1| sed "s/$FROM/$TO/g"`
+  fi
+
+  shift
+done

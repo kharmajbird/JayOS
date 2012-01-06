@@ -1,0 +1,8 @@
+#!/bin/sh
+
+MYIP=`/sbin/ifconfig eth0| grep "inet addr"| cut -d':' -f2| cut -d' ' -f1`
+t="`/sbin/route| grep -n default| cut -d':' -f1`"
+MYGATEWAY=`/sbin/route -n| head -${t}| tail -1| awk '{print $2}'`
+
+/sbin/ifconfig $1 192.168.1.1
+#/sbin/ifconfig $1 $MYIP

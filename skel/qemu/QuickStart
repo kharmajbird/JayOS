@@ -1,0 +1,27 @@
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+To launch under windows (QEMU wants 256MB RAM for itself) run qemu-win.bat.
+At the boot: prompt, enter "qemu".
+
+
+If you have QEMU installed under Linux, run qemu.sh 
+
+
+To boot natively, burn jlfs-x86.iso and enter "jayos" at the boot prompt.
+
+
+To modify the scripts, copy the CD to a directory and launch it from there.
+
+
+For online help, see:
+http://jayos.lfs-matrix.net/jayos
+http://jayos.lfs-matrix.net/jayos/forum
+
+Latest source can be found at:
+http://jayos.lfs-matrix.net/jayos/iso
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+Thanks for your support!
+Jay Lewis

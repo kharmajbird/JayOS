@@ -1,0 +1,78 @@
+Submitted By: Ken Moffat <ken at linuxfromscratch dot org>
+Date: 2008-12-14
+Initial Package Version: 1.2.2
+Upstream Status: unknown
+Origin: various - mandriva, fedora, self
+Description: Fix compilation with recent versions of gcc.  In the gcc-4.2 series
+the reference to SigC in xcdrdao broke (fix from mandriva).  With the 4.3 series
+strerror and strcmp have moved to string.h - initial fixes from fedora (they
+build with --without-xdao --without-lame), extended to FormatMp3.cc FormatOgg.cc
+and TextEdit.cc so that it all builds.
+
+diff -Naur cdrdao-1.2.2.orig/trackdb/FormatConverter.cc cdrdao-1.2.2/trackdb/FormatConverter.cc
+--- cdrdao-1.2.2.orig/trackdb/FormatConverter.cc	2005-05-10 01:55:28.000000000 +0100
++++ cdrdao-1.2.2/trackdb/FormatConverter.cc	2008-12-14 15:53:51.000000000 +0000
+@@ -18,6 +18,7 @@
+  */
+ 
+ #include <stdlib.h>
++#include <string.h>
+ #ifdef HAVE_AO
+ #include <ao/ao.h>
+ #endif
+diff -Naur cdrdao-1.2.2.orig/trackdb/FormatMp3.cc cdrdao-1.2.2/trackdb/FormatMp3.cc
+--- cdrdao-1.2.2.orig/trackdb/FormatMp3.cc	2005-09-24 19:28:43.000000000 +0100
++++ cdrdao-1.2.2/trackdb/FormatMp3.cc	2008-12-14 17:51:03.000000000 +0000
+@@ -25,6 +25,7 @@
+ #include <stdlib.h>
+ #include <unistd.h>
+ #include <fcntl.h>
++#include <string.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <sys/mman.h>
+diff -Naur cdrdao-1.2.2.orig/trackdb/FormatOgg.cc cdrdao-1.2.2/trackdb/FormatOgg.cc
+--- cdrdao-1.2.2.orig/trackdb/FormatOgg.cc	2005-04-22 03:01:46.000000000 +0100
++++ cdrdao-1.2.2/trackdb/FormatOgg.cc	2008-12-14 17:51:13.000000000 +0000
+@@ -18,6 +18,7 @@
+  */
+ 
+ #include <stdio.h>
++#include <string.h>
+ 
+ #include "util.h"
+ #include "FormatOgg.h"
+diff -Naur cdrdao-1.2.2.orig/trackdb/TempFileManager.cc cdrdao-1.2.2/trackdb/TempFileManager.cc
+--- cdrdao-1.2.2.orig/trackdb/TempFileManager.cc	2005-04-22 03:01:46.000000000 +0100
++++ cdrdao-1.2.2/trackdb/TempFileManager.cc	2008-12-14 15:53:51.000000000 +0000
+@@ -24,6 +24,7 @@
+ #include <sys/stat.h>
+ #include <unistd.h>
+ #include <fcntl.h>
++#include <string.h>
+ 
+ #define DEFAULT_TEMP_PATH "/tmp/"
+ 
+diff -Naur cdrdao-1.2.2.orig/xdao/TextEdit.cc cdrdao-1.2.2/xdao/TextEdit.cc
+--- cdrdao-1.2.2.orig/xdao/TextEdit.cc	2004-02-12 01:13:32.000000000 +0000
++++ cdrdao-1.2.2/xdao/TextEdit.cc	2008-12-14 19:06:20.000000000 +0000
+@@ -21,6 +21,7 @@
+ 
+ #include <stddef.h>
+ #include <ctype.h>
++#include <string.h>
+ 
+ TextEdit::TextEdit(const char *sample) : Gtk::Entry()
+ {
+diff -Naur cdrdao-1.2.2.orig/xdao/xcdrdao.cc cdrdao-1.2.2/xdao/xcdrdao.cc
+--- cdrdao-1.2.2.orig/xdao/xcdrdao.cc	2005-05-03 10:50:17.000000000 +0100
++++ cdrdao-1.2.2/xdao/xcdrdao.cc	2008-12-14 15:53:17.000000000 +0000
+@@ -136,7 +136,7 @@
+   installSignalHandler(SIGCHLD, signalHandler);
+ 
+   // setup periodic GUI updates
+-  Glib::signal_timeout().connect(SigC::slot(&guiUpdatePeriodic), 2000);
++  Glib::signal_timeout().connect(sigc::ptr_fun(&guiUpdatePeriodic), 2000);
+ 
+   installSignalHandler(SIGPIPE, SIG_IGN);
+ 
