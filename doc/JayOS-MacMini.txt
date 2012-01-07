@@ -7,10 +7,9 @@ YMMV with iMacs, Macbooks and Macbook pros
 firmware
 
 What you will need:
-a) one Mac Mini
-b) a 1 GB USB stick (bootloader)
-c) a 4 GB USB stick (OS + Apps)
-
+- one Mac Mini
+- 1 GB USB stick (EFI bootloader)
+- 1 GB USB stick (Linux + GNU applications)
 
 
 
@@ -68,8 +67,5 @@ when video goes into framebuffer mode and a penguin (or two) shows in the
 corner of the screen. Failing to do will at worst panic the kernel if it
 can't figure out which stick to load the root filesystem from.
 
-I know, I know... Can I call it a feature?
-
-
-Step Four:
+I know, I know... Can I call that a feature?
 
