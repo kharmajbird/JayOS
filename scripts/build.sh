@@ -1,9 +1,10 @@
 #!/bin/sh
 
 #
-# Initiate the build of a JayOS Live CD (based on Linux From Scratch)
+# Script to initiate the build of a JayOS Live CD (based on Linux From Scratch)
 #
 
+# set FS=0 if sources are already in /lfs/build/JayOS
 FS=1
 
 # ensure these two directories exist
@@ -13,11 +14,11 @@ LFS=/lfs
 SCRATCH=/fs/fs
 #
 
-HEAD=$LFS/build/JayOS
+#
+# create a 12GB filesystem, mount, and populate with sources
+#
 
-#
-# create the filesystem, mount, and populate with sources
-#
+HEAD=$LFS/build/JayOS
 
 if [ $FS = "1" ]; then
     echo "Creating /lfs loopback filesystem on $SCRATCH..." && \
@@ -36,17 +37,17 @@ fi
 
 #
 # launch the LFS build
-# due to the clean room, we need the user's help
+# due to the clean room ahead, we need the user's help
 #
 
 (cd $HEAD/lfs && make prep)
 
 echo "=============================================================="
 echo
-echo "You are now within a clean shell environment, ready to begin"
-echo "the LFS/BLFS/JLFS build process."
+echo "Ready to begin the LFS/BLFS/JLFS build process!"
 echo
-echo "Please run the two commands below to continue the build:"
+echo "You are about to step within a clean shell environment..."
+echo "Please run the two commands below to continue the build"
 echo
 echo "=============================================================="
 echo
