@@ -167,7 +167,7 @@ fs "Fourteen" "/Fourteen" 0 1 1 0 0
 fs mount_command mkdir -p /Fourteen; mount -o rw,force /dev/disk/by-label/Fourteen /Fourteen
 fs umount_command umount /Fourteen
 fs "15" "/15" 0 1 1 0 0
-fs mount_command if [ -f /Earcandy/fs/15.fs; then mkdir -p /15; gmt /15 /Earcandy/fs/15.fs; fi
+fs mount_command if [ -f /Earcandy/fs/15.fs ]; then mkdir -p /15; gmt /15 /Earcandy/fs/15.fs; fi
 fs umount_command mt /15
 fs fs_check_timeout 2
 fs nfs_check_timeout 16
