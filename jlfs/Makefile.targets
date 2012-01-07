@@ -850,6 +850,8 @@ boot:
 ##########################################################################
 
 iso:
+	mkdir -p $(LFS)/build/iso
+
 	if [ ! -f $(ROOTFS).gz ]; then \
 		make VERSION=$(VERSION)-$(ARCH) root && \
 		\
@@ -891,7 +893,6 @@ iso-write:
 	if [ "$(ARCH)" = "x86"  -o "$(ARCH)" = "486" -o "$(ARCH)" = "xen" ]; then \
 		if [ "$(INCLUDE_SRC)" = "1" ]; then \
 			ISO=$(ISOx86); \
-			echo BUILDTBALL="/jlfs-buildfs.tbz=/cd/jlfs-buildfs.tbz"; \
 			SRCPOINT="/src=$(BURN_SRC)"; \
 		else \
 			ISO=$(ISOx86-SHORT); \
@@ -913,7 +914,6 @@ iso-write:
 			-boot-info-table \
 			-graft-points \
 				$${SRCPOINT} \
-				$${BUILDTBALL} \
 				/doc=$(LFS)/build/JayOS/doc \
 				/boot=$(LIVECD)/boot \
 				/isolinux.cfg=$(LIVECD)/boot/isolinux.cfg \
@@ -927,6 +927,8 @@ iso-write:
 ##########################################################################
 #
 # Rename ISOs to match VERSION and ARCH
+#
+# -- abandoned territory... use at your own risk
 #
 ##########################################################################
 rename-iso:
@@ -997,10 +999,16 @@ install-vaio:
 ##########################################################################
 
 usb:
-	gzip -dc $(USB-TARBALLS)/$(STICK1).gz > /lfs/build/$(STICK1) && \
-	gzip -dc $(USB-TARBALLS)/$(STICK2).gz > /lfs/build/$(STICK2) && \
+	mkdir -p $(LFS)/build/iso && \
+	gzip -dc $(USB-TARBALLS)/$(STICK1).gz > /lfs/build/iso/$(STICK1) && \
+	echo "Creating checksum for $(STICK1)..." && \
+	md5sum /lfs/build/iso/$(STICK1) > /lfs/build/iso/$(STICK1).md5 && \
 	\
-	/sbin/kpartx -a /lfs/build/$(STICK2) && \
+	gzip -dc $(USB-TARBALLS)/$(STICK2).gz > /lfs/build/iso/$(STICK2) && \
+	echo "Creating checksum for $(STICK2)..." && \
+	md5sum /lfs/build/iso/$(STICK2) > /lfs/build/iso/$(STICK2).md5 && \
+	\
+	/sbin/kpartx -a /lfs/build/iso/$(STICK2) && \
 	rm -rf $(MNT) && mkdir $(MNT) && \
 	ls /dev/dm-1 && sleep 5 && \
 	mount /dev/dm-1 $(MNT) && \
@@ -1009,4 +1017,4 @@ usb:
 	find $(MNT)/doc -name .svn -type d| xargs rm -rf && \
 	\
 	umount /dev/dm-1 && \
-	/sbin/kpartx -d /lfs/build/$(STICK2)
+	/sbin/kpartx -d /lfs/build/iso/$(STICK2)
