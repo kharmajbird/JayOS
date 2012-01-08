@@ -21,15 +21,6 @@ for i in `cat /proc/cmdline`; do
 		# preconfigured 1280x1024
 		#qemu=y)	    cp -a $CFG.qemu $CFG && exit ;;
 
-		# go through system-display-config
-		#newvid)
-		#	rm -f $CFG
-    		#	cd /root 
-    		#	cat .xinitrc > .xinitrc.orig
-    		#	cat .xinitrc.cfg > .xinitrc
-    		#	/usr/bin/startx
-		#	;;
-
 		framebuf)   
 			rm -f $CFG
     			/usr/bin/Xorg -configure
