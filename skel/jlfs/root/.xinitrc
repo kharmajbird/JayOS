@@ -23,6 +23,9 @@ fi
 eval `dbus-launch`
 export DBUS_SESSION_BUS_ADDRESS
 
+# ssh agent
+eval `ssh-agent`
+
 gkrellm &
 xdaliclock -24 -transparent -foreground white -noseconds -geometry 293x92-3+34 &
 xset s off
