@@ -130,11 +130,10 @@ for ARG in `cat /proc/cmdline`; do
         localdev=*) LOCALDEV=`echo $ARG| sed 's/^.*=//'` ;;
         localfs=*)  LOCALFS=`echo $ARG| sed 's/^.*=//'` ;;
 
-        #altfs=*)    ALTFS=`echo $ARG| sed 's/^.*=//'`
-        #            CRYPT="-e aes"
-        #            busybox echo "Setting alternate rootfs"
-        #            #ROOTFS=
-        #            ;;
+        altfs=*)    ALTFS=`echo $ARG| sed 's/^.*=//'`
+                    CRYPT="-e aes"
+                    busybox echo "Setting alternate rootfs"
+                    ;;
 
         usrram)     USRRAM=1 ;;
         nousrram)   USRRAM=0 ;;

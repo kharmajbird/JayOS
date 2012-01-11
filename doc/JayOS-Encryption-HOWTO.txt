@@ -6,17 +6,16 @@ hidden data into a filesystem.
 
 
 This procedure was tested with:
-	JayOS-iMac-20060824, JayOS-iMac-20060818
-	JayOS-x86-20060824, JayOS-x86-20060818 
+	JayOS-x86-20120111
 
 
 --- already done for you, see /cd/boot/root.alt
 After booting normally, run the script /root/bin/mklo to create an
 encrypted copy of your currently-mounted root filesystem. The following
-command will create 64MB encrypted ext2 filesystem (journal doesn't
+command will create a 160 MB encrypted ext2 filesystem (journal doesn't
 work on loopback devices),
 
-mklo -e -t ext2 -s 64 -f /mnt/boot/root.alt
+mklo -e -t ext2 -s 160 -f /lfs/build/livecd/boot/root.alt
 ---
 
 
@@ -31,7 +30,7 @@ to /sbin/init as usual. Within the root filesystem, losetup has been
 patched so that the Password: prompt is not displayed, but this is not
 the case for the losetup in initrd. 
 
-The password for root.alt on the livecd is "jay-zareasonabledoubt".
+The password for root.alt on the livecd is "steviewonder-innervisions".
 Once you have successfully booted, look in root's home directory for the
 password to use when prompted in the steps below.
 
