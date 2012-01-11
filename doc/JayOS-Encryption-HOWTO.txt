@@ -1,29 +1,30 @@
-This is a brief explanation of how to use encryption under the most
-recent release of JayOS. It will walk you through the steps of creating
-and booting an encrypted root filesystem, and how to insert and extract
+This is an explanation of how to use encryption under the most recent
+release of JayOS. It will walk you through the steps of creating and
+booting an encrypted root filesystem, and how to insert and extract
 hidden data into a filesystem.
 
+This procedure was last tested with JayOS-x86-20120111.
 
+#
 
-This procedure was tested with:
-	JayOS-x86-20120111
+First of all, it is assumed that the system has already been compiled
+by scripts/build.sh, and /lfs/build/livecd exist and is populated.
 
-
---- already done for you, see /cd/boot/root.alt
-After booting normally, run the script /root/bin/mklo to create an
-encrypted copy of your currently-mounted root filesystem. The following
-command will create a 160 MB encrypted ext2 filesystem (journal doesn't
-work on loopback devices),
+From the livecd, run the script /root/bin/mklo to create an encrypted
+copy of your currently-mounted root filesystem. The following command
+will create a 160 MB encrypted ext2 filesystem (journaling doesn't work
+on loopback devices),
 
 mklo -e -t ext2 -s 160 -f /lfs/build/livecd/fs/root.alt
----
 
+Rebuild the livecd by changing into /lfs/src/jlfs and running "make livecd".
 
+#
 
 The next time you boot, give pass the kernel the "altfs" parameter. This
 will tell /initrd/linuxrc that you want to load fs/root.alt instead
-of fs/root.gz. It will copy into memory the above file, assume
-it is encrypted, and pause for the passphrase. You can type in the
+of fs/root.gz. It will copy into memory the above file, 
+and pause for the passphrase. You can type in the
 password after dd prints its message. If you give the wrong password,
 the unencrypted root filesystem is loaded instead, and control passes
 to /sbin/init as usual. Within the root filesystem, losetup has been
@@ -34,21 +35,25 @@ The password for root.alt on the livecd is "steviewonder-innervisions".
 Once you have successfully booted, look in root's home directory for the
 password to use when prompted in the steps below.
 
-The default name root.alt can be overridden with altfs=your.filename
+The default name root.alt can be overridden with altfs=path/filename
 
 
 
-Q) How do you know root is encrypted?
 
-Do an losetup on /dev/loop7, where root is mounted. You'll see it points
-to /dev/ram1, and is encrypted with aes128.  Use dd to copy the first
-megabyte of /dev/ram1 to a file, then run file against the newly created
-file and note its file type: data. Do the same for /dev/loop7 and see
-that the filesystem type is recognized.
+#
+# How to prove the root filesystem is encrypted
+#
+
+Do an losetup on /dev/loop7, where root is mounted. You'll see it
+points to /dev/ram1, and is encrypted with aes128.  Use dd to copy the
+first megabyte of /dev/ram1 to a file, then run file against the newly
+created file and note its file type: data. Do the same for /dev/loop7
+and see that the filesystem type is recognized.
 
 
-
-How to pull encrypted data from a filesystem
+#
+# How to pull encrypted data from a filesystem
+#
 
 For this example, I have chosen to use the current root filesystem ramdisk 
 as the storage location. 
@@ -64,25 +69,25 @@ mount -o loop /tmp/small.fs /tmp/j
 ls -l /tmp/j
 
 
+#
+# How to hide encrypted data in a filesystem
+#
 
-
-
-How to hide encrypted data in a filesystem
-
-There is a patch in JayOS/patches/jlfs named runefs-initrd.patch. After
+There is a patch in patches/jlfs named runefs-initrd.patch. After
 build.sh completes, patch the source tree with this command:
 
 /usr/src# patch -Np3 < /lfs/build/JayOS/patches/jlfs/runefs-initrd.patch
 
-
 A small file will be created named small.fs.gz. It is a compressed ext2
-filesystem containing a single file. It could easily be anything you want
-it to be. Now when "make boot" is run, code in the Makefile will insert
-small.fs.gz into either the root filesystem, or the initial ramdisk 
-where it cannot be readily found.
+filesystem containing a single file. It could easily be anything you
+want it to be.
 
+Edit jlfs/Makefile.vars and uncomment the second set of the variables
+ADDFS and ADDFSDIR.
 
+Now when "make root" is run, code in jlfs/Makefile.targets will insert
+small.fs.gz into either the root filesystem, or the initial ramdisk
+where its existence will be hard to prove.
 
-
-All sources and patches used to make this happen are provided on the
-source CD, but not necessarily compiled during the normal build process.
+All sources and patches used to make this happen are provided but not
+necessarily compiled during the normal build process.
