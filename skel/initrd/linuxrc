@@ -29,11 +29,6 @@ mount_root()
     echo "Mounting $ROOTDEV..."
     mount -t auto $ROOTDEV $MNT
 
-    if [ $? -ne 0 ]; then
-        echo "Error mounting $ROOTDEV; ABENDing"
-        exit
-    fi
-
     if [ "$CRYPT" = "" ]; then
         echo "Copying rootfs from $ROOTDEV into RAM..."
 
@@ -53,6 +48,7 @@ mount_root()
             echo "U-Turn..."
             losetup -d $LOOP
             CRYPT=
+            ROOTFS="fs/root.gz"
             mount_root
         else
             echo "0x0707" > /proc/sys/kernel/real-root-dev
@@ -130,9 +126,10 @@ for ARG in `cat /proc/cmdline`; do
         localdev=*) LOCALDEV=`echo $ARG| sed 's/^.*=//'` ;;
         localfs=*)  LOCALFS=`echo $ARG| sed 's/^.*=//'` ;;
 
-        altfs=*)    ALTFS=`echo $ARG| sed 's/^.*=//'`
+        altfs*)     ALTFS=`echo $ARG| sed 's/^.*=//'`
+                    if [ "$ALTFS" = "altfs" ]; then ALTFS="fs/root.alt"; fi
                     CRYPT="-e aes"
-                    ROOTDEV=`echo $ARG| sed 's/^.*=//'`
+                    ROOTFS=`echo $ARG| sed 's/^.*=//'`
                     busybox echo "Setting alternate rootfs"
                     ;;
 
