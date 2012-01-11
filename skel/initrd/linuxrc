@@ -132,7 +132,7 @@ for ARG in `cat /proc/cmdline`; do
 
         altfs=*)    ALTFS=`echo $ARG| sed 's/^.*=//'`
                     CRYPT="-e aes"
-                    ROOTDEV=`echo $ARG| sed 's/^.*=//'` ;;
+                    ROOTDEV=`echo $ARG| sed 's/^.*=//'`
                     busybox echo "Setting alternate rootfs"
                     ;;
 
