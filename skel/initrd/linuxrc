@@ -40,10 +40,9 @@ mount_root()
 
         dd if=$MNT/$ALTFS of=/dev/ram1 bs=1024k || sh
         losetup $CRYPT $LOOP /dev/ram1
+        mount -t ext2 $LOOP $MNT || sh
 
         # circle back and load unencrypted root if password bad
-        mount $LOOP $MNT
-
         if [ $? -ne 0 ]; then
             echo "U-Turn..."
             losetup -d $LOOP
@@ -55,6 +54,7 @@ mount_root()
         fi
     fi
 
+    sh
     umount $MNT
 
     #
@@ -67,8 +67,6 @@ mount_root()
     if [ $DEBUG ]; then sh; fi
 
     cd $MNT
-    umount /proc
-    umount /sys
     /sbin/pivot_root . initrd
     exec /sbin/chroot . /sbin/init 3
 
