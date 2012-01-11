@@ -7,9 +7,6 @@ MNT="/mnt"
 CRYPT=""
 LOOP=/dev/loop7
 
-export MNT CRYPT LOOP
-
-
 copy_usr()
 {
     echo "Mounting $USRDEV..." 2>/dev/null
@@ -40,7 +37,7 @@ mount_root()
 
         dd if=$MNT/$ALTFS of=/dev/ram1 bs=1024k || sh
         losetup $CRYPT $LOOP /dev/ram1
-        mount -t ext2 $LOOP $MNT || sh
+        mount -t ext2 $LOOP $MNT
 
         # circle back and load unencrypted root if password bad
         if [ $? -ne 0 ]; then
@@ -51,10 +48,11 @@ mount_root()
             mount_root
         else
             echo "0x0707" > /proc/sys/kernel/real-root-dev
+
+            # lazy unmount required!
+            umount -l $MNT
         fi
     fi
-
-    sh
     umount $MNT
 
     #
@@ -67,6 +65,7 @@ mount_root()
     if [ $DEBUG ]; then sh; fi
 
     cd $MNT
+    umount /proc
     /sbin/pivot_root . initrd
     exec /sbin/chroot . /sbin/init 3
 
@@ -88,7 +87,6 @@ echo
 sleep 5
 
 mount -t proc none /proc
-mount -t sysfs none /sys
 
 #
 # load modules and pause for hardware recognition
@@ -97,8 +95,6 @@ mount -t sysfs none /sys
 for i in $MODULE_LIST; do
     if [ -f /lib/$i.ko ]; then insmod /lib/$i.ko 2>/dev/null; fi
 done
-
-
 echo "Tired, taking 5..."; sleep 5
 
 
