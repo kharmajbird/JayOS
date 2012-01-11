@@ -15,14 +15,14 @@ encrypted copy of your currently-mounted root filesystem. The following
 command will create a 160 MB encrypted ext2 filesystem (journal doesn't
 work on loopback devices),
 
-mklo -e -t ext2 -s 160 -f /lfs/build/livecd/boot/root.alt
+mklo -e -t ext2 -s 160 -f /lfs/build/livecd/fs/root.alt
 ---
 
 
 
-The next time you boot, give pass the kernel the "alt" parameter. This
-will tell /initrd/linuxrc that you want to load boot/root.alt instead
-of boot/root.gz. It will copy into memory the above file, assume
+The next time you boot, give pass the kernel the "altfs" parameter. This
+will tell /initrd/linuxrc that you want to load fs/root.alt instead
+of fs/root.gz. It will copy into memory the above file, assume
 it is encrypted, and pause for the passphrase. You can type in the
 password after dd prints its message. If you give the wrong password,
 the unencrypted root filesystem is loaded instead, and control passes
@@ -34,6 +34,7 @@ The password for root.alt on the livecd is "steviewonder-innervisions".
 Once you have successfully booted, look in root's home directory for the
 password to use when prompted in the steps below.
 
+The default name root.alt can be overridden with altfs=your.filename
 
 
 
@@ -68,11 +69,11 @@ ls -l /tmp/j
 
 How to hide encrypted data in a filesystem
 
-There is a patch in /cd/src/jlfs named runefs-initrd.patch. During the
-JayOS build process, before running "make boot", patch the source tree
-with this command:
+There is a patch in JayOS/patches/jlfs named runefs-initrd.patch. After
+build.sh completes, patch the source tree with this command:
 
-patch -Np3 < runefs-initrd.patch
+/usr/src# patch -Np3 < /lfs/build/JayOS/patches/jlfs/runefs-initrd.patch
+
 
 A small file will be created named small.fs.gz. It is a compressed ext2
 filesystem containing a single file. It could easily be anything you want
@@ -85,4 +86,3 @@ where it cannot be readily found.
 
 All sources and patches used to make this happen are provided on the
 source CD, but not necessarily compiled during the normal build process.
-Happy hunting!
