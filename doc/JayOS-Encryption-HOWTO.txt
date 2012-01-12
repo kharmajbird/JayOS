@@ -12,31 +12,29 @@ by scripts/build.sh, and /lfs/build/livecd exist and is populated.
 
 From the livecd, run the script /root/bin/mklo to create an encrypted
 copy of your currently-mounted root filesystem. The following command
-will create a 160 MB encrypted ext2 filesystem (journaling doesn't work
+will create a 115 MB encrypted ext2 filesystem (journaling doesn't work
 on loopback devices),
 
-mklo -e -t ext2 -s 160 -f /lfs/build/livecd/fs/root.alt
+mklo -e -t ext2 -s 115 -f /lfs/build/livecd/fs/root.alt
 
 Rebuild the livecd by changing into /lfs/src/jlfs and running "make livecd".
 
 #
 
 The next time you boot, give pass the kernel the "altfs" parameter. This
-will tell /initrd/linuxrc that you want to load fs/root.alt instead
-of fs/root.gz. It will copy into memory the above file, 
-and pause for the passphrase. You can type in the
-password after dd prints its message. If you give the wrong password,
-the unencrypted root filesystem is loaded instead, and control passes
-to /sbin/init as usual. Within the root filesystem, losetup has been
-patched so that the Password: prompt is not displayed, but this is not
-the case for the losetup in initrd. 
+will tell /initrd/linuxrc that you want to load fs/root.alt instead of
+fs/root.gz. It will copy into memory the above file, and pause for the
+passphrase. You can type in the password after dd prints its message. If
+you give the wrong password, the unencrypted root filesystem is loaded
+instead, and control passes to /sbin/init as usual. Within the root
+filesystem, losetup has been patched so that the Password: prompt is
+not displayed, but this is not the case for the losetup in initrd.
 
 The password for root.alt on the livecd is "steviewonder-innervisions".
-Once you have successfully booted, look in root's home directory for the
-password to use when prompted in the steps below.
+Once you have successfully booted, look in root's home directory for
+the password to use when prompted in the steps below.
 
 The default name root.alt can be overridden with altfs=path/filename
-
 
 
 

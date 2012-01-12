@@ -66,7 +66,7 @@ livecd:	un-prep strip-man root initrd boot usr opt iso usb
 	echo
 
 #
-# I saved 130MB in my /usr by not including Samba!!! :)
+#
 #
 bloat:
 	$(LFS)/usr/sbin/chroot $(LFS) /bin/env -i \
@@ -113,7 +113,7 @@ inside-chroot:
 	touch /tmp/sallgood
 
 #
-# a 200+ MB saving in cool stuff I don't use
+# a 100+ MB saving in cool stuff I rarely use
 #
 
 inside-bloat:
