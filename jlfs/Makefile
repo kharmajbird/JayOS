@@ -57,6 +57,33 @@ all:
 include Makefile.targets
 
 livecd:	un-prep strip-man root initrd boot usr opt iso usb
+	echo
+	echo "This system has been built without the following packages:"
+	echo "$(SAMBA), $(QDVDAUTHOR)"
+	echo
+	echo "If you would like to include them, run make bloat"
+	echo "from /usr/src"
+	echo
+
+#
+# I saved 130MB in my /usr by not including Samba!!! :)
+#
+bloat:
+	$(LFS)/usr/sbin/chroot $(LFS) /bin/env -i \
+		\
+		HOME=/root \
+		TERM=$(TERM) \
+		PS1='\u:\w\$ ' \
+		PATH=/bin:/usr/bin:/sbin:/usr/sbin \
+		\
+		/bin/bash -c ' \
+			SHELL=/bin/bash \
+			cd /usr/src && make inside-bloat '
+
+	if [ -f $(LFS)/tmp/sallgood ]; then \
+		rm -f $(LFS)/tmp/sallgood && \
+		make strip; \
+	fi
 
 #
 #
@@ -84,6 +111,21 @@ inside-chroot:
 		$(JLFS-BLACKHAT-LIB) && \
 	\
 	touch /tmp/sallgood
+
+#
+# a 200+ MB saving in cool stuff I don't use
+#
+
+inside-bloat:
+	touch /tmp/timestamp && rm -f /tmp/sallgood
+
+	cd /usr/src && make SHELL=/bin/sh \
+		$(SAMBA) \
+		$(QDVDAUTHOR) && \
+	\
+	touch /tmp/sallgood
+
+	make strip-man
 
 #
 # Begin JLFS Custom-CLI
