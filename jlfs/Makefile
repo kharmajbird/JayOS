@@ -90,6 +90,10 @@ bloat:
 		make strip; \
 	fi
 
+	make strip-man
+	make usr
+	make opt
+
 #
 #
 #
@@ -125,12 +129,9 @@ inside-bloat:
 	touch /tmp/timestamp && rm -f /tmp/sallgood
 
 	cd /usr/src && make SHELL=/bin/sh \
-		$(SAMBA) \
-		$(QDVDAUTHOR) && \
+		$(JLFS-BLOATED) && \
 	\
 	touch /tmp/sallgood
-
-	make strip-man
 
 #
 # Begin JLFS Custom-CLI
