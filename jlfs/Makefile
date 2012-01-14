@@ -1,3 +1,8 @@
+#
+#
+# First run "make", then (optionally) "make strip-man", then "make livecd"
+# If you want absolutely everything, run "make bloat" before "make livecd"
+#
 ##########################################################################
 #
 VERSION=20120111
@@ -57,13 +62,13 @@ all:
 include Makefile.targets
 
 livecd:	un-prep strip-man root initrd boot usr opt iso usb
-	echo
-	echo "This system has been built without the following packages:"
-	echo "$(SAMBA), $(QDVDAUTHOR)"
-	echo
-	echo "If you would like to include them, run make bloat"
-	echo "from /usr/src"
-	echo
+	@echo
+	@echo "This system has been built without the following packages:"
+	@echo "$(JLFS-BLOATED)"
+	@echo
+	@echo -n "If you would like to include them, run \"make bloat\" "
+	@echo "from /usr/src"
+	@echo
 
 #
 #

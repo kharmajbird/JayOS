@@ -367,7 +367,7 @@ usr:  usr-prereqs
 	if [ "$(WITHOUT-DEVEL)" != "" ]; then \
 		USREXCL="include"; \
 	fi && \
-	$(MKSQUASHFS-BIN) $(LFS)/usr $(USRFS) -e src $${USREXCL} && \
+	$(MKSQUASHFS-BIN) $(LFS)/usr $(USRFS) -noappend -e src $${USREXCL} && \
 	\
 	rm -rf $(MNT) && mkdir $(MNT) && \
 	ln -sfn /lfs/usr/src $(MNT)/src && \
