@@ -1,3 +1,13 @@
+[ 20120111 ]
+
+	The LiveCD image was becoming larger than 800MB, so I moved a
+	handful of non-essential packages out of the standard build and into 
+	a separate Make target called "bloat".
+
+	The altfs boot option is working again, and a sample root.alt is
+	included on the LiveCD. See doc/JayOS-Encryption-HOWTO.txt for details.
+
+	
 [ 20111225 ]
 
 	Upgraded to the latest glib2 and friends to compile the latest 
@@ -21,6 +31,7 @@
 
 
 [ 20110225 ]
+
 	Upgraded the core to the latest 6.7 LinuxFromScratch project, and 
 	the development version of the BeyondLinuxFromScratch project.
 
@@ -36,10 +47,12 @@
 
 
 [ 20110214 ]
+
 	Released two USB drive images capable of booting 20100601.
 
 
 [ 20100601 ]
+
 	Many, Many Updates! 
 
 	Jay's Linux From Scratch (JayOS | JLFS) now sits on top of
