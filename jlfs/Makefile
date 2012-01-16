@@ -7874,7 +7874,8 @@ $(NET-TOOLS):
 		-e 's|HAVE_MII 0|HAVE_MII 1|g' config.h && \
 	sed -i -e 's|# HAVE_IP_TOOLS=0|HAVE_IP_TOOLS=1|g' \
 		-e 's|# HAVE_MII=0|HAVE_MII=1|g' config.make && \
-	make -j2 && \
+	echo no make -j2 && \
+	make && \
 	make update && \
 	cd .. && \
 	rm -rf $(NET-TOOLS)/* && \
