@@ -1,0 +1,4 @@
+One reason you may want to try out JayOS is to use it for building the latest 
+Linux From Scratch, whose LiveCD is no longer being maintained.  Just boot
+JayOS, download the LFS book (current 7.0) and follow the book's instructions.
+
