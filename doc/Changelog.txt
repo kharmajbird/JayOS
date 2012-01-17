@@ -1,4 +1,4 @@
-[ 20120111 ]
+[ 20120116 ]
 
 	The LiveCD image was becoming larger than 800MB, so I moved a
 	handful of non-essential packages out of the standard build and
