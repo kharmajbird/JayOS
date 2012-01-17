@@ -7,8 +7,8 @@ for a non-intrusive, secure mobile workstation. Source and build
 instructions for x86 and Intel Macs are included and easily modified.
 
 Features a 2.6 kernel, many network security and filesystem tools, and QEMU. 
-It is also a full-blown development environment with many programming tools 
-and libraries including gcc, gdb, ddd, perl, gtk, tcl/tk, python, and glade-3. 
+It is also a development environment with many programming tools & libraries 
+including gcc, gdb, ddd, perl, gtk, php, ruby, tcl/tk, python, & glade-3. 
 
 A small footprint lets it run well on low-end hardware, yet it is able to
 take advantage of extra RAM to run entirely from memory. Instructions are
