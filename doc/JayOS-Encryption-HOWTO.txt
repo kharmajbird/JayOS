@@ -50,42 +50,42 @@ and see that the filesystem type is recognized.
 
 
 #
-# How to pull encrypted data from a filesystem
-#
-
-For this example, I have chosen to use the current root filesystem ramdisk 
-as the storage location. 
-
-mkdir /tmp/j
-
-/initrd/bin/busybox rune /dev/ram1| \
-    aespipe -d -e aes128 > \
-        /tmp/small.fs.gz
-
-gzip -d /tmp/small.fs.gz
-mount -o loop /tmp/small.fs /tmp/j
-ls -l /tmp/j
-
-
-#
-# How to hide encrypted data in a filesystem
+# How to store encrypted data in a filesystem
 #
 
 There is a patch in patches/jlfs named runefs-initrd.patch. After
 build.sh completes, patch the source tree with this command:
 
-/usr/src# patch -Np3 < /lfs/build/JayOS/patches/jlfs/runefs-initrd.patch
+/usr/src# patch -Np2 < /lfs/build/JayOS/patches/jlfs/runefs-root.patch
 
-A small file will be created named small.fs.gz. It is a compressed ext2
-filesystem containing a single file. It could easily be anything you
-want it to be.
+A small file will be created named myaddons.tbz. Extract it and examine
+it. It's purpose is to change the splash screen when Xorg fires up,
+but it could easily be anything you want it to be.
 
 Edit jlfs/Makefile.vars and uncomment the second set of the variables
 ADDFS and ADDFSDIR.
 
-Now when "make root" is run, code in jlfs/Makefile.targets will insert
-small.fs.gz into either the root filesystem, or the initial ramdisk
-where its existence will be hard to prove.
+Now when "make root" is run, code in jlfs/Makefile.targets will
+first prompt for an encryption passphrase, then use runefs to insert
+myaddons.tbz into the slack space of the ext2 filesystem, where its
+existence will be hard to prove.
+
+
+#
+# How to pull encrypted data from a filesystem
+#
+
+The root filesystem on the LiveCD has easter eggs :)
+
+The password prompt is a red herring of sorts.  If anything other than
+the passphrase "fulfillingnessfirstfinale" is entered, the boot will
+ignore the entry and continue as usual.  With the proper passphrase
+however, ~/.bash_profile will use the following command to extract the
+encrypted data:
+
+/initrd/bin/busybox rune /dev/ram1| \
+    aespipe -d -e aes128 > \
+        /tmp/myaddons.tbz
 
 All sources and patches used to make this happen are provided but not
-necessarily compiled during the normal build process.
+compiled by default during the normal build process.
