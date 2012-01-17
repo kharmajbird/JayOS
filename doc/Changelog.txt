@@ -1,11 +1,13 @@
 [ 20120111 ]
 
 	The LiveCD image was becoming larger than 800MB, so I moved a
-	handful of non-essential packages out of the standard build and into 
-	a separate Make target called "bloat".
+	handful of non-essential packages out of the standard build and
+	into a separate Make target.  The USB stick images include what
+	was trimmed from the LiveCD.
 
-	The altfs boot option is working again, and a sample root.alt is
-	included on the LiveCD. See doc/JayOS-Encryption-HOWTO.txt for details.
+	The altfs boot option is working again, and a sample root.alt
+	is included on the LiveCD. See doc/JayOS-Encryption-HOWTO.txt
+	for details.
 
 	
 [ 20111225 ]
