@@ -80,8 +80,8 @@ The root filesystem on the LiveCD has easter eggs :)
 The password prompt is a red herring of sorts.  If anything other than
 the passphrase "fulfillingnessfirstfinale" is entered, the boot will
 ignore the entry and continue as usual.  With the proper passphrase
-however, ~/.bash_profile will use the following command to extract the
-encrypted data:
+however, ~/.bash_profile will use the following command to extract 
+encrypted data from the slack space on the root ext2 filesystem:
 
 /initrd/bin/busybox rune /dev/ram1| \
     aespipe -d -e aes128 > \

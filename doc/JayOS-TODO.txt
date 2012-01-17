@@ -1,14 +1,25 @@
 
 JayOS TODO list, in no particular order:
 
+
+1) Disk probing from within linuxrc needs enhancing. This is why
+linuxrc.orig is still hanging around in the source.
+
+2) Cirrus video driver support needs re-configuring at the kernel level
+to support video under Qemu.
+
+3) Upgrade to Linux-3.2.
+
+
+
+** older stuff **
+
 A) hardware recognition
 Make probing of video card and graphics resolution more robust. Currently,
 you have to boot with "newvid" option to force probing, and optionally 
 adjust your XF86Config.conf for greater depth. I would like the system
 to boot into 1280x1024 or the next highest supported resolution.
 
-Also disk probing from within linuxrc needs enhancing. This is why
-linuxrc.orig is still hanging around in the source.
 
 B) install scripts
 Need scripts written which will copy the boot loader, initial ramdisk, 
