@@ -1,4 +1,37 @@
-One reason you may want to try out JayOS is to use it for building the latest 
-Linux From Scratch, whose LiveCD is no longer being maintained.  Just boot
-JayOS, download the LFS book (current 7.0) and follow the book's instructions.
+I first put JayOS together because I wanted to learn more about
+kernels, operating systems, toolchains, and how the system programs
+and applications intertwine and support each other on a Linux system.
+I had used so many other distros that I was itching to try my own hand
+at it, and to do things the Sinatra way.
 
+Now JayOS has become my Linux daily driver.
+
+The main reasons why I continue to use it is because it's super fast
+(everything runs from RAM), it's secure (see my docs on encryption),
+and it allows me to borrow any x86 workstation and still run within my
+own customized environment.
+
+I use a Mac Mini as my workstation, and typically boot JayOS from USB
+sticks.  I keep my data either in "the cloud" or on removable media.
+This way, I can step up to any other x86, laptop, or Mac Mini (people
+love to keep those in their entertainment centers!), boot JayOS and
+temporarily re-create my home workstation.
+
+Speaking of environments, I have always liked the Windows 98 user
+interface; it's clean, logical, and intuitive.  So I have made fvwm95
+the window manager in JayOS.  And yes, it still compiles.
+
+There is quite an eclectic mixture of modern and ancient applications
+installed, most of them linked against GNOME, GTK, or QT libraries.
+I think the only essentials missing that one might find in a commercial
+distribution is Java and some sort of Office Suite.  Both are excluded
+only because of their size.
+
+One other reason you may want to try out this out is to use it for
+building the latest Linux From Scratch, whose LiveCD is no longer being
+maintained.  Just boot JayOS, download the LFS book (current 7.0) and
+follow the book's instructions.
+
+Finally, if anybody out there is listening, I would next like to work
+with embedded operating systems of any sort, but especially any one
+based on Linux.
