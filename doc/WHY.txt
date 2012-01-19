@@ -27,7 +27,7 @@ I think the only essentials missing that one might find in a commercial
 distribution is Java and some sort of Office Suite.  Both are excluded
 only because of their size.
 
-One other reason you may want to try out this out is to use it for
+One other reason you may want to try this out is to use it for
 building the latest Linux From Scratch, whose LiveCD is no longer being
 maintained.  Just boot JayOS, download the LFS book (current 7.0) and
 follow the book's instructions.
