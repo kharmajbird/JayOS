@@ -8,7 +8,7 @@
 S3=http://jayosrc.s3-website-us-west-1.amazonaws.com/tarballs
 PKGLIST=/lfs/build/JayOS/figs/pkglist
 HEAD=/lfs/build/JayOS/tarballs
-DIRS="jlfs lfs"
+DIRS="jlfs lfs usb"
 XDIRS="xorg/app xorg/driver xorg/font xorg/lib xorg/proto xorg/util xorg/xserver"
 
 STICK1=jlfs-USB-stick1.img.gz
@@ -23,6 +23,6 @@ for i in `cat $PKGLIST| grep -v ^#`; do
     wget -nH $S3/$i )
 done
 
-(cd $HEAD && \
+(cd $HEAD/usb && \
     wget -nH $S3/usb/$STICK1 && \
     wget -nH $S3/usb/$STICK2 )
