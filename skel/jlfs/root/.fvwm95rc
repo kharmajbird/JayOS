@@ -664,7 +664,8 @@ AddToMenu "Office" \
 DestroyMenu "FileManagers"
 AddToMenu "FileManagers" \
   "Explorer%explorer.xpm%"		Exec xwc
-+ "Subversion Client%mini-rball.xpm%"	Exec esvn
++ "Git Client%mini-rball.xpm%"		Exec xterm -bc -rv -fn 10x20 -geometry 80x6 -bg Wheat -fg black -e git gui
++ "Subversion Client%mini-bball.xpm%"	Exec esvn
 + "Windows Shares%mini.win95.xpm%"	Exec LinNeighborhood
 + ""                                    Nop
 #j#+ "Network filesystems%mini-dfolder.xpm%"	Exec system-config-nfs
