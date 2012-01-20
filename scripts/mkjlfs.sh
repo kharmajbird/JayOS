@@ -25,5 +25,5 @@ make prep && \
 cd /usr/src && \
 make && \
 make un-prep && \
-make strip-man && \
+make strip-man
 make livecd
