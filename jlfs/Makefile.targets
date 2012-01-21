@@ -546,9 +546,7 @@ root-generic:
 		mv $(MNT)/bin/mt $(MNT)/bin/mt.orig; \
 	fi && \
 	\
-	( cd $(SKEL-LFS) && \
-		find ./ -type d -name .svn -prune -o -print| \
-		cpio -pdu $(MNT) ) && \
+	cp -a $(SKEL-LFS)/* $(MNT) && \
 	\
 	( cd $(MNT)/usr && \
 		ln -s ../bin . && \
@@ -583,9 +581,7 @@ root-generic:
 	( cd $(MNT)/etc/rc.d/rc3.d && ln -sfn ../rc.local S99local ) && \
 	\
 	if [ "$(ADD-JLFS-SKEL)" = "1" ]; then \
-		( cd $(SKEL-JLFS) && \
-			find ./ -type d -name .svn -prune -o -print| \
-			cpio -pdu $(MNT) ); \
+		cp -a $(SKEL-JLFS)/* $(MNT); \
 	fi && \
 	\
 	echo $(VERSION) > $(MNT)/etc/lfs-release && \
@@ -639,9 +635,7 @@ root-uml:
 	$(LOSETUP-BIN) $(LOOPDEV) $(FSDIR)/uml.fs && \
 	$(MOUNT-BIN) $(LOOPDEV) $(MNT) && \
 	\
-	( cd $(SKEL-UML) && \
-		find ./ -type d -name .svn -prune -o -print| \
-		cpio -pdu $(MNT) ) && \
+	cp -a $(SKEL-UML)/* $(MNT) && \
 	\
 	$(UMOUNT-BIN) $(LOOPDEV) && $(LOSETUP-BIN) -d $(LOOPDEV)
 
@@ -744,9 +738,7 @@ initrd:
 		cp -av $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/extra/loop.ko $(MNT)/lib; \
 	fi
 
-	( cd $(SKEL-INITRD) && \
-		find ./ -type d -name .svn -prune -o -print| \
-		cpio -pdu $(MNT) ) && \
+	cp -a $(SKEL-INITRD)/* $(MNT) && \
 	\
 	( cd $(MNT)/bin && ln -sfn test [ ) && \
 	\
@@ -826,9 +818,7 @@ boot:
 	fi && \
 	\
 	if [ "$(ARCH)" = "imac" ]; then \
-		( cd $(SKEL-EFI) && \
-			find ./ -type d -name .svn -prune -o -print| \
-			cpio -pdu $(LIVECD) ); \
+		cp -a $(SKEL-EFI)/* $(MNT); \
 	fi && \
 	\
 	if [ $(OPENVZ) ]; then \
