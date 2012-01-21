@@ -1,0 +1,2 @@
+KERNEL="fb[0-9]*",	GROUP="video", MODE="0620"
+
