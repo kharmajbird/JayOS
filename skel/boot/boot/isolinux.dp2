@@ -16,7 +16,7 @@ video=imacfb:macbook
 -----MISC-------
 usrram            Copy /usr into RAM for speed; only for systems with 1GB+ RAM
 addons            Pull encrypted data from root filesystem
-alt               Use encrypted root filesystem
+altfs             Use encrypted root filesystem
 dhcp|nodhcp       Start/Stop DHCP client
 ssh               Start sshd daemon
 nofw              Prevent firewall from starting
