@@ -5,9 +5,6 @@ JayOS TODO list, in no particular order:
 1) Disk probing from within linuxrc needs enhancing. This is why
 linuxrc.orig is still hanging around in the source.
 
-2) Cirrus video driver support needs re-configuring at the kernel level
-to support video under Qemu.
-
 3) Upgrade to Linux-3.2.
 
 
