@@ -77,10 +77,13 @@ fi
 
 #
 # macmini keeps wonky time
+# also while we are here, customize intel graphics card for xorg
 #
 if [ ! `grep Macmini /var/log/messages >/dev/null` ]; then
     perl -p -i -e 's/UTC=0/UTC=1/' /etc/sysconfig/clock
     /etc/rc.d/init.d/setclock start
+
+    cp -av /etc/X11/xorg.conf.intel /etc/X11/xorg.conf
 fi
 
 #
