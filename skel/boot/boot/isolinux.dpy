@@ -16,7 +16,7 @@ available to demonstrate installation to internal and external disk storage.
 
          Please wait for a minimal graphical environment to launch. 
       or Enter   "jayos"   for the bleeding-edge kernel,
-                 "qemu"    for booting under QEMU or other emulation
+
 
 If anything breaks, you get to keep both pieces :) Jedi Knights see /src. 
 
