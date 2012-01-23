@@ -84,8 +84,11 @@ ANYFS-TOOLS = anyfs-tools-0.85.1c
 BLUEZ-HCIDUMP = bluez-hcidump-2.1
 LATENCYTOP = latencytop-0.4
 BRIDGE-UTILS = bridge-utils-1.4
-MADWIFI = madwifi-0.9.4
-MADWIFI-VER = r4136-20110304
+#
+# ath driver is in the kernel
+#j#MADWIFI = madwifi-0.9.4
+#j#MADWIFI-VER = r4136-20110304
+#
 DMIDECODE = dmidecode-2.9
 UNRAR = unrarsrc-3.7.8
 GPART = gpart-0.1f
