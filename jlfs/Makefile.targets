@@ -427,7 +427,7 @@ inside-opt-chroot:
 root:  root-prereqs root-generic
 
 root-prereqs:
-	chroot $(LFS) /bin/env -i \
+	/usr/sbin/chroot $(LFS) /bin/env -i \
 		\
 		HOME=/root \
 		TERM=$(TERM) \
@@ -598,7 +598,7 @@ root-generic:
 	\
 	mkdir -p $(LIVECD)/boot $(FSDIR) && \
 	\
-	chroot $(MNT) /sbin/ldconfig && \
+	/usr/sbin/chroot $(MNT) /sbin/ldconfig && \
 	$(UMOUNT-BIN) $(LOOPDEV) && $(LOSETUP-BIN) -d $(LOOPDEV) && \
 	gzip -9 $(ROOTFS)
 
