@@ -3,7 +3,7 @@ release of JayOS. It will walk you through the steps of creating and
 booting an encrypted root filesystem, and how to insert and extract
 hidden data into a filesystem.
 
-This procedure was last tested with JayOS-x86-20120116.
+This procedure was last tested with JayOS-x86-20120123.
 
 #
 
