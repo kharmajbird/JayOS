@@ -1,3 +1,8 @@
+[ 20120123 ]
+
+	This minor release fixes a kernel configuration error; now the ISO
+	image supports Xorg running under Qemu emulation again.
+
 [ 20120116 ]
 
 	The LiveCD image was becoming larger than 800MB, so I moved a
