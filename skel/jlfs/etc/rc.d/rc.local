@@ -84,7 +84,7 @@ if [ ! `grep Macmini /var/log/messages >/dev/null` ]; then
 fi
 
 # also while we are here, customize intel graphics card for xorg
-if [ `grep Macmini /var/log/messages >/dev/null` ]; then
+if [ ! `grep Macmini /var/log/messages >/dev/null` ]; then
     cp -av /etc/X11/xorg.conf.intel /etc/X11/xorg.conf
 fi
 
