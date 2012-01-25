@@ -112,7 +112,7 @@ openvz:  $(OPENVZ-KERNEL)
 	mkdir -p $(LFS)/lib/modules/$(OPENVZ-VER)/extra && \
 	cp -v loop.ko $(LFS)/lib/modules/$(OPENVZ-VER)/extra && \
 	\
-	chroot $(LFS) /bin/bash -c ' \
+	/usr/sbin/chroot $(LFS) /bin/bash -c ' \
 		cd /usr/src/$(OPENVZ-KERNEL) && make modules_install ' && \
 	\
 	cd .. && \
@@ -377,7 +377,7 @@ usr:  usr-prereqs
 	chmod 644 $(USRFS)
 
 usr-prereqs:
-	chroot $(LFS) /bin/env -i \
+	/usr/sbin/chroot $(LFS) /bin/env -i \
 		\
 		HOME=/root \
 		TERM=$(TERM) \
@@ -404,7 +404,7 @@ opt:  opt-prereqs
 	chmod 644 $(OPTFS)
 
 opt-prereqs:
-	chroot $(LFS) /bin/env -i \
+	/usr/sbin/chroot $(LFS) /bin/env -i \
 		\
 		HOME=/root \
 		TERM=$(TERM) \
@@ -777,7 +777,7 @@ initrd:
 #	rm -rf $(LFS)/usr/src/$(LOOP-AES) && \
 #	cd $(LFS)/usr/src && ln -sfn $(KERNEL-VANILLA-VER)-x86-vanilla linux && \
 #	\
-#	chroot $(LFS) /bin/env -i \
+#	/usr/sbin/chroot $(LFS) /bin/env -i \
 #		PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/X11R6/bin \
 #		KERNEL=linux-2.6.9 MODKERNEL=2.6.9 \
 #		/bin/bash -c "cd /usr/src/linux && touch /tmp/timestamp && \
@@ -786,7 +786,7 @@ initrd:
 #	\
 #	mkdir -p $(LFS)/lib/modules/2.6.9/kernel && \
 #	\
-#	chroot $(LFS) /bin/env -i \
+#	/usr/sbin/chroot $(LFS) /bin/env -i \
 #		PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/X11R6/bin \
 #		KERNEL=linux-2.6.9 MODKERNEL=2.6.9 \
 #		/bin/bash -c "cd /usr/src && touch /tmp/timestamp && \
