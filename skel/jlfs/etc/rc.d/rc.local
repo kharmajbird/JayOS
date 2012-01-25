@@ -76,22 +76,25 @@ if [ $SWAP ]; then
 fi
 
 #
-# macmini keeps wonky time
+# Mac Mini customizations
 #
-if [ ! `grep Macmini /var/log/messages >/dev/null` ]; then
+grep Macmini /var/log/messages >/dev/null
+
+if [ $? -eq 0 ]; then
+    # macmini keeps wonky time
     perl -p -i -e 's/UTC=0/UTC=1/' /etc/sysconfig/clock
     /etc/rc.d/init.d/setclock start
-fi
 
-# also while we are here, customize intel graphics card for xorg
-if [ ! `grep Macmini /var/log/messages >/dev/null` ]; then
+    # customize intel graphics card for xorg
     cp -av /etc/X11/xorg.conf.intel /etc/X11/xorg.conf
 fi
 
 #
-# my macally kbd doesn't have a SysReq key
+# my macally kbd doesn't have a SysReq key; fake one
 #
-echo "458856 99"| keyfuzz -s -d /dev/input/by-id/usb-Macally_Peripherals_Macally_ICEKey_keyboard-event-kbd
+echo "458856 99"| \
+	keyfuzz -s -d \
+/dev/input/by-id/usb-Macally_Peripherals_Macally_ICEKey_keyboard-event-kbd
 
 #
 # vaio (and maybe other) performance increases
