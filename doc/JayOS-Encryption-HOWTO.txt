@@ -77,6 +77,8 @@ existence will be hard to prove.
 
 The root filesystem on the LiveCD has easter eggs :)
 
+At the boot prompt, enter "jayos addons".
+
 The password prompt is a red herring of sorts.  If anything other than
 the passphrase "fulfillingnessfirstfinale" is entered, the boot will
 ignore the entry and continue as usual.  With the proper passphrase
