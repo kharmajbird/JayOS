@@ -4177,6 +4177,21 @@ $(LIBNL):
 	rm -rf $(LIBNL)/* && \
 	make P=$(LIBNL) log-package
 
+$(BOTO):
+	set +h && \
+	\
+	tar xvf $(JLFS-TARBALLS)/$(BOTO).tar.gz && \
+	chmod 755 $(BOTO) && \
+	chown -R 0:0 $(BOTO) && \
+	cd $(BOTO) && \
+	\
+	python setup.py build && \
+	python setup.py install && \
+	\
+	cd .. && \
+	rm -rf $(BOTO)/* && \
+	make P=$(BOTO) log-package
+
 # End JLFS Custom-Lib
 # Begin JLFS-Blackhat-Tools
 #
