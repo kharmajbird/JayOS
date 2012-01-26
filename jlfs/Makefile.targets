@@ -999,7 +999,7 @@ usb:
 	gzip -dc $(USB-TARBALLS)/$(STICK2).gz > /lfs/build/iso/$(STICK2) && \
 	\
 	/sbin/kpartx -a /lfs/build/iso/$(STICK2) && \
-	ls /dev/dm-1 && sleep 5 && \
+	ls /dev/dm-1 && sleep 10 && \
 	mount /dev/dm-1 $(MNT) && \
 	\
 	cp -av $(FSDIR) $(BOOTDIR) $(LFS)/build/JayOS/doc $(MNT) && \
