@@ -4180,7 +4180,7 @@ $(LIBNL):
 $(BOTO):
 	set +h && \
 	\
-	tar xvf $(JLFS-TARBALLS)/$(BOTO).tar.gz && \
+	tar jxvf $(JLFS-TARBALLS)/$(BOTO).tar.bz2 && \
 	chmod 755 $(BOTO) && \
 	chown -R 0:0 $(BOTO) && \
 	cd $(BOTO) && \

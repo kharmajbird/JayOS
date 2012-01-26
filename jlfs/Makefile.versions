@@ -214,7 +214,7 @@ LIBCANBERRA = libcanberra-0.28
 LIBVPX = libvpx-v0.9.7
 GST-FFMPEG = gst-ffmpeg-0.10.13
 LIBNL = libnl-3.2.3
-BOTO = boto-2.1.1
+BOTO = boto-r1595
 
 #
 # End JLFS Custom-Lib
