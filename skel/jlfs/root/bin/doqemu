@@ -1,0 +1,10 @@
+#!/bin/sh
+
+#
+# quick and dirty QEMU launcher
+#
+CDROM=/lfs/build/iso/jlfs-x86.iso
+
+/etc/qemu-ifup tap0
+qemu -m 512 -cdrom $CDROM -net nic -net tap,ifname=tap0,script=no
+/etc/qemu-ifdown tap0
