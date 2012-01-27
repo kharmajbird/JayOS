@@ -10,12 +10,13 @@ MYGATEWAY=`/sbin/route -n| head -${t}| tail -1| awk '{print $2}'`
 
 killall dhclient
 /sbin/ifconfig eth0 down
-/sbin/ifconfig eth0 0.0.0.0 up
+/sbin/ifconfig eth0 0.0.0.0 promisc up
 
 #
 # Bring up tap0 with IP 0.0.0.0, create bridge br0 and add interfaces eth0
 # and tap0
 #
+tunctl -t tap0
 /sbin/ifconfig $1 0.0.0.0 promisc up
 /usr/sbin/brctl addbr br0
 /usr/sbin/brctl addif br0 eth0
@@ -30,6 +31,8 @@ killall dhclient
 # Bring up the bridge with our IP and add both default routes
 #
 /sbin/ifconfig br0 $MYIP up
-echo now
 /sbin/route add default gw $MYGATEWAY
-/sbin/route add default gw $MYGATEWAY
+
+#why /sbin/route add default gw $MYGATEWAY
+
+/etc/init.d/iptables clear

@@ -1291,6 +1291,23 @@ $(S3CMD):
 	rm -rf $(S3CMD)/* && \
 	make P=$(S3CMD) log-package
 
+$(TUNCTL):
+	set +h && \
+	\
+	tar xvf $(JLFS-TARBALLS)/$(TUNCTL).tar.gz && \
+	chmod 755 $(TUNCTL) && \
+	chown -R 0:0 $(TUNCTL) && \
+	cd $(TUNCTL) && \
+	\
+	patch -Np1 -i $(JLFS-PATCHES)/$(TUNCTL)-no-manpage.patch && \
+	make && \
+	strip tunctl && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(TUNCTL)/* && \
+	make P=$(TUNCTL) log-package
+
 #
 # End JLFS Custom-CLI
 # Begin JLFS Custom-GUI

@@ -20,4 +20,5 @@
 /sbin/ifconfig eth0 -promisc
 /sbin/ifconfig eth0 up
 
+tunctl -d tap0
 /etc/init.d/network restart

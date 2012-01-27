@@ -108,6 +108,7 @@ YASM = yasm-1.2.0
 DVDAUTHOR = dvdauthor-0.7.0
 IPVSADM = ipvsadm-1.26
 S3CMD = s3cmd-1.0.1
+TUNCTL = tunctl-1.5
 
 #
 # End JLFS Custom-CLI
