@@ -11,7 +11,6 @@
 #
 
 DISKMNT=/cd
-MARKER=/initrd/.cddev
 
 if [ "$1" = "stop" ]; then
 	/root/bin/mt /home
@@ -45,9 +44,6 @@ for i in `cat /proc/cmdline`; do
 		###################################################
 	esac
 done
-
-# why do I do this?
-ROOTDEV=`cat $MARKER`
 
 ##################################################################
 # ADD filesystem definitions here...
@@ -132,13 +128,3 @@ for FS in $ALL; do
 	echo
 	if [ $DEBUG ]; then sh; fi
 done
-
-
-# this must be done after /cd is mounted
-#
-for i in `cat /proc/cmdline`; do
-	case $i in
-		vanilla)    mount /lib/modules ;;
-	esac
-done
-

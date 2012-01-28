@@ -8,6 +8,6 @@ CDROM=/lfs/build/iso/jlfs-x86.iso
 /etc/qemu-ifup tap0
 qemu -m 512 -cdrom $CDROM \
     -net nic,vlan=0 \
-    -net tap,vlan=0,ifname=tap0,script=no
+    -net tap,vlan=0,ifname=tap0,macaddr=00:aa:6d:a1:20:67,script=no
 
 /etc/qemu-ifdown tap0

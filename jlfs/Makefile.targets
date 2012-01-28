@@ -572,12 +572,8 @@ root-generic:
 	( cd $(MNT)/etc/rc.d/rcsysinit.d && \
 		ln -sfn ../init.d/netcheck S50netcheck ) && \
 	\
-	( cd $(MNT)/etc/rc.d/rcsysinit.d && \
-		ln -sfn ../init.d/modules2 S07modules2 ) && \
-	\
 	( cd $(MNT)/etc/rc.d/rc2.d && ln -sfn ../init.d/fs K50fs ) && \
 	( cd $(MNT)/etc/rc.d/rc3.d && ln -sfn ../init.d/precups S24precups ) && \
-	( cd $(MNT)/etc/rc.d/rc3.d && ln -sfn ../init.d/Xconfig S99Xconfig ) && \
 	( cd $(MNT)/etc/rc.d/rc3.d && ln -sfn ../rc.local S99local ) && \
 	\
 	if [ "$(ADD-JLFS-SKEL)" = "1" ]; then \

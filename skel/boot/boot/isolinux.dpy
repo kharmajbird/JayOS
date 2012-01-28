@@ -15,10 +15,10 @@ take advantage of extra RAM to run entirely from memory. Instructions are
 available to demonstrate installation to internal and external disk storage.
 
          Please wait for a minimal graphical environment to launch. 
-      or Enter   "jayos"   for the bleeding-edge kernel,
+      or Enter "jayos usrram" to load /usr into RAM
+      or       "jayos qemuhi" for higher resolution under emulation
 
+           If anything breaks, you get to keep both pieces :)
 
-If anything breaks, you get to keep both pieces :) Jedi Knights see /src. 
-
-VERSION                        Copyright (c) 2002-2012, Jay Lewis
-Press F1 for help                                   All rights reserved
+VERSION     Jedi Knights see https://github.com/kharmajbird/JayOS
+Press F1 for help                  Copyright (c) 2002-2012, Jay Lewis

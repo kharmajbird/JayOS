@@ -10,19 +10,7 @@ for i in `cat /proc/cmdline`; do
 
         nofw)	/etc/init.d/iptables clear ;;
 
-        nonet)  JAYOS_NETWORKING=0 ;;
-
-        dhcp)	
-            if [ $JAYOS_NETWORKING ]; then
-                modprobe sky2
-                /sbin/dhclient eth0
-            fi
-            ;;
-
-        ssh)	/etc/init.d/sshd start ;;
-
-	qemu=y)	QEMU=1 ;;
-	qemu=n)	QEMU=0 ;;
+        qemuhi) cp -av /etc/X11/xorg.conf.qemu /etc/X11/xorg.conf ;;
 
 	noswap)	SWAP=0 ;;
     esac
@@ -44,14 +32,13 @@ if [ -d /var/nessus ]; then
     ln -sfn /tmp/nessus /var/nessus
 fi
 
-if [ ! $QEMU ]; then 
-    mknod /dev/kqemu c 250 0
-    modprobe -a kqemu
-fi
-
+#
+# is any of this still necessary?
+#
+mknod /dev/kqemu c 250 0
+modprobe -a kqemu
 modprobe -a snd_mixer_oss
 modprobe -a snd_pcm_oss
-
 /sbin/ldconfig
 
 # for allocating 256MB to QEMU; unmount if not needed
@@ -65,6 +52,11 @@ modprobe -a snd_pcm_oss
 #    /sbin/hdparm -m16 -c3 -u1 -d1 -S60 /dev/hda
 #fi
 
+
+
+#
+# not really used
+#
 if [ $SWAP ]; then
     for i in hda sda; do
         for j in `fdisk -l /dev/$i| grep -i swap| awk '{ print $1 }'`; do
@@ -74,6 +66,8 @@ if [ $SWAP ]; then
 
     /etc/init.d/swap start
 fi
+
+
 
 #
 # Mac Mini customizations
@@ -89,12 +83,16 @@ if [ $? -eq 0 ]; then
     cp -av /etc/X11/xorg.conf.intel /etc/X11/xorg.conf
 fi
 
+
+
 #
 # my macally kbd doesn't have a SysReq key; fake one
 #
 echo "458856 99"| \
 	keyfuzz -s -d \
 /dev/input/by-id/usb-Macally_Peripherals_Macally_ICEKey_keyboard-event-kbd
+
+
 
 #
 # vaio (and maybe other) performance increases
