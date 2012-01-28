@@ -394,7 +394,8 @@ AddToMenu "StartMenu" \
   "&Programs%programs.xpm%"		Popup Programs
 + "&Settings%settings.xpm%"		Popup Settings
 + "&Utilities%toolbox.xpm%"		Popup Utilities
-#j#+ "&Network%mini-ray.xpm%"		Popup Internet
++ "&System%mini-eye.xpm%"		Popup System
++ "&Network%mini-ray.xpm%"		Popup Internet
 + "&Documents%documents.xpm%"		Popup Documents
 + "&Search%find1.xpm%"			Exec gnome-search-tool
 + "&Run... (F2)%run.xpm%"		Exec  /root/bin/xrun
@@ -405,8 +406,7 @@ AddToMenu "StartMenu" \
 
 DestroyMenu "Internet"
 AddToMenu "Internet" \
-  "LAN to Internet%mini-ray.xpm%"	Exec dhclient eth0
-+ "DSL to Internet%mini-ray.xpm%"	Exec tkpppoe
+  "DSL to Internet%mini-ray.xpm%"	Exec tkpppoe
 #j#+ "Advanced...%mini-ray.xpm%"		Exec internet-druid
 
 
@@ -420,7 +420,6 @@ AddToMenu "Programs" \
 + "Audio%mini-cd.xpm%"			Popup Audio
 + "Networking%mini-telnet.xpm%"		Popup Networking
 + "Graphics%mini-paint.xpm%"		Popup Graphics
-+ "System%mini-eye.xpm%"		Popup System
 + "Video%mini-cd.xpm%"			Popup Video
 + "Devices%mini-cd.xpm%"		Popup Devices
 + ""					Nop
@@ -716,10 +715,8 @@ DestroyMenu "Documents"
 AddToMenu "Documents" \
   "Changelog%mini-bball.xpm%"           Exec xmessage -file /root/doc/Changelog.txt
 + "Building%mini-bball.xpm%"            Exec xmessage -file /root/doc/Building.txt
-+ "Installation%mini-bball.xpm%"        Exec xmessage -file /root/doc/Install.txt
-#j#+ "Encryption%mini-bball.xpm%"          Exec xmessage -file /root/doc/JayOS-Encryption-HOWTO.txt
-#j#+ "FAQ%mini-bball.xpm%"                 Exec xmessage -file /root/doc/JayOS-QuestionsAnswers.txt
-#j#+ "TODO%mini-bball.xpm%"                Exec xmessage -file /root/doc/JayOS-TODO.txt
++ "Encryption%mini-bball.xpm%"          Exec xmessage -file /root/doc/JayOS-Encryption-HOWTO.txt
++ "TODO%mini-bball.xpm%"                Exec xmessage -file /root/doc/JayOS-TODO.txt
 + ""                                    Nop
 + "FVWM95%mini.win95.xpm%"              Exec seamonkey /usr/lib/X11/fvwm95/index.html
 
