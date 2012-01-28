@@ -1,0 +1,11 @@
+strict graph  {
+	graph [rankdir=LR,
+		ranksep="2.0"
+	];
+	subgraph switches_rank {
+		graph [rank=same];
+	}
+	JayOS_LiveCD	 [fontsize=9,
+		image="/tmp/Qemu_grey.png",
+		shape=none];
+}
