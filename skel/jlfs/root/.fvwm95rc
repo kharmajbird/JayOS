@@ -492,6 +492,7 @@ AddToMenu "Devices" \
 DestroyMenu "System"
 AddToMenu "System" \
   "Emulator%mini-rball.xpm%"		Popup Emulation
++ ""					Nop
 + "Backup/Restore Partitions%mini-diskette.xpm%"		Exec xterm -font 9x15 -bg \#c0c0c0 -fg black -T partimage -n partimage -e partimage
 + "Disk Analysis%mini-rball.xpm%"	Exec baobab
 + "MySQL Admin%mini-bball.xpm%"		Exec seamonkey http://localhost/phpmyadmin/index.php
