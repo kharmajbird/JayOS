@@ -1,7 +1,6 @@
 Enter "jayos" and any options below after boot:             F2 for main screen
 
 --FILESYSTEMS---
-uproot=device     device with /boot/root-deltas.tbz to upgrade root filesystem
 rootdev=device    device with /boot/root.gz         to mount as /
 usrdev=device     device with /fs/usr.fs            to mount as /usr
 optdev=device     device with /fs/opt.fs            to mount as /opt  
@@ -14,9 +13,11 @@ qemuhi            1280x1024 X11 display under QEMU
 usrram            Copy /usr into RAM for speed; only for systems with 1GB+ RAM
 addons            Pull encrypted data from root filesystem
 altfs             Use encrypted root filesystem
-
 nofw              Prevent firewall from starting
-initshell | shell Open a shell within the initial ramdisk
-noswap            Prevent automatic mounting of swap partitions
+noswap            Prevent automatic mounting of discovered swap partitions
+
+-----DEBUG------
+initshell         Open a shell within the initial ramdisk
+shell             Open shells as breakpoints within /etc/init.d
 
 
