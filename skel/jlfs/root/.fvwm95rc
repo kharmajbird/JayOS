@@ -491,7 +491,8 @@ AddToMenu "Devices" \
 
 DestroyMenu "System"
 AddToMenu "System" \
-  "Backup/Restore Partitions%mini-diskette.xpm%"		Exec xterm -font 9x15 -bg \#c0c0c0 -fg black -T partimage -n partimage -e partimage
+  "Emulator%mini-rball.xpm%"		Popup Emulation
++ "Backup/Restore Partitions%mini-diskette.xpm%"		Exec xterm -font 9x15 -bg \#c0c0c0 -fg black -T partimage -n partimage -e partimage
 + "Disk Analysis%mini-rball.xpm%"	Exec baobab
 + "MySQL Admin%mini-bball.xpm%"		Exec seamonkey http://localhost/phpmyadmin/index.php
 + ""					Nop
@@ -500,8 +501,6 @@ AddToMenu "System" \
 + "QT3 UI Designer%mini-rball.xpm%"	Exec designer
 + "QT4 UI Designer%mini-rball.xpm%"	Exec /opt/qt/bin/designer
 + "Debugger%mini-rball.xpm%"		Exec ddd
-+ ""					Nop
-+ "Emulator%mini-rball.xpm%"		Popup Emulation
 #j#+ "Save root%mini-diskette.xpm%"	Exec xterm -bg \#c0c0c0 -fg black -e saveroot -y
 #j#+ "Unify usr%mini-rball.xpm%"		Exec /root/bin/unify /usr
 #j#+ "Disperse usr%mini-rball.xpm%"	Exec umount /usr
@@ -664,6 +663,7 @@ AddToMenu "Office" \
 DestroyMenu "FileManagers"
 AddToMenu "FileManagers" \
   "Explorer%explorer.xpm%"		Exec xwc
++ "Nautilus%explorer.xpm%"		Exec nautilus
 + "Git Client%mini-rball.xpm%"		Exec xterm -bc -rv -fn 10x20 -geometry 80x6 -bg Wheat -fg black -e git gui
 + "Subversion Client%mini-bball.xpm%"	Exec esvn
 + "Windows Shares%mini.win95.xpm%"	Exec LinNeighborhood
