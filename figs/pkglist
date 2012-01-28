@@ -531,6 +531,7 @@ jlfs/totem-pl-parser-2.32.6.tar.bz2
 jlfs/traceroute-1.4a12.tar.gz
 jlfs/transcode-1.1.4.tar.bz2
 jlfs/transmission-2.21.tar.bz2
+jlfs/tunctl-1.5.tar.gz
 jlfs/udftools-1.0.0b3.tar.gz
 jlfs/unrarsrc-3.7.8.tar.gz
 jlfs/unzip60.tar.gz
@@ -538,6 +539,7 @@ jlfs/usbutils-0.86.tar.gz
 jlfs/uudeview-0.5.18.tar.gz
 jlfs/vcdimager-0.7.23.tar.gz
 jlfs/virtualbricks-0.4.276.tar.bz2
+jlfs/virtualbricks-0.6.352.tar.bz2
 jlfs/vlc-1.1.7.tar.bz2
 jlfs/vlc-skins.zip
 jlfs/vorbis-tools-1.2.0.tar.gz

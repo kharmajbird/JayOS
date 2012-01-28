@@ -1591,6 +1591,7 @@ $(VIRTUALBRICKS):  $(QEMU) $(PYTHON) $(PYGTK2) $(LIBGLADE) $(PIL) $(PYGRAPHVIZ)
 	set +h && \
 	\
 	tar jxvf $(JLFS-TARBALLS)/$(VIRTUALBRICKS).tar.bz2 && \
+	mv virtualbricks $(VIRTUALBRICKS) && \
 	chmod 755 $(VIRTUALBRICKS) && \
 	chown -R 0:0 $(VIRTUALBRICKS) && \
 	cd $(VIRTUALBRICKS) && \
