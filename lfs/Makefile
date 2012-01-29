@@ -45,12 +45,12 @@ all:
 # establish a clean-room environment
 
 prep:
-	make prep-lfs-tools && \
+	@make prep-lfs-tools && \
 	make prep-lfs-environ && \
 	ln -sfn build/JayOS $(LFS)/src
 
 un-prep:
-	if [ -f /root/.bashrc.orig ]; then \
+	@if [ -f /root/.bashrc.orig ]; then \
 		echo "" && \
 		echo "Restoring /root/.bashrc and /root/.bash_profile" && \
 		\
@@ -58,7 +58,7 @@ un-prep:
 		mv /root/.bash_profile.orig /root/.bash_profile; \
 	fi
 
-	rm -f /tools
+	@rm -f /tools
 
 	-umount -v $(LFS)/sys
 	-umount -v $(LFS)/proc
@@ -67,7 +67,7 @@ un-prep:
 	-umount -v $(LFS)/dev
 
 prep-lfs-tools:
-	if [ ! -d $(LFS)/tools ]; then \
+	@if [ ! -d $(LFS)/tools ]; then \
 		mkdir -vp $(LFS)/tools/src && \
 		ln -sfn $(LFS)/tools / && \
 		\
@@ -81,7 +81,7 @@ prep-lfs-tools:
 	fi
 
 prep-lfs-environ:
-	if [ ! -f /root/.bashrc.orig ]; then \
+	@if [ ! -f /root/.bashrc.orig ]; then \
 		echo "" && \
 		echo "Backing up root's .bashrc and .bash_profile" && \
 		echo "" && \
@@ -111,9 +111,9 @@ prep-lfs-environ:
 	fi
 
 log-package:
-	rm -f /var/lib/packages/$(P)
+	@rm -f /var/lib/packages/$(P)
 	
-	find /{etc,bin,lib,sbin,usr} -type f \
+	@find /{etc,bin,lib,sbin,usr} -type f \
 		-cnewer /tmp/timestamp \
 		-print -exec sh -c \
 			" md5sum {} >> /var/lib/packages/$(P) " \;
