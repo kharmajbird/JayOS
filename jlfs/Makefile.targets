@@ -285,25 +285,27 @@ log-package:
 #
 #
 strip:
-	find $(LFS)/{,usr/}lib -type f \
+	@find $(LFS)/{,usr/}lib -type f \
    		-exec /usr/bin/strip --strip-debug '{}' ';'
 
-	find $(LFS)/opt/qt/lib -type f \
+	@find $(LFS)/opt/qt/lib -type f \
    		-exec /usr/bin/strip --strip-debug '{}' ';'
 
-	find $(LFS)/{,usr/}{bin,sbin} -type f \
+	@find $(LFS)/{,usr/}{bin,sbin} -type f \
    		-exec /usr/bin/strip --strip-all '{}' ';'
 
-	find $(LFS)/opt/sbin -type f \
+	@find $(LFS)/opt/sbin -type f \
    		-exec /usr/bin/strip --strip-all '{}' ';'
 
-	find $(LFS)/opt/bin -type f \
+	@find $(LFS)/opt/bin -type f \
    		-exec /usr/bin/strip --strip-all '{}' ';'
 
 #
 #
 #
 strip-man:
+	@echo "Stripping man pages and locales..." && \
+	\
 	cd $(LFS) && \
 	touch usr/src/manpages.tar.bz2 && \
 	mv usr/src/manpages.tar.bz2 usr/src/manpages-orig.tar.bz2 && \
@@ -340,9 +342,6 @@ strip-man:
 			usr/src/manpages-orig.tar.bz2; \
 	fi
 
-clean-lfs:
-	#echo do -rf $(shell cd ${LFS} && ls -1| egrep -v lost|build )
-
 ##########################################################################
 #
 # /usr filesystem generation
@@ -350,6 +349,8 @@ clean-lfs:
 ##########################################################################
 
 usr:  usr-prereqs
+	@echo "Creating /usr filesystem in $(USRFS)" && \
+	\
 	mkdir -p $(FSDIR) && \
 	rm -f $(USRFS) && \
 	\
@@ -364,10 +365,7 @@ usr:  usr-prereqs
 		$(SKEL-LFS-PROD)/usr/share/usb.ids \
 		$(LFS)/usr/share && \
 	\
-	if [ "$(WITHOUT-DEVEL)" != "" ]; then \
-		USREXCL="include"; \
-	fi && \
-	$(MKSQUASHFS-BIN) $(LFS)/usr $(USRFS) -noappend -e src $${USREXCL} && \
+	$(MKSQUASHFS-BIN) $(LFS)/usr $(USRFS) -noappend -e src && \
 	\
 	rm -rf $(MNT) && mkdir $(MNT) && \
 	ln -sfn /lfs/usr/src $(MNT)/src && \
@@ -377,7 +375,7 @@ usr:  usr-prereqs
 	chmod 644 $(USRFS)
 
 usr-prereqs:
-	/usr/sbin/chroot $(LFS) /bin/env -i \
+	@/usr/sbin/chroot $(LFS) /bin/env -i \
 		\
 		HOME=/root \
 		TERM=$(TERM) \
@@ -389,7 +387,7 @@ usr-prereqs:
 			cd /usr/src && make inside-usr-chroot '
 
 inside-usr-chroot:
-	make SHELL=/bin/sh $(USR-REQS)
+	@make SHELL=/bin/sh $(USR-REQS)
 
 ##########################################################################
 #
@@ -398,13 +396,15 @@ inside-usr-chroot:
 ##########################################################################
 
 opt:  opt-prereqs
+	@echo "Creating /opt filesystem in $(OPTFS)" && \
+	\
 	mkdir -p $(LIVECD)/fs && \
 	rm -f $(OPTFS) && \
 	$(MKSQUASHFS-BIN) $(LFS)/opt $(OPTFS) && \
 	chmod 644 $(OPTFS)
 
 opt-prereqs:
-	/usr/sbin/chroot $(LFS) /bin/env -i \
+	@/usr/sbin/chroot $(LFS) /bin/env -i \
 		\
 		HOME=/root \
 		TERM=$(TERM) \
@@ -416,7 +416,7 @@ opt-prereqs:
 			cd /usr/src && make inside-opt-chroot '
 
 inside-opt-chroot:
-	make SHELL=/bin/sh $(OPT-REQS)
+	@make SHELL=/bin/sh $(OPT-REQS)
 
 ##########################################################################
 #
@@ -425,9 +425,10 @@ inside-opt-chroot:
 ##########################################################################
 
 root:  root-prereqs root-generic
+	@echo "Creating /filesystem in $(ROOTFS)"
 
 root-prereqs:
-	/usr/sbin/chroot $(LFS) /bin/env -i \
+	@/usr/sbin/chroot $(LFS) /bin/env -i \
 		\
 		HOME=/root \
 		TERM=$(TERM) \
@@ -440,7 +441,7 @@ root-prereqs:
 		make root-qemu'
 
 root-modules:
-	if [ ! -d $(KERNEL)-$(ARCH) ]; then \
+	@if [ ! -d $(KERNEL)-$(ARCH) ]; then \
 		echo "Kernel not built. Run make first" && \
 		exit 1; \
 	fi && \
@@ -450,7 +451,7 @@ root-modules:
 	make SHELL=/bin/sh $(ROOT-REQS)
 
 root-qemu:
-	( cd $(QEMU)/$(KQEMU) && \
+	@( cd $(QEMU)/$(KQEMU) && \
 		make clean && \
 		\
 		./configure --prefix=/usr \
@@ -465,7 +466,7 @@ root-generic:
 	-$(UMOUNT-BIN) $(MNT) 2>/dev/null
 	-$(LOSETUP-BIN) -d $(LOOPDEV) 2>/dev/null
 
-	if [ ! $(OPENVZ) ]; then \
+	@if [ ! $(OPENVZ) ]; then \
 		rm -rf $(LFS)/lib/modules/$(OPENVZ-VER); \
 	else \
 		rm -rf $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH); \
@@ -476,7 +477,7 @@ root-generic:
 	$(LOSETUP-BIN) $(LOOPDEV) $(ROOTFS) && \
 	$(MKE2FS-BIN) -m0 $(LOOPDEV)
 
-	if [ "$(ADDONS)" = "1" ]; then \
+	@if [ "$(ADDONS)" = "1" ]; then \
 		$(MKRUNE-BIN) $(LOOPDEV); \
 		make addons; \
 		patch -Np1 -i $(ADDFSDIR)/addons.patch; \
@@ -496,9 +497,9 @@ root-generic:
 		#echo && \
 		#exit 1; \
 
-	-rm -rf $(LFS)/usr/src/{addons.orig,addons,$(ADDFS)}
+	@rm -rf $(LFS)/usr/src/{addons.orig,addons,$(ADDFS)}
 
-	rm -rf $(MNT) $(ROOTFS).gz && mkdir $(MNT) && \
+	@rm -rf $(MNT) $(ROOTFS).gz && mkdir $(MNT) && \
 	$(MOUNT-BIN) $(LOOPDEV) $(MNT) && \
 	\
 	if [ ! -f $(LFS)/etc/ssh/ssh_host_key ]; then \
@@ -610,6 +611,8 @@ root-generic:
 ##########################################################################
 
 addons:
+	@echo "Patching addon support..." && \
+	\
 	cd $(LFS)/usr/src && \
 	\
 	rm -rf addons.orig addons && \
@@ -648,10 +651,12 @@ rootalt: root-generic
 ##########################################################################
 
 initrd:
+	@echo "Creating initial ramdisk as $(INITRDFS)..."
+	
 	-$(UMOUNT-BIN) $(MNT) 2>/dev/null
 	-$(LOSETUP-BIN) -d $(LOOPDEV) 2>/dev/null
 
-	rm -rf $(MNT) $(INITRDFS).gz && mkdir -p $(MNT) && \
+	@rm -rf $(MNT) $(INITRDFS).gz && mkdir -p $(MNT) && \
 	dd if=/dev/zero bs=1024k count=$(INITRDSIZE) of=$(INITRDFS) && \
 	$(LOSETUP-BIN) $(LOOPDEV) $(INITRDFS) && \
 	$(MKE2FS-BIN) -m0 $(LOOPDEV)
@@ -662,7 +667,7 @@ initrd:
 	#	rm -f small.fs.gz; \
 	#fi
 
-	$(MOUNT-BIN) $(LOOPDEV) $(MNT) && \
+	@$(MOUNT-BIN) $(LOOPDEV) $(MNT) && \
 	\
 	mkdir -p $(MNT)/{cd,dev,lib,mnt,usr/bin,proc,sys} && \
 	mknod $(MNT)/dev/null c 1 3 && \
@@ -716,7 +721,7 @@ initrd:
 		x=`expr $${x} + 1`; \
 	done
 
-	if [ $(OPENVZ) ]; then \
+	@if [ $(OPENVZ) ]; then \
 		cp -av $(LFS)/lib/modules/$(OPENVZ-VER)/kernel/crypto/aes_generic.ko $(MNT)/lib; \
 		cp -av $(LFS)/lib/modules/$(OPENVZ-VER)/kernel/arch/x86/crypto/aes-i586.ko $(MNT)/lib; \
 		cp -av $(LFS)/lib/modules/$(OPENVZ-VER)/kernel/lib/crc-itu-t.ko $(MNT)/lib; \
@@ -734,7 +739,7 @@ initrd:
 		cp -av $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/extra/loop.ko $(MNT)/lib; \
 	fi
 
-	cp -a $(SKEL-INITRD)/* $(MNT) && \
+	@cp -a $(SKEL-INITRD)/* $(MNT) && \
 	\
 	( cd $(MNT)/bin && ln -sfn test [ ) && \
 	\
@@ -805,6 +810,8 @@ initrd:
 ##########################################################################
 
 boot:
+	@echo "Creating /boot..." && \
+	\
 	mkdir -p $(LIVECD)/boot && \
 	\
 	if [ "$(ARCH)" = "x86" -o "$(ARCH)" = "486"  -o "$(ARCH)" = "xen" ]; then \
@@ -836,9 +843,11 @@ boot:
 ##########################################################################
 
 iso:
+	@echo "Creating iso image as $(ISOx86)..." && \
+	\
 	mkdir -p $(LFS)/build/iso
 
-	if [ ! -f $(ROOTFS).gz ]; then \
+	@if [ ! -f $(ROOTFS).gz ]; then \
 		make VERSION=$(VERSION)-$(ARCH) root && \
 		\
 		if [ "$(ALTROOT)" = "1" ]; then \
@@ -848,7 +857,6 @@ iso:
 		echo "Created root filesystem(s)"; \
 	fi && \
 	\
-	echo make boot && \
 	make iso-write
 
 iso-with-src: 
@@ -857,7 +865,7 @@ iso-with-src:
 ##########################################################################
 
 iso-write:
-	if [ "$(ARCH)" = "imac" ]; then \
+	@if [ "$(ARCH)" = "imac" ]; then \
 		if [ "$(INCLUDE_SRC)" = "1" ]; then \
 			SIZE=$(IMACISO-SIZE); \
 			ISO=$(ISOIMAC); \
@@ -985,19 +993,26 @@ install-vaio:
 ##########################################################################
 
 usb:
-	mkdir -p $(LFS)/build/iso && \
+	@mkdir -p $(LFS)/build/iso && \
 	rm -rf $(MNT) && mkdir $(MNT) && \
 	\
+	echo "Extracting $(STICK1) to /lfs/build/iso/" && \
 	gzip -dc $(USB-TARBALLS)/$(STICK1).gz > /lfs/build/iso/$(STICK1) && \
+	\
 	echo "Creating checksum for $(STICK1)..." && \
 	md5sum /lfs/build/iso/$(STICK1) > /lfs/build/iso/$(STICK1).md5 && \
 	\
+	echo "Extracting $(STICK2) to /lfs/build/iso/" && \
 	gzip -dc $(USB-TARBALLS)/$(STICK2).gz > /lfs/build/iso/$(STICK2) && \
 	\
 	/sbin/kpartx -a /lfs/build/iso/$(STICK2) && \
-	ls /dev/dm-1 && sleep 10 && \
-	mount /dev/dm-1 $(MNT) && \
 	\
+	echo "Mounting $(STICK2)..." && \
+	mount /dev/dm-1 $(MNT) || \
+	( echo "Mounting of /dev/dm-1 failed... trying again" && \
+		sleep 5 && mount /dev/dm-1 $(MNT) )
+
+	@echo && \
 	cp -av $(FSDIR) $(BOOTDIR) $(LFS)/build/JayOS/doc $(MNT) && \
 	\
 	umount /dev/dm-1 && \
