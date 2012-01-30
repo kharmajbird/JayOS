@@ -66,6 +66,7 @@ livecd:	un-prep strip-man root initrd boot usr opt iso usb
 	@echo "==========================================================="
 	@echo
 	@echo "This system has been built without the following packages:"
+	@echo
 	@echo "$(JLFS-BLOATED)"
 	@echo
 	@echo -n "If you would like to include them, run \"make bloat\" "
