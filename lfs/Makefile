@@ -597,7 +597,7 @@ TEMP-$(EXPECT):  TEMP-$(TCL)
 	chown -R 0:0 $(EXPECT) && \
 	cd $(EXPECT) && \
 	\
-	patch -Np1 -i $(LFS-PATCHES)/$(EXPECT)-no_tk-1.patch && \
+	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(EXPECT)-no_tk-1.patch && \
 	\
 	cp configure{,.orig} && \
 	sed 's:/usr/local/bin:/bin:' configure.orig > configure && \
