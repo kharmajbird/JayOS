@@ -489,7 +489,9 @@ PASS2-$(GCC4):
 	chown -R 0:0 $(GCC4) && \
 	cd $(GCC4) && \
 	\
+	patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-cross_compile-1.patch && \
 	patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-startfiles_fix-1.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-locale-1.patch && \
 	\
 	cp -v gcc/Makefile.in{,.orig} && \
 	sed 's@\./fixinc\.sh@-c true@' gcc/Makefile.in.orig \
@@ -645,6 +647,8 @@ TEMP-$(BASH):
 	chmod 755 $(BASH) && \
 	chown -R 0:0 $(BASH) && \
 	cd $(BASH) && \
+	\
+	patch -Np1 -i $(LFS-PATCHES)/$(BASH)-fixes-3.patch && \
 	\
 	./configure --prefix=/tools --without-bash-malloc && \
 	\
@@ -842,7 +846,7 @@ TEMP-$(PERL):
 	cd $(PERL) && \
 	\
 	patch -Np1 -i $(LFS-PATCHES)/$(PERL)-libc-1.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(PERL)-utf8-1.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(PERL)-security-fix-1.patch && \
 	\
 	sh Configure -des -Dprefix=/tools \
                   -Dstatic_ext='Data/Dumper Fcntl IO POSIX' && \
@@ -958,7 +962,8 @@ $(GLIBC):
 	sed -i 's|@BASH@|/bin/bash|' elf/ldd.bash.in && \
 	\
 	patch -Np1 -i $(LFS-PATCHES)/$(GLIBC)-gcc_fix-1.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(GLIBC)-makefile_fix-1.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(GLIBC)-fixes-1.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(GLIBC)-cpuid-1.patch && \
 	\
 	mkdir -v ../$(GLIBC)-build && \
 	cd ../$(GLIBC)-build && \
@@ -1450,7 +1455,7 @@ $(PROCPS):
 	chown -R 0:0 $(PROCPS) && \
 	cd $(PROCPS) && \
 	\
-	patch -Np1 -i $(LFS-PATCHES)/$(PROCPS)-watch_unicode-1.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(PROCPS)-fix_HZ-errors-1.patch && \
 	make && \
 	make install && \
 	\
@@ -1482,6 +1487,8 @@ $(READLINE):
 	chown -R 0:0 $(READLINE) && \
 	cd $(READLINE) && \
 	\
+	patch -Np1 -i $(LFS-PATCHES)/$(READLINE)-fixes-1.patch && \
+	\
 	sed -i '/MV.*old/d' Makefile.in && \
 	sed -i '/{OLDSUFF}/c:' support/shlib-install && \
 	\
@@ -1509,6 +1516,8 @@ $(BASH):
 	chmod 755 $(BASH) && \
 	chown -R 0:0 $(BASH) && \
 	cd $(BASH) && \
+	\
+	patch -Np1 -i $(LFS-PATCHES)/$(BASH)-fixes-3.patch && \
 	\
 	./configure --prefix=/usr --bindir=/bin \
 		--htmldir=/usr/share/doc/$(BASH) \
@@ -1583,7 +1592,7 @@ $(PERL):
 	cd $(PERL) && \
 	\
 	patch -Np1 -i $(LFS-PATCHES)/$(PERL)-libc-1.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(PERL)-utf8-1.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(PERL)-security-fix-1.patch && \
 	\
 	echo "127.0.0.1 localhost $(LFS-HOSTNAME)" > /etc/hosts && \
 	\
@@ -1935,6 +1944,8 @@ $(MODULE-INIT-TOOLS):
 	cd $(MODULE-INIT-TOOLS) && \
 	\
 	echo '.so man5/modprobe.conf.5' > modprobe.d.5 && \
+	\
+	patch -Np1 -i $(LFS-PATCHES)/$(MODULE-INIT-TOOLS)-man_pages-1.patch && \
 	\
 	./configure --prefix=/ --enable-zlib-dynamic --mandir=/usr/share/man && \
 	make && \
