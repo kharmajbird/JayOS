@@ -589,7 +589,7 @@ lfs/coreutils-8.14.tar.bz2
 lfs/dejagnu-1.5.tar.gz
 lfs/diffutils-3.2.tar.gz
 lfs/e2fsprogs-1.41.14.tar.gz
-lfs/expect5.45.tar.gz
+lfs/expect-5.45.tar.bz2
 lfs/file-5.09.tar.gz
 lfs/findutils-4.4.2.tar.gz
 lfs/flex-2.5.35.tar.bz2

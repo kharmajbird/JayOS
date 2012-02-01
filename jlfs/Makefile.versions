@@ -498,8 +498,8 @@ DEVICE-MAPPER = LVM2.2.02.62
 #DEJAGNU = dejagnu-1.4.4
 #DOXYGEN = doxygen-1.5.2
 # binary located in LFS-land
-EXPECT = expect-5.44.1.15
-EXPECT-VER = 5.44.1.15
+EXPECT = expect-5.45
+EXPECT-VER = 5.45
 #
 #GC-6.8
 GCC3 = gcc-3.3.6
