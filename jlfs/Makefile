@@ -8600,7 +8600,7 @@ $(DHCP):  $(NET-TOOLS)
 	rm -rf $(DHCP)/* && \
 	make P=$(DHCP) log-package
 
-$(SENDMAIL):  $(OPENLDAP) $(OPENSSL) $(TCP-WRAPPER) $(PROCMAIL)
+$(SENDMAIL):  $(OPENLDAP) $(OPENSSL) $(TCP-WRAPPER) $(PROCMAIL) $(BDB4)
 	set +h && \
 	\
 	tar xvf $(JLFS-TARBALLS)/$(SENDMAIL).tar.gz && \

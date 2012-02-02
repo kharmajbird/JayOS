@@ -612,7 +612,7 @@ OPENSSH = openssh-5.6p1
 #exim-4.67
 #postfix-2.3.3
 #qpopper-4.0.9
-#j#SENDMAIL = sendmail-8.14.1
+SENDMAIL = sendmail-8.14.4
 BDB4 = db-4.8.26
 MYSQL = mysql-5.1.52
 #postgresql-8.2.4
