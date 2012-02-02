@@ -354,13 +354,11 @@ PASS1-$(GCC4):
 		--disable-nls --disable-shared --disable-multilib \
     		--disable-decimal-float --disable-threads \
     		--disable-libmudflap --disable-libssp \
-    		--disable-libgomp --enable-languages=c \
-		--disable-libquadmath \
+    		--disable-libgomp --disable-libquadmath \
 		--disable-target-libiberty --disable-target-zlib \
-		--with-gmp-include=$(PWD)/gmp --with-gmp-lib=$(PWD)/gmp/.libs \
+		--enable-languages=c --without-ppl --without-cloog \
 		--with-mpfr-include=$(PWD)/../$(GCC4)/mpfr/src \
-		--with-mpfr-lib=$(PWD)/mpfr/src/.libs \
-		--without-ppl --without-cloog && \
+		--with-mpfr-lib=$(PWD)/mpfr/src/.libs && \
 	\
 	make && \
 	make install && \
@@ -528,10 +526,9 @@ PASS2-$(GCC4):
 		--enable-__cxa_atexit --enable-languages=c,c++ \
 		--disable-libstdcxx-pch --disable-multilib \
 		--disable-bootstrap --disable-libgomp \
-		--with-gmp-include=$(PWD)/gmp --with-gmp-lib=$(PWD)/gmp/.libs \
+		--without-ppl --without-cloog \
 		--with-mpfr-include=$(PWD)/../$(GCC4)/mpfr/src \
-		--with-mpfr-lib=$(PWD)/mpfr/src/.libs \
-		--without-ppl --without-cloog && \
+		--with-mpfr-lib=$(PWD)/mpfr/src/.libs && \
 	\
 	make && \
 	make install && \
@@ -1004,6 +1001,10 @@ $(GLIBC):
 	\
 	touch /etc/ld.so.conf && \
 	make install && \
+	\
+	cp -v ../$(GLIBC)/sunrpc/rpc/*.h /usr/include/rpc
+	cp -v ../$(GLIBC)/sunrpc/rpcsvc/*.h /usr/include/rpcsvc
+	cp -v ../$(GLIBC)/nis/rpcsvc/*.h /usr/include/rpcsvc && \
 	\
 	mkdir -pv /usr/lib/locale && \
 	localedef -i cs_CZ -f UTF-8 cs_CZ.UTF-8 && \
