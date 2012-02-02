@@ -59,12 +59,7 @@ LFS-BASICSYS := linux-headers $(MAN-PAGES) $(GLIBC) \
 ########################################################################
 
 
-#	PASS1-$(BINUTILS) \
-
-#
-# comment and move above targets that built clean
-#
-
+	#PASS1-$(BINUTILS) \
 	#PASS1-$(GCC4) \
 	#TEMP-linux-headers \
 	#TEMP-$(GLIBC) \
@@ -74,20 +69,26 @@ LFS-BASICSYS := linux-headers $(MAN-PAGES) $(GLIBC) \
 	#TEMP-$(DEJAGNU) \
 	#TEMP-$(GMP) \
 	#TEMP-$(MPC) \
-	#PASS2-$(GCC4) \
-	#PASS2-$(BINUTILS) \
-	#TEMP-$(NCURSES) \
-	#TEMP-$(BASH) \
-	#TEMP-$(BZIP2) \
-	#TEMP-$(COREUTILS) \
-	#TEMP-$(DIFFUTILS) \
-	#TEMP-$(FINDUTILS) \
-	#TEMP-$(GAWK) \
-	#TEMP-$(GETTEXT) \
-	#TEMP-$(GREP) \
-	#TEMP-$(GZIP) \
+
+#
+# when doing a "make redo-lfs-tempsys" 
+# comment the targets that built clean and move them above for debugging
+#
 
 REDO-LFS-TEMPSYS := \
+	TEMP-$(MPFR) \
+	PASS2-$(GCC4) \
+	PASS2-$(BINUTILS) \
+	TEMP-$(NCURSES) \
+	TEMP-$(BASH) \
+	TEMP-$(BZIP2) \
+	TEMP-$(COREUTILS) \
+	TEMP-$(DIFFUTILS) \
+	TEMP-$(FINDUTILS) \
+	TEMP-$(GAWK) \
+	TEMP-$(GETTEXT) \
+	TEMP-$(GREP) \
+	TEMP-$(GZIP) \
 	TEMP-$(M4) \
 	TEMP-$(MAKE) \
 	TEMP-$(PATCH) \
@@ -98,7 +99,7 @@ REDO-LFS-TEMPSYS := \
 	TEMP-$(XZ)
 
 #
-# comment and move above targets that built clean
+#
 #
 
 	#linux-headers \
