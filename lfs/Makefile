@@ -690,7 +690,7 @@ TEMP-$(BZIP2):
 TEMP-$(COREUTILS):
 	set +h && \
 	\
-	tar xvf $(LFS-TARBALLS)/$(COREUTILS).tar.gz && \
+	xz -dc $(LFS-TARBALLS)/$(COREUTILS).tar.xz| tar xvf - && \
 	chmod 755 $(COREUTILS) && \
 	chown -R 0:0 $(COREUTILS) && \
 	cd $(COREUTILS) && \
@@ -1426,7 +1426,7 @@ $(E2FSPROGS):
 $(COREUTILS):
 	set +h && \
 	\
-	tar xvf $(LFS-TARBALLS)/$(COREUTILS).tar.gz && \
+	xz -dc $(LFS-TARBALLS)/$(COREUTILS).tar.xz| tar xvf - && \
 	chmod 755 $(COREUTILS) && \
 	chown -R 0:0 $(COREUTILS) && \
 	cd $(COREUTILS) && \
