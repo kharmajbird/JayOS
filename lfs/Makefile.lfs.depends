@@ -94,7 +94,8 @@ REDO-LFS-TEMPSYS := \
 	TEMP-$(PERL) \
 	TEMP-$(SED) \
 	TEMP-$(TAR) \
-	TEMP-$(TEXINFO)
+	TEMP-$(TEXINFO) \
+	TEMP-$(XZ)
 
 #
 # comment and move above targets that built clean
@@ -118,7 +119,7 @@ REDO-LFS-TEMPSYS := \
 	#$(AUTOMAKE) $(BZIP2) $(DIFFUTILS) $(GAWK) $(FINDUTILS) \
 	#$(FLEX) $(GETTEXT) $(GROFF) $(GRUB) \
 	#$(GZIP) \
-	#$(IPROUTE) $(KBD) $(LESS) $(MAKE) $(MAN-DB) \
+	#$(IPROUTE) $(KBD) $(LESS) $(LIBPIPELINE) $(MAKE) $(MAN-DB) \
 
 REDO-LFS-BASICSYS := \
 	$(MODULE-INIT-TOOLS) \
