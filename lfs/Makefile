@@ -457,52 +457,6 @@ PASS2-$(BINUTILS):
 	cd .. && \
 	rm -rf $(BINUTILS)-build $(BINUTILS)
 
-TEMP-$(GMP):
-	set +h && \
-	\
-	tar jxvf $(LFS-TARBALLS)/$(GMP).tar.bz2 && \
-	chmod 755 $(GMP) && \
-	chown -R 0:0 $(GMP) && \
-	cd $(GMP) && \
-	\
-	./configure --prefix=/tools --enable-cxx --enable-mpbsd && \
-	make && \
-	make install && \
-	\
-	cd .. && \
-	rm -rf $(GMP)
-
-TEMP-$(MPC):
-	set +h && \
-	\
-	tar xvf $(LFS-TARBALLS)/$(MPC).tar.gz && \
-	chmod 755 $(MPC) && \
-	chown -R 0:0 $(MPC) && \
-	cd $(MPC) && \
-	\
-	./configure --prefix=/tools && \
-	make && \
-	make install && \
-	\
-	cd .. && \
-	rm -rf $(MPC)
-
-TEMP-$(MPFR):
-	set +h && \
-	\
-	tar jxvf $(LFS-TARBALLS)/$(MPFR).tar.bz2 && \
-	chmod 755 $(MPFR) && \
-	chown -R 0:0 $(MPFR) && \
-	cd $(MPFR) && \
-	\
-	./configure --prefix=/tools --enable-thread-safe && \
-	make && \
-	make check && \
-	make install && \
-	\
-	cd .. && \
-	rm -rf $(MPFR)/* && \
-
 PASS2-$(GCC4):
 	tar xvf $(LFS-TARBALLS)/$(GCC4).tar.bz2 && \
 	chmod 755 $(GCC4) && \
@@ -571,6 +525,8 @@ PASS2-$(GCC4):
 		--disable-libstdcxx-pch --disable-multilib \
 		--disable-bootstrap --disable-libgomp \
 		--with-gmp-include=$(PWD)/gmp --with-gmp-lib=$(PWD)/gmp/.libs \
+		--with-mpfr-include=$(PWD)/../$(GCC4)/mpfr/src \
+		--with-mpfr-lib=$(PWD)/mpfr/src/.libs \
 		--without-ppl --without-cloog && \
 	\
 	make && \

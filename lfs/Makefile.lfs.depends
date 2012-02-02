@@ -67,8 +67,6 @@ LFS-BASICSYS := linux-headers $(MAN-PAGES) $(GLIBC) \
 	#TEMP-$(TCL) \
 	#TEMP-$(EXPECT) \
 	#TEMP-$(DEJAGNU) \
-	#TEMP-$(GMP) \
-	#TEMP-$(MPC) \
 
 #
 # when doing a "make redo-lfs-tempsys" 
@@ -76,7 +74,6 @@ LFS-BASICSYS := linux-headers $(MAN-PAGES) $(GLIBC) \
 #
 
 REDO-LFS-TEMPSYS := \
-	TEMP-$(MPFR) \
 	PASS2-$(GCC4) \
 	PASS2-$(BINUTILS) \
 	TEMP-$(NCURSES) \
