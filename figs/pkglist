@@ -391,7 +391,7 @@ jlfs/libxslt-1.1.26.tar.gz
 jlfs/linux-2.6.18-xen-3.3.0.tar.gz
 jlfs/linux-2.6.26-openvz-20091121.tar.bz2
 jlfs/linux-2.6.34.tar.bz2
-jlfs/linux-3.2.tar.bz2
+jlfs/linux-3.2.2.tar.bz2
 jlfs/loop-AES-v3.2a.tar.bz2
 jlfs/loop-AES-v3.6b.tar.bz2
 jlfs/lsdvd-0.16.tar.gz
@@ -587,7 +587,7 @@ lfs/binutils-2.21.1a.tar.bz2
 lfs/bison-2.5.tar.bz2
 lfs/bzip2-1.0.6.tar.gz
 lfs/check-0.9.8.tar.gz
-lfs/coreutils-8.14.tar.bz2
+lfs/coreutils-8.14.tar.xz
 lfs/dejagnu-1.5.tar.gz
 lfs/diffutils-3.2.tar.gz
 lfs/e2fsprogs-1.41.14.tar.gz
@@ -604,7 +604,6 @@ lfs/gmp-5.0.2.tar.bz2
 lfs/grep-2.9.tar.gz
 lfs/groff-1.21.tar.gz
 lfs/grub-0.97.tar.gz
-lfs/grub-1.98.tar.gz
 lfs/grub-1.99.tar.gz
 lfs/gzip-1.4.tar.gz
 lfs/iana-etc-2.30.tar.bz2
@@ -618,7 +617,7 @@ lfs/libtool-2.4.tar.gz
 lfs/m4-1.4.16.tar.bz2
 lfs/make-3.82.tar.bz2
 lfs/man-db-2.6.0.2.tar.gz
-lfs/man-pages-3.25.tar.bz2
+lfs/man-pages-3.35.tar.gz
 lfs/module-init-tools-3.16.tar.bz2
 lfs/mpc-0.9.tar.gz
 lfs/mpfr-3.1.0.tar.bz2

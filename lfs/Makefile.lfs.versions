@@ -10,7 +10,7 @@
 AUTOCONF = autoconf-2.68
 AUTOMAKE = automake-1.11.1
 BASH = bash-4.2
-BINUTILS = binutils-2.21.1a
+BINUTILS = binutils-2.21.1
 BISON = bison-2.5
 BZIP2 = bzip2-1.0.6
 COREUTILS = coreutils-8.14

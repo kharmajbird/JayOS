@@ -76,7 +76,7 @@ prep-lfs-tools:
 			Makefile.lfs.depends \
 			Makefile.lfs.versions; do \
 			\
-			cp -av $(LFS-SRC)/$${i} $(LFS)/tools/src/$${i}; \
+			ln -sfn $(LFS-SRC)/$${i} $(LFS)/tools/src/$${i}; \
 		done; \
 	fi
 
@@ -973,7 +973,7 @@ linux-headers:
 $(MAN-PAGES):
 	set +h && \
 	\
-	tar xvf $(LFS-TARBALLS)/$(MAN-PAGES).tar.bz2 && \
+	tar zxvf $(LFS-TARBALLS)/$(MAN-PAGES).tar.gz && \
 	chmod 755 $(MAN-PAGES) && \
 	chown -R 0:0 $(MAN-PAGES) && \
 	cd $(MAN-PAGES) && \
