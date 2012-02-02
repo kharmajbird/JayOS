@@ -487,6 +487,22 @@ TEMP-$(MPC):
 	cd .. && \
 	rm -rf $(MPC)
 
+TEMP-$(MPFR):
+	set +h && \
+	\
+	tar jxvf $(LFS-TARBALLS)/$(MPFR).tar.bz2 && \
+	chmod 755 $(MPFR) && \
+	chown -R 0:0 $(MPFR) && \
+	cd $(MPFR) && \
+	\
+	./configure --prefix=/tools --enable-thread-safe && \
+	make && \
+	make check && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(MPFR)/* && \
+
 PASS2-$(GCC4):
 	tar xvf $(LFS-TARBALLS)/$(GCC4).tar.bz2 && \
 	chmod 755 $(GCC4) && \
