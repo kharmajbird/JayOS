@@ -356,6 +356,8 @@ PASS1-$(GCC4):
 		--disable-libquadmath \
 		--disable-target-libiberty --disable-target-zlib \
 		--with-gmp-include=$(PWD)/gmp --with-gmp-lib=$(PWD)/gmp/.libs \
+		--with-mpfr-include=$(PWD)/../$(GCC4)/mpfr/src \
+		--with-mpfr-lib=$(PWD)/mpfr/src/.libs \
 		--without-ppl --without-cloog && \
 	\
 	make && \
