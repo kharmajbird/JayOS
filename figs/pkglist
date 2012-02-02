@@ -391,6 +391,7 @@ jlfs/libxslt-1.1.26.tar.gz
 jlfs/linux-2.6.18-xen-3.3.0.tar.gz
 jlfs/linux-2.6.26-openvz-20091121.tar.bz2
 jlfs/linux-2.6.34.tar.bz2
+jlfs/linux-3.2.tar.bz2
 jlfs/loop-AES-v3.2a.tar.bz2
 jlfs/loop-AES-v3.6b.tar.bz2
 jlfs/lsdvd-0.16.tar.gz
@@ -453,6 +454,7 @@ jlfs/pidgin-2.10.0.tar.bz2
 jlfs/pidgin-2.3.1.tar.bz2
 jlfs/pinentry-0.7.6.tar.gz
 jlfs/pixman-0.24.0.tar.gz
+jlfs/pkg-config-0.25.tar.gz
 jlfs/polkit-0.102.tar.gz
 jlfs/polkit-gnome-0.105.tar.bz2
 jlfs/popt-1.16.tar.gz
@@ -623,7 +625,6 @@ lfs/mpfr-3.1.0.tar.bz2
 lfs/ncurses-5.9.tar.gz
 lfs/patch-2.6.1.tar.bz2
 lfs/perl-5.14.2.tar.bz2
-lfs/pkg-config-0.25.tar.gz
 lfs/procps-3.2.8.tar.gz
 lfs/psmisc-22.14.tar.gz
 lfs/readline-6.2.tar.gz

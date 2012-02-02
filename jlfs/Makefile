@@ -4640,6 +4640,22 @@ $(XEN-KERNEL):
 	echo obsolete rm -rf $(XEN-KERNEL)/* && \
 	make P=$(XEN-KERNEL) log-package
 
+$(PKG-CONFIG):
+	set +h && \
+	\
+	tar xvf $(JLFS-TARBALLS)/$(PKG-CONFIG).tar.gz && \
+	chmod 755 $(PKG-CONFIG) && \
+	chown -R 0:0 $(PKG-CONFIG) && \
+	cd $(PKG-CONFIG) && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(PKG-CONFIG)/* && \
+	make P=$(PKG-CONFIG) log-package
+
 $(AUTOFS): $(OPENLDAP)
 	echo obsolete mount -vt proc proc /proc && \
 	\
@@ -7297,7 +7313,7 @@ $(XML-PARSER):  $(EXPAT) $(LIBWWW-PERL)
 	rm -rf $(XML-PARSER)/* && \
 	make P=$(XML-PARSER) log-package
 
-$(ARCHIVE-ZIP):  $(COMPRESS-ZLIB)
+$(ARCHIVE-ZIP):
 	set +h && \
 	\
 	tar xvf $(JLFS-TARBALLS)/$(ARCHIVE-ZIP).tar.gz && \
@@ -7312,22 +7328,6 @@ $(ARCHIVE-ZIP):  $(COMPRESS-ZLIB)
 	cd .. && \
 	rm -rf $(ARCHIVE-ZIP)/* && \
 	make P=$(ARCHIVE-ZIP) log-package
-
-$(COMPRESS-ZLIB):  $(IO-COMPRESS-ZLIB) $(IO-COMPRESS-BZIP2) 
-	set +h && \
-	\
-	tar xvf $(JLFS-TARBALLS)/$(COMPRESS-ZLIB).tar.gz && \
-	chmod 755 $(COMPRESS-ZLIB) && \
-	chown -R 0:0 $(COMPRESS-ZLIB) && \
-	cd $(COMPRESS-ZLIB) && \
-	\
-	perl Makefile.PL && \
-	make -j2 && \
-	make install && \
-	\
-	cd .. && \
-	rm -rf $(COMPRESS-ZLIB)/* && \
-	make P=$(COMPRESS-ZLIB) log-package
 
 $(IO-COMPRESS-ZLIB):  $(COMPRESS-RAW-ZLIB) $(IO-COMPRESS-BZIP2)
 	set +h && \
