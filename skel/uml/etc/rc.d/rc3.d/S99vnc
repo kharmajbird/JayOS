@@ -1,7 +1,0 @@
-#!/bin/sh
-
-export PATH=$PATH:/usr/X11R6/bin
-export HOME=/root
-export USER=root
-
-vncserver -geometry 1024x768
