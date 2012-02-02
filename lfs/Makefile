@@ -27,6 +27,8 @@ include Makefile.lfs.depends
 ##########################################################################
 
 all:
+	echo "TODO:  if-then var on make redo"
+
 	echo make redo-lfs-temp-system && \
 	make lfs-temp-system && \
 	\
