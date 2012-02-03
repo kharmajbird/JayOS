@@ -16,6 +16,7 @@ HEAD=$(LFS)/build/JayOS
 include Makefile.lfs.versions
 include Makefile.lfs.depends
 
+# For developer use
 SKIP-TEMP=0
 REDO-TEMP=0
 REDO-BASIC=0
