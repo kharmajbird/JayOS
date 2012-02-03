@@ -16,6 +16,9 @@ HEAD=$(LFS)/build/JayOS
 include Makefile.lfs.versions
 include Makefile.lfs.depends
 
+REDO-TEMP=0
+REDO-BASIC=0
+
 ##########################################################################
 #
 # System config files/directories created:
@@ -27,11 +30,17 @@ include Makefile.lfs.depends
 ##########################################################################
 
 all:
-	echo make redo-lfs-temp-system && \
-	make lfs-temp-system && \
+	if [ "$(REDO-TEMP)" = "1" ]; then \
+		make redo-lfs-temp-system; \
+	else \
+		make lfs-temp-system; \
+	fi && \
 	\
-	echo make redo-lfs-basic-system && \
-	make lfs-basic-system && \
+	if [ "$(REDO-BASIC)" = "1" ]; then \
+		make redo-lfs-basic-system; \
+	else \
+		make lfs-basic-system; \
+	fi && \
 	\
 	make config-setclock && \
 	make config-console && \
