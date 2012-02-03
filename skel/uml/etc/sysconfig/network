@@ -1,4 +1,0 @@
-HOSTNAME=uml.jaynet.org
-ONBOOT=no
-GATEWAY=192.168.1.10
-GATEWAY_IF=eth0

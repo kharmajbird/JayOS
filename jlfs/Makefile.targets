@@ -628,19 +628,6 @@ addons:
 #
 #
 #
-root-uml:
-	rm -rf $(MNT) && mkdir -p $(MNT) && \
-	\
-	$(LOSETUP-BIN) $(LOOPDEV) $(FSDIR)/uml.fs && \
-	$(MOUNT-BIN) $(LOOPDEV) $(MNT) && \
-	\
-	cp -a $(SKEL-UML)/* $(MNT) && \
-	\
-	$(UMOUNT-BIN) $(LOOPDEV) && $(LOSETUP-BIN) -d $(LOOPDEV)
-
-#
-#
-#
 rootalt: root-generic
 	gzip -dc $(ROOTFS).gz| $(AESPIPE-BIN) -T -e aes128 > $(ROOTFS).alt
 
@@ -875,10 +862,7 @@ iso-write:
 		fi; \
 		\
 		rm -f $(LIVECD)/boot/isolinux.bin \
-			$(LIVECD)/isolinux.cfg \
-			$(LIVECD)/fs/uml.fs \
-			$(LIVECD)/fs/uml.fs.cow \
-			$(LIVECD)/fs/uml-nest1.fs.cow && \
+			$(LIVECD)/isolinux.cfg && \
 		\
 		$(JLFS-SCRIPTS)/hcreate.sh \
 			$(VERSION)-$(ARCH) $${SIZE} $${ISO}; \
