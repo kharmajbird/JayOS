@@ -18,7 +18,7 @@ include Makefile.lfs.depends
 
 # For developer use
 SKIP-TEMP=0
-REDO-TEMP=0
+REDO-TEMP=1
 REDO-BASIC=0
 
 ##########################################################################
@@ -715,12 +715,12 @@ TEMP-$(FILE):
 	chown -R 0:0 $(FILE) && \
 	cd $(FILE) && \
 	\
-	./configure --prefix=/usr && \
+	./configure --prefix=/tools && \
 	make && \
 	make install && \
 	\
 	cd .. && \
-	rm -rf $(FILE)/* && \
+	rm -rf $(FILE)
 
 TEMP-$(FINDUTILS):
 	set +h && \
