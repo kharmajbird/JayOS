@@ -29,8 +29,8 @@ include Makefile.lfs.depends
 all:
 	echo "TODO:  if-then var on make redo"
 
-	echo make redo-lfs-temp-system && \
-	make lfs-temp-system && \
+	make redo-lfs-temp-system && \
+	echo make lfs-temp-system && \
 	\
 	echo make redo-lfs-basic-system && \
 	make lfs-basic-system && \
@@ -357,8 +357,8 @@ PASS1-$(GCC4):
     		--disable-libgomp --disable-libquadmath \
 		--disable-target-libiberty --disable-target-zlib \
 		--enable-languages=c --without-ppl --without-cloog \
-		--with-mpfr-include=$(PWD)/../$(GCC4)-build/mpfr/src \
-		--with-mpfr-lib=$(PWD)/../$(GCC4)-build/mpfr/src/.libs && \
+		--with-mpfr-include=/tools/src/$(GCC4)-build/mpfr/src \
+		--with-mpfr-lib=/tools/src/$(GCC4)-build/mpfr/src/.libs && \
 	\
 	make && \
 	make install && \
@@ -527,8 +527,8 @@ PASS2-$(GCC4):
 		--disable-libstdcxx-pch --disable-multilib \
 		--disable-bootstrap --disable-libgomp \
 		--without-ppl --without-cloog \
-		--with-mpfr-include=$(PWD)/../$(GCC4)-build/mpfr/src \
-		--with-mpfr-lib=$(PWD)/../$(GCC4)-build/mpfr/src/.libs && \
+		--with-mpfr-include=/tools/src/$(GCC4)-build/mpfr/src \
+		--with-mpfr-lib=/tools/src/$(GCC4)-build/mpfr/src/.libs && \
 	\
 	make && \
 	make install && \
