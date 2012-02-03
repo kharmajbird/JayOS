@@ -364,7 +364,7 @@ PASS1-$(GCC4):
     		--disable-libgomp --disable-libquadmath \
 		--disable-target-libiberty --disable-target-zlib \
 		--enable-languages=c --without-ppl --without-cloog \
-		--with-gmp-include=/tools/src/$(GCC4)/gmp \
+		--with-gmp-include=/tools/src/$(GCC4)-build/gmp \
 		--with-gmp-lib=/tools/src/$(GCC4)/gmp/.libs \
 		--with-mpfr-include=/tools/src/$(GCC4)/mpfr/src \
 		--with-mpfr-lib=/tools/src/$(GCC4)/mpfr/src/.libs && \
@@ -536,7 +536,7 @@ PASS2-$(GCC4):
 		--disable-libstdcxx-pch --disable-multilib \
 		--disable-bootstrap --disable-libgomp \
 		--without-ppl --without-cloog \
-		--with-gmp-include=/tools/src/$(GCC4)/gmp \
+		--with-gmp-include=/tools/src/$(GCC4)-build/gmp \
 		--with-gmp-lib=/tools/src/$(GCC4)/gmp/.libs \
 		--with-mpfr-include=/tools/src/$(GCC4)/mpfr/src \
 		--with-mpfr-lib=/tools/src/$(GCC4)/mpfr/src/.libs && \
