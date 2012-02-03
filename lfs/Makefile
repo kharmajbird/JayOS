@@ -16,6 +16,7 @@ HEAD=$(LFS)/build/JayOS
 include Makefile.lfs.versions
 include Makefile.lfs.depends
 
+SKIP-TEMP=0
 REDO-TEMP=0
 REDO-BASIC=0
 
@@ -30,11 +31,14 @@ REDO-BASIC=0
 ##########################################################################
 
 all:
-	if [ "$(REDO-TEMP)" = "1" ]; then \
-		make redo-lfs-temp-system; \
-	else \
-		make lfs-temp-system; \
+	if [ "$(SKIP-TEMP)" = "0" ]; then \
+		if [ "$(REDO-TEMP)" = "1" ]; then \
+			make redo-lfs-temp-system; \
+		else \
+			make lfs-temp-system; \
+		fi; \
 	fi && \
+	\
 	\
 	if [ "$(REDO-BASIC)" = "1" ]; then \
 		make redo-lfs-basic-system; \
