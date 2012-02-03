@@ -357,8 +357,8 @@ PASS1-$(GCC4):
     		--disable-libgomp --disable-libquadmath \
 		--disable-target-libiberty --disable-target-zlib \
 		--enable-languages=c --without-ppl --without-cloog \
-		--with-mpfr-include=$(PWD)/../$(GCC4)/mpfr/src \
-		--with-mpfr-lib=$(PWD)/mpfr/src/.libs && \
+		--with-mpfr-include=$(PWD)/../$(GCC4)-build/mpfr/src \
+		--with-mpfr-lib=$(PWD)/../$(GCC4)-build/mpfr/src/.libs && \
 	\
 	make && \
 	make install && \
@@ -527,8 +527,8 @@ PASS2-$(GCC4):
 		--disable-libstdcxx-pch --disable-multilib \
 		--disable-bootstrap --disable-libgomp \
 		--without-ppl --without-cloog \
-		--with-mpfr-include=$(PWD)/../$(GCC4)/mpfr/src \
-		--with-mpfr-lib=$(PWD)/mpfr/src/.libs && \
+		--with-mpfr-include=$(PWD)/../$(GCC4)-build/mpfr/src \
+		--with-mpfr-lib=$(PWD)/../$(GCC4)-build/mpfr/src/.libs && \
 	\
 	make && \
 	make install && \
