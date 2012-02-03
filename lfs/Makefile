@@ -671,7 +671,7 @@ TEMP-$(BZIP2):
 	cd .. && \
 	rm -rf $(BZIP2)
 
-TEMP-$(COREUTILS):
+TEMP-$(COREUTILS):  TEMP-$(XZ)
 	set +h && \
 	\
 	xz -dc $(LFS-TARBALLS)/$(COREUTILS).tar.xz| tar xvf - && \
