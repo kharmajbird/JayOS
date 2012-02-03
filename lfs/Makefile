@@ -367,7 +367,7 @@ PASS1-$(GCC4):
 		--with-gmp-include=/tools/src/$(GCC4)-build/gmp \
 		--with-gmp-lib=/tools/src/$(GCC4)-build/gmp/.libs \
 		--with-mpfr-include=/tools/src/$(GCC4)/mpfr/src \
-		--with-mpfr-lib=/tools/src/$(GCC4)/mpfr/src/.libs && \
+		--with-mpfr-lib=/tools/src/$(GCC4)-build/mpfr/src/.libs && \
 	\
 	make && \
 	make install && \
@@ -539,7 +539,7 @@ PASS2-$(GCC4):
 		--with-gmp-include=/tools/src/$(GCC4)-build/gmp \
 		--with-gmp-lib=/tools/src/$(GCC4)-build/gmp/.libs \
 		--with-mpfr-include=/tools/src/$(GCC4)/mpfr/src \
-		--with-mpfr-lib=/tools/src/$(GCC4)/mpfr/src/.libs && \
+		--with-mpfr-lib=/tools/src/$(GCC4)-build/mpfr/src/.libs && \
 	\
 	make && \
 	make install && \
