@@ -82,6 +82,9 @@ LFS-BASICSYS := linux-headers $(MAN-PAGES) $(GLIBC) \
 	#TEMP-$(M4) \
 	#TEMP-$(MAKE) \
 	#TEMP-$(PATCH) \
+	#TEMP-$(PERL) \
+	#TEMP-$(SED) \
+	#TEMP-$(TAR) \
 
 #
 # when doing a "make redo-lfs-tempsys" 
@@ -89,9 +92,6 @@ LFS-BASICSYS := linux-headers $(MAN-PAGES) $(GLIBC) \
 #
 
 REDO-LFS-TEMPSYS := \
-	TEMP-$(PERL) \
-	TEMP-$(SED) \
-	TEMP-$(TAR) \
 	TEMP-$(TEXINFO)
 
 #
