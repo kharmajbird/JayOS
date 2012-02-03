@@ -357,8 +357,8 @@ PASS1-$(GCC4):
     		--disable-libgomp --disable-libquadmath \
 		--disable-target-libiberty --disable-target-zlib \
 		--enable-languages=c --without-ppl --without-cloog \
-		--with-mpfr-include=/tools/src/$(GCC4)-build/mpfr/src \
-		--with-mpfr-lib=/tools/src/$(GCC4)-build/mpfr/src/.libs && \
+		--with-mpfr-include=/tools/src/$(GCC4)/mpfr/src \
+		--with-mpfr-lib=/tools/src/$(GCC4)/mpfr/src/.libs && \
 	\
 	make && \
 	make install && \
@@ -466,8 +466,8 @@ PASS2-$(GCC4):
 	cd $(GCC4) && \
 	\
 	patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-startfiles_fix-1.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-cross_compile-1.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-locale-1.patch && \
+	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-cross_compile-1.patch && \
+	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-locale-1.patch && \
 	\
 	cp -v gcc/Makefile.in{,.orig} && \
 	sed 's@\./fixinc\.sh@-c true@' gcc/Makefile.in.orig \
@@ -527,8 +527,8 @@ PASS2-$(GCC4):
 		--disable-libstdcxx-pch --disable-multilib \
 		--disable-bootstrap --disable-libgomp \
 		--without-ppl --without-cloog \
-		--with-mpfr-include=/tools/src/$(GCC4)-build/mpfr/src \
-		--with-mpfr-lib=/tools/src/$(GCC4)-build/mpfr/src/.libs && \
+		--with-mpfr-include=/tools/src/$(GCC4)/mpfr/src \
+		--with-mpfr-lib=/tools/src/$(GCC4)/mpfr/src/.libs && \
 	\
 	make && \
 	make install && \
