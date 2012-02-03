@@ -858,12 +858,12 @@ TEMP-$(PERL):
 	cd $(PERL) && \
 	\
 	patch -Np1 -i $(LFS-PATCHES)/$(PERL)-libc-1.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(PERL)-security-fix-1.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(PERL)-security_fix-1.patch && \
 	\
 	sh Configure -des -Dprefix=/tools && \
 	make && \
 	\
-	cp -v perl pod/pod2man /tools/bin && \
+	cp -v perl cpan/podlators/pod2man /tools/bin && \
 	mkdir -pv /tools/lib/perl5/$(PERL-VER) && \
 	cp -Rv lib/* /tools/lib/perl5/$(PERL-VER) && \
 	\

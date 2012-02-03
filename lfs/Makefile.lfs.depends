@@ -72,6 +72,16 @@ LFS-BASICSYS := linux-headers $(MAN-PAGES) $(GLIBC) \
 	#TEMP-$(BASH) \
 	#TEMP-$(BZIP2) \
 	#TEMP-$(XZ) \
+	#TEMP-$(COREUTILS) \
+	#TEMP-$(DIFFUTILS) \
+	#TEMP-$(FINDUTILS) \
+	#TEMP-$(GAWK) \
+	#TEMP-$(GETTEXT) \
+	#TEMP-$(GREP) \
+	#TEMP-$(GZIP) \
+	#TEMP-$(M4) \
+	#TEMP-$(MAKE) \
+	#TEMP-$(PATCH) \
 
 #
 # when doing a "make redo-lfs-tempsys" 
@@ -79,16 +89,6 @@ LFS-BASICSYS := linux-headers $(MAN-PAGES) $(GLIBC) \
 #
 
 REDO-LFS-TEMPSYS := \
-	TEMP-$(COREUTILS) \
-	TEMP-$(DIFFUTILS) \
-	TEMP-$(FINDUTILS) \
-	TEMP-$(GAWK) \
-	TEMP-$(GETTEXT) \
-	TEMP-$(GREP) \
-	TEMP-$(GZIP) \
-	TEMP-$(M4) \
-	TEMP-$(MAKE) \
-	TEMP-$(PATCH) \
 	TEMP-$(PERL) \
 	TEMP-$(SED) \
 	TEMP-$(TAR) \
