@@ -893,7 +893,7 @@ TEMP-$(TAR):
 	chown -R 0:0 $(TAR) && \
 	cd $(TAR) && \
 	\
-	./configure --prefix=/tools && \
+	FORCE_UNSAFE_CONFIGURE=1 ./configure --prefix=/tools && \
 	make && \
 	make install && \
 	\
