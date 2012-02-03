@@ -90,7 +90,7 @@ prep-lfs-tools:
 			Makefile.lfs.depends \
 			Makefile.lfs.versions; do \
 			\
-			ln -sfn $(LFS-SRC)/$${i} $(LFS)/tools/src/$${i}; \
+			cp -a $(LFS-SRC)/$${i} $(LFS)/tools/src/$${i}; \
 		done; \
 	fi
 
