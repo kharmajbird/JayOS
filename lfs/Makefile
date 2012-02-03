@@ -17,9 +17,9 @@ include Makefile.lfs.versions
 include Makefile.lfs.depends
 
 # For developer use
-SKIP-TEMP=0
-REDO-TEMP=1
-REDO-BASIC=0
+SKIP-TEMP=1
+REDO-TEMP=0
+REDO-BASIC=1
 
 ##########################################################################
 #
@@ -173,8 +173,6 @@ redo-lfs-temp-system:
 
 lfs-basic-system:
 	mkdir -pv $(LFS)/{dev,proc,sys} && \
-	mknod -m 600 $(LFS)/dev/console c 5 1 && \
-	mknod -m 666 $(LFS)/dev/null c 1 3 && \
 	mount -v --bind /dev $(LFS)/dev && \
 	mount -vt devpts devpts $(LFS)/dev/pts && \
 	mount -vt tmpfs shm $(LFS)/dev/shm && \
