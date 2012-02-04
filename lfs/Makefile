@@ -1509,7 +1509,7 @@ $(PROCPS):
 	chown -R 0:0 $(PROCPS) && \
 	cd $(PROCPS) && \
 	\
-	patch -Np1 -i $(LFS-PATCHES)/$(PROCPS)-fix_HZ-errors-1.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(PROCPS)-fix_HZ_errors-1.patch && \
 	patch -Np1 -i $(LFS-PATCHES)/$(PROCPS)-watch_unicode-1.patch && \
 	\
 	sed -i -e 's@\*/module.mk@proc/module.mk ps/module.mk@' Makefile && \
