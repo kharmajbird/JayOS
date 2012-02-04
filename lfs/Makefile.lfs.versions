@@ -31,7 +31,7 @@ GCC4-VER = 4.6.1
 GETTEXT = gettext-0.18.1.1
 GLIBC = glibc-2.14.1
 GREP = grep-2.9
-GROFF = groff-1.21.1
+GROFF = groff-1.21
 #
 # grub2 is 1.98, avoid for now
 GRUB = grub-0.97

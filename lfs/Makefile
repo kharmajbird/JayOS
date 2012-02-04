@@ -19,7 +19,7 @@ include Makefile.lfs.depends
 # For developer use
 SKIP-TEMP=1
 REDO-TEMP=0
-REDO-BASIC=1
+REDO-BASIC=0
 
 ##########################################################################
 #
@@ -245,7 +245,7 @@ lfs-basic-system-chroot:
 	install -dv -m 1777 /tmp /var/tmp && \
 	mkdir -pv /usr/{,local/}{bin,include,lib,sbin,src} && \
 	mkdir -pv /usr/{,local/}share/{doc,info,locale,man} && \
-	mkdir -v  /usr/{,local/}share/{misc,terminfo,zoneinfo} && \
+	mkdir -pv  /usr/{,local/}share/{misc,terminfo,zoneinfo} && \
 	mkdir -pv /usr/{,local/}share/man/man{1..8} && \
 	\
 	for DIR in /usr /usr/local; do \

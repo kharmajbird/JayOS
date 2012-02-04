@@ -116,13 +116,14 @@ REDO-LFS-TEMPSYS := \
 	#$(IANA-ETC) $(BISON) $(PROCPS) $(GREP) $(READLINE) $(BASH) \
 	#$(LIBTOOL) \
 	#$(GDBM) $(INETUTILS) 
+	#$(PERL) $(AUTOCONF) \
+	#$(AUTOMAKE) $(BZIP2) $(DIFFUTILS) $(GAWK) $(FINDUTILS) \
+	#$(FLEX) $(GETTEXT) \
 
 # ditto when doing a "make redo-lfs-basicsystem"
 
 REDO-LFS-BASICSYS := \
-	$(PERL) $(AUTOCONF) \
-	$(AUTOMAKE) $(BZIP2) $(DIFFUTILS) $(GAWK) $(FINDUTILS) \
-	$(FLEX) $(GETTEXT) $(GROFF) $(GRUB) \
+	$(GROFF) $(GRUB) \
 	$(GZIP) \
 	$(IPROUTE) $(KBD) $(LESS) $(LIBPIPELINE) $(MAKE) $(MAN-DB) \
 	$(MODULE-INIT-TOOLS) \
