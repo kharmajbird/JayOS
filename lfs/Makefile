@@ -1015,8 +1015,8 @@ $(GLIBC):
 	touch /etc/ld.so.conf && \
 	make install && \
 	\
-	cp -v ../$(GLIBC)/sunrpc/rpc/*.h /usr/include/rpc
-	cp -v ../$(GLIBC)/sunrpc/rpcsvc/*.h /usr/include/rpcsvc
+	cp -v ../$(GLIBC)/sunrpc/rpc/*.h /usr/include/rpc && \
+	cp -v ../$(GLIBC)/sunrpc/rpcsvc/*.h /usr/include/rpcsvc && \
 	cp -v ../$(GLIBC)/nis/rpcsvc/*.h /usr/include/rpcsvc && \
 	\
 	mkdir -pv /usr/lib/locale && \

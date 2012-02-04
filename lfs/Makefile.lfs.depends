@@ -101,11 +101,11 @@ REDO-LFS-TEMPSYS := \
 
 	#linux-headers \
 	#$(MAN-PAGES) \
+	#$(GLIBC) \
 
 # ditto when doing a "make redo-lfs-basicsystem"
 
 REDO-LFS-BASICSYS := \
-	$(GLIBC) \
 	readjust-toolchain \
 	$(ZLIB) \
 	$(BINUTILS) \
