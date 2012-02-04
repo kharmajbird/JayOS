@@ -1650,12 +1650,12 @@ $(PERL):
 	echo "127.0.0.1 localhost $(LFS-HOSTNAME)" > /etc/hosts && \
 	\
 	patch -Np1 -i $(LFS-PATCHES)/$(PERL)-libc-1.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(PERL)-security-fix-1.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(PERL)-security_fix-1.patch && \
 	\
 	sed -i -e "s|BUILD_ZLIB\s*= True|BUILD_ZLIB = False|" \
 		-e "s|INCLUDE\s*= ./zlib-src|INCLUDE    = /usr/include|" \
 		-e "s|LIB\s*= ./zlib-src|LIB        = /usr/lib|" \
-			ext/Compress-Raw-Zlib/config.in && \
+			cpan/Compress-Raw-Zlib/config.in && \
 	\
 	sh Configure -des -Dprefix=/usr \
 		-Dvendorprefix=/usr           \

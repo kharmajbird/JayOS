@@ -112,14 +112,15 @@ REDO-LFS-TEMPSYS := \
 	#$(SED) \
 	#$(NCURSES) \
 	#$(UTIL-LINUX) $(E2FSPROGS) \
+	#$(COREUTILS) \
+	#$(IANA-ETC) $(BISON) $(PROCPS) $(GREP) $(READLINE) $(BASH) \
+	#$(LIBTOOL) \
+	#$(GDBM) $(INETUTILS) 
 
 # ditto when doing a "make redo-lfs-basicsystem"
 
 REDO-LFS-BASICSYS := \
-	$(COREUTILS) \
-	$(IANA-ETC) $(BISON) $(PROCPS) $(GREP) $(READLINE) $(BASH) \
-	$(LIBTOOL) \
-	$(GDBM) $(INETUTILS) $(PERL) $(AUTOCONF) \
+	$(PERL) $(AUTOCONF) \
 	$(AUTOMAKE) $(BZIP2) $(DIFFUTILS) $(GAWK) $(FINDUTILS) \
 	$(FLEX) $(GETTEXT) $(GROFF) $(GRUB) \
 	$(GZIP) \
