@@ -35,7 +35,7 @@ LFS-TEMPSYS := PASS1-$(BINUTILS) PASS1-$(GCC4) \
 LFS-BASICSYS := linux-headers $(MAN-PAGES) $(GLIBC) \
 		readjust-toolchain \
 		$(ZLIB) $(FILE) $(BINUTILS) $(M4) $(GMP) $(MPFR) $(MPC) \
-		$(GCC4) $(SED) $(PKG-CONFIG) $(NCURSES) $(UTIL-LINUX) \
+		$(GCC4) $(SED) $(NCURSES) $(UTIL-LINUX) \
 		$(E2FSPROGS) $(COREUTILS) $(IANA-ETC) $(M4) $(BISON) $(PROCPS) \
 		$(GREP) $(READLINE) $(BASH) $(LIBTOOL) $(GDBM) $(INETUTILS) \
 		$(PERL) $(AUTOCONF) $(AUTOMAKE) $(BZIP2) $(DIFFUTILS) $(GAWK) \
@@ -102,18 +102,19 @@ REDO-LFS-TEMPSYS := \
 	#linux-headers \
 	#$(MAN-PAGES) \
 	#$(GLIBC) \
+	#readjust-toolchain \
+	#$(ZLIB) \
+	#$(BINUTILS) \
+	#$(M4) $(GMP) \
+	#$(MPFR) $(MPC) \
+	#$(FILE) \
+	#$(GCC4) \
+	#$(SED) \
 
 # ditto when doing a "make redo-lfs-basicsystem"
 
 REDO-LFS-BASICSYS := \
-	readjust-toolchain \
-	$(ZLIB) \
-	$(BINUTILS) \
-	$(M4) $(GMP) \
-	$(MPFR) $(MPC) \
-	$(FILE) \
-	$(GCC4) \
-	$(SED) $(PKG-CONFIG) $(NCURSES) $(UTIL-LINUX) $(E2FSPROGS) \
+	$(NCURSES) $(UTIL-LINUX) $(E2FSPROGS) \
 	$(COREUTILS) \
 	$(IANA-ETC) $(BISON) $(PROCPS) $(GREP) $(READLINE) $(BASH) \
 	$(LIBTOOL) \

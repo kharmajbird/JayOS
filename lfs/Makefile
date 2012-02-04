@@ -1358,7 +1358,7 @@ $(UTIL-LINUX):
 	chown -R 0:0 $(UTIL-LINUX) && \
 	cd $(UTIL-LINUX) && \
 	\
-	echo "TODO:  make hwclock FHS-compliant"
+	echo "TODO:  make hwclock FHS-compliant" && \
 	echo figure out later sed -e 's@etc/adjtime@var/lib/hwclock/adjtime@g' \
 		-i $(shell grep -rl '/etc/adjtime' .) && \
 	mkdir -pv /var/lib/hwclock && \

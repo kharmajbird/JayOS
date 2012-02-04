@@ -63,7 +63,6 @@ PROCPS = procps-3.2.8
 PSMISC = psmisc-22.14
 READLINE = readline-6.2
 SED = sed-4.2.1
-PKG-CONFIG = pkg-config-0.25
 SHADOW = shadow-4.1.4.3
 SYSKLOGD = sysklogd-1.5
 SYSVINIT = sysvinit-2.88dsf
