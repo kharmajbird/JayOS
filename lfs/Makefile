@@ -249,21 +249,21 @@ lfs-basic-system-chroot:
 	mkdir -pv /usr/{,local/}share/man/man{1..8} && \
 	\
 	for DIR in /usr /usr/local; do \
-		ln -sv share/{man,doc,info} $${DIR}; \
+		ln -sfv share/{man,doc,info} $${DIR}; \
 	done && \
 	\
 	if [ "`uname -m`" = "x86_64" ]; then \
-		ln -sv lib /lib64 && ln -sv lib /usr/lib64; \
+		ln -sfv lib /lib64 && ln -sv lib /usr/lib64; \
 	fi && \
 	\
-	mkdir -v /var/{lock,log,mail,run,spool} && \
+	mkdir -pv /var/{lock,log,mail,run,spool} && \
 	mkdir -pv /var/{opt,cache,lib/{misc,locate},local} && \
 	\
-	ln -sv /tools/bin/{bash,cat,echo,grep,pwd,stty} /bin && \
-	ln -sv /tools/bin/perl /usr/bin && \
-	ln -sv /tools/lib/libgcc_s.so{,.1} /usr/lib && \
-	ln -sv /tools/lib/libstdc++.so{,.6} /usr/lib && \
-	ln -sv bash /bin/sh && \
+	ln -sfv /tools/bin/{bash,cat,echo,grep,pwd,stty} /bin && \
+	ln -sfv /tools/bin/perl /usr/bin && \
+	ln -sfv /tools/lib/libgcc_s.so{,.1} /usr/lib && \
+	ln -sfv /tools/lib/libstdc++.so{,.6} /usr/lib && \
+	ln -sfv bash /bin/sh && \
 	\
 	touch /etc/mtab && \
 	\
