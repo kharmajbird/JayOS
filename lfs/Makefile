@@ -985,14 +985,13 @@ $(GLIBC):
         	scripts/test-installation.pl && \
 	unset DL && \
 	\
-	sed -i -e 's/"db1"/& \&\& $name ne "nss_test1"/' \
+	sed -i -e 's/"db1"/& \&\& $$name ne "nss_test1"/' \
 		scripts/test-installation.pl && \
 	\
 	sed -i 's|@BASH@|/bin/bash|' elf/ldd.bash.in && \
 	\
 	patch -Np1 -i $(LFS-PATCHES)/$(GLIBC)-fixes-1.patch && \
 	patch -Np1 -i $(LFS-PATCHES)/$(GLIBC)-gcc_fix-1.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(GLIBC)-cpuid-1.patch && \
 	\
 	sed -i '195,213 s/PRIVATE_FUTEX/FUTEX_CLOCK_REALTIME/' \
 		nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timed{rd,wr}lock.S && \
