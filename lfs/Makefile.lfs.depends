@@ -110,11 +110,12 @@ REDO-LFS-TEMPSYS := \
 	#$(FILE) \
 	#$(GCC4) \
 	#$(SED) \
+	#$(NCURSES) \
+	#$(UTIL-LINUX) $(E2FSPROGS) \
 
 # ditto when doing a "make redo-lfs-basicsystem"
 
 REDO-LFS-BASICSYS := \
-	$(NCURSES) $(UTIL-LINUX) $(E2FSPROGS) \
 	$(COREUTILS) \
 	$(IANA-ETC) $(BISON) $(PROCPS) $(GREP) $(READLINE) $(BASH) \
 	$(LIBTOOL) \

@@ -1422,7 +1422,7 @@ $(COREUTILS):
 	cd $(COREUTILS) && \
 	\
 	if [ "`uname -m`" = "i486" -o "`uname -m`" = "i586" -o "`uname -m`" = "i686" -o "`uname -m`" = "x86_64" ]; then \
-		patch -Np1 -i $(LFS-PATCHES)/$(COREUTILS)-uname-2.patch; \
+		patch -Np1 -i $(LFS-PATCHES)/$(COREUTILS)-uname-1.patch; \
 	fi && \
 	\
 	patch -Np1 -i $(LFS-PATCHES)/$(COREUTILS)-i18n-1.patch && \
