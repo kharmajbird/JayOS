@@ -1612,7 +1612,6 @@ $(GDBM):
 	./configure --prefix=/usr --enable-libgdbm-compat && \
 	make && \
 	make install && \
-	make install-compat && \
 	\
 	cd .. && \
 	rm -rf $(GDBM)/.libs $(GDBM)/* && \
