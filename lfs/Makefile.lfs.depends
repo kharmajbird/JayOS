@@ -117,7 +117,8 @@ REDO-LFS-TEMPSYS := \
 	#$(LIBTOOL) \
 	#$(GDBM) $(INETUTILS) 
 	#$(PERL) $(AUTOCONF) \
-	#$(AUTOMAKE) $(BZIP2) $(DIFFUTILS) $(GAWK) $(FINDUTILS) \
+	#$(AUTOMAKE) 
+	#$(BZIP2) $(DIFFUTILS) $(GAWK) $(FINDUTILS) \
 	#$(FLEX) $(GETTEXT) \
 
 # ditto when doing a "make redo-lfs-basicsystem"

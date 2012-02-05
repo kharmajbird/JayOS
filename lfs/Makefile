@@ -19,7 +19,7 @@ include Makefile.lfs.depends
 # For developer use
 SKIP-TEMP=1
 REDO-TEMP=0
-REDO-BASIC=0
+REDO-BASIC=1
 
 ##########################################################################
 #
@@ -1307,10 +1307,10 @@ $(BZIP2):
 	\
 	cp -v bzip2-shared /bin/bzip2 && \
 	cp -av libbz2.so* /lib && \
-	ln -sv ../../lib/libbz2.so.1.0 /usr/lib/libbz2.so && \
+	ln -sfv ../../lib/libbz2.so.1.0 /usr/lib/libbz2.so && \
 	rm -v /usr/bin/{bunzip2,bzcat,bzip2} && \
-	ln -sv bzip2 /bin/bunzip2 && \
-	ln -sv bzip2 /bin/bzcat && \
+	ln -sfv bzip2 /bin/bunzip2 && \
+	ln -sfv bzip2 /bin/bzcat && \
 	\
 	cd .. && \
 	rm -rf $(BZIP2)/* && \
@@ -1815,8 +1815,8 @@ $(GROFF):
 	make && \
 	make install && \
 	\
-	ln -sv eqn /usr/bin/geqn && \
-	ln -sv tbl /usr/bin/gtbl && \
+	ln -sfv eqn /usr/bin/geqn && \
+	ln -sfv tbl /usr/bin/gtbl && \
 	\
 	cd .. && \
 	rm -rf $(GROFF)/* && \
