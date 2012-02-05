@@ -17,9 +17,9 @@ include Makefile.lfs.versions
 include Makefile.lfs.depends
 
 # For developer use
-SKIP-TEMP=1
+SKIP-TEMP=0
 REDO-TEMP=0
-REDO-BASIC=1
+REDO-BASIC=0
 
 ##########################################################################
 #
@@ -2051,9 +2051,6 @@ $(PSMISC):
 	./configure --prefix=/usr --exec-prefix="" && \
 	make && \
 	make install && \
-	\
-	mv -v /usr/bin/fuser /bin && \
-	mv -v /usr/bin/killall /bin && \
 	\
 	mv -v /bin/pstree* /usr/bin && \
 	ln -sv killall /bin/pidof && \
