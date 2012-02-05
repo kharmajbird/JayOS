@@ -122,14 +122,15 @@ REDO-LFS-TEMPSYS := \
 	#$(FLEX) $(GETTEXT) \
 	#$(GROFF) $(GRUB) \
 	#$(GZIP) \
+	#j#$(IPROUTE) \
+	#$(KBD) $(LESS) $(LIBPIPELINE) $(MAKE) $(MAN-DB) \
+	#$(MODULE-INIT-TOOLS) \
+	#$(PATCH) \
+	#$(PSMISC) 
+	#j#$(SHADOW) \
 
 # ditto when doing a "make redo-lfs-basicsystem"
 
 REDO-LFS-BASICSYS := \
-	$(IPROUTE) \
-	$(KBD) $(LESS) $(LIBPIPELINE) $(MAKE) $(MAN-DB) \
-	$(MODULE-INIT-TOOLS) \
-	$(PATCH) \
-	$(PSMISC) $(SHADOW) \
 	$(SYSKLOGD) $(SYSVINIT) $(TAR) $(TEXINFO) $(UDEV) $(VIM) \
 	$(LFS-BOOTSCRIPTS)
