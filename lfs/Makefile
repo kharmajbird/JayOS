@@ -17,9 +17,9 @@ include Makefile.lfs.versions
 include Makefile.lfs.depends
 
 # For developer use
-SKIP-TEMP=0
+SKIP-TEMP=1
 REDO-TEMP=0
-REDO-BASIC=0
+REDO-BASIC=1
 
 ##########################################################################
 #
@@ -2070,13 +2070,12 @@ $(SHADOW):
 	sed -i 's/groups$$(EXEEXT) //' src/Makefile.in && \
 	find man -name Makefile -exec sed -i 's/groups\.1 / /' {} \; && \
 	\
-	sed -i -e 's/ ko//' -e 's/ zh_CN zh_TW//' man/Makefile.in && \
+	sed -i 's/man_MANS = $$(man_nopam) /man_MANS = /' man/ru/Makefile.in && \
 	\
-	sed -i -e 's@#ENCRYPT_METHOD DES@ENCRYPT_METHOD MD5@' \
+	sed -i -e 's@#ENCRYPT_METHOD DES@ENCRYPT_METHOD SHA512@' \
 		-e 's@/var/spool/mail@/var/mail@' etc/login.defs && \
 	\
 	./configure --sysconfdir=/etc && \
-	\
 	make && \
 	make install && \
 	\
