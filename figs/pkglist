@@ -500,7 +500,7 @@ jlfs/sane-backends-1.0.17.tar.gz
 jlfs/screen-4.0.3.tar.gz
 jlfs/seamonkey-2.5.source.tar.bz2
 jlfs/send2trash-1.2.0.tar.bz2
-jlfs/sendmail.8.14.1.tar.gz
+jlfs/sendmail.8.14.4.tar.gz
 jlfs/setuptools-0.6c11.tar.gz
 jlfs/shared-mime-info-0.70.tar.bz2
 jlfs/sip-4.12.4.tar.gz
@@ -583,7 +583,7 @@ jlfs/zip30.tar.gz
 lfs/autoconf-2.68.tar.bz2
 lfs/automake-1.11.1.tar.bz2
 lfs/bash-4.2.tar.gz
-lfs/binutils-2.21.1a.tar.bz2
+lfs/binutils-2.21.1.tar.bz2
 lfs/bison-2.5.tar.bz2
 lfs/bzip2-1.0.6.tar.gz
 lfs/check-0.9.8.tar.gz
@@ -608,10 +608,11 @@ lfs/grub-1.99.tar.gz
 lfs/gzip-1.4.tar.gz
 lfs/iana-etc-2.30.tar.bz2
 lfs/inetutils-1.8.tar.gz
-lfs/iproute2-2.6.35.tar.bz2
+lfs/iproute2-3.2.0.tar.xz
 lfs/kbd-1.15.2.tar.gz
 lfs/less-444.tar.gz
 lfs/lfs-bootscripts-20111017.tar.bz2
+lfs/libnl-2.0.tar.gz
 lfs/libpipeline-1.2.0.tar.gz
 lfs/libtool-2.4.tar.gz
 lfs/m4-1.4.16.tar.bz2
@@ -633,7 +634,7 @@ lfs/sysklogd-1.5.tar.gz
 lfs/sysvinit-2.88dsf.tar.bz2
 lfs/tar-1.26.tar.bz2
 lfs/tcl8.5.10-src.tar.gz
-lfs/texinfo-4.13a.tar.gz
+lfs/texinfo-4.13.tar.gz
 lfs/udev-173.tar.bz2
 lfs/udev-config-20100128.tar.bz2
 lfs/util-linux-2.20.tar.bz2

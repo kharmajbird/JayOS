@@ -64,6 +64,10 @@ PROCPS = procps-3.2.8
 PSMISC = psmisc-22.14
 READLINE = readline-6.2
 SED = sed-4.2.1
+#
+# also update SHADOW in JayOS/jlfs/Makefile.versions
+# re-install in BLFS for Linux-PAM support
+#
 SHADOW = shadow-4.1.4.3
 SYSKLOGD = sysklogd-1.5
 SYSVINIT = sysvinit-2.88dsf
