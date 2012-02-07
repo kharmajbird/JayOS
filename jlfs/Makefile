@@ -5256,6 +5256,22 @@ $(LIBXAU):
 	rm -rf $(LIBXAU)/* && \
 	make P=$(LIBXAU) log-package
 
+$(LIBXCB):  $(LIBXAU)
+	set +h && \
+	\
+	tar jxvf $(XORG-TARBALLS)/misc/$(LIBXCB).tar.bz2 && \
+	chmod 755 $(LIBXCB) && \
+	chown -R 0:0 $(LIBXCB) && \
+	cd $(LIBXCB) && \
+	\
+	./configure --prefix=/usr --without-doxygen && \
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(LIBXCB)/* && \
+	make P=$(LIBXCB) log-package
+
 $(LIBXDMCP):
 	set +h && \
 	\
@@ -6442,22 +6458,6 @@ $(NSPR):
 	cd .. && \
 	rm -rf $(NSPR)/* && \
 	make P=$(NSPR) log-package
-
-$(LIBXCB):  $(LIBXAU)
-	set +h && \
-	\
-	tar jxvf $(JLFS-TARBALLS)/$(LIBXCB).tar.bz2 && \
-	chmod 755 $(LIBXCB) && \
-	chown -R 0:0 $(LIBXCB) && \
-	cd $(LIBXCB) && \
-	\
-	./configure --prefix=/usr --without-doxygen && \
-	make -j2 && \
-	make install && \
-	\
-	cd .. && \
-	rm -rf $(LIBXCB)/* && \
-	make P=$(LIBXCB) log-package
 
 ##
 ## Begin Graphics and Font Libraries
