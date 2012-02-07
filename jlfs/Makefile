@@ -5218,14 +5218,16 @@ $(LIBDRM):
 	echo rm -rf $(LIBDRM)/* && \
 	make P=$(LIBDRM) log-package
 
-$(MESA):  $(LIBDRM) $(XORG7-PROTO) $(XORG7-UTIL) $(XORG7-LIB) $(EXPAT)
+$(MESA):  $(LIBDRM) $(XORG7-PROTO) $(XORG7-UTIL) $(XORG7-LIB) $(EXPAT) \
+	$(LLVM) $(TALLOC)
+
 	set +h && \
 	\
 	tar jxvf $(JLFS-TARBALLS)/$(MESALIB).tar.bz2 && \
-	tar jxvf $(JLFS-TARBALLS)/$(MESADEMO).tar.bz2 && \
 	chmod 755 $(MESA) && \
 	chown -R 0:0 $(MESA) && \
 	cd $(MESA) && \
+	patch -Np1 -i $(XORG-PATCHES)/$(MESA)-llvm_3.0-1.patch && \
 	\
 	sed 's@FLAGS=\"-g@FLAGS=\"@' -i configure && \
 	\
@@ -5233,7 +5235,6 @@ $(MESA):  $(LIBDRM) $(XORG7-PROTO) $(XORG7-UTIL) $(XORG7-LIB) $(EXPAT)
 		--enable-xcb && \
 	make -j2 && \
 	make install && \
-	install -v -m755 progs/xdemos/glx{info,gears} /usr/bin && \
 	\
 	cd .. && \
 	echo source will be removed with Xorg rm -rf $(MESA)/* && \
@@ -5242,7 +5243,7 @@ $(MESA):  $(LIBDRM) $(XORG7-PROTO) $(XORG7-UTIL) $(XORG7-LIB) $(EXPAT)
 $(LIBXAU):
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(LIBXAU).tar.bz2 && \
+	tar jxvf $(XORG-TARBALLS)/misc/$(LIBXAU).tar.bz2 && \
 	chmod 755 $(LIBXAU) && \
 	chown -R 0:0 $(LIBXAU) && \
 	cd $(LIBXAU) && \
@@ -5258,7 +5259,7 @@ $(LIBXAU):
 $(LIBXDMCP):
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(LIBXDMCP).tar.bz2 && \
+	tar jxvf $(XORG-TARBALLS)/misc/$(LIBXDMCP).tar.bz2 && \
 	chmod 755 $(LIBXDMCP) && \
 	chown -R 0:0 $(LIBXDMCP) && \
 	cd $(LIBXDMCP) && \
@@ -5270,6 +5271,86 @@ $(LIBXDMCP):
 	cd .. && \
 	rm -rf $(LIBXDMCP)/* && \
 	make P=$(LIBXDMCP) log-package
+
+$(UTIL-MACROS):
+	set +h && \
+	\
+	tar jxvf $(XORG-TARBALLS)/misc/$(UTIL-MACROS).tar.bz2 && \
+	chmod 755 $(UTIL-MACROS) && \
+	chown -R 0:0 $(UTIL-MACROS) && \
+	cd $(UTIL-MACROS) && \
+	\
+	./configure --prefix=/usr && \
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(UTIL-MACROS)/* && \
+	make P=$(UTIL-MACROS) log-package
+
+$(XCB-PROTO):  $(PYTHON)
+	set +h && \
+	\
+	tar jxvf $(XORG-TARBALLS)/misc/$(XCB-PROTO).tar.bz2 && \
+	chmod 755 $(XCB-PROTO) && \
+	chown -R 0:0 $(XCB-PROTO) && \
+	cd $(XCB-PROTO) && \
+	\
+	./configure --prefix=/usr && \
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(XCB-PROTO)/* && \
+	make P=$(XCB-PROTO) log-package
+
+$(LIBATOMIC-OPS):
+	set +h && \
+	\
+	tar xvf $(XORG-TARBALLS)/misc/$(LIBATOMIC-OPS).tar.gz && \
+	chmod 755 $(LIBATOMIC-OPS) && \
+	chown -R 0:0 $(LIBATOMIC-OPS) && \
+	cd $(LIBATOMIC-OPS) && \
+	\
+	./configure --prefix=/usr && \
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(LIBATOMIC-OPS)/* && \
+	make P=$(LIBATOMIC-OPS) log-package
+
+$(LLVM):
+	set +h && \
+	\
+	tar xvf $(XORG-TARBALLS)/misc/$(LLVM).tar.gz && \
+	chmod 755 $(LLVM) && \
+	chown -R 0:0 $(LLVM) && \
+	cd $(LLVM) && \
+	\
+	./configure --prefix=/usr && \
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(LLVM)/* && \
+	make P=$(LLVM) log-package
+
+$(TALLOC):
+	set +h && \
+	\
+	tar xvf $(XORG-TARBALLS)/misc/$(TALLOC).tar.gz && \
+	chmod 755 $(TALLOC) && \
+	chown -R 0:0 $(TALLOC) && \
+	cd $(TALLOC) && \
+	\
+	./configure --prefix=/usr && \
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(TALLOC)/* && \
+	make P=$(TALLOC) log-package
 
 #
 # Begin Xorg
@@ -5285,11 +5366,14 @@ $(XORG7): $(DBUS) $(PKG-CONFIG) $(LIBPNG) $(FONTCONFIG) $(ED) \
 
 	set +h && \
 	\
+	make $(UTIL-MACROS) && \
 	make $(XORG7-PROTO) && \
 	make $(XORG7-UTIL) && \
 	\
 	make $(LIBXAU) && \
 	make $(LIBXDMCP) && \
+	make $(LIBPTHREAD-STUBS) && \
+	make $(XCB-PROTO) && \
 	make $(LIBXCB) && \
 	\
 	make $(XORG7-LIB) && \
@@ -5298,6 +5382,7 @@ $(XORG7): $(DBUS) $(PKG-CONFIG) $(LIBPNG) $(FONTCONFIG) $(ED) \
 	\
 	make $(XORG7-APP) && \
 	make $(XORG7-FONT) && \
+	make $(XKEYBOARD-CONFIG) && \
 	make $(XORG7-SERVER) && \
 	make $(XORG7-DRIVER) && \
 	\
@@ -5310,8 +5395,6 @@ $(XORG7): $(DBUS) $(PKG-CONFIG) $(LIBPNG) $(FONTCONFIG) $(ED) \
 	ln -sfn /usr /usr/X11R6 && \
 	echo "/tmp/.ICE-unix dir 1777 root root" \
 		>> /etc/sysconfig/createfiles && \
-	\
-	echo obsolete cp -v /etc/pam.d/login /etc/pam.d/xdm && \
 	\
 	echo "$(XORG7) built successfully"
 
@@ -6164,7 +6247,7 @@ $(DBUS):  $(EXPAT)
 $(LIBPTHREAD-STUBS): 
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(LIBPTHREAD-STUBS).tar.bz2 && \
+	tar jxvf $(XORG-TARBALLS)/misc/$(LIBPTHREAD-STUBS).tar.bz2 && \
 	chmod 755 $(LIBPTHREAD-STUBS) && \
 	chown -R 0:0 $(LIBPTHREAD-STUBS) && \
 	cd $(LIBPTHREAD-STUBS) && \

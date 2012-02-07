@@ -406,7 +406,7 @@ ISO-CODES = iso-codes-3.23
 GMIME-OLD = gmime-2.1.9
 GMIME = gmime-2.4.7
 LIBIDN = libidn-1.19
-LIBDRM = libdrm-2.4.14
+LIBDRM = libdrm-2.4.27
 DBUS = dbus-1.5.8
 DBUS-GLIB = dbus-glib-0.98
 DBUS-PYTHON = dbus-python-0.84.0
@@ -625,14 +625,13 @@ OPENLDAP = openldap-2.4.23
 # we're liable to burn up on re-entry
 #
 
-MESA-VER = 7.6
+MESA-VER = 7.11.2
 #
 MESA = Mesa-$(MESA-VER)
 MESALIB = MesaLib-$(MESA-VER)
-MESADEMO = MesaDemos-$(MESA-VER)
 
-XORG7 = Xorg-7.5
-XORG7-VER = 7.5-2
+XORG7 = Xorg-7.6-2
+XORG7-VER = 7.6-2
 #
 XORG7-PROTO = $(XORG7)-proto
 XORG7-UTIL = $(XORG7)-util
@@ -640,14 +639,19 @@ XORG7-LIB = $(XORG7)-lib
 XORG7-APP = $(XORG7)-app
 XORG7-FONT = $(XORG7)-font
 XORG7-SERVER = $(XORG7)-server
-XSERVER = xorg-server-1.7.1
+XSERVER = xorg-server-1.11.2
 XORG7-DRIVER = $(XORG7)-driver
 #
-XKEYBOARD-CONFIG = xkeyboard-config-1.7
+XKEYBOARD-CONFIG = xkeyboard-config-2.0
 BITSTREAM-VERA-FONTS = ttf-bitstream-vera-1.10
 WEBCORE-FONTS = webcore-fonts-3.0
-LIBXAU = libXau-1.0.5
-LIBXDMCP = libXdmcp-1.0.3
+LIBXAU = libXau-1.0.6
+LIBXDMCP = libXdmcp-1.1.0
+UTIL-MACROS = util-macros-1.11.0
+XCB-PROTO = xcb-proto-1.6
+LIBATOMIC-OPS = libatomic_ops-1.2
+LLVM = llvm-3.0
+TALLOC = talloc-2.0.7
 #
 XTERM = xterm-267
 
