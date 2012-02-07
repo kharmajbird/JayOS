@@ -9,8 +9,8 @@
 # Kernel
 #
 
-KERNEL = linux-2.6.34
-KERNEL-VER = 2.6.34
+KERNEL = linux-3.2.2
+KERNEL-VER = 3.2.2
 KERNEL-MOD-VER = $(KERNEL-VER)
 
 KERNEL-XEN=linux-2.6.18
@@ -21,7 +21,7 @@ KERNEL-VANILLA-VER = 2.6.22
 KERNEL-VANILLA-MOD-VER = $(KERNEL-VANILLA-VER).5
 
 SQUASHFS = squashfs4.0
-LOOP-AES = loop-AES-v3.6b
+LOOP-AES = loop-AES-v3.6e
 LOOP-AES-XEN = loop-AES-v3.2a
 UTIL-LINUX = util-linux-2.12r
 UNIONFS = unionfs-2.3.3_for_$(KERNEL-VER)
