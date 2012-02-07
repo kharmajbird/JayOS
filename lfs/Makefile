@@ -17,9 +17,9 @@ include Makefile.lfs.versions
 include Makefile.lfs.depends
 
 # For developer use
-SKIP-TEMP=1
+SKIP-TEMP=0
 REDO-TEMP=0
-REDO-BASIC=1
+REDO-BASIC=0
 
 ##########################################################################
 #
@@ -1872,10 +1872,26 @@ $(GZIP):
 	rm -rf $(GZIP)/* && \
 	make P=$(GZIP) log-package
 
-$(IPROUTE):
+$(LIBNL):
 	set +h && \
 	\
-	tar jxvf $(LFS-TARBALLS)/$(IPROUTE).tar.bz2 && \
+	tar xvf $(LFS-TARBALLS)/$(LIBNL).tar.gz && \
+	chmod 755 $(LIBNL) && \
+	chown -R 0:0 $(LIBNL) && \
+	cd $(LIBNL) && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(LIBNL)/* && \
+	make P=$(LIBNL) log-package
+
+$(IPROUTE):  $(LIBNL)
+	set +h && \
+	\
+	xz -dc $(LFS-TARBALLS)/$(IPROUTE).tar.xz| tar xvf - && \
 	chmod 755 $(IPROUTE) && \
 	chown -R 0:0 $(IPROUTE) && \
 	cd $(IPROUTE) && \
