@@ -43,6 +43,7 @@ export XDG_DATA_DIRS LIBGLADE_MODULE_PATH PKG_CONFIG_PATH
 export PATH USER LOGNAME MAIL HOSTNAME HISTSIZE INPUTRC
 export PYTHONPATH
 export EC2_HOME
+export LIBXCB_ALLOW_SLOPPY_LOCK=1
 
 for i in /etc/profile.d/*.sh ; do
     if [ -r $i ]; then
