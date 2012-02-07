@@ -422,7 +422,7 @@ ENCHANT = enchant-1.6.0
 LIBGDATA = libgdata-0.5.1
 LIBSOUP = libsoup-2.30.2
 SQLITE = sqlite-3.7.9
-LIBXCB = libxcb-1.8
+LIBXCB = libxcb-1.7
 
 #
 # Graphics and Font Libraries
