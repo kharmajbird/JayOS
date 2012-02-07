@@ -4674,6 +4674,7 @@ $(AUTOFS): $(OPENLDAP)
 	make -j2 && \
 	make install && \
 	\
+	mkdir -p /etc/rc.d/rcsysinit.d && \
 	ln -sfn  ../init.d/autofs /etc/rc.d/rcsysinit.d/S52autofs && \
 	\
 	mv /etc/auto.master /etc/auto.master.bak && \
@@ -4683,25 +4684,6 @@ $(AUTOFS): $(OPENLDAP)
 	echo "#/home        /etc/auto.home" >> /etc/auto.master && \
 	echo "" >> /etc/auto.master && \
 	echo "# End /etc/auto.master" >> /etc/auto.master && \
-	\
-	cd .. && \
-	rm -rf $(AUTOFS)/.version $(AUTOFS)/.$(AUTOFS) $(AUTOFS)/* && \
-	make P=$(AUTOFS) log-package && \
-	echo obsolete umount -v /proc
-
-$(oldAUTOFS):
-	set +h && \
-	\
-	tar jxvf $(JLFS-TARBALLS)/$(AUTOFS).tar.bz2 && \
-	chmod 755 $(AUTOFS) && \
-	chown -R 0:0 $(AUTOFS) && \
-	cd $(AUTOFS) && \
-	patch -Np1 -i $(JLFS-PATCHES)/$(AUTOFS)-consolidated-1.patch && \
-	\
-	./configure --sysconfdir=/etc --prefix=/ --mandir=/usr/share/man && \
-	make -j2 && \
-	make install && \
-	rm -f /etc/rc.d/init.d/autofs && \
 	\
 	cd .. && \
 	rm -rf $(AUTOFS)/.version $(AUTOFS)/.$(AUTOFS) $(AUTOFS)/* && \
