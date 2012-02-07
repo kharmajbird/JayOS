@@ -5815,7 +5815,7 @@ $(GLIB):
 	rm -rf $(GLIB)/.libs $(GLIB)/* && \
 	make P=$(GLIB) log-package
 
-$(GLIB2):  $(PKG-CONFIG) $(LIBFFI) $(PYTHON) $(PYTHON3)
+$(GLIB2):  $(PKG-CONFIG) $(LIBFFI) $(PYTHON) $(PYTHON3) $(PKG-CONFIG)
 	set +h && \
 	\
 	tar jxvf $(JLFS-TARBALLS)/$(GLIB2).tar.bz2 && \

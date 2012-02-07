@@ -352,6 +352,7 @@ OPENVZ-QUOTA = vzquota-20091121
 #j#OPENVZ-KERNEL = linux-2.6.26-openvz-20091121
 OPENVZ-VER = 2.6.26
 
+PKG-CONFIG = pkg-config-0.25
 AUTOFS = autofs-5.0.3
 AUTOFS-VER = 5.0.3
 ED = ed-0.8
