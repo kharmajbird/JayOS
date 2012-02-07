@@ -4944,18 +4944,19 @@ $(IPTABLES):  $(KERNEL)-$(ARCH)
 	touch $(IPTABLES) && \
 	cd $(IPTABLES) && \
 	\
-	./configure --prefix=/usr --libexecdir=/usr/lib && \
+	sed -i '/if_packet/i#define __aligned_u64 __u64 __attribute__((aligned(8)))' \
+		extensions/libxt_pkttype.c && \
+	./configure --prefix=/usr \
+		--bindir=/sbin \
+		--sbindir=/sbin \
+		--libdir=/lib \
+		--libexecdir=/lib \
+		--with-pkgconfigdir=/usr/lib/pkgconfig && \
+	\
 	make -j2 && \
 	make install && \
 	\
-	echo obsolete make LIBDIR=/lib KERNEL_DIR=/usr/src/$(KERNEL)-$(ARCH) && \
-	echo obsolete make PREFIX=/usr LIBDIR=/lib BINDIR=/sbin \
-		MANDIR=/usr/share/man install && \
-	echo obsolete make PREFIX=/usr LIBDIR=/lib BINDIR=/sbin \
-		MANDIR=/usr/share/man install-devel && \
-	echo obsolete install -v -m644 iptables.xslt /lib/iptables && \
-	\
-	cp -a /usr/sbin/iptables* /sbin && \
+	ln -sfv xtables-multi /sbin/iptables-xml && \
 	\
 	cd .. && \
 	rm -rf $(IPTABLES)/* && \
