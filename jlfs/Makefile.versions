@@ -487,8 +487,8 @@ CPIO = cpio-2.11
 #MC-4.6.1
 SYSSTAT = sysstat-7.0.4
 #Apache Ant-1.7.0
-HAL = hal-0.5.14
-HAL-INFO = hal-info-20091130
+#j#HAL = hal-0.5.14
+#j#HAL-INFO = hal-info-20091130
 DEVICE-MAPPER = LVM2.2.02.62
 
 
