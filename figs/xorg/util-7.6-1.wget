@@ -1,0 +1,6 @@
+# Xorg-7.6-1 utility packages
+# $LastChangedBy: dj $
+# $Date: 2011-01-23 03:17:34 +0000 (Sun, 23 Jan 2011) $
+#
+util-macros-1.11.0.tar.bz2
+makedepend-1.0.3.tar.bz2
