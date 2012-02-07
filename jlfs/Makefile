@@ -5204,7 +5204,7 @@ $(PKG-CONFIG):
 $(LIBDRM):
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(LIBDRM).tar.bz2 && \
+	tar jxvf $(XORG-TARBALLS)/misc/$(LIBDRM).tar.bz2 && \
 	chmod 755 $(LIBDRM) && \
 	chown -R 0:0 $(LIBDRM) && \
 	cd $(LIBDRM) && \
