@@ -5275,7 +5275,7 @@ $(LIBXDMCP):
 $(UTIL-MACROS):
 	set +h && \
 	\
-	tar jxvf $(XORG-TARBALLS)/misc/$(UTIL-MACROS).tar.bz2 && \
+	tar jxvf $(XORG-TARBALLS)/util/$(UTIL-MACROS).tar.bz2 && \
 	chmod 755 $(UTIL-MACROS) && \
 	chown -R 0:0 $(UTIL-MACROS) && \
 	cd $(UTIL-MACROS) && \
