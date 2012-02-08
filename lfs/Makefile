@@ -424,12 +424,6 @@ TEMP-$(GLIBC):
 	cd .. && \
 	rm -rf $(GLIBC)-build $(GLIBC)
 
-	# not I, said the rabbit
-	#SPECS=`dirname $($LFS_TGT-gcc -print-libgcc-file-name)`/specs && \
-	#/tools/bin/$(LFS_TGT)-gcc -print-libgcc-file-name > /tmp/tgt
-	#FILE=$(shell cat /tmp/tgt)
-	#SPECS=$(shell dirname $${FILE})/specs && \
-
 adjust-toolchain:
 	SPECS="/lfs/tools/bin/../lib/gcc/$(LFS_TGT)/$(GCC4-VER)/specs" && \
 	\
