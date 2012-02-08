@@ -5392,6 +5392,28 @@ $(TALLOC):
 	rm -rf $(TALLOC)/* && \
 	make P=$(TALLOC) log-package
 
+$(XKEYBOARD-CONFIG):
+	set +h && \
+	\
+	tar jxvf $(XORG-TARBALLS)/misc/$(XKEYBOARD-CONFIG).tar.bz2 && \
+	chmod 755 $(XKEYBOARD-CONFIG) && \
+	chown -R 0:0 $(XKEYBOARD-CONFIG) && \
+	cd $(XKEYBOARD-CONFIG) && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--mandir=/usr/share/man \
+		--localstatedir=/var \
+		--with-xkb-base=/usr/share/X11/xkb \
+		--enable-xkbcomp-symlink \
+		--with-xkb-rules-symlink=xorg \
+		--with-config-dir=/usr/lib/X11/config && \
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(XKEYBOARD-CONFIG)/* && \
+	make P=$(XKEYBOARD-CONFIG) log-package
+
 #
 # Begin Xorg
 #
