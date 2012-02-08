@@ -9,8 +9,8 @@
 # Kernel
 #
 
-KERNEL = linux-2.6.34
-KERNEL-VER = 2.6.34
+KERNEL = linux-3.2.2
+KERNEL-VER = 3.2.2
 KERNEL-MOD-VER = $(KERNEL-VER)
 
 KERNEL-XEN=linux-2.6.18
@@ -21,7 +21,7 @@ KERNEL-VANILLA-VER = 2.6.22
 KERNEL-VANILLA-MOD-VER = $(KERNEL-VANILLA-VER).5
 
 SQUASHFS = squashfs4.0
-LOOP-AES = loop-AES-v3.6b
+LOOP-AES = loop-AES-v3.6e
 LOOP-AES-XEN = loop-AES-v3.2a
 UTIL-LINUX = util-linux-2.12r
 UNIONFS = unionfs-2.3.3_for_$(KERNEL-VER)
@@ -352,6 +352,7 @@ OPENVZ-QUOTA = vzquota-20091121
 #j#OPENVZ-KERNEL = linux-2.6.26-openvz-20091121
 OPENVZ-VER = 2.6.26
 
+PKG-CONFIG = pkg-config-0.25
 AUTOFS = autofs-5.0.3
 AUTOFS-VER = 5.0.3
 ED = ed-0.8
@@ -364,8 +365,8 @@ BLFSBOOT = blfs-bootscripts-20080816
 OPENSSL = openssl-1.0.0d
 OPENSSL-CA = BLFS-ca-bundle-3.12.9.0
 PAM = Linux-PAM-1.1.1
-SHADOW = shadow-4.1.4.2
-IPTABLES = iptables-1.4.9
+SHADOW = shadow-4.1.4.3
+IPTABLES = iptables-1.4.12
 GNUPG = gnupg-1.4.8
 NSS = nss-3.13.1
 NSPR = nspr-4.8.9
@@ -405,7 +406,7 @@ ISO-CODES = iso-codes-3.23
 GMIME-OLD = gmime-2.1.9
 GMIME = gmime-2.4.7
 LIBIDN = libidn-1.19
-LIBDRM = libdrm-2.4.14
+LIBDRM = libdrm-2.4.27
 DBUS = dbus-1.5.8
 DBUS-GLIB = dbus-glib-0.98
 DBUS-PYTHON = dbus-python-0.84.0
@@ -421,7 +422,7 @@ ENCHANT = enchant-1.6.0
 LIBGDATA = libgdata-0.5.1
 LIBSOUP = libsoup-2.30.2
 SQLITE = sqlite-3.7.9
-LIBXCB = libxcb-1.4
+LIBXCB = libxcb-1.7
 
 #
 # Graphics and Font Libraries
@@ -486,8 +487,8 @@ CPIO = cpio-2.11
 #MC-4.6.1
 SYSSTAT = sysstat-7.0.4
 #Apache Ant-1.7.0
-HAL = hal-0.5.14
-HAL-INFO = hal-info-20091130
+#j#HAL = hal-0.5.14
+#j#HAL-INFO = hal-info-20091130
 DEVICE-MAPPER = LVM2.2.02.62
 
 
@@ -624,14 +625,13 @@ OPENLDAP = openldap-2.4.23
 # we're liable to burn up on re-entry
 #
 
-MESA-VER = 7.6
+MESA-VER = 7.11.2
 #
 MESA = Mesa-$(MESA-VER)
 MESALIB = MesaLib-$(MESA-VER)
-MESADEMO = MesaDemos-$(MESA-VER)
 
-XORG7 = Xorg-7.5
-XORG7-VER = 7.5-2
+XORG7 = Xorg-7.6-2
+XORG7-VER = 7.6-2
 #
 XORG7-PROTO = $(XORG7)-proto
 XORG7-UTIL = $(XORG7)-util
@@ -639,14 +639,19 @@ XORG7-LIB = $(XORG7)-lib
 XORG7-APP = $(XORG7)-app
 XORG7-FONT = $(XORG7)-font
 XORG7-SERVER = $(XORG7)-server
-XSERVER = xorg-server-1.7.1
+XSERVER = xorg-server-1.11.2
 XORG7-DRIVER = $(XORG7)-driver
 #
-XKEYBOARD-CONFIG = xkeyboard-config-1.7
+XKEYBOARD-CONFIG = xkeyboard-config-2.0
 BITSTREAM-VERA-FONTS = ttf-bitstream-vera-1.10
 WEBCORE-FONTS = webcore-fonts-3.0
-LIBXAU = libXau-1.0.5
-LIBXDMCP = libXdmcp-1.0.3
+LIBXAU = libXau-1.0.6
+LIBXDMCP = libXdmcp-1.1.0
+UTIL-MACROS = util-macros-1.11.0
+XCB-PROTO = xcb-proto-1.6
+LIBATOMIC-OPS = libatomic_ops-1.2
+LLVM = llvm-3.0
+TALLOC = talloc-2.0.7
 #
 XTERM = xterm-267
 

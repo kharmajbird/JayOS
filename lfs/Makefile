@@ -16,6 +16,7 @@ HEAD=$(LFS)/build/JayOS
 include Makefile.lfs.versions
 include Makefile.lfs.depends
 
+# For developer use
 SKIP-TEMP=0
 REDO-TEMP=0
 REDO-BASIC=0
@@ -89,7 +90,7 @@ prep-lfs-tools:
 			Makefile.lfs.depends \
 			Makefile.lfs.versions; do \
 			\
-			ln -sfn $(LFS-SRC)/$${i} $(LFS)/tools/src/$${i}; \
+			cp -a $(LFS-SRC)/$${i} $(LFS)/tools/src/$${i}; \
 		done; \
 	fi
 
@@ -172,8 +173,6 @@ redo-lfs-temp-system:
 
 lfs-basic-system:
 	mkdir -pv $(LFS)/{dev,proc,sys} && \
-	mknod -m 600 $(LFS)/dev/console c 5 1 && \
-	mknod -m 666 $(LFS)/dev/null c 1 3 && \
 	mount -v --bind /dev $(LFS)/dev && \
 	mount -vt devpts devpts $(LFS)/dev/pts && \
 	mount -vt tmpfs shm $(LFS)/dev/shm && \
@@ -246,25 +245,25 @@ lfs-basic-system-chroot:
 	install -dv -m 1777 /tmp /var/tmp && \
 	mkdir -pv /usr/{,local/}{bin,include,lib,sbin,src} && \
 	mkdir -pv /usr/{,local/}share/{doc,info,locale,man} && \
-	mkdir -v  /usr/{,local/}share/{misc,terminfo,zoneinfo} && \
+	mkdir -pv  /usr/{,local/}share/{misc,terminfo,zoneinfo} && \
 	mkdir -pv /usr/{,local/}share/man/man{1..8} && \
 	\
 	for DIR in /usr /usr/local; do \
-		ln -sv share/{man,doc,info} $${DIR}; \
+		ln -sfv share/{man,doc,info} $${DIR}; \
 	done && \
 	\
 	if [ "`uname -m`" = "x86_64" ]; then \
-		ln -sv lib /lib64 && ln -sv lib /usr/lib64; \
+		ln -sfv lib /lib64 && ln -sv lib /usr/lib64; \
 	fi && \
 	\
-	mkdir -v /var/{lock,log,mail,run,spool} && \
+	mkdir -pv /var/{lock,log,mail,run,spool} && \
 	mkdir -pv /var/{opt,cache,lib/{misc,locate},local} && \
 	\
-	ln -sv /tools/bin/{bash,cat,echo,grep,pwd,stty} /bin && \
-	ln -sv /tools/bin/perl /usr/bin && \
-	ln -sv /tools/lib/libgcc_s.so{,.1} /usr/lib && \
-	ln -sv /tools/lib/libstdc++.so{,.6} /usr/lib && \
-	ln -sv bash /bin/sh && \
+	ln -sfv /tools/bin/{bash,cat,echo,grep,pwd,stty} /bin && \
+	ln -sfv /tools/bin/perl /usr/bin && \
+	ln -sfv /tools/lib/libgcc_s.so{,.1} /usr/lib && \
+	ln -sfv /tools/lib/libstdc++.so{,.6} /usr/lib && \
+	ln -sfv bash /bin/sh && \
 	\
 	touch /etc/mtab && \
 	\
@@ -365,11 +364,13 @@ PASS1-$(GCC4):
 		--disable-nls --disable-shared --disable-multilib \
     		--disable-decimal-float --disable-threads \
     		--disable-libmudflap --disable-libssp \
-    		--disable-libgomp --enable-languages=c \
-		--disable-libquadmath \
+    		--disable-libgomp --disable-libquadmath \
 		--disable-target-libiberty --disable-target-zlib \
-		--with-gmp-include=$(PWD)/gmp --with-gmp-lib=$(PWD)/gmp/.libs \
-		--without-ppl --without-cloog && \
+		--enable-languages=c --without-ppl --without-cloog \
+		--with-gmp-include=/tools/src/$(GCC4)-build/gmp \
+		--with-gmp-lib=/tools/src/$(GCC4)-build/gmp/.libs \
+		--with-mpfr-include=/tools/src/$(GCC4)/mpfr/src \
+		--with-mpfr-lib=/tools/src/$(GCC4)-build/mpfr/src/.libs && \
 	\
 	make && \
 	make install && \
@@ -470,52 +471,6 @@ PASS2-$(BINUTILS):
 	cd .. && \
 	rm -rf $(BINUTILS)-build $(BINUTILS)
 
-TEMP-$(GMP):
-	set +h && \
-	\
-	tar jxvf $(LFS-TARBALLS)/$(GMP).tar.bz2 && \
-	chmod 755 $(GMP) && \
-	chown -R 0:0 $(GMP) && \
-	cd $(GMP) && \
-	\
-	./configure --prefix=/tools --enable-cxx --enable-mpbsd && \
-	make && \
-	make install && \
-	\
-	cd .. && \
-	rm -rf $(GMP)
-
-TEMP-$(MPC):
-	set +h && \
-	\
-	tar xvf $(LFS-TARBALLS)/$(MPC).tar.gz && \
-	chmod 755 $(MPC) && \
-	chown -R 0:0 $(MPC) && \
-	cd $(MPC) && \
-	\
-	./configure --prefix=/tools && \
-	make && \
-	make install && \
-	\
-	cd .. && \
-	rm -rf $(MPC)
-
-TEMP-$(MPFR):
-	set +h && \
-	\
-	tar jxvf $(LFS-TARBALLS)/$(MPFR).tar.bz2 && \
-	chmod 755 $(MPFR) && \
-	chown -R 0:0 $(MPFR) && \
-	cd $(MPFR) && \
-	\
-	./configure --prefix=/tools --enable-thread-safe && \
-	make && \
-	make check && \
-	make install && \
-	\
-	cd .. && \
-	rm -rf $(MPFR)/* && \
-
 PASS2-$(GCC4):
 	tar xvf $(LFS-TARBALLS)/$(GCC4).tar.bz2 && \
 	chmod 755 $(GCC4) && \
@@ -523,8 +478,8 @@ PASS2-$(GCC4):
 	cd $(GCC4) && \
 	\
 	patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-startfiles_fix-1.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-cross_compile-1.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-locale-1.patch && \
+	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-cross_compile-1.patch && \
+	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-locale-1.patch && \
 	\
 	cp -v gcc/Makefile.in{,.orig} && \
 	sed 's@\./fixinc\.sh@-c true@' gcc/Makefile.in.orig \
@@ -583,8 +538,11 @@ PASS2-$(GCC4):
 		--enable-__cxa_atexit --enable-languages=c,c++ \
 		--disable-libstdcxx-pch --disable-multilib \
 		--disable-bootstrap --disable-libgomp \
-		--with-gmp-include=$(PWD)/gmp --with-gmp-lib=$(PWD)/gmp/.libs \
-		--without-ppl --without-cloog && \
+		--without-ppl --without-cloog \
+		--with-gmp-include=/tools/src/$(GCC4)-build/gmp \
+		--with-gmp-lib=/tools/src/$(GCC4)-build/gmp/.libs \
+		--with-mpfr-include=/tools/src/$(GCC4)/mpfr/src \
+		--with-mpfr-lib=/tools/src/$(GCC4)-build/mpfr/src/.libs && \
 	\
 	make && \
 	make install && \
@@ -716,7 +674,7 @@ TEMP-$(BZIP2):
 	cd .. && \
 	rm -rf $(BZIP2)
 
-TEMP-$(COREUTILS):
+TEMP-$(COREUTILS):  TEMP-$(XZ)
 	set +h && \
 	\
 	xz -dc $(LFS-TARBALLS)/$(COREUTILS).tar.xz| tar xvf - && \
@@ -755,12 +713,12 @@ TEMP-$(FILE):
 	chown -R 0:0 $(FILE) && \
 	cd $(FILE) && \
 	\
-	./configure --prefix=/usr && \
+	./configure --prefix=/tools && \
 	make && \
 	make install && \
 	\
 	cd .. && \
-	rm -rf $(FILE)/* && \
+	rm -rf $(FILE)
 
 TEMP-$(FINDUTILS):
 	set +h && \
@@ -903,12 +861,12 @@ TEMP-$(PERL):
 	cd $(PERL) && \
 	\
 	patch -Np1 -i $(LFS-PATCHES)/$(PERL)-libc-1.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(PERL)-security-fix-1.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(PERL)-security_fix-1.patch && \
 	\
 	sh Configure -des -Dprefix=/tools && \
 	make && \
 	\
-	cp -v perl pod/pod2man /tools/bin && \
+	cp -v perl cpan/podlators/pod2man /tools/bin && \
 	mkdir -pv /tools/lib/perl5/$(PERL-VER) && \
 	cp -Rv lib/* /tools/lib/perl5/$(PERL-VER) && \
 	\
@@ -938,7 +896,7 @@ TEMP-$(TAR):
 	chown -R 0:0 $(TAR) && \
 	cd $(TAR) && \
 	\
-	./configure --prefix=/tools && \
+	FORCE_UNSAFE_CONFIGURE=1 ./configure --prefix=/tools && \
 	make && \
 	make install && \
 	\
@@ -1027,14 +985,13 @@ $(GLIBC):
         	scripts/test-installation.pl && \
 	unset DL && \
 	\
-	sed -i -e 's/"db1"/& \&\& $name ne "nss_test1"/' \
+	sed -i -e 's/"db1"/& \&\& $$name ne "nss_test1"/' \
 		scripts/test-installation.pl && \
 	\
 	sed -i 's|@BASH@|/bin/bash|' elf/ldd.bash.in && \
 	\
 	patch -Np1 -i $(LFS-PATCHES)/$(GLIBC)-fixes-1.patch && \
 	patch -Np1 -i $(LFS-PATCHES)/$(GLIBC)-gcc_fix-1.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(GLIBC)-cpuid-1.patch && \
 	\
 	sed -i '195,213 s/PRIVATE_FUTEX/FUTEX_CLOCK_REALTIME/' \
 		nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timed{rd,wr}lock.S && \
@@ -1057,6 +1014,10 @@ $(GLIBC):
 	\
 	touch /etc/ld.so.conf && \
 	make install && \
+	\
+	cp -v ../$(GLIBC)/sunrpc/rpc/*.h /usr/include/rpc && \
+	cp -v ../$(GLIBC)/sunrpc/rpcsvc/*.h /usr/include/rpcsvc && \
+	cp -v ../$(GLIBC)/nis/rpcsvc/*.h /usr/include/rpcsvc && \
 	\
 	mkdir -pv /usr/lib/locale && \
 	localedef -i cs_CZ -f UTF-8 cs_CZ.UTF-8 && \
@@ -1346,10 +1307,10 @@ $(BZIP2):
 	\
 	cp -v bzip2-shared /bin/bzip2 && \
 	cp -av libbz2.so* /lib && \
-	ln -sv ../../lib/libbz2.so.1.0 /usr/lib/libbz2.so && \
+	ln -sfv ../../lib/libbz2.so.1.0 /usr/lib/libbz2.so && \
 	rm -v /usr/bin/{bunzip2,bzcat,bzip2} && \
-	ln -sv bzip2 /bin/bunzip2 && \
-	ln -sv bzip2 /bin/bzcat && \
+	ln -sfv bzip2 /bin/bunzip2 && \
+	ln -sfv bzip2 /bin/bzcat && \
 	\
 	cd .. && \
 	rm -rf $(BZIP2)/* && \
@@ -1397,7 +1358,7 @@ $(UTIL-LINUX):
 	chown -R 0:0 $(UTIL-LINUX) && \
 	cd $(UTIL-LINUX) && \
 	\
-	echo "TODO:  make hwclock FHS-compliant"
+	echo "TODO:  make hwclock FHS-compliant" && \
 	echo figure out later sed -e 's@etc/adjtime@var/lib/hwclock/adjtime@g' \
 		-i $(shell grep -rl '/etc/adjtime' .) && \
 	mkdir -pv /var/lib/hwclock && \
@@ -1461,7 +1422,7 @@ $(COREUTILS):
 	cd $(COREUTILS) && \
 	\
 	if [ "`uname -m`" = "i486" -o "`uname -m`" = "i586" -o "`uname -m`" = "i686" -o "`uname -m`" = "x86_64" ]; then \
-		patch -Np1 -i $(LFS-PATCHES)/$(COREUTILS)-uname-2.patch; \
+		patch -Np1 -i $(LFS-PATCHES)/$(COREUTILS)-uname-1.patch; \
 	fi && \
 	\
 	patch -Np1 -i $(LFS-PATCHES)/$(COREUTILS)-i18n-1.patch && \
@@ -1548,7 +1509,7 @@ $(PROCPS):
 	chown -R 0:0 $(PROCPS) && \
 	cd $(PROCPS) && \
 	\
-	patch -Np1 -i $(LFS-PATCHES)/$(PROCPS)-fix_HZ-errors-1.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(PROCPS)-fix_HZ_errors-1.patch && \
 	patch -Np1 -i $(LFS-PATCHES)/$(PROCPS)-watch_unicode-1.patch && \
 	\
 	sed -i -e 's@\*/module.mk@proc/module.mk ps/module.mk@' Makefile && \
@@ -1651,7 +1612,6 @@ $(GDBM):
 	./configure --prefix=/usr --enable-libgdbm-compat && \
 	make && \
 	make install && \
-	make install-compat && \
 	\
 	cd .. && \
 	rm -rf $(GDBM)/.libs $(GDBM)/* && \
@@ -1690,12 +1650,12 @@ $(PERL):
 	echo "127.0.0.1 localhost $(LFS-HOSTNAME)" > /etc/hosts && \
 	\
 	patch -Np1 -i $(LFS-PATCHES)/$(PERL)-libc-1.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(PERL)-security-fix-1.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(PERL)-security_fix-1.patch && \
 	\
 	sed -i -e "s|BUILD_ZLIB\s*= True|BUILD_ZLIB = False|" \
 		-e "s|INCLUDE\s*= ./zlib-src|INCLUDE    = /usr/include|" \
 		-e "s|LIB\s*= ./zlib-src|LIB        = /usr/lib|" \
-			ext/Compress-Raw-Zlib/config.in && \
+			cpan/Compress-Raw-Zlib/config.in && \
 	\
 	sh Configure -des -Dprefix=/usr \
 		-Dvendorprefix=/usr           \
@@ -1855,8 +1815,8 @@ $(GROFF):
 	make && \
 	make install && \
 	\
-	ln -sv eqn /usr/bin/geqn && \
-	ln -sv tbl /usr/bin/gtbl && \
+	ln -sfv eqn /usr/bin/geqn && \
+	ln -sfv tbl /usr/bin/gtbl && \
 	\
 	cd .. && \
 	rm -rf $(GROFF)/* && \
@@ -1912,10 +1872,26 @@ $(GZIP):
 	rm -rf $(GZIP)/* && \
 	make P=$(GZIP) log-package
 
-$(IPROUTE):
+$(LIBNL):
 	set +h && \
 	\
-	tar jxvf $(LFS-TARBALLS)/$(IPROUTE).tar.bz2 && \
+	tar xvf $(LFS-TARBALLS)/$(LIBNL).tar.gz && \
+	chmod 755 $(LIBNL) && \
+	chown -R 0:0 $(LIBNL) && \
+	cd $(LIBNL) && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(LIBNL)/* && \
+	make P=$(LIBNL) log-package
+
+$(IPROUTE):  $(LIBNL)
+	set +h && \
+	\
+	xz -dc $(LFS-TARBALLS)/$(IPROUTE).tar.xz| tar xvf - && \
 	chmod 755 $(IPROUTE) && \
 	chown -R 0:0 $(IPROUTE) && \
 	cd $(IPROUTE) && \
@@ -2092,9 +2068,6 @@ $(PSMISC):
 	make && \
 	make install && \
 	\
-	mv -v /usr/bin/fuser /bin && \
-	mv -v /usr/bin/killall /bin && \
-	\
 	mv -v /bin/pstree* /usr/bin && \
 	ln -sv killall /bin/pidof && \
 	\
@@ -2113,13 +2086,12 @@ $(SHADOW):
 	sed -i 's/groups$$(EXEEXT) //' src/Makefile.in && \
 	find man -name Makefile -exec sed -i 's/groups\.1 / /' {} \; && \
 	\
-	sed -i -e 's/ ko//' -e 's/ zh_CN zh_TW//' man/Makefile.in && \
+	sed -i 's/man_MANS = $$(man_nopam) /man_MANS = /' man/ru/Makefile.in && \
 	\
-	sed -i -e 's@#ENCRYPT_METHOD DES@ENCRYPT_METHOD MD5@' \
+	sed -i -e 's@#ENCRYPT_METHOD DES@ENCRYPT_METHOD SHA512@' \
 		-e 's@/var/spool/mail@/var/mail@' etc/login.defs && \
 	\
 	./configure --sysconfdir=/etc && \
-	\
 	make && \
 	make install && \
 	\

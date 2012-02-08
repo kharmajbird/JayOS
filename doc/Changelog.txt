@@ -1,3 +1,7 @@
+[ 20120206 ]
+	Upgraded to the latest stable Linux From Scratch, version 7.0
+
+
 [ 20120123 ]
 
 	This minor release fixes a kernel configuration error; now the ISO

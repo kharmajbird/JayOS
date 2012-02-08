@@ -31,7 +31,7 @@ GCC4-VER = 4.6.1
 GETTEXT = gettext-0.18.1.1
 GLIBC = glibc-2.14.1
 GREP = grep-2.9
-GROFF = groff-1.21.1
+GROFF = groff-1.21
 #
 # grub2 is 1.98, avoid for now
 GRUB = grub-0.97
@@ -39,7 +39,7 @@ GRUB = grub-0.97
 GZIP = gzip-1.4
 IANA-ETC = iana-etc-2.30
 INETUTILS = inetutils-1.8
-IPROUTE = iproute2-2.6.35
+IPROUTE = iproute2-3.2.0
 KBD = kbd-1.15.2
 LESS = less-444
 LFS-BOOTSCRIPTS = lfs-bootscripts-20111017
@@ -47,10 +47,11 @@ LIBTOOL = libtool-2.4
 LIBPIPELINE = libpipeline-1.2.0
 GDBM = gdbm-1.9.1
 LINUX = linux-3.2.2
+LIBNL = libnl-2.0
 M4 = m4-1.4.16
 MAKE = make-3.82
 MAN-DB = man-db-2.6.0.2
-MAN-PAGES = man-pages-3.25
+MAN-PAGES = man-pages-3.35
 MODULE-INIT-TOOLS = module-init-tools-3.16
 MPFR = mpfr-3.1.0
 GMP = gmp-5.0.2
@@ -63,14 +64,17 @@ PROCPS = procps-3.2.8
 PSMISC = psmisc-22.14
 READLINE = readline-6.2
 SED = sed-4.2.1
-PKG-CONFIG = pkg-config-0.25
+#
+# also update SHADOW in JayOS/jlfs/Makefile.versions
+# re-install in BLFS for Linux-PAM support
+#
 SHADOW = shadow-4.1.4.3
 SYSKLOGD = sysklogd-1.5
 SYSVINIT = sysvinit-2.88dsf
 TAR = tar-1.26
 TCL = tcl8.5.10
 TCL-VER = 8.5.10
-TEXINFO = texinfo-4.13a
+TEXINFO = texinfo-4.13
 UDEV = udev-173
 UDEV-CONFIG = udev-config-20100128
 UTIL-LINUX = util-linux-2.20

@@ -17,14 +17,13 @@ LFS-TEMPSYS := PASS1-$(BINUTILS) PASS1-$(GCC4) \
 	TEMP-linux-headers TEMP-$(GLIBC) \
 	adjust-toolchain \
 	PASS2-$(BINUTILS) \
-	TEMP-$(GMP) TEMP-$(MPC) \
 	PASS2-$(GCC4) \
 	TEMP-$(TCL) TEMP-$(EXPECT) TEMP-$(DEJAGNU) TEMP-$(CHECK) \
-	TEMP-$(NCURSES) TEMP-$(BASH) TEMP-$(BZIP2) TEMP-$(COREUTILS) \
-	TEMP-$(DIFFUTILS) TEMP-$(FILE) TEMP-$(FINDUTILS) TEMP-$(GAWK) \
-	TEMP-$(GETTEXT) TEMP-$(GREP) TEMP-$(GZIP) TEMP-$(M4) TEMP-$(MAKE) \
-	TEMP-$(PATCH) TEMP-$(PERL) TEMP-$(SED) TEMP-$(TAR) \
-	TEMP-$(TEXINFO) TEMP-$(XZ)
+	TEMP-$(NCURSES) TEMP-$(BASH) TEMP-$(BZIP2) TEMP-$(XZ) \
+	TEMP-$(COREUTILS) TEMP-$(DIFFUTILS) TEMP-$(FILE) TEMP-$(FINDUTILS) \
+	TEMP-$(GAWK) TEMP-$(GETTEXT) TEMP-$(GREP) TEMP-$(GZIP) TEMP-$(M4) \
+	TEMP-$(MAKE) TEMP-$(PATCH) TEMP-$(PERL) TEMP-$(SED) TEMP-$(TAR) \
+	TEMP-$(TEXINFO)
 
 
 ########################################################################
@@ -36,13 +35,13 @@ LFS-TEMPSYS := PASS1-$(BINUTILS) PASS1-$(GCC4) \
 LFS-BASICSYS := linux-headers $(MAN-PAGES) $(GLIBC) \
 		readjust-toolchain \
 		$(ZLIB) $(FILE) $(BINUTILS) $(M4) $(GMP) $(MPFR) $(MPC) \
-		$(GCC4) $(SED) $(PKG-CONFIG) $(NCURSES) $(UTIL-LINUX) \
+		$(GCC4) $(SED) $(NCURSES) $(UTIL-LINUX) \
 		$(E2FSPROGS) $(COREUTILS) $(IANA-ETC) $(M4) $(BISON) $(PROCPS) \
 		$(GREP) $(READLINE) $(BASH) $(LIBTOOL) $(GDBM) $(INETUTILS) \
 		$(PERL) $(AUTOCONF) $(AUTOMAKE) $(BZIP2) $(DIFFUTILS) $(GAWK) \
 		$(FINDUTILS) $(FLEX) $(GETTEXT) $(GROFF) $(GRUB) $(GZIP) \
-		$(IPROUTE) $(KBD) $(LESS) $(LIBPIPELINE) $(MAKE) $(MAN-DB) \
-		$(MODULE-INIT-TOOLS) $(PATCH) $(PSMISC) $(SHADOW) \
+		$(LIBNL) $(IPROUTE) $(KBD) $(LESS) $(LIBPIPELINE) $(MAKE) \
+		$(MAN-DB) $(MODULE-INIT-TOOLS) $(PATCH) $(PSMISC) $(SHADOW) \
 		$(SYSKLOGD) $(SYSVINIT) $(TAR) $(TEXINFO) $(UDEV) \
 		$(VIM) $(LFS-BOOTSCRIPTS)
 
@@ -67,8 +66,14 @@ LFS-BASICSYS := linux-headers $(MAN-PAGES) $(GLIBC) \
 	#TEMP-$(TCL) \
 	#TEMP-$(EXPECT) \
 	#TEMP-$(DEJAGNU) \
-	#TEMP-$(GMP) \
-	#TEMP-$(MPC) \
+	#PASS2-$(GCC4) \
+	#PASS2-$(BINUTILS) \
+	#TEMP-$(NCURSES) \
+	#TEMP-$(BASH) \
+	#TEMP-$(BZIP2) \
+	#TEMP-$(XZ) \
+	#TEMP-$(COREUTILS) \
+	#TEMP-$(DIFFUTILS) \
 
 #
 # when doing a "make redo-lfs-tempsys" 
@@ -76,14 +81,7 @@ LFS-BASICSYS := linux-headers $(MAN-PAGES) $(GLIBC) \
 #
 
 REDO-LFS-TEMPSYS := \
-	TEMP-$(MPFR) \
-	PASS2-$(GCC4) \
-	PASS2-$(BINUTILS) \
-	TEMP-$(NCURSES) \
-	TEMP-$(BASH) \
-	TEMP-$(BZIP2) \
-	TEMP-$(COREUTILS) \
-	TEMP-$(DIFFUTILS) \
+	TEMP-$(FILE) \
 	TEMP-$(FINDUTILS) \
 	TEMP-$(GAWK) \
 	TEMP-$(GETTEXT) \
@@ -95,11 +93,10 @@ REDO-LFS-TEMPSYS := \
 	TEMP-$(PERL) \
 	TEMP-$(SED) \
 	TEMP-$(TAR) \
-	TEMP-$(TEXINFO) \
-	TEMP-$(XZ)
+	TEMP-$(TEXINFO)
 
 #
-#
+#######################################################################
 #
 
 	#linux-headers \
@@ -112,18 +109,29 @@ REDO-LFS-TEMPSYS := \
 	#$(MPFR) $(MPC) \
 	#$(FILE) \
 	#$(GCC4) \
-	#$(SED) $(PKG-CONFIG) $(NCURSES) $(UTIL-LINUX) $(E2FSPROGS) \
+	#$(SED) \
+	#$(NCURSES) \
+	#$(UTIL-LINUX) $(E2FSPROGS) \
 	#$(COREUTILS) \
 	#$(IANA-ETC) $(BISON) $(PROCPS) $(GREP) $(READLINE) $(BASH) \
 	#$(LIBTOOL) \
-	#$(GDBM) $(INETUTILS) $(PERL) $(AUTOCONF) \
-	#$(AUTOMAKE) $(BZIP2) $(DIFFUTILS) $(GAWK) $(FINDUTILS) \
-	#$(FLEX) $(GETTEXT) $(GROFF) $(GRUB) \
+	#$(GDBM) $(INETUTILS) 
+	#$(PERL) $(AUTOCONF) \
+	#$(AUTOMAKE) 
+	#$(BZIP2) $(DIFFUTILS) $(GAWK) $(FINDUTILS) \
+	#$(FLEX) $(GETTEXT) \
+	#$(GROFF) $(GRUB) \
 	#$(GZIP) \
-	#$(IPROUTE) $(KBD) $(LESS) $(LIBPIPELINE) $(MAKE) $(MAN-DB) \
+
+# ditto when doing a "make redo-lfs-basicsystem"
 
 REDO-LFS-BASICSYS := \
+	$(LIBNL) \
+	$(IPROUTE) \
+	$(KBD) $(LESS) $(LIBPIPELINE) $(MAKE) $(MAN-DB) \
 	$(MODULE-INIT-TOOLS) \
-	$(PATCH) $(PSMISC) $(SHADOW) \
+	$(PATCH) \
+	$(PSMISC) \
+	$(SHADOW) \
 	$(SYSKLOGD) $(SYSVINIT) $(TAR) $(TEXINFO) $(UDEV) $(VIM) \
 	$(LFS-BOOTSCRIPTS)

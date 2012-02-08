@@ -5,8 +5,8 @@
 #
 ##########################################################################
 #
-VERSION=20120206
-LFSVERSION=LFS-6.7
+VERSION=20120213
+LFSVERSION=LFS-7.0
 #
 ##########################################################################
 
@@ -4674,6 +4674,7 @@ $(AUTOFS): $(OPENLDAP)
 	make -j2 && \
 	make install && \
 	\
+	mkdir -p /etc/rc.d/rcsysinit.d && \
 	ln -sfn  ../init.d/autofs /etc/rc.d/rcsysinit.d/S52autofs && \
 	\
 	mv /etc/auto.master /etc/auto.master.bak && \
@@ -4683,25 +4684,6 @@ $(AUTOFS): $(OPENLDAP)
 	echo "#/home        /etc/auto.home" >> /etc/auto.master && \
 	echo "" >> /etc/auto.master && \
 	echo "# End /etc/auto.master" >> /etc/auto.master && \
-	\
-	cd .. && \
-	rm -rf $(AUTOFS)/.version $(AUTOFS)/.$(AUTOFS) $(AUTOFS)/* && \
-	make P=$(AUTOFS) log-package && \
-	echo obsolete umount -v /proc
-
-$(oldAUTOFS):
-	set +h && \
-	\
-	tar jxvf $(JLFS-TARBALLS)/$(AUTOFS).tar.bz2 && \
-	chmod 755 $(AUTOFS) && \
-	chown -R 0:0 $(AUTOFS) && \
-	cd $(AUTOFS) && \
-	patch -Np1 -i $(JLFS-PATCHES)/$(AUTOFS)-consolidated-1.patch && \
-	\
-	./configure --sysconfdir=/etc --prefix=/ --mandir=/usr/share/man && \
-	make -j2 && \
-	make install && \
-	rm -f /etc/rc.d/init.d/autofs && \
 	\
 	cd .. && \
 	rm -rf $(AUTOFS)/.version $(AUTOFS)/.$(AUTOFS) $(AUTOFS)/* && \
@@ -4962,18 +4944,19 @@ $(IPTABLES):  $(KERNEL)-$(ARCH)
 	touch $(IPTABLES) && \
 	cd $(IPTABLES) && \
 	\
-	./configure --prefix=/usr --libexecdir=/usr/lib && \
+	sed -i '/if_packet/i#define __aligned_u64 __u64 __attribute__((aligned(8)))' \
+		extensions/libxt_pkttype.c && \
+	./configure --prefix=/usr \
+		--bindir=/sbin \
+		--sbindir=/sbin \
+		--libdir=/lib \
+		--libexecdir=/lib \
+		--with-pkgconfigdir=/usr/lib/pkgconfig && \
+	\
 	make -j2 && \
 	make install && \
 	\
-	echo obsolete make LIBDIR=/lib KERNEL_DIR=/usr/src/$(KERNEL)-$(ARCH) && \
-	echo obsolete make PREFIX=/usr LIBDIR=/lib BINDIR=/sbin \
-		MANDIR=/usr/share/man install && \
-	echo obsolete make PREFIX=/usr LIBDIR=/lib BINDIR=/sbin \
-		MANDIR=/usr/share/man install-devel && \
-	echo obsolete install -v -m644 iptables.xslt /lib/iptables && \
-	\
-	cp -a /usr/sbin/iptables* /sbin && \
+	ln -sfv xtables-multi /sbin/iptables-xml && \
 	\
 	cd .. && \
 	rm -rf $(IPTABLES)/* && \
@@ -5221,12 +5204,14 @@ $(PKG-CONFIG):
 $(LIBDRM):
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(LIBDRM).tar.bz2 && \
+	tar jxvf $(XORG-TARBALLS)/misc/$(LIBDRM).tar.bz2 && \
 	chmod 755 $(LIBDRM) && \
 	chown -R 0:0 $(LIBDRM) && \
 	cd $(LIBDRM) && \
 	\
-	./configure --prefix=/usr && \
+	./configure --prefix=/usr \
+		--enable-nouveau-experimental-api \
+		--enable-vmwgfx-experimental-api && \
 	\
 	make -j2 && \
 	make install && \
@@ -5235,22 +5220,23 @@ $(LIBDRM):
 	echo rm -rf $(LIBDRM)/* && \
 	make P=$(LIBDRM) log-package
 
-$(MESA):  $(LIBDRM) $(XORG7-PROTO) $(XORG7-UTIL) $(XORG7-LIB) $(EXPAT)
+$(MESA):  $(LIBDRM) $(XORG7-PROTO) $(XORG7-UTIL) $(XORG7-LIB) $(EXPAT) \
+	$(LLVM) $(TALLOC)
+
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(MESALIB).tar.bz2 && \
-	tar jxvf $(JLFS-TARBALLS)/$(MESADEMO).tar.bz2 && \
+	tar jxvf $(XORG-TARBALLS)/misc/$(MESALIB).tar.bz2 && \
 	chmod 755 $(MESA) && \
 	chown -R 0:0 $(MESA) && \
 	cd $(MESA) && \
+	patch -Np1 -i $(XORG-PATCHES)/$(MESALIB)-llvm_3.0-1.patch && \
 	\
 	sed 's@FLAGS=\"-g@FLAGS=\"@' -i configure && \
 	\
-	./configure --prefix=/usr \
+	PATH=$(PATH):/opt/llvm/bin ./configure --prefix=/usr \
 		--enable-xcb && \
-	make -j2 && \
+	PATH=$(PATH):/opt/llvm/bin make -j2 && \
 	make install && \
-	install -v -m755 progs/xdemos/glx{info,gears} /usr/bin && \
 	\
 	cd .. && \
 	echo source will be removed with Xorg rm -rf $(MESA)/* && \
@@ -5259,7 +5245,7 @@ $(MESA):  $(LIBDRM) $(XORG7-PROTO) $(XORG7-UTIL) $(XORG7-LIB) $(EXPAT)
 $(LIBXAU):
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(LIBXAU).tar.bz2 && \
+	tar jxvf $(XORG-TARBALLS)/misc/$(LIBXAU).tar.bz2 && \
 	chmod 755 $(LIBXAU) && \
 	chown -R 0:0 $(LIBXAU) && \
 	cd $(LIBXAU) && \
@@ -5272,10 +5258,26 @@ $(LIBXAU):
 	rm -rf $(LIBXAU)/* && \
 	make P=$(LIBXAU) log-package
 
+$(LIBXCB):  $(LIBXAU)
+	set +h && \
+	\
+	tar jxvf $(XORG-TARBALLS)/misc/$(LIBXCB).tar.bz2 && \
+	chmod 755 $(LIBXCB) && \
+	chown -R 0:0 $(LIBXCB) && \
+	cd $(LIBXCB) && \
+	\
+	./configure --prefix=/usr --without-doxygen && \
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(LIBXCB)/* && \
+	make P=$(LIBXCB) log-package
+
 $(LIBXDMCP):
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(LIBXDMCP).tar.bz2 && \
+	tar jxvf $(XORG-TARBALLS)/misc/$(LIBXDMCP).tar.bz2 && \
 	chmod 755 $(LIBXDMCP) && \
 	chown -R 0:0 $(LIBXDMCP) && \
 	cd $(LIBXDMCP) && \
@@ -5288,6 +5290,130 @@ $(LIBXDMCP):
 	rm -rf $(LIBXDMCP)/* && \
 	make P=$(LIBXDMCP) log-package
 
+$(UTIL-MACROS):
+	set +h && \
+	\
+	tar jxvf $(XORG-TARBALLS)/util/$(UTIL-MACROS).tar.bz2 && \
+	chmod 755 $(UTIL-MACROS) && \
+	chown -R 0:0 $(UTIL-MACROS) && \
+	cd $(UTIL-MACROS) && \
+	\
+	./configure --prefix=/usr && \
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(UTIL-MACROS)/* && \
+	make P=$(UTIL-MACROS) log-package
+
+$(XCB-PROTO):  $(PYTHON)
+	set +h && \
+	\
+	tar jxvf $(XORG-TARBALLS)/misc/$(XCB-PROTO).tar.bz2 && \
+	chmod 755 $(XCB-PROTO) && \
+	chown -R 0:0 $(XCB-PROTO) && \
+	cd $(XCB-PROTO) && \
+	\
+	./configure --prefix=/usr && \
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(XCB-PROTO)/* && \
+	make P=$(XCB-PROTO) log-package
+
+$(LIBATOMIC-OPS):
+	set +h && \
+	\
+	tar xvf $(XORG-TARBALLS)/misc/$(LIBATOMIC-OPS).tar.gz && \
+	chmod 755 $(LIBATOMIC-OPS) && \
+	chown -R 0:0 $(LIBATOMIC-OPS) && \
+	cd $(LIBATOMIC-OPS) && \
+	\
+	./configure --prefix=/usr && \
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(LIBATOMIC-OPS)/* && \
+	make P=$(LIBATOMIC-OPS) log-package
+
+$(LLVM):
+	set +h && \
+	\
+	tar xvf $(XORG-TARBALLS)/misc/$(LLVM).tar.gz && \
+	mv $(LLVM).src $(LLVM) && \
+	chmod 755 $(LLVM) && \
+	chown -R 0:0 $(LLVM) && \
+	cd $(LLVM) && \
+	\
+	touch tools/edis/EnhancedDisassembly.exports && \
+	\
+	./configure --prefix=/opt/llvm && \
+	find -name Makefile -exec \
+		sed -i -r -e '/^LIBRARYNAME/a SHARED_LIBRARY = 1' \
+			-e 's#BUILD_ARCHIVE :*= 1#NO_&#' \
+			-e '/^USEDLIBS/s# ([A-Za-z]*).a# -l\1#g' \
+			-e 's#^USEDLIBS#LDFLAGS#' {} \; && \
+	\
+	sed -i 's#BUILD_ARCHIVE = 1#NO_&#' Makefile.rules && \
+	sed -i 's#x)/docs#x)/share/doc#' Makefile.config && \
+	\
+	make -j2 && \
+	make install && \
+	\
+	echo "/opt/llvm/lib" >> /etc/ld.so.conf && \
+	ldconfig && \
+	echo "pathappend /usr/share/man MANPATH" >> \
+		/etc/profile.d/extrapaths.sh && \
+	echo "pathappend /opt/llvm/share/man MANPATH" >> \
+		/etc/profile.d/extrapaths.sh && \
+	echo "pathappend /opt/llvm/bin" >> \
+		/etc/profile.d/extrapaths.sh && \
+	ln -svf /opt/llvm/share/doc /usr/share/doc/$(LLVM) && \
+	\
+	cd .. && \
+	rm -rf $(LLVM)/* && \
+	make P=$(LLVM) log-package
+
+$(TALLOC):
+	set +h && \
+	\
+	tar xvf $(XORG-TARBALLS)/misc/$(TALLOC).tar.gz && \
+	chmod 755 $(TALLOC) && \
+	chown -R 0:0 $(TALLOC) && \
+	cd $(TALLOC) && \
+	\
+	./configure --prefix=/usr && \
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(TALLOC)/* && \
+	make P=$(TALLOC) log-package
+
+$(XKEYBOARD-CONFIG):
+	set +h && \
+	\
+	tar jxvf $(XORG-TARBALLS)/misc/$(XKEYBOARD-CONFIG).tar.bz2 && \
+	chmod 755 $(XKEYBOARD-CONFIG) && \
+	chown -R 0:0 $(XKEYBOARD-CONFIG) && \
+	cd $(XKEYBOARD-CONFIG) && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--mandir=/usr/share/man \
+		--localstatedir=/var \
+		--with-xkb-base=/usr/share/X11/xkb \
+		--enable-xkbcomp-symlink \
+		--with-xkb-rules-symlink=xorg \
+		--with-config-dir=/usr/lib/X11/config && \
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(XKEYBOARD-CONFIG)/* && \
+	make P=$(XKEYBOARD-CONFIG) log-package
+
 #
 # Begin Xorg
 #
@@ -5297,16 +5423,19 @@ $(LIBXDMCP):
 #        of starting the Xorg build all over again.
 #
 
-$(XORG7): $(HAL) $(DBUS) $(PKG-CONFIG) $(LIBPNG) $(FONTCONFIG) $(ED) \
+$(XORG7): $(DBUS) $(PKG-CONFIG) $(LIBPNG) $(FONTCONFIG) $(ED) \
 	$(XML-PARSER) $(LIBPTHREAD-STUBS) $(LIBXSLT)
 
 	set +h && \
 	\
+	make $(UTIL-MACROS) && \
 	make $(XORG7-PROTO) && \
 	make $(XORG7-UTIL) && \
 	\
 	make $(LIBXAU) && \
 	make $(LIBXDMCP) && \
+	make $(LIBPTHREAD-STUBS) && \
+	make $(XCB-PROTO) && \
 	make $(LIBXCB) && \
 	\
 	make $(XORG7-LIB) && \
@@ -5315,6 +5444,7 @@ $(XORG7): $(HAL) $(DBUS) $(PKG-CONFIG) $(LIBPNG) $(FONTCONFIG) $(ED) \
 	\
 	make $(XORG7-APP) && \
 	make $(XORG7-FONT) && \
+	make $(XKEYBOARD-CONFIG) && \
 	make $(XORG7-SERVER) && \
 	make $(XORG7-DRIVER) && \
 	\
@@ -5327,8 +5457,6 @@ $(XORG7): $(HAL) $(DBUS) $(PKG-CONFIG) $(LIBPNG) $(FONTCONFIG) $(ED) \
 	ln -sfn /usr /usr/X11R6 && \
 	echo "/tmp/.ICE-unix dir 1777 root root" \
 		>> /etc/sysconfig/createfiles && \
-	\
-	echo obsolete cp -v /etc/pam.d/login /etc/pam.d/xdm && \
 	\
 	echo "$(XORG7) built successfully"
 
@@ -5832,7 +5960,7 @@ $(GLIB):
 	rm -rf $(GLIB)/.libs $(GLIB)/* && \
 	make P=$(GLIB) log-package
 
-$(GLIB2):  $(PKG-CONFIG) $(LIBFFI) $(PYTHON) $(PYTHON3)
+$(GLIB2):  $(PKG-CONFIG) $(LIBFFI) $(PYTHON) $(PYTHON3) $(PKG-CONFIG)
 	set +h && \
 	\
 	tar jxvf $(JLFS-TARBALLS)/$(GLIB2).tar.bz2 && \
@@ -6181,7 +6309,7 @@ $(DBUS):  $(EXPAT)
 $(LIBPTHREAD-STUBS): 
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(LIBPTHREAD-STUBS).tar.bz2 && \
+	tar jxvf $(XORG-TARBALLS)/misc/$(LIBPTHREAD-STUBS).tar.bz2 && \
 	chmod 755 $(LIBPTHREAD-STUBS) && \
 	chown -R 0:0 $(LIBPTHREAD-STUBS) && \
 	cd $(LIBPTHREAD-STUBS) && \
@@ -6376,22 +6504,6 @@ $(NSPR):
 	cd .. && \
 	rm -rf $(NSPR)/* && \
 	make P=$(NSPR) log-package
-
-$(LIBXCB):  $(LIBXAU)
-	set +h && \
-	\
-	tar jxvf $(JLFS-TARBALLS)/$(LIBXCB).tar.bz2 && \
-	chmod 755 $(LIBXCB) && \
-	chown -R 0:0 $(LIBXCB) && \
-	cd $(LIBXCB) && \
-	\
-	./configure --prefix=/usr --without-doxygen && \
-	make -j2 && \
-	make install && \
-	\
-	cd .. && \
-	rm -rf $(LIBXCB)/* && \
-	make P=$(LIBXCB) log-package
 
 ##
 ## Begin Graphics and Font Libraries
@@ -6964,48 +7076,48 @@ $(SYSSTAT):
 	rm -rf $(SYSSTAT)/* && \
 	make P=$(SYSSTAT) log-package
 
-$(HAL):  $(DBUS-GLIB) $(XML-PARSER) $(PYTHON) $(PCIUTILS) $(USBUTILS)
-	set +h && \
-	\
-	tar zxvf $(JLFS-TARBALLS)/$(HAL).tar.gz && \
-	chmod 755 $(HAL) && \
-	chown -R 0:0 $(HAL) && \
-	cd $(HAL) && \
-	\
-	groupadd -g 19 haldaemon; \
-	useradd -c "HAL Daemon User" -d /dev/null -u 19 \
-		-g haldaemon -s /bin/false haldaemon; \
-	\
-	patch -Np1 -i $(JLFS-PATCHES)/$(HAL)-no-glib-dot-h-for-you.patch && \
-	\
-	./configure --prefix=/usr \
-		--sysconfdir=/etc \
-		--libexecdir=/usr/lib/hal \
-		--docdir=/usr/share/$(HAL) \
-		--localstatedir=/var \
-		--enable-policy-kit=no && \
-	\
-	make -j2 && \
-	make install && \
-	\
-	cd .. && \
-	rm -rf $(HAL)/* && \
-	make P=$(HAL) log-package
-
-$(HAL-INFO):  $(HAL)
-	set +h && \
-	\
-	tar xvf $(JLFS-TARBALLS)/$(HAL-INFO).tar.gz && \
-	chmod 755 $(HAL-INFO) && \
-	chown -R 0:0 $(HAL-INFO) && \
-	cd $(HAL-INFO) && \
-	\
-	./configure --prefix=/usr --sysconfdir=/etc && \
-	make install && \
-	\
-	cd .. && \
-	rm -rf $(HAL-INFO)/* && \
-	make P=$(HAL-INFO) log-package
+#$(HAL):  $(DBUS-GLIB) $(XML-PARSER) $(PYTHON) $(PCIUTILS) $(USBUTILS)
+#	set +h && \
+#	\
+#	tar zxvf $(JLFS-TARBALLS)/$(HAL).tar.gz && \
+#	chmod 755 $(HAL) && \
+#	chown -R 0:0 $(HAL) && \
+#	cd $(HAL) && \
+#	\
+#	groupadd -g 19 haldaemon; \
+#	useradd -c "HAL Daemon User" -d /dev/null -u 19 \
+#		-g haldaemon -s /bin/false haldaemon; \
+#	\
+#	patch -Np1 -i $(JLFS-PATCHES)/$(HAL)-no-glib-dot-h-for-you.patch && \
+#	\
+#	./configure --prefix=/usr \
+#		--sysconfdir=/etc \
+#		--libexecdir=/usr/lib/hal \
+#		--docdir=/usr/share/$(HAL) \
+#		--localstatedir=/var \
+#		--enable-policy-kit=no && \
+#	\
+#	make -j2 && \
+#	make install && \
+#	\
+#	cd .. && \
+#	rm -rf $(HAL)/* && \
+#	make P=$(HAL) log-package
+#
+#$(HAL-INFO):  $(HAL)
+#	set +h && \
+#	\
+#	tar xvf $(JLFS-TARBALLS)/$(HAL-INFO).tar.gz && \
+#	chmod 755 $(HAL-INFO) && \
+#	chown -R 0:0 $(HAL-INFO) && \
+#	cd $(HAL-INFO) && \
+#	\
+#	./configure --prefix=/usr --sysconfdir=/etc && \
+#	make install && \
+#	\
+#	cd .. && \
+#	rm -rf $(HAL-INFO)/* && \
+#	make P=$(HAL-INFO) log-package
 
 $(DEVICE-MAPPER):
 	set +h && \
@@ -9063,7 +9175,7 @@ $(DESKTOP-FILE-UTILS):  $(GLIB2)
 	make P=$(DESKTOP-FILE-UTILS) log-package
 
 $(GNOME-VFS):  $(DBUS-GLIB) $(GCONF) $(GNOME-MIME-DATA) $(OPENSSH) \
-	$(OPENSSL) $(HAL) $(GAMIN) $(FAM) $(LIBXML2)
+	$(OPENSSL) $(GAMIN) $(FAM) $(LIBXML2)
 
 	set +h && \
 	\
@@ -9620,7 +9732,7 @@ $(GEDIT):  $(LIBGNOMEUI) $(LIBGNOMEPRINTUI) $(GNOME-DOC-UTILS) \
 	make P=$(GEDIT) log-package
 
 $(TOTEM):  $(GNOME-ICON-THEME) $(GNOME-DESKTOP) $(ISO-CODES) \
-	$(GST-PLUGINS-GOOD) $(XINE-LIB) $(HAL) $(VLC) $(TOTEM-PL-PARSER) \
+	$(GST-PLUGINS-GOOD) $(XINE-LIB) $(VLC) $(TOTEM-PL-PARSER) \
 	$(LIBUNIQUE) $(LIBGDATA)
 
 	set +h && \
@@ -10309,7 +10421,7 @@ $(GST-PLUGINS-BASE):  $(GSTREAMER) $(LIBOIL) $(ALSA-LIB) $(LIBOGG) \
 	make P=$(GST-PLUGINS-BASE) log-package
 
 $(GST-PLUGINS-GOOD):  $(GST-PLUGINS-BASE) $(AALIB) $(CAIRO) $(LIBDV) \
-	$(ESOUND) $(FLAC) $(GTK2) $(HAL) $(LIBJPEG) $(LIBPNG) \
+	$(ESOUND) $(FLAC) $(GTK2) $(LIBJPEG) $(LIBPNG) \
 	$(SPEEX) $(XORG7) $(GCONF)
 
 	set +h && \
