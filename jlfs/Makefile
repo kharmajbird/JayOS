@@ -5209,7 +5209,9 @@ $(LIBDRM):
 	chown -R 0:0 $(LIBDRM) && \
 	cd $(LIBDRM) && \
 	\
-	./configure --prefix=/usr && \
+	./configure --prefix=/usr \
+		--enable-nouveau-experimental-api \
+		--enable-vmwgfx-experimental-api && \
 	\
 	make -j2 && \
 	make install && \
@@ -5223,17 +5225,17 @@ $(MESA):  $(LIBDRM) $(XORG7-PROTO) $(XORG7-UTIL) $(XORG7-LIB) $(EXPAT) \
 
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(MESALIB).tar.bz2 && \
+	tar jxvf $(XORG-TARBALLS)/misc/$(MESALIB).tar.bz2 && \
 	chmod 755 $(MESA) && \
 	chown -R 0:0 $(MESA) && \
 	cd $(MESA) && \
-	patch -Np1 -i $(XORG-PATCHES)/$(MESA)-llvm_3.0-1.patch && \
+	patch -Np1 -i $(XORG-PATCHES)/$(MESALIB)-llvm_3.0-1.patch && \
 	\
 	sed 's@FLAGS=\"-g@FLAGS=\"@' -i configure && \
 	\
-	./configure --prefix=/usr \
+	PATH=$(PATH):/opt/llvm/bin ./configure --prefix=/usr \
 		--enable-xcb && \
-	make -j2 && \
+	PATH=$(PATH):/opt/llvm/bin make -j2 && \
 	make install && \
 	\
 	cd .. && \
