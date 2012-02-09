@@ -6,8 +6,6 @@
 export G_FILENAME_ENCODING=@locale
 export LANG=C
 export GNUPGHOME=/home/.gnupg
-#export JAVA_HOME=/usr/java/j2re1.4.2_05
-#export PATH=$PATH:$JAVA_HOME/bin
 set -o vi
 
 export HOSTNAME=$(grep HOSTNAME /etc/sysconfig/network| cut -f2 -d'=')

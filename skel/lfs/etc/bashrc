@@ -7,7 +7,5 @@ export G_FILENAME_ENCODING=@locale
 export LC_ALL=POSIX
 export GNUPGHOME=/home/.gnupg
 export PS1="\h:\w\\$ "
-export JAVA_HOME=/usr/local/jre1.6.0_07
-export PATH=$PATH:$JAVA_HOME/bin
 set -o vi
 
