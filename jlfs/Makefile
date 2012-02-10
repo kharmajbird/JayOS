@@ -5221,7 +5221,7 @@ $(LIBDRM):
 	make P=$(LIBDRM) log-package
 
 $(MESA):  $(LIBDRM) $(XORG7-PROTO) $(XORG7-UTIL) $(XORG7-LIB) $(EXPAT) \
-	$(LLVM) $(TALLOC)
+	$(TALLOC)
 
 	set +h && \
 	\
@@ -5229,13 +5229,12 @@ $(MESA):  $(LIBDRM) $(XORG7-PROTO) $(XORG7-UTIL) $(XORG7-LIB) $(EXPAT) \
 	chmod 755 $(MESA) && \
 	chown -R 0:0 $(MESA) && \
 	cd $(MESA) && \
-	patch -Np1 -i $(XORG-PATCHES)/$(MESALIB)-llvm_3.0-1.patch && \
 	\
 	sed 's@FLAGS=\"-g@FLAGS=\"@' -i configure && \
 	\
-	PATH=$(PATH):/opt/llvm/bin ./configure --prefix=/usr \
-		--enable-xcb && \
-	PATH=$(PATH):/opt/llvm/bin make -j2 && \
+	./configure --prefix=/usr \
+		--enable-xcb --without-gallium-drivers && \
+	make -j2 && \
 	make install && \
 	\
 	cd .. && \
@@ -5337,44 +5336,6 @@ $(LIBATOMIC-OPS):
 	cd .. && \
 	rm -rf $(LIBATOMIC-OPS)/* && \
 	make P=$(LIBATOMIC-OPS) log-package
-
-$(LLVM):
-	set +h && \
-	\
-	tar xvf $(XORG-TARBALLS)/misc/$(LLVM).tar.gz && \
-	mv $(LLVM).src $(LLVM) && \
-	chmod 755 $(LLVM) && \
-	chown -R 0:0 $(LLVM) && \
-	cd $(LLVM) && \
-	\
-	touch tools/edis/EnhancedDisassembly.exports && \
-	\
-	./configure --prefix=/opt/llvm && \
-	find -name Makefile -exec \
-		sed -i -r -e '/^LIBRARYNAME/a SHARED_LIBRARY = 1' \
-			-e 's#BUILD_ARCHIVE :*= 1#NO_&#' \
-			-e '/^USEDLIBS/s# ([A-Za-z]*).a# -l\1#g' \
-			-e 's#^USEDLIBS#LDFLAGS#' {} \; && \
-	\
-	sed -i 's#BUILD_ARCHIVE = 1#NO_&#' Makefile.rules && \
-	sed -i 's#x)/docs#x)/share/doc#' Makefile.config && \
-	\
-	make -j2 && \
-	make install && \
-	\
-	echo "/opt/llvm/lib" >> /etc/ld.so.conf && \
-	ldconfig && \
-	echo "pathappend /usr/share/man MANPATH" >> \
-		/etc/profile.d/extrapaths.sh && \
-	echo "pathappend /opt/llvm/share/man MANPATH" >> \
-		/etc/profile.d/extrapaths.sh && \
-	echo "pathappend /opt/llvm/bin" >> \
-		/etc/profile.d/extrapaths.sh && \
-	ln -svf /opt/llvm/share/doc /usr/share/doc/$(LLVM) && \
-	\
-	cd .. && \
-	rm -rf $(LLVM)/* && \
-	make P=$(LLVM) log-package
 
 $(TALLOC):
 	set +h && \

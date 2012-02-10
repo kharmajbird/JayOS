@@ -650,7 +650,6 @@ LIBXDMCP = libXdmcp-1.1.0
 UTIL-MACROS = util-macros-1.11.0
 XCB-PROTO = xcb-proto-1.6
 LIBATOMIC-OPS = libatomic_ops-1.2
-LLVM = llvm-3.0
 TALLOC = talloc-2.0.7
 #
 XTERM = xterm-267
