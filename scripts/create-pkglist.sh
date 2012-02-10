@@ -8,7 +8,7 @@
 
 HEAD=/lfs/build/JayOS/tarballs
 DIRS="jlfs lfs"
-XDIRS="xorg/app xorg/driver xorg/font xorg/lib xorg/proto xorg/util xorg/xserver"
+XDIRS="xorg/app xorg/driver xorg/font xorg/lib xorg/proto xorg/util xorg/xserver xorg/misc"
 PKGLIST=/lfs/build/JayOS/figs/pkglist
 
 # create pkglist in /JayOS/figs
