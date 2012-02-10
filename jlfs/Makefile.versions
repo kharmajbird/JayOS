@@ -517,7 +517,7 @@ PHP5 = php-5.3.7
 PYTHON = Python-2.6.4
 PYTHON-VER=python2.6
 RUBY = ruby-1.9.1-p376
-TCL = tcl8.5.8
+TCL = tcl8.5.10
 TK = tk8.5.8
 
 #
