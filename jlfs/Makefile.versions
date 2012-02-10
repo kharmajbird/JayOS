@@ -658,7 +658,7 @@ XTERM = xterm-267
 # X11 Libraries
 #
 
-QT3 = qt-x11-free-3.3.8b
+QT3 = qt3-3.3.8.d
 QT4 = qt-everywhere-opensource-src-4.7.1
 QT4-VER = qt-4.7.1
 GTK = gtk+-1.2.10

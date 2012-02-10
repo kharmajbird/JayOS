@@ -8738,13 +8738,19 @@ $(QT3):  $(XORG7)  $(LIBJPEG) $(LIBMNG) $(EXPECT)
 	set +h && \
 	\
 	tar zxvf $(JLFS-TARBALLS)/$(QT3).tar.gz && \
+	mv qt3 $(QT3) && \
 	chmod 755 $(QT3) && \
 	chown -R 0:0 $(QT3) && \
 	cd $(QT3) && \
 	\
-	sed -i '/QMAKE_RPATH/d' mkspecs/linux*/qmake.conf && \
+	for directory in `ls -d mkspecs/linux*`; do \
+		sed -i '/QMAKE_RPATH/d' $${directory}/qmake.conf; \
+	done && \
+	\
 	sed -i 's/^QMAKE_INCDIR..=/& \/usr\/include\/qt/' \
 		mkspecs/linux*/qmake.conf && \
+	\
+	patch -Np1 -i $(JLFS-PATCHES)/$(QT3)-libpng15-1.patch && \
 	\
 	yes "yes"| ./configure -DQT_CLEAN_NAMESPACE \
 		-prefix /usr \
@@ -8768,7 +8774,7 @@ $(QT3):  $(XORG7)  $(LIBJPEG) $(LIBMNG) $(EXPECT)
 		-no-ipv6 \
 		-tablet && \
 	\
-	make \
+	make sub-tools \
 		PATH=/usr/src/$(QT3)/bin:$(PATH) \
 		LD_LIBRARY_PATH=/usr/src/$(QT3)/lib:$(LD_LIBRARY_PATH) && \
 	\
