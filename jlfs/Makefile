@@ -7125,8 +7125,6 @@ $(EXPECT):  $(TCL) $(TK)
 	chown -R 0:0 $(EXPECT) && \
 	cd $(EXPECT) && \
 	\
-	patch -Np1 -i $(LFS-PATCHES)/$(EXPECT)-no_tk-1.patch && \
-	\
 	./configure --prefix=/usr \
             --with-tcl=/usr/lib \
             --with-tclinclude=/usr/include \
