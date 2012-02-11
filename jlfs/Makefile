@@ -40,6 +40,8 @@ include Makefile.vars
 include Makefile.depends
 STUB=stub-ver
 
+include Makefile.targets
+
 ##########################################################################
 
 all:
@@ -57,9 +59,8 @@ all:
 	if [ -f $(LFS)/tmp/sallgood ]; then \
 		rm -f $(LFS)/tmp/sallgood && \
 		make strip; \
-	fi
-
-include Makefile.targets
+	else \
+		play $(SKEL-JLFS)/root/bin/tos-redalert
 
 livecd:	un-prep strip-man root initrd boot usr opt iso usb
 	@echo
