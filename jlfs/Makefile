@@ -4730,9 +4730,6 @@ $(BLFSBOOT):
 	touch $(BLFSBOOT) && \
 	cd $(BLFSBOOT) && \
 	\
-	echo for braindead avahi && \
-	echo obsolete link ln -sfn /etc/rc.d/init.d /etc/init.d && \
-	\
 	make install-autofs && \
 	make install-iptables && \
 	make install-dbus && \
@@ -7841,8 +7838,15 @@ $(DHCPCD):
 	chown -R 0:0 $(DHCPCD) && \
 	cd $(DHCPCD) && \
 	\
+	./configure --libexecdir=/lib/dhcpcd \
+		--dbdir=/run \
+		--sysconfdir=/etc && \
 	make -j2 && \
 	make install && \
+	\
+	sed -i "s;/var/lib;/run;g" dhcpcd-hooks/50-dhcpcd-compat && \
+	install -v -m 644 dhcpcd-hooks/50-dhcpcd-compat \
+		/lib/dhcpcd/dhcpcd-hooks/ && \
 	\
 	cd .. && \
 	rm -rf $(DHCPCD)/* && \
@@ -8675,12 +8679,22 @@ $(DHCP):  $(NET-TOOLS)
 	chown -R 0:0 $(DHCP) && \
 	cd $(DHCP) && \
 	\
-	patch -Np1 -i $(JLFS-PATCHES)/$(DHCP)-client_dns-1.patch && \
 	patch -Np1 -i $(JLFS-PATCHES)/$(DHCP)-iproute2-1.patch && \
-	./configure && \
+	\
+	sed -i 's%\(^sbindir =\).*%\1 @prefix@@sbindir@%' \
+		server/Makefile.in && \
+	./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var \
+		--sbindir=/sbin \
+		--with-srv-lease-file=/var/state/dhcp/dhcpd.leases \
+		--with-srv6-lease-file=/var/state/dhcp/dhcpd6.leases \
+		--with-cli-lease-file=/var/state/dhclient.leases \
+		--with-cli6-lease-file=/var/state/dhclient6.leases && \
+	sed -i 's/-Werror//' \
+		{client,common,dst,omapip,relay,server,tests}/Makefile && \
+	\
 	make -j2 && \
-	make LIBDIR=/usr/lib INCDIR=/usr/include install && \
-	touch /var/state/dhcp/dhcpd.leases && \
+	make install && \
+	mkdir -p /var/state/dhcp/ && \
 	\
 	cd .. && \
 	rm -rf $(DHCP)/* && \
