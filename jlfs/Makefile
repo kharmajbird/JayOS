@@ -4656,6 +4656,22 @@ $(PKG-CONFIG):
 	rm -rf $(PKG-CONFIG)/* && \
 	make P=$(PKG-CONFIG) log-package
 
+$(XZ):
+	set +h && \
+	\
+	tar xvf $(LFS-TARBALLS)/$(XZ).tar.bz2 && \
+	chmod 755 $(XZ) && \
+	chown -R 0:0 $(XZ) && \
+	cd $(XZ) && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(XZ)/* && \
+	make P=$(XZ) log-package
+
 $(AUTOFS): $(OPENLDAP)
 	echo obsolete mount -vt proc proc /proc && \
 	\
@@ -6710,18 +6726,17 @@ $(BC):
 
 $(IMAGEMAGICK):  $(PKG-CONFIG) $(CUPS) $(LPRNG) $(SANE-BACKENDS) $(WGET) \
 	$(LCMS) $(LIBEXIF) $(LIBJPEG) $(LIBPNG) $(LIBRSVG) $(LIBXML2) \
-	$(LIBTIFF) $(FREETYPE) $(AVIFILE) $(A52DEC) $(GRAPHVIZ)
+	$(LIBTIFF) $(FREETYPE) $(AVIFILE) $(A52DEC) $(GRAPHVIZ) $(XZ)
 
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(IMAGEMAGICK).tar.bz2 && \
+	xz -dc $(JLFS-TARBALLS)/$(IMAGEMAGICK).tar.xz| tar xvf - && \
 	chmod 755 $(IMAGEMAGICK) && \
 	chown -R 0:0 $(IMAGEMAGICK) && \
 	cd $(IMAGEMAGICK) && \
 	\
-	sed -i -e "s/\xc2\xae/\\\[rg\]/g" \
-		-e "s/B...'e./Be/" utilities/ImageMagick.1.in && \
 	./configure --prefix=/usr --with-modules \
+		--disable-static \
 		--with-perl=yes && \
 	make -j2 && \
 	make install && \

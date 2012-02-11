@@ -353,6 +353,7 @@ OPENVZ-QUOTA = vzquota-20091121
 OPENVZ-VER = 2.6.26
 
 PKG-CONFIG = pkg-config-0.25
+XZ = xz-5.0.3
 AUTOFS = autofs-5.0.3
 AUTOFS-VER = 5.0.3
 ED = ed-0.8
@@ -451,7 +452,7 @@ PIXMAN = pixman-0.24.0
 BC = bc-1.06
 #rep-gtk-0.18
 #compface-1.5.2
-IMAGEMAGICK = ImageMagick-6.6.1-10
+IMAGEMAGICK = ImageMagick-6.7.3-10
 HD2U = hd2u-1.0.1
 #gtk-doc-1.8
 #scrollkeeper-0.3.14
