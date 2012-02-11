@@ -40,8 +40,6 @@ include Makefile.vars
 include Makefile.depends
 STUB=stub-ver
 
-include Makefile.targets
-
 ##########################################################################
 
 all:
@@ -61,6 +59,8 @@ all:
 		make strip; \
 	else \
 		play $(SKEL-JLFS)/root/bin/tos-redalert
+
+include Makefile.targets
 
 livecd:	un-prep strip-man root initrd boot usr opt iso usb
 	@echo
@@ -8447,8 +8447,6 @@ $(NFS-UTILS):  $(RPCBIND) $(TCP-WRAPPER)
 	chown -R 0:0 $(NFS-UTILS) && \
 	cd $(NFS-UTILS) && \
 	\
-	patch -Np1 -i $(JLFS-PATCHES)/$(NFS-UTILS)-glibc-1.patch && \
-	\
 	groupadd -g 99 nogroup; \
 	useradd -c "Unprivileged Nobody" -d /dev/null -g nogroup \
 		-s /bin/false -u 99 nobody; \
@@ -8456,6 +8454,7 @@ $(NFS-UTILS):  $(RPCBIND) $(TCP-WRAPPER)
 	./configure --prefix=/usr \
 		--sysconfdir=/etc \
 		--disable-nfsv4 \
+		--disable-nfsv41 \
 		--with-tcp-wrappers \
 		--disable-gss && \
 	make -j2 && \
