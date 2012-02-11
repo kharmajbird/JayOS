@@ -8751,6 +8751,7 @@ $(QT3):  $(XORG7)  $(LIBJPEG) $(LIBMNG) $(EXPECT)
 		mkspecs/linux*/qmake.conf && \
 	\
 	patch -Np1 -i $(JLFS-PATCHES)/$(QT3)-libpng15-1.patch && \
+	patch -Np1 -i $(JLFS-PATCHES)/$(QT3)-no_debug-1.patch && \
 	\
 	yes "yes"| ./configure -DQT_CLEAN_NAMESPACE \
 		-prefix /usr \
