@@ -4750,7 +4750,7 @@ $(BLFSBOOT):
 		make install-service-dhcpcd && \
 		make install-service-pppoe && \
 		make install-ntp && \
-		make install-portmap && \
+		make install-rpcbind && \
 		make install-dhcp && \
 		make install-proftpd && \
 		make install-mysql && \
@@ -8029,22 +8029,49 @@ $(NTP):
 	rm -rf $(NTP)/* && \
 	make P=$(NTP) log-package
 
-$(PORTMAP):  $(TCP-WRAPPER)
+$(LIBTIRPC):
 	set +h && \
 	\
-	tar xvf $(JLFS-TARBALLS)/$(PORTMAP).tgz && \
-	mv $(PORTMAP-VER) $(PORTMAP) && \
-	chmod 755 $(PORTMAP) && \
-	chown -R 0:0 $(PORTMAP) && \
-	cd $(PORTMAP) && \
+	tar jxvf $(JLFS-TARBALLS)/$(LIBTIRPC).tar.bz2 && \
+	chmod 755 $(LIBTIRPC) && \
+	chown -R 0:0 $(LIBTIRPC) && \
+	cd $(LIBTIRPC) && \
 	\
-	useradd -u 1 -g 1 -d /dev/null -s /bin/false bin; \
+	if [ ! -r /usr/include/rpc/rpc.h ]; then \
+		tar -xvf $(JLFS-TARBALLS)/rpcnis-headers.tar.bz2 \
+			-C /usr/include; \
+	fi && \
+	\
+	patch -Np1 -i $(JLFS-PATCHES)/$(LIBTIRPC)-remove-nis-2.patch && \
+	\
+	autoreconf && \
+	./configure --prefix=/usr --libdir=/lib && \
+	make && \
+	make pkgconfigdir=/usr/lib/pkgconfig install && \
+	mv -v /lib/libtirpc.*a /usr/lib && \
+	\
+	cd .. && \
+	rm -rf $(LIBTIRPC)/* && \
+	make P=$(LIBTIRPC) log-package
+
+$(RPCBIND):  $(LIBTIRPC) $(TCP-WRAPPER)
+	set +h && \
+	\
+	tar jxvf $(JLFS-TARBALLS)/$(RPCBIND).tar.bz2 && \
+	chmod 755 $(RPCBIND) && \
+	chown -R 0:0 $(RPCBIND) && \
+	cd $(RPCBIND) && \
+	\
+	sed -i 's/^sunrpc/rpcbind/' /etc/services && \
+	\
+	./configure --prefix=/usr --bindir=/sbin && \
+	\
 	make -j2 && \
 	make install && \
 	\
 	cd .. && \
-	rm -rf $(PORTMAP)/* && \
-	make P=$(PORTMAP) log-package
+	rm -rf $(RPCBIND)/* && \
+	make P=$(RPCBIND) log-package
 
 $(RSYNC):
 	set +h && \
@@ -8411,7 +8438,7 @@ $(BIND):  $(OPENSSL)
 	rm -rf $(BIND)/* && \
 	make P=$(BIND) log-package
 
-$(NFS-UTILS):  $(PORTMAP) $(TCP-WRAPPER)
+$(NFS-UTILS):  $(RPCBIND) $(TCP-WRAPPER)
 	set +h && \
 	\
 	tar jxvf $(JLFS-TARBALLS)/$(NFS-UTILS).tar.bz2 && \
