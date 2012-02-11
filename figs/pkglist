@@ -27,6 +27,7 @@ jlfs/IO-Compress-Bzip2-2.005.tar.gz
 jlfs/IO-Compress-Zlib-2.005.tar.gz
 jlfs/IO-stringy-2.110.tar.gz
 jlfs/ImageMagick-6.6.1-10.tar.bz2
+jlfs/ImageMagick-6.7.3-10.tar.xz
 jlfs/Imaging-1.1.7.tar.gz
 jlfs/Jinja2-2.6.tar.gz
 jlfs/LPRng-3.8.33.tgz
@@ -65,6 +66,7 @@ jlfs/Sphinx-1.0.8.tar.gz
 jlfs/TermReadKey-2.14.tar.gz
 jlfs/Tie-IxHash-1.21.tar.gz
 jlfs/Tk-804.028.tar.gz
+jlfs/Tk-804.030.tar.gz
 jlfs/URI-1.35.tar.gz
 jlfs/WEPCrack-0.1.0.tar.gz
 jlfs/XML-Parser-2.40.tar.gz
@@ -128,7 +130,9 @@ jlfs/ddrescue-1.0-pre1.tar.gz
 jlfs/dejagnu-1.4.4.tar.gz
 jlfs/desktop-file-utils-0.17.tar.bz2
 jlfs/dhcp-3.0.6.tar.gz
+jlfs/dhcp-4.2.3.tar.gz
 jlfs/dhcpcd-3.0.19.tar.bz2
+jlfs/dhcpcd-5.2.12.tar.bz2
 jlfs/dia-0.97.1.tar.bz2
 jlfs/dietlibc-0.31.tar.bz2
 jlfs/diskdev-cmds-332.14.tar.gz
@@ -371,6 +375,7 @@ jlfs/libssh-0.11.tgz
 jlfs/libssh2-1.2.7.tar.gz
 jlfs/libtasn1-2.8.tar.gz
 jlfs/libtheora-1.1.1.tar.bz2
+jlfs/libtirpc-0.2.2.tar.bz2
 jlfs/libungif-4.1.0b1.tar.gz
 jlfs/libunique-1.1.6.tar.bz2
 jlfs/libusb-1.0.8.tar.bz2
@@ -424,6 +429,7 @@ jlfs/netcat-0.7.1.tar.bz2
 jlfs/newt-0.52.14.tar.gz
 jlfs/nfs-utils-1.1.4.tar.bz2
 jlfs/nmap-4.53.tar.bz2
+jlfs/nmap-5.51.tar.bz2
 jlfs/nspr-4.8.9.tar.gz
 jlfs/nss-3.13.1.tar.gz
 jlfs/ntfsprogs-2.0.0.tar.bz2
@@ -478,11 +484,13 @@ jlfs/qemu-0.15.0.tar.gz
 jlfs/qemu-1.0.tar.gz
 jlfs/qemu-efi-bios.tar.bz2
 jlfs/qt-everywhere-opensource-src-4.7.1.tar.gz
-jlfs/qt-x11-free-3.3.8b.tar.gz
+jlfs/qt3-3.3.8.d.tar.gz
 jlfs/quodlibet-2.3.2.tar.gz
 jlfs/quodlibet-plugins-2.3.2.tar.gz
 jlfs/rarlinux-3.0.tar.gz
 jlfs/rp-pppoe-3.8.tar.gz
+jlfs/rpcbind-0.2.0.tar.bz2
+jlfs/rpcnis-headers.tar.bz2
 jlfs/rsync-3.0.7.tar.gz
 jlfs/ruby-1.9.1-p376.tar.bz2
 jlfs/runefs.tar.gz
@@ -809,3 +817,13 @@ xorg/proto/xproto-7.0.22.tar.bz2
 xorg/util/makedepend-1.0.3.tar.bz2
 xorg/util/util-macros-1.11.0.tar.bz2
 xorg/xserver/xorg-server-1.11.2.tar.bz2
+xorg/misc/MesaLib-7.11.2.tar.bz2
+xorg/misc/libXau-1.0.6.tar.bz2
+xorg/misc/libXdmcp-1.1.0.tar.bz2
+xorg/misc/libatomic_ops-1.2.tar.gz
+xorg/misc/libdrm-2.4.27.tar.bz2
+xorg/misc/libpthread-stubs-0.3.tar.bz2
+xorg/misc/libxcb-1.7.tar.bz2
+xorg/misc/talloc-2.0.7.tar.gz
+xorg/misc/xcb-proto-1.6.tar.bz2
+xorg/misc/xkeyboard-config-2.0.tar.bz2

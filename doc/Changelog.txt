@@ -1,6 +1,8 @@
-[ 20120206 ]
+[ 20120213 ]
 	Upgraded to the latest stable Linux From Scratch, version 7.0
 
+	Linux-3.2.2
+	Xorg-7.6-2
 
 [ 20120123 ]
 

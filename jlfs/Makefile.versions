@@ -353,6 +353,7 @@ OPENVZ-QUOTA = vzquota-20091121
 OPENVZ-VER = 2.6.26
 
 PKG-CONFIG = pkg-config-0.25
+XZ = xz-5.0.3
 AUTOFS = autofs-5.0.3
 AUTOFS-VER = 5.0.3
 ED = ed-0.8
@@ -412,7 +413,7 @@ DBUS-GLIB = dbus-glib-0.98
 DBUS-PYTHON = dbus-python-0.84.0
 DBUS-QT3 = dbus-qt3-0.62
 EGGDBUS = eggdbus-0.6
-LIBPTHREAD-STUBS = libpthread-stubs-0.1
+LIBPTHREAD-STUBS = libpthread-stubs-0.3
 PTH = pth-2.0.7
 LIBASSUAN = libassuan-1.0.2
 LIBGPG-ERROR = libgpg-error-1.7
@@ -451,7 +452,7 @@ PIXMAN = pixman-0.24.0
 BC = bc-1.06
 #rep-gtk-0.18
 #compface-1.5.2
-IMAGEMAGICK = ImageMagick-6.6.1-10
+IMAGEMAGICK = ImageMagick-6.7.3-10
 HD2U = hd2u-1.0.1
 #gtk-doc-1.8
 #scrollkeeper-0.3.14
@@ -469,7 +470,7 @@ ICON-NAMING-UTILS = icon-naming-utils-0.8.90
 #rxvt-unicode-8.4
 #pin-entry-0.7.3
 GPERF = gperf-3.0.4
-XCB-UTIL = xcb-util-0.3.6
+XCB-UTIL = xcb-util-0.3.8
 
 #
 # System Utilities
@@ -517,7 +518,7 @@ PHP5 = php-5.3.7
 PYTHON = Python-2.6.4
 PYTHON-VER=python2.6
 RUBY = ruby-1.9.1-p376
-TCL = tcl8.5.8
+TCL = tcl8.5.10
 TK = tk8.5.8
 
 #
@@ -542,7 +543,7 @@ LIBWWW-PERL = libwww-perl-5.806
 URI = URI-1.35
 HTML-PARSER = HTML-Parser-3.56
 CRYPT-SSLEAY = Crypt-SSLeay-0.58
-TK-PERL = Tk-804.028
+TK-PERL = Tk-804.030
 XML-SIMPLE = XML-Simple-2.18
 TIE-IXHASH = Tie-IxHash-1.21
 
@@ -564,8 +565,8 @@ GNOME-PYTHON = gnome-python-2.28.1
 #
 
 PPP = ppp-2.4.4
-DHCP = dhcp-3.0.6
-DHCPCD = dhcpcd-3.0.19
+DHCP = dhcp-4.2.3
+DHCPCD = dhcpcd-5.2.12
 RP-PPPOE = rp-pppoe-3.8
 CURL = curl-7.21.2
 GNET = gnet-2.0.7
@@ -577,8 +578,8 @@ LYNX = lynx-2.8.6
 NCFTP = ncftp-3.2.1
 NET-TOOLS = net-tools-1.60
 NTP = ntp-4.2.4p7
-PORTMAP = portmap-6.0
-PORTMAP-VER = portmap_6.0
+LIBTIRPC = libtirpc-0.2.2
+RPCBIND = rpcbind-0.2.0
 RSYNC = rsync-3.0.7
 SAMBA = samba-3.5.1
 SUBVERSION = subversion-1.7.1
@@ -587,7 +588,7 @@ TCPDUMP = tcpdump-4.1.1
 WGET = wget-1.12
 WIRELESS-TOOLS = wireless_tools.29
 TRACEROUTE = traceroute-1.4a12
-NMAP = nmap-4.53
+NMAP = nmap-5.51
 WHOIS = whois-4.7.24
 BIND = bind-9.4.1-P1
 WIRESHARK = wireshark-0.99.7
@@ -650,7 +651,6 @@ LIBXDMCP = libXdmcp-1.1.0
 UTIL-MACROS = util-macros-1.11.0
 XCB-PROTO = xcb-proto-1.6
 LIBATOMIC-OPS = libatomic_ops-1.2
-LLVM = llvm-3.0
 TALLOC = talloc-2.0.7
 #
 XTERM = xterm-267
@@ -659,7 +659,7 @@ XTERM = xterm-267
 # X11 Libraries
 #
 
-QT3 = qt-x11-free-3.3.8b
+QT3 = qt3-3.3.8.d
 QT4 = qt-everywhere-opensource-src-4.7.1
 QT4-VER = qt-4.7.1
 GTK = gtk+-1.2.10

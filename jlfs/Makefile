@@ -40,6 +40,8 @@ include Makefile.vars
 include Makefile.depends
 STUB=stub-ver
 
+include Makefile.targets
+
 ##########################################################################
 
 all:
@@ -57,9 +59,8 @@ all:
 	if [ -f $(LFS)/tmp/sallgood ]; then \
 		rm -f $(LFS)/tmp/sallgood && \
 		make strip; \
-	fi
-
-include Makefile.targets
+	else \
+		play $(SKEL-JLFS)/root/bin/tos-redalert
 
 livecd:	un-prep strip-man root initrd boot usr opt iso usb
 	@echo
@@ -4656,6 +4657,22 @@ $(PKG-CONFIG):
 	rm -rf $(PKG-CONFIG)/* && \
 	make P=$(PKG-CONFIG) log-package
 
+$(XZ):
+	set +h && \
+	\
+	tar xvf $(LFS-TARBALLS)/$(XZ).tar.bz2 && \
+	chmod 755 $(XZ) && \
+	chown -R 0:0 $(XZ) && \
+	cd $(XZ) && \
+	\
+	./configure --prefix=/usr && \
+	make && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(XZ)/* && \
+	make P=$(XZ) log-package
+
 $(AUTOFS): $(OPENLDAP)
 	echo obsolete mount -vt proc proc /proc && \
 	\
@@ -4714,9 +4731,6 @@ $(BLFSBOOT):
 	touch $(BLFSBOOT) && \
 	cd $(BLFSBOOT) && \
 	\
-	echo for braindead avahi && \
-	echo obsolete link ln -sfn /etc/rc.d/init.d /etc/init.d && \
-	\
 	make install-autofs && \
 	make install-iptables && \
 	make install-dbus && \
@@ -4737,7 +4751,7 @@ $(BLFSBOOT):
 		make install-service-dhcpcd && \
 		make install-service-pppoe && \
 		make install-ntp && \
-		make install-portmap && \
+		make install-rpcbind && \
 		make install-dhcp && \
 		make install-proftpd && \
 		make install-mysql && \
@@ -5221,7 +5235,7 @@ $(LIBDRM):
 	make P=$(LIBDRM) log-package
 
 $(MESA):  $(LIBDRM) $(XORG7-PROTO) $(XORG7-UTIL) $(XORG7-LIB) $(EXPAT) \
-	$(LLVM) $(TALLOC)
+	$(TALLOC)
 
 	set +h && \
 	\
@@ -5229,13 +5243,12 @@ $(MESA):  $(LIBDRM) $(XORG7-PROTO) $(XORG7-UTIL) $(XORG7-LIB) $(EXPAT) \
 	chmod 755 $(MESA) && \
 	chown -R 0:0 $(MESA) && \
 	cd $(MESA) && \
-	patch -Np1 -i $(XORG-PATCHES)/$(MESALIB)-llvm_3.0-1.patch && \
 	\
 	sed 's@FLAGS=\"-g@FLAGS=\"@' -i configure && \
 	\
-	PATH=$(PATH):/opt/llvm/bin ./configure --prefix=/usr \
-		--enable-xcb && \
-	PATH=$(PATH):/opt/llvm/bin make -j2 && \
+	./configure --prefix=/usr \
+		--enable-xcb --without-gallium-drivers && \
+	make -j2 && \
 	make install && \
 	\
 	cd .. && \
@@ -5337,44 +5350,6 @@ $(LIBATOMIC-OPS):
 	cd .. && \
 	rm -rf $(LIBATOMIC-OPS)/* && \
 	make P=$(LIBATOMIC-OPS) log-package
-
-$(LLVM):
-	set +h && \
-	\
-	tar xvf $(XORG-TARBALLS)/misc/$(LLVM).tar.gz && \
-	mv $(LLVM).src $(LLVM) && \
-	chmod 755 $(LLVM) && \
-	chown -R 0:0 $(LLVM) && \
-	cd $(LLVM) && \
-	\
-	touch tools/edis/EnhancedDisassembly.exports && \
-	\
-	./configure --prefix=/opt/llvm && \
-	find -name Makefile -exec \
-		sed -i -r -e '/^LIBRARYNAME/a SHARED_LIBRARY = 1' \
-			-e 's#BUILD_ARCHIVE :*= 1#NO_&#' \
-			-e '/^USEDLIBS/s# ([A-Za-z]*).a# -l\1#g' \
-			-e 's#^USEDLIBS#LDFLAGS#' {} \; && \
-	\
-	sed -i 's#BUILD_ARCHIVE = 1#NO_&#' Makefile.rules && \
-	sed -i 's#x)/docs#x)/share/doc#' Makefile.config && \
-	\
-	make -j2 && \
-	make install && \
-	\
-	echo "/opt/llvm/lib" >> /etc/ld.so.conf && \
-	ldconfig && \
-	echo "pathappend /usr/share/man MANPATH" >> \
-		/etc/profile.d/extrapaths.sh && \
-	echo "pathappend /opt/llvm/share/man MANPATH" >> \
-		/etc/profile.d/extrapaths.sh && \
-	echo "pathappend /opt/llvm/bin" >> \
-		/etc/profile.d/extrapaths.sh && \
-	ln -svf /opt/llvm/share/doc /usr/share/doc/$(LLVM) && \
-	\
-	cd .. && \
-	rm -rf $(LLVM)/* && \
-	make P=$(LLVM) log-package
 
 $(TALLOC):
 	set +h && \
@@ -6749,18 +6724,17 @@ $(BC):
 
 $(IMAGEMAGICK):  $(PKG-CONFIG) $(CUPS) $(LPRNG) $(SANE-BACKENDS) $(WGET) \
 	$(LCMS) $(LIBEXIF) $(LIBJPEG) $(LIBPNG) $(LIBRSVG) $(LIBXML2) \
-	$(LIBTIFF) $(FREETYPE) $(AVIFILE) $(A52DEC) $(GRAPHVIZ)
+	$(LIBTIFF) $(FREETYPE) $(AVIFILE) $(A52DEC) $(GRAPHVIZ) $(XZ)
 
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(IMAGEMAGICK).tar.bz2 && \
+	xz -dc $(JLFS-TARBALLS)/$(IMAGEMAGICK).tar.xz| tar xvf - && \
 	chmod 755 $(IMAGEMAGICK) && \
 	chown -R 0:0 $(IMAGEMAGICK) && \
 	cd $(IMAGEMAGICK) && \
 	\
-	sed -i -e "s/\xc2\xae/\\\[rg\]/g" \
-		-e "s/B...'e./Be/" utilities/ImageMagick.1.in && \
 	./configure --prefix=/usr --with-modules \
+		--disable-static \
 		--with-perl=yes && \
 	make -j2 && \
 	make install && \
@@ -6877,7 +6851,7 @@ $(GPERF):
 $(XCB-UTIL): $(GPERF)
 	set +h && \
 	\
-	tar jxf $(JLFS-TARBALLS)/$(XCB-UTIL).tar.bz2 && \
+	tar jvxf $(JLFS-TARBALLS)/$(XCB-UTIL).tar.bz2 && \
 	chmod 755 $(XCB-UTIL) && \
 	chown -R 0:0 $(XCB-UTIL) && \
 	cd $(XCB-UTIL) && \
@@ -7163,8 +7137,6 @@ $(EXPECT):  $(TCL) $(TK)
 	chmod 755 $(EXPECT) && \
 	chown -R 0:0 $(EXPECT) && \
 	cd $(EXPECT) && \
-	\
-	patch -Np1 -i $(LFS-PATCHES)/$(EXPECT)-no_tk-1.patch && \
 	\
 	./configure --prefix=/usr \
             --with-tcl=/usr/lib \
@@ -7867,8 +7839,15 @@ $(DHCPCD):
 	chown -R 0:0 $(DHCPCD) && \
 	cd $(DHCPCD) && \
 	\
+	./configure --libexecdir=/lib/dhcpcd \
+		--dbdir=/run \
+		--sysconfdir=/etc && \
 	make -j2 && \
 	make install && \
+	\
+	sed -i "s;/var/lib;/run;g" dhcpcd-hooks/50-dhcpcd-compat && \
+	install -v -m 644 dhcpcd-hooks/50-dhcpcd-compat \
+		/lib/dhcpcd/dhcpcd-hooks/ && \
 	\
 	cd .. && \
 	rm -rf $(DHCPCD)/* && \
@@ -8051,22 +8030,49 @@ $(NTP):
 	rm -rf $(NTP)/* && \
 	make P=$(NTP) log-package
 
-$(PORTMAP):  $(TCP-WRAPPER)
+$(LIBTIRPC):
 	set +h && \
 	\
-	tar xvf $(JLFS-TARBALLS)/$(PORTMAP).tgz && \
-	mv $(PORTMAP-VER) $(PORTMAP) && \
-	chmod 755 $(PORTMAP) && \
-	chown -R 0:0 $(PORTMAP) && \
-	cd $(PORTMAP) && \
+	tar jxvf $(JLFS-TARBALLS)/$(LIBTIRPC).tar.bz2 && \
+	chmod 755 $(LIBTIRPC) && \
+	chown -R 0:0 $(LIBTIRPC) && \
+	cd $(LIBTIRPC) && \
 	\
-	useradd -u 1 -g 1 -d /dev/null -s /bin/false bin; \
+	if [ ! -r /usr/include/rpc/rpc.h ]; then \
+		tar -xvf $(JLFS-TARBALLS)/rpcnis-headers.tar.bz2 \
+			-C /usr/include; \
+	fi && \
+	\
+	patch -Np1 -i $(JLFS-PATCHES)/$(LIBTIRPC)-remove-nis-2.patch && \
+	\
+	autoreconf && \
+	./configure --prefix=/usr --libdir=/lib && \
+	make && \
+	make pkgconfigdir=/usr/lib/pkgconfig install && \
+	mv -v /lib/libtirpc.*a /usr/lib && \
+	\
+	cd .. && \
+	rm -rf $(LIBTIRPC)/* && \
+	make P=$(LIBTIRPC) log-package
+
+$(RPCBIND):  $(LIBTIRPC) $(TCP-WRAPPER)
+	set +h && \
+	\
+	tar jxvf $(JLFS-TARBALLS)/$(RPCBIND).tar.bz2 && \
+	chmod 755 $(RPCBIND) && \
+	chown -R 0:0 $(RPCBIND) && \
+	cd $(RPCBIND) && \
+	\
+	sed -i 's/^sunrpc/rpcbind/' /etc/services && \
+	\
+	./configure --prefix=/usr --bindir=/sbin && \
+	\
 	make -j2 && \
 	make install && \
 	\
 	cd .. && \
-	rm -rf $(PORTMAP)/* && \
-	make P=$(PORTMAP) log-package
+	rm -rf $(RPCBIND)/* && \
+	make P=$(RPCBIND) log-package
 
 $(RSYNC):
 	set +h && \
@@ -8433,7 +8439,7 @@ $(BIND):  $(OPENSSL)
 	rm -rf $(BIND)/* && \
 	make P=$(BIND) log-package
 
-$(NFS-UTILS):  $(PORTMAP) $(TCP-WRAPPER)
+$(NFS-UTILS):  $(RPCBIND) $(TCP-WRAPPER)
 	set +h && \
 	\
 	tar jxvf $(JLFS-TARBALLS)/$(NFS-UTILS).tar.bz2 && \
@@ -8701,12 +8707,22 @@ $(DHCP):  $(NET-TOOLS)
 	chown -R 0:0 $(DHCP) && \
 	cd $(DHCP) && \
 	\
-	patch -Np1 -i $(JLFS-PATCHES)/$(DHCP)-client_dns-1.patch && \
 	patch -Np1 -i $(JLFS-PATCHES)/$(DHCP)-iproute2-1.patch && \
-	./configure && \
+	\
+	sed -i 's%\(^sbindir =\).*%\1 @prefix@@sbindir@%' \
+		server/Makefile.in && \
+	./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var \
+		--sbindir=/sbin \
+		--with-srv-lease-file=/var/state/dhcp/dhcpd.leases \
+		--with-srv6-lease-file=/var/state/dhcp/dhcpd6.leases \
+		--with-cli-lease-file=/var/state/dhclient.leases \
+		--with-cli6-lease-file=/var/state/dhclient6.leases && \
+	sed -i 's/-Werror//' \
+		{client,common,dst,omapip,relay,server,tests}/Makefile && \
+	\
 	make -j2 && \
-	make LIBDIR=/usr/lib INCDIR=/usr/include install && \
-	touch /var/state/dhcp/dhcpd.leases && \
+	make install && \
+	mkdir -p /var/state/dhcp/ && \
 	\
 	cd .. && \
 	rm -rf $(DHCP)/* && \
@@ -8779,13 +8795,20 @@ $(QT3):  $(XORG7)  $(LIBJPEG) $(LIBMNG) $(EXPECT)
 	set +h && \
 	\
 	tar zxvf $(JLFS-TARBALLS)/$(QT3).tar.gz && \
+	mv qt3 $(QT3) && \
 	chmod 755 $(QT3) && \
 	chown -R 0:0 $(QT3) && \
 	cd $(QT3) && \
 	\
-	sed -i '/QMAKE_RPATH/d' mkspecs/linux*/qmake.conf && \
+	for directory in `ls -d mkspecs/linux*`; do \
+		sed -i '/QMAKE_RPATH/d' $${directory}/qmake.conf; \
+	done && \
+	\
 	sed -i 's/^QMAKE_INCDIR..=/& \/usr\/include\/qt/' \
 		mkspecs/linux*/qmake.conf && \
+	\
+	patch -Np1 -i $(JLFS-PATCHES)/$(QT3)-libpng15-1.patch && \
+	patch -Np1 -i $(JLFS-PATCHES)/$(QT3)-no_debug-1.patch && \
 	\
 	yes "yes"| ./configure -DQT_CLEAN_NAMESPACE \
 		-prefix /usr \
@@ -8809,7 +8832,7 @@ $(QT3):  $(XORG7)  $(LIBJPEG) $(LIBMNG) $(EXPECT)
 		-no-ipv6 \
 		-tablet && \
 	\
-	make \
+	make sub-tools \
 		PATH=/usr/src/$(QT3)/bin:$(PATH) \
 		LD_LIBRARY_PATH=/usr/src/$(QT3)/lib:$(LD_LIBRARY_PATH) && \
 	\
@@ -8842,7 +8865,6 @@ finish-qt-build:
 	ln -v -snf ../../include/qt /usr/share/qt/include && \
 	ln -v -snf ../../lib /usr/share/qt/lib && \
 	cp -v -r doc/man /usr/share && \
-	cp -v -r examples /usr/share/doc/qt && \
 	\
 	/sbin/ldconfig && \
 	cd .. && \

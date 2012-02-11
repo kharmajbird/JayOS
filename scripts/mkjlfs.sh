@@ -11,8 +11,10 @@ cd /tools/src && make && make un-prep && \
 \
 \
 echo "Finished building LFS base" || \
-    ( echo "Problem building LFS base..you got a long road ahead of ya :(" && \
-    read val && make un-prep && exit 1 )
+    ( echo "Problem building LFS base... you have a long road ahead of you :(" && \
+    play /root/bin/tos-redalert && read val && \
+    make un-prep && \
+    exit 1 )
 
 #
 # Start Beyond Linux From Scratch build
