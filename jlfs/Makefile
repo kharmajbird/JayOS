@@ -4641,22 +4641,6 @@ $(XEN-KERNEL):
 	echo obsolete rm -rf $(XEN-KERNEL)/* && \
 	make P=$(XEN-KERNEL) log-package
 
-$(PKG-CONFIG):
-	set +h && \
-	\
-	tar xvf $(JLFS-TARBALLS)/$(PKG-CONFIG).tar.gz && \
-	chmod 755 $(PKG-CONFIG) && \
-	chown -R 0:0 $(PKG-CONFIG) && \
-	cd $(PKG-CONFIG) && \
-	\
-	./configure --prefix=/usr && \
-	make && \
-	make install && \
-	\
-	cd .. && \
-	rm -rf $(PKG-CONFIG)/* && \
-	make P=$(PKG-CONFIG) log-package
-
 $(XZ):
 	set +h && \
 	\
