@@ -4730,7 +4730,7 @@ $(BLFSBOOT):
 	make install-lprng && \
 	\
 	if [ "$(SERVER)" != "" ]; then \
-		make install-apache && \
+		make install-httpd && \
 		make install-service-dhclient && \
 		make install-service-dhcpcd && \
 		make install-service-pppoe && \

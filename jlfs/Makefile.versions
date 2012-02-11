@@ -357,7 +357,7 @@ XZ = xz-5.0.3
 AUTOFS = autofs-5.0.3
 AUTOFS-VER = 5.0.3
 ED = ed-0.8
-BLFSBOOT = blfs-bootscripts-20080816
+BLFSBOOT = blfs-bootscripts-20120206
 
 #
 # Security
