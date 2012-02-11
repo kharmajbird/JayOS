@@ -6853,7 +6853,7 @@ $(GPERF):
 $(XCB-UTIL): $(GPERF)
 	set +h && \
 	\
-	tar jxf $(JLFS-TARBALLS)/$(XCB-UTIL).tar.bz2 && \
+	tar jvxf $(JLFS-TARBALLS)/$(XCB-UTIL).tar.bz2 && \
 	chmod 755 $(XCB-UTIL) && \
 	chown -R 0:0 $(XCB-UTIL) && \
 	cd $(XCB-UTIL) && \

@@ -470,7 +470,7 @@ ICON-NAMING-UTILS = icon-naming-utils-0.8.90
 #rxvt-unicode-8.4
 #pin-entry-0.7.3
 GPERF = gperf-3.0.4
-XCB-UTIL = xcb-util-0.3.6
+XCB-UTIL = xcb-util-0.3.8
 
 #
 # System Utilities
