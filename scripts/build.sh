@@ -24,6 +24,7 @@ if [ $FS = "1" ]; then
     echo "Creating /lfs loopback filesystem on $SCRATCH..." && \
     dd if=/dev/zero of=$SCRATCH/lfs.fs count=12288 bs=1024k && \
     mke2fs -j -m 0 $SCRATCH/lfs.fs && \
+    sleep 5 && \
     mount -o loop -t auto $SCRATCH/lfs.fs /lfs && \
     \
     mkdir -p $LFS/build $SCRATCH && \
