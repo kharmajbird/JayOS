@@ -8808,7 +8808,6 @@ finish-qt-build:
 	ln -v -snf ../../include/qt /usr/share/qt/include && \
 	ln -v -snf ../../lib /usr/share/qt/lib && \
 	cp -v -r doc/man /usr/share && \
-	cp -v -r examples /usr/share/doc/qt && \
 	\
 	/sbin/ldconfig && \
 	cd .. && \
