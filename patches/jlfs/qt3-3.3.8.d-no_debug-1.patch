@@ -1,0 +1,16 @@
+diff -Naur qt3.orig/tools/msg2qm/msg2qm.cpp qt3/tools/msg2qm/msg2qm.cpp
+--- qt3.orig/tools/msg2qm/msg2qm.cpp	2011-10-30 11:55:58.000000000 -0700
++++ qt3/tools/msg2qm/msg2qm.cpp	2012-02-10 16:31:25.380128761 -0800
+@@ -191,12 +191,6 @@
+ 			    i++;
+ 			QString charset = msgstr.mid( cpos, i-cpos );
+ 			codec = QTextCodec::codecForName( charset.ascii() );
+-			if ( codec ) {
+-			    debug( "PO file character set: %s. Codec: %s",
+-				   charset.ascii(), codec->name() );
+-			} else {
+-			    debug( "No codec for %s", charset.ascii() );
+-			}
+ 		    }
+ 		    break;
+ 		}
