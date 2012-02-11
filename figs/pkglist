@@ -375,6 +375,7 @@ jlfs/libssh-0.11.tgz
 jlfs/libssh2-1.2.7.tar.gz
 jlfs/libtasn1-2.8.tar.gz
 jlfs/libtheora-1.1.1.tar.bz2
+jlfs/libtirpc-0.2.2.tar.bz2
 jlfs/libungif-4.1.0b1.tar.gz
 jlfs/libunique-1.1.6.tar.bz2
 jlfs/libusb-1.0.8.tar.bz2
@@ -428,6 +429,7 @@ jlfs/netcat-0.7.1.tar.bz2
 jlfs/newt-0.52.14.tar.gz
 jlfs/nfs-utils-1.1.4.tar.bz2
 jlfs/nmap-4.53.tar.bz2
+jlfs/nmap-5.51.tar.bz2
 jlfs/nspr-4.8.9.tar.gz
 jlfs/nss-3.13.1.tar.gz
 jlfs/ntfsprogs-2.0.0.tar.bz2
@@ -487,6 +489,8 @@ jlfs/quodlibet-2.3.2.tar.gz
 jlfs/quodlibet-plugins-2.3.2.tar.gz
 jlfs/rarlinux-3.0.tar.gz
 jlfs/rp-pppoe-3.8.tar.gz
+jlfs/rpcbind-0.2.0.tar.bz2
+jlfs/rpcnis-headers.tar.bz2
 jlfs/rsync-3.0.7.tar.gz
 jlfs/ruby-1.9.1-p376.tar.bz2
 jlfs/runefs.tar.gz
