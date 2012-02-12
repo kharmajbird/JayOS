@@ -330,7 +330,10 @@ LIBSSH2 = libssh2-1.2.7
 NESSUS-LIBRARIES = nessus-libraries-2.1.3
 NESSUS-PLUGINS = nessus-plugins-2.1.3
 TERMREADKEY = TermReadKey-2.14
+#
+# required by wepcrack
 #j#NET-PCAP = Net-Pcap-0.16
+#
 AFFLIB= afflib-3.6.6
 
 ########################################################################
@@ -389,7 +392,6 @@ LIBXSLT = libxslt-1.1.26
 LIBGTKHTML = libgtkhtml-2.11.1
 GLIB = glib-1.2.10
 GLIB2 = glib-2.31.2
-#
 LIBIDL = libIDL-0.8.14
 LIBCROCO = libcroco-0.6.1
 LIBGSF = libgsf-1.14.21
@@ -398,8 +400,6 @@ EXPAT = expat-2.0.1
 LIBESMTP = libesmtp-1.0.4
 ASPELL = aspell-0.60.6
 ASPELL-DICT = aspell6-en-7.1-0
-#slib-3a4
-#gwrap-1.3.4
 LZO = lzo-2.02
 LIBUSB = libusb-1.0.8
 LIBUSB-COMPAT = libusb-compat-0.1.3
@@ -450,25 +450,12 @@ PIXMAN = pixman-0.24.0
 #
 
 BC = bc-1.06
-#rep-gtk-0.18
-#compface-1.5.2
 IMAGEMAGICK = ImageMagick-6.7.3-10
 HD2U = hd2u-1.0.1
-#gtk-doc-1.8
-#scrollkeeper-0.3.14
 INTLTOOL = intltool-0.41.1
 SCREEN = screen-4.0.3
-#HTML-Tidy
-#desktop-file-utils-0.13
 XSCREENSAVER = xscreensaver-5.10
-#pilot-link-0.12.2
-#unixodbc-2.2.12
-#graphviz-2.12
-#rman-3.2
-#recode-3.6
 ICON-NAMING-UTILS = icon-naming-utils-0.8.90
-#rxvt-unicode-8.4
-#pin-entry-0.7.3
 GPERF = gperf-3.0.4
 XCB-UTIL = xcb-util-0.3.8
 
@@ -485,9 +472,7 @@ ZIP = zip30
 PCIUTILS = pciutils-3.1.7
 USBUTILS = usbutils-0.86
 CPIO = cpio-2.11
-#MC-4.6.1
 SYSSTAT = sysstat-7.0.4
-#Apache Ant-1.7.0
 #j#HAL = hal-0.5.14
 #j#HAL-INFO = hal-info-20091130
 DEVICE-MAPPER = LVM2.2.02.62
@@ -497,23 +482,14 @@ DEVICE-MAPPER = LVM2.2.02.62
 # Programming
 #
 
-#DEJAGNU = dejagnu-1.4.4
-#DOXYGEN = doxygen-1.5.2
 # binary located in LFS-land
 EXPECT = expect-5.45
 EXPECT-VER = 5.45
-#
-#GC-6.8
 GCC3 = gcc-3.3.6
 GCC3-VER = 3.3.6
 GCC4-OLD = gcc-4.1.2
 GCC4-OLD-VER = 4.1.2
-#guile-1.8.2
-#JDK-6
-#JUnit-4.3.1
-#Librep-0.17
 NASM = nasm-0.98.39
-#PDL-2.4.2
 PHP5 = php-5.3.7
 PYTHON = Python-2.6.4
 PYTHON-VER=python2.6
@@ -525,10 +501,6 @@ TK = tk8.5.8
 # Perl Modules
 #
 
-#Test-Pod-1.26
-#Pod-Simple-3.05
-#Pod-Escapes-1.04
-#Test-Simple-0.70
 XML-PARSER = XML-Parser-2.40
 ARCHIVE-ZIP = Archive-Zip-1.20
 IO-COMPRESS-ZLIB = IO-Compress-Zlib-2.005
@@ -573,8 +545,6 @@ GNET = gnet-2.0.7
 LIBPROXY = libproxy-0.2.3
 LIBPCAP = libpcap-1.1.1
 LYNX = lynx-2.8.6
-#w3m-0.5.2
-#CVS-1.11.22
 NCFTP = ncftp-3.2.1
 NET-TOOLS = net-tools-1.60
 NTP = ntp-4.2.4p7
@@ -595,9 +565,6 @@ WIRESHARK = wireshark-0.99.7
 MAILX = mailx-12.4
 PROCMAIL = procmail-3.22
 FETCHMAIL = fetchmail-6.3.8
-#mutt-1.5.17
-#pine-4.64
-#tin-1.8.2
 PIDGIN = pidgin-2.10.0
 
 #
@@ -607,30 +574,18 @@ PIDGIN = pidgin-2.10.0
 APACHE = httpd-2.2.17
 NFS-UTILS = nfs-utils-1.2.5
 OPENSSH = openssh-5.6p1
-#proftpd-1.3.0
-#vsftpd-2.0.5
-#xinetd-2.3.14
-#exim-4.67
-#postfix-2.3.3
-#qpopper-4.0.9
 SENDMAIL = sendmail-8.14.4
 BDB4 = db-4.8.26
 MYSQL = mysql-5.1.52
-#postgresql-8.2.4
 OPENLDAP = openldap-2.4.23
 
 #
 # X11
 #
-# I'm tracking the bleeding edge of Xorg so close, 
-# we're liable to burn up on re-entry
-#
 
 MESA-VER = 7.11.2
-#
 MESA = Mesa-$(MESA-VER)
 MESALIB = MesaLib-$(MESA-VER)
-
 XORG7 = Xorg-7.6-2
 XORG7-VER = 7.6-2
 #
@@ -642,7 +597,6 @@ XORG7-FONT = $(XORG7)-font
 XORG7-SERVER = $(XORG7)-server
 XSERVER = xorg-server-1.11.2
 XORG7-DRIVER = $(XORG7)-driver
-#
 XKEYBOARD-CONFIG = xkeyboard-config-2.0
 BITSTREAM-VERA-FONTS = ttf-bitstream-vera-1.10
 WEBCORE-FONTS = webcore-fonts-3.0
@@ -652,7 +606,6 @@ UTIL-MACROS = util-macros-1.11.0
 XCB-PROTO = xcb-proto-1.6
 LIBATOMIC-OPS = libatomic_ops-1.2
 TALLOC = talloc-2.0.7
-#
 XTERM = xterm-267
 
 #
@@ -673,9 +626,6 @@ LESSTIF = lesstif-0.95.2
 STARTUP-NOTIFICATION = startup-notification-0.9
 SHARED-MIME-INFO = shared-mime-info-0.70
 HICOLOR-ICON-THEME = hicolor-icon-theme-0.12
-#libxklavier-3.2
-#freeglut-2.4.0
-#goffice-0.4.2 
 
 #
 # GNOME Core
@@ -710,8 +660,6 @@ GNOME-BLUETOOTH = gnome-bluetooth-3.3.2
 # GNOME Libraries
 #
 
-#EVOLUTION-DATA-SERVER = evolution-data-server-1.10.3
-#GNOME-AUDIO = gnome-audio-2.0.0
 GTKHTML = gtkhtml-4.3.2
 GTKSOURCEVIEW = gtksourceview-2.10.4
 LIBGNOMECUPS = libgnomecups-0.2.3-3.fc9.i386
@@ -724,33 +672,11 @@ LIBGNOME-KEYRING = libgnome-keyring-2.30.1
 # GNOME Utilities
 #
 
-#BUG-BUDDY = bug-buddy-2.18.1
-#EKIGA = ekiga-2.0.9
-#EOG = eog-2.18.2
-#EPIPHANY = epiphany-2.18.3
-#EVINCE = evince-0.8.3
-#FILE-ROLLER = file-roller-2.18.4
-#gcalctool-5.9.14
-#GCONF-EDITOR = gconf-editor-2.28.0
-#GDM = gdm-2.18.3
 GEDIT = gedit-2.30.3
-#GNOME-GAMES = gnome-games-2.18.2.1
-#GNOME-KEYRING-MANAGER = gnome-keyring-manager-2.18.0
-#GNOME-MEDIA = gnome-media-2.18.0
-#GNOME-MOUNT = gnome-mount-0.6
-#GNOME-NETSTATUS = gnome-netstatus-2.12.1
-#GNOME-SCREENSAVER = gnome-screensaver-2.18.2
-#GNOME-SYSTEM-MONITOR = gnome-system-monitor-2.18.2
-#GNOME-VOLUME-MANAGER = gnome-volume-manager-2.17.0
-#GUCHARMAP = gucharmap-1.10.0
-#NAUTILUS-CD-BURNER = nautilus-cd-burner-2.18.2
-#SOUND-JUICER = sound-juicer-2.16.4
 TOTEM = totem-2.30.2
 TOTEM-PL-PARSER = totem-pl-parser-2.32.6
 ZENITY = zenity-3.2.0
 GNOME-UTILITIES = gnome-utils-3.2.1
-
-
 
 #
 # Multimedia Libraries
@@ -804,7 +730,6 @@ VORBIS-TOOLS = vorbis-tools-1.2.0
 XMMS = xmms-1.2.11
 LAME = lame-398-2
 CDPARANOIA = cdparanoia-III-10.2
-#FREETTS = freetts-1.2.1
 AUDACIOUS = audacious-3.1
 AUDACIOUS-PLUGINS = audacious-plugins-3.1-fedora
 
@@ -813,7 +738,7 @@ AUDACIOUS-PLUGINS = audacious-plugins-3.1-fedora
 #
 
 FFMPEG = ffmpeg-0.6.1
-#6#AVIFILE = avifile-0.7-0.7.45
+#j#AVIFILE = avifile-0.7-0.7.45
 AVIFILE-BINS = avifile-binaries-011002
 MPLAYER = MPlayer-1.0rc4
 MPLAYER-CODECS-ALL = MPlayer-all-20061022
@@ -849,7 +774,6 @@ DVD-RW-TOOLS = dvd+rw-tools-7.1
 
 CUPS = cups-1.4.5
 LPRNG = LPRng-3.8.33
-#ghostscript-8.53
 ESPGS = espgs-8.15.4
 GNU-GS-FONTS-OTHER = gnu-gs-fonts-other-6.0
 GHOSTSCRIPT-FONTS-STD = ghostscript-fonts-std-8.11
@@ -866,24 +790,12 @@ XSANE = xsane-0.994
 # Typesetting
 #
 
-#SGML Common-0.6.3
-#DocBook SGML DTD-3.1
-#DocBook SGML DTD-4.5
-#OpenSP-1.5.2
-#OpenJade-1.3.2
-#DocBook DSSSL Stylesheets-1.79
-#DocBook-utils-0.6.14
 DOCBOOK-XML-DTD = docbook-xml-4.5
 DOCBOOK-XSL = docbook-xsl-1.75.2
 XSL-VER = 1.75.2
 DTD-VER = 4.5
 A2PS = a2ps-4.13
 I18N-FONTS = i18n-fonts-0.1
-#ENSCRIPT = enscript-1.6.4
 PSUTILS = psutils-p17
 GSVIEW = gsview-4.9
 XPDF = xpdf-3.02
-#FOP = fop-0.93
-#PAPS = paps-0.6.6
-#TETEX = tetex-3.0
-#JADETEX = jadetex-3.13

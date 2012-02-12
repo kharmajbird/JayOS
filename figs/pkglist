@@ -105,7 +105,6 @@ jlfs/bluez-4.96.tar.bz2
 jlfs/bluez-hcidump-2.1.tar.bz2
 jlfs/boto-r1595.tar.bz2
 jlfs/bridge-utils-1.4.tar.gz
-jlfs/busybox-1.00.tar.gz
 jlfs/busybox-1.8.2.tar.bz2
 jlfs/cairo-1.10.2.tar.gz
 jlfs/cairomm-1.10.0.tar.gz
@@ -168,7 +167,6 @@ jlfs/fetchmail-6.3.8.tar.bz2
 jlfs/fetchyahoo-2.10.9.tar.gz
 jlfs/ffmpeg-0.6.1.tar.bz2
 jlfs/fftw-3.3.tar.gz
-jlfs/file-roller-2.18.4.tar.bz2
 jlfs/firestarter-1.0.3.tar.gz
 jlfs/flac-1.2.1.tar.gz
 jlfs/fontconfig-2.8.0.tar.gz

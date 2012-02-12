@@ -7097,22 +7097,6 @@ $(DEVICE-MAPPER):
 # Begin BLFS Programming Tools
 #
 
-$(DEJAGNU):
-	set +h && \
-	\
-	tar xvf $(JLFS-TARBALLS)/$(DEJAGNU).tar.gz && \
-	chmod 755 $(DEJAGNU) && \
-	chown -R 0:0 $(DEJAGNU) && \
-	cd $(DEJAGNU) && \
-	\
-	./configure --prefix=/usr && \
-	make -j2 && \
-	make install && \
-	\
-	cd .. && \
-	rm -rf $(DEJAGNU)/* && \
-	make P=$(DEJAGNU) log-package
-
 $(EXPECT):  $(TCL) $(TK)
 	set +h && \
 	\
