@@ -5393,7 +5393,6 @@ $(XORG7): $(DBUS) $(PKG-CONFIG) $(LIBPNG) $(FONTCONFIG) $(ED) \
 	\
 	make $(LIBXAU) && \
 	make $(LIBXDMCP) && \
-	make $(LIBPTHREAD-STUBS) && \
 	make $(XCB-PROTO) && \
 	make $(LIBXCB) && \
 	\
