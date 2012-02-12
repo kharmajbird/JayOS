@@ -58,7 +58,7 @@ all:
 		rm -f $(LFS)/tmp/sallgood && \
 		make strip; \
 	else \
-		play $(SKEL-JLFS)/root/bin/tos-redalert
+		/usr/bin/play $(SKEL-JLFS)/root/bin/tos-redalert
 
 include Makefile.targets
 
