@@ -8753,7 +8753,7 @@ $(SENDMAIL):  $(OPENLDAP) $(OPENSSL) $(TCP-WRAPPER) $(PROCMAIL) $(BDB4)
 	\
 	cd .. && \
 	\
-	rm -rf $(SENDMAIL)/* && \ && \
+	rm -rf $(SENDMAIL)/* && \
 	make P=$(SENDMAIL) log-package
 
 #
