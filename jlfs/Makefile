@@ -10305,28 +10305,28 @@ $(XVIDCORE):  $(NASM)
 
 $(XINE-LIB):  $(XORG7) $(ESOUND) $(ALSA-LIB) $(ARTS) $(PKG-CONFIG) \
 	$(AALIB) $(LIBVORBIS) $(LIBFAME) $(LIBMNG) $(FLAC) $(SDL) \
-	$(SPEEX) $(IMAGEMAGICK)
+	$(SPEEX) $(IMAGEMAGICK) $(FFMPEG)
 
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(XINE-LIB).tar.bz2 && \
+	xz -dc $(JLFS-TARBALLS)/$(XINE-LIB).tar.xz| tar xvf - && \
 	chmod 755 $(XINE-LIB) && \
 	chown -R 0:0 $(XINE-LIB) && \
 	cd $(XINE-LIB) && \
 	\
-	./configure --prefix=/usr --enable-static && \
+	sed -i 's#gzgetc(#gzgetc_(#' src/xine-engine/osd.c && \
+	\
+	./configure --prefix=/usr \
+		--disable-musepack \
+		--disable-vcd \
+		--enable-static \
+		--docdir=/usr/share/doc/$(XINE-LIB) && \
 	make -j2 && \
 	make install && \
 	\
 	cd .. && \
 	rm -rf $(XINE-LIB)/* && \
 	make P=$(XINE-LIB) log-package
-
-	#
-	# xine works OK without this option, but vlc does not work with
-	# external ffmpeg
-	#
-	#--with-external-ffmpeg
 
 $(LIBMIKMOD):  $(ALSA-LIB) $(ESOUND)
 	set +h && \
