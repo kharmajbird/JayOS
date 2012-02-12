@@ -8719,34 +8719,37 @@ $(SENDMAIL):  $(OPENLDAP) $(OPENSSL) $(TCP-WRAPPER) $(PROCMAIL) $(BDB4)
 	\
 	cd ../cf/cf && \
 	cp generic-linux.mc sendmail.mc && \
+	\
+	mkdir -p /etc/mail && \
+	\
 	sh Build sendmail.cf \
-	install -v -d -m755 /etc/mail && \
+	install -v -d -m 755 /etc/mail && \
 	sh Build install-cf && \
 	\
 	cd ../.. && \
 	sh Build install && \
-	install -v -m644 cf/cf/{submit,sendmail}.mc /etc/mail && \
+	\
+	install -v -m 644 cf/cf/{submit,sendmail}.mc /etc/mail && \
 	cp -v -R cf/* /etc/mail && \
 	\
-	install -v -m755 -d /usr/share/doc/$(SENDMAIL)/{cf,sendmail} && \
-	install -v -m644 \
+	install -v -m 755 -d /usr/share/doc/$(SENDMAIL)/{cf,sendmail} && \
+	install -v -m 644 \
 		CACerts FAQ KNOWNBUGS LICENSE PGPKEYS README RELEASE_NOTES \
 			/usr/share/doc/$(SENDMAIL) && \
-	install -v -m644 sendmail/{README,SECURITY,TRACEFLAGS,TUNING} \
+	install -v -m 644 sendmail/{README,SECURITY,TRACEFLAGS,TUNING} \
 		/usr/share/doc/$(SENDMAIL)/sendmail && \
-	install -v -m644 cf/README /usr/share/doc/$(SENDMAIL)/cf && \
+	install -v -m 644 cf/README /usr/share/doc/$(SENDMAIL)/cf && \
 	\
 	for manpage in sendmail editmap mailstats makemap praliases smrsh; do \
-		install -v -m444 $${manpage}/$${manpage}.8 \
+		install -v -m 444 $${manpage}/$${manpage}.8 \
 			/usr/share/man/man8; \
 	done && \
 	\
-	install -v -m444 sendmail/aliases.5    /usr/share/man/man5 && \
-	install -v -m444 sendmail/mailq.1      /usr/share/man/man1 && \
-	install -v -m444 sendmail/newaliases.1 /usr/share/man/man1 && \
-	install -v -m444 vacation/vacation.1   /usr/share/man/man1 && \
-	install -v -d -m755 /usr/share/doc/$(SENDMAIL) && \
-	install -v -m644 op.ps op.txt /usr/share/doc/$(SENDMAIL) && \
+	install -v -m 444 sendmail/aliases.5    /usr/share/man/man5 && \
+	install -v -m 444 sendmail/mailq.1      /usr/share/man/man1 && \
+	install -v -m 444 sendmail/newaliases.1 /usr/share/man/man1 && \
+	install -v -m 444 vacation/vacation.1   /usr/share/man/man1 && \
+	install -v -d -m 755 /usr/share/doc/$(SENDMAIL) && \
 	\
 	cd .. && \
 	\
