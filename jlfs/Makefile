@@ -9472,8 +9472,6 @@ $(LIBUNIQUE):  $(GTK2)
 	chown -R 0:0 $(LIBUNIQUE) && \
 	cd $(LIBUNIQUE) && \
 	\
-	patch -Np1 -i $(JLFS-PATCHES)/$(LIBUNIQUE)-no-gchar-const.patch && \
-	\
 	./configure --prefix=/usr --sysconfdir=/etc \
 		--disable-introspection && \
 	make -j2 && \
