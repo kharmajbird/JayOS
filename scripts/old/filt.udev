@@ -1,1 +1,0 @@
-udevinfo -a -p `udevinfo -q path -n /dev/input/event$1`
