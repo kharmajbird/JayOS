@@ -3356,7 +3356,7 @@ $(GLIBMM):  $(LIBSIGC)
 $(LIBSIGC):
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(LIBSIGC).tar.bz2 && \
+	xz -dc $(JLFS-TARBALLS)/$(LIBSIGC).tar.xz| tar xvf - && \
 	chmod 755 $(LIBSIGC) && \
 	chown -R 0:0 $(LIBSIGC) && \
 	cd $(LIBSIGC) && \
