@@ -96,7 +96,7 @@ jlfs/autofs-5.0.3.tar.bz2
 jlfs/autopsy-2.08.tar.bz2
 jlfs/avahi-0.6.22.tar.gz
 jlfs/avidemux_2.5.5.tar.gz
-jlfs/babl-0.1.2.tar.bz2
+jlfs/babl-0.1.6.tar.bz2
 jlfs/balsa-2.3.28.tar.bz2
 jlfs/bc-1.06.tar.gz
 jlfs/bind-9.4.1-P1.tar.gz
@@ -196,7 +196,7 @@ jlfs/gdb-7.1.tar.bz2
 jlfs/gdk-pixbuf-0.22.0.tar.bz2
 jlfs/gdk-pixbuf-2.24.0.tar.bz2
 jlfs/gedit-2.30.3.tar.bz2
-jlfs/gegl-0.1.2.tar.bz2
+jlfs/gegl-0.1.8.tar.bz2
 jlfs/gettext-1.05.tar.gz
 jlfs/ghostscript-fonts-std-8.11.tar.gz
 jlfs/giflib-4.1.6.tar.bz2
