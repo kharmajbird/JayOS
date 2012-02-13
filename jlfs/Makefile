@@ -10144,28 +10144,6 @@ $(FAAD2):  $(XMMS) $(LIBID3TAG) $(ID3LIB)
 	echo wait for vlc rm -rf $(FAAD2)/* && \
 	make P=$(FAAD2) log-package
 
-$(NAS):  $(XORG7)
-	set +h && \
-	\
-	tar xvf $(JLFS-TARBALLS)/$(NAS).src.tar.gz && \
-	chmod 755 $(NAS) && \
-	chown -R 0:0 $(NAS) && \
-	cd $(NAS) && \
-	\
-	xmkmf && \
-	make World && \
-	make install install.man && \
-	\
-	install -v -m755 -d /usr/share/doc/$(NAS)/{html,pdf} && \
-	install -v -m644 doc/html/* /usr/share/doc/$(NAS)/html && \
-	install -v -m644 doc/pdf/* /usr/share/doc/$(NAS)/pdf && \
-	install -v -m644 doc/{README,actions,*.{ps,txt}} \
-		/usr/share/doc/$(NAS) && \
-	\
-	cd .. && \
-	rm -rf $(NAS)/* && \
-	make P=$(NAS) log-package
-
 $(LIBMPEG2):  $(NASM) $(A52DEC) $(SDL)
 	set +h && \
 	\
@@ -10832,7 +10810,7 @@ $(AVIFILE):  $(QT3) $(SDL) $(LIBVORBIS) $(A52DEC) $(LAME) $(LIBMAD) \
 	make P=$(AVIFILE) log-package
 
 $(MPLAYER):  $(XORG7) $(GTK2) $(CDPARANOIA) $(LIBDV) $(LIBDVREAD) $(ALSA) \
-	$(ARTS) $(ESOUND) $(NAS) $(SDL) $(AALIB) $(FONTCONFIG) $(FREETYPE) \
+	$(ARTS) $(ESOUND) $(SDL) $(AALIB) $(FONTCONFIG) $(FREETYPE) \
 	$(FRIBIDI) $(GIFLIB) $(LIBJPEG) $(LIBPNG) $(FAAC) $(FAAD2) $(FFMPEG) \
 	$(LAME) $(LIBFAME) $(LIBMAD) $(LIBVORBIS) $(LZO) $(X264) $(XVIDCORE) \
 	$(LIBDVDNAV) $(DIVX4LINUX)
