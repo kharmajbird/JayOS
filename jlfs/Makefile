@@ -6774,6 +6774,23 @@ $(JSON-GLIB):  $(GLIB2)
 	cd .. && \
 	rm -rf $(JSON-GLIB)/* && \
 	make P=$(JSON-GLIB) log-package
+
+$(LIBPEAS): 
+	set +h && \
+	\
+	xz -dc $(JLFS-TARBALLS)/$(LIBPEAS).tar.xz| tar xvf - && \
+	chmod 755 $(LIBPEAS) && \
+	chown -R 0:0 $(LIBPEAS) && \
+	cd $(LIBPEAS) && \
+	\
+	./configure --prefix=/usr && \
+	make -j2 && \
+	make install -j2 && \
+	\
+	cd .. && \
+	rm -rf $(LIBPEAS)/* && \
+	make P=$(LIBPEAS) log-package
+
 #
 # Begin BLFS General Utilities
 #
@@ -9815,7 +9832,8 @@ $(GEDIT):  $(LIBGNOMEUI) $(LIBGNOMEPRINTUI) $(GNOME-DOC-UTILS) \
 
 $(TOTEM):  $(GNOME-ICON-THEME) $(GNOME-DESKTOP) $(ISO-CODES) \
 	$(GST-PLUGINS-GOOD) $(XINE-LIB) $(VLC) $(TOTEM-PL-PARSER) \
-	$(LIBUNIQUE) $(LIBGDATA) $(GNOME-DOC-UTILS) $(CLUTTER) $(MX)
+	$(LIBUNIQUE) $(LIBGDATA) $(GNOME-DOC-UTILS) $(CLUTTER) $(MX) \
+	$(CLUTTER-GTK) $(CLUTTER-GST) $(LIBPEAS)
 
 	set +h && \
 	\

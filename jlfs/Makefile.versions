@@ -449,6 +449,7 @@ CLUTTER-GTK = clutter-gtk-1.0.4
 MX = mx-1.2.1
 COGL = cogl-1.8.2
 JSON-GLIB = json-glib-0.14.2
+LIBPEAS = libpeas-1.2.0
 
 #
 # General Utilities
