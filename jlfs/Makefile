@@ -3683,7 +3683,7 @@ $(SEND2TRASH):  $(PYTHON3)
 	rm -rf $(SEND2TRASH)/* && \
 	make P=$(SEND2TRASH) log-package
 
-$(SPHINX):  $(SETUPTOOLS) $(DOCUTILS) $(JINJA2) $(PYGMENTS)
+$(SPHINX):  $(SETUPTOOLS) $(GNOME-DOC-UTILS) $(JINJA2) $(PYGMENTS)
 	set +h && \
 	\
 	tar xvf $(JLFS-TARBALLS)/$(SPHINX).tar.gz && \
@@ -3732,23 +3732,21 @@ $(SETUPTOOLS):
 	rm -rf $(SETUPTOOLS)/* && \
 	make P=$(SETUPTOOLS) log-package
 
-$(DOCUTILS):  $(PYTHON3)
+$(GNOME-DOC-UTILS):  $(INTLTOOL) $(LIBXSLT) $(PYTHON2)
 	set +h && \
 	\
-	tar xvf $(JLFS-TARBALLS)/$(DOCUTILS).tar.gz && \
-	chmod 755 $(DOCUTILS) && \
-	chown -R 0:0 $(DOCUTILS) && \
-	cd $(DOCUTILS) && \
+	tar jxvf $(JLFS-TARBALLS)/$(GNOME-DOC-UTILS).tar.bz2 && \
+	chmod 755 $(GNOME-DOC-UTILS) && \
+	chown -R 0:0 $(GNOME-DOC-UTILS) && \
+	cd $(GNOME-DOC-UTILS) && \
 	\
-	python setup.py build && \
-	python setup.py install && \
-	\
-	python3 setup.py build && \
-	python3 setup.py install && \
+	./configure --prefix /usr && \
+	make && \
+	make install && \
 	\
 	cd .. && \
-	rm -rf $(DOCUTILS)/* && \
-	make P=$(DOCUTILS) log-package
+	rm -rf $(GNOME-DOC-UTILS)/* && \
+	make P=$(GNOME-DOC-UTILS) log-package
 
 $(JINJA2):  $(PYTHON3) $(SETUPTOOLS) $(DISTRIBUTE)
 	set +h && \
@@ -9722,7 +9720,7 @@ $(GEDIT):  $(LIBGNOMEUI) $(LIBGNOMEPRINTUI) $(GNOME-DOC-UTILS) \
 
 $(TOTEM):  $(GNOME-ICON-THEME) $(GNOME-DESKTOP) $(ISO-CODES) \
 	$(GST-PLUGINS-GOOD) $(XINE-LIB) $(VLC) $(TOTEM-PL-PARSER) \
-	$(LIBUNIQUE) $(LIBGDATA)
+	$(LIBUNIQUE) $(LIBGDATA) $(GNOME-DOC-UTILS)
 
 	set +h && \
 	\
