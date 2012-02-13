@@ -113,7 +113,11 @@ jlfs/cdrdao-1.2.2.tar.bz2
 jlfs/cdrtools-2.01.tar.bz2
 jlfs/celestia-1.6.1.tar.gz
 jlfs/cinelerra-2.1.5-cv981.tar.bz2
+jlfs/clutter-1.8.2.tar.xz
+jlfs/clutter-gst-1.4.4.tar.xz
+jlfs/clutter-gtk-1.0.4.tar.xz
 jlfs/cmake-2.8.6.tar.gz
+jlfs/cogl-1.8.2.tar.xz
 jlfs/cpio-2.11.tar.bz2
 jlfs/cups-1.4.5-source.tar.bz2
 jlfs/curl-7.21.2.tar.bz2
@@ -281,6 +285,7 @@ jlfs/iso-codes-3.23.tar.bz2
 jlfs/ivman-0.6.14.tar.bz2
 jlfs/jobprogress-1.0.2.tar.bz2
 jlfs/jpeg-8b.tar.gz
+jlfs/json-glib-0.14.2.tar.xz
 jlfs/keepalived-1.2.2.tar.gz
 jlfs/keyfuzz-0.2.tar.gz
 jlfs/kismet-2007-10-R1.tar.gz
@@ -409,6 +414,7 @@ jlfs/mpg123-1.4.2.tar.bz2
 jlfs/mtools-3.9.11.tar.bz2
 jlfs/multipath-tools-0.4.9.tar.bz2
 jlfs/mutagen-1.18.tar.gz
+jlfs/mx-1.2.1.tar.bz2
 jlfs/mysql-5.1.52.tar.gz
 jlfs/nas-1.9.src.tar.gz
 jlfs/nasm-0.98.39.tar.bz2

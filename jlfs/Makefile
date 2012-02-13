@@ -6679,6 +6679,101 @@ $(PIXMAN):
 	rm -rf $(PIXMAN)/* && \
 	make P=$(PIXMAN) log-package
 
+$(CLUTTER):  $(ATK) $(CAIRO) $(COGL) $(GDK-PIXBUF) $(JSON-GLIB) $(PANGO)
+	set +h && \
+	\
+	xz -dc $(JLFS-TARBALLS)/$(CLUTTER).tar.xz| tar xvf - && \
+	chmod 755 $(CLUTTER) && \
+	chown -R 0:0 $(CLUTTER) && \
+	cd $(CLUTTER) && \
+	\
+	./configure --prefix=/usr && \
+	make -j2 && \
+	make install -j2 && \
+	\
+	cd .. && \
+	rm -rf $(CLUTTER)/* && \
+	make P=$(CLUTTER) log-package
+
+$(CLUTTER-GST):  $(CLUTTER) $(GSTREAMER)
+	set +h && \
+	\
+	xz -dc $(JLFS-TARBALLS)/$(CLUTTER-GST).tar.xz| tar xvf - && \
+	chmod 755 $(CLUTTER-GST) && \
+	chown -R 0:0 $(CLUTTER-GST) && \
+	cd $(CLUTTER-GST) && \
+	\
+	./configure --prefix=/usr && \
+	make -j2 && \
+	make install -j2 && \
+	\
+	cd .. && \
+	rm -rf $(CLUTTER-GST)/* && \
+	make P=$(CLUTTER-GST) log-package
+
+$(CLUTTER-GTK):  $(CLUTTER) $(GTK3)
+	set +h && \
+	\
+	xz -dc $(JLFS-TARBALLS)/$(CLUTTER-GTK).tar.xz| tar xvf - && \
+	chmod 755 $(CLUTTER-GTK) && \
+	chown -R 0:0 $(CLUTTER-GTK) && \
+	cd $(CLUTTER-GTK) && \
+	\
+	./configure --prefix=/usr && \
+	make -j2 && \
+	make install -j2 && \
+	\
+	cd .. && \
+	rm -rf $(CLUTTER-GTK)/* && \
+	make P=$(CLUTTER-GTK) log-package
+
+$(MX):
+	set +h && \
+	\
+	tar jxvf $(JLFS-TARBALLS)/$(MX).tar.bz2 && \
+	chmod 755 $(MX) && \
+	chown -R 0:0 $(MX) && \
+	cd $(MX) && \
+	\
+	./configure --prefix=/usr && \
+	make -j2 && \
+	make install -j2 && \
+	\
+	cd .. && \
+	rm -rf $(MX)/* && \
+	make P=$(STUB) log-package
+
+$(COGL):  $(GLIB2)
+	set +h && \
+	\
+	xz -dc $(JLFS-TARBALLS)/$(COGL).tar.xz| tar xvf - && \
+	chmod 755 $(COGL) && \
+	chown -R 0:0 $(COGL) && \
+	cd $(COGL) && \
+	\
+	./configure --prefix=/usr && \
+	make -j2 && \
+	make install -j2 && \
+	\
+	cd .. && \
+	rm -rf $(COGL)/* && \
+	make P=$(COGL) log-package
+
+$(JSON-GLIB):  $(GLIB2)
+	set +h && \
+	\
+	xz -dc $(JLFS-TARBALLS)/$(JSON-GLIB).tar.xz| tar xvf - && \
+	chmod 755 $(JSON-GLIB) && \
+	chown -R 0:0 $(JSON-GLIB) && \
+	cd $(JSON-GLIB) && \
+	\
+	./configure --prefix=/usr && \
+	make -j2 && \
+	make install -j2 && \
+	\
+	cd .. && \
+	rm -rf $(JSON-GLIB)/* && \
+	make P=$(JSON-GLIB) log-package
 #
 # Begin BLFS General Utilities
 #
@@ -9720,7 +9815,7 @@ $(GEDIT):  $(LIBGNOMEUI) $(LIBGNOMEPRINTUI) $(GNOME-DOC-UTILS) \
 
 $(TOTEM):  $(GNOME-ICON-THEME) $(GNOME-DESKTOP) $(ISO-CODES) \
 	$(GST-PLUGINS-GOOD) $(XINE-LIB) $(VLC) $(TOTEM-PL-PARSER) \
-	$(LIBUNIQUE) $(LIBGDATA) $(GNOME-DOC-UTILS)
+	$(LIBUNIQUE) $(LIBGDATA) $(GNOME-DOC-UTILS) $(CLUTTER) $(MX)
 
 	set +h && \
 	\
