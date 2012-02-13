@@ -452,8 +452,6 @@ $(MJPEGTOOLS):
 	chown -R 0:0 $(MJPEGTOOLS) && \
 	cd $(MJPEGTOOLS) && \
 	\
-	patch -Np1 -i $(JLFS-PATCHES)/$(MJPEGTOOLS)-invalid-conversion.patch && \
-	\
 	./configure --prefix=/usr && \
 	make -j2 && \
 	make install && \
