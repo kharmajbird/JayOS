@@ -10314,7 +10314,7 @@ $(XINE-LIB):  $(XORG7) $(ESOUND) $(ALSA-LIB) $(ARTS) $(PKG-CONFIG) \
 	chown -R 0:0 $(XINE-LIB) && \
 	cd $(XINE-LIB) && \
 	\
-	sed -i 's#gzgetc(#gzgetc_(#' src/xine-engine/osd.c && \
+	echo for zlib-1.2.6 sed -i 's#gzgetc(#gzgetc_(#' src/xine-engine/osd.c && \
 	\
 	./configure --prefix=/usr \
 		--disable-musepack \
