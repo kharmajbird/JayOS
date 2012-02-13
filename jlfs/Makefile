@@ -5099,7 +5099,7 @@ $(POLKIT-GNOME):  $(POLKIT) $(GTK2) $(GTK3)
 $(LIBPNG):
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(LIBPNG).tar.bz2 && \
+	xz -dc $(JLFS-TARBALLS)/$(LIBPNG).tar.xz| tar xvf - && \
 	chmod 755 $(LIBPNG) && \
 	chown -R 0:0 $(LIBPNG) && \
 	cd $(LIBPNG) && \
@@ -10887,14 +10887,19 @@ $(MPLAYER):  $(XORG7) $(GTK2) $(CDPARANOIA) $(LIBDV) $(LIBDVREAD) $(ALSA) \
 $(XINE-UI):  $(AALIB)
 	set +h && \
 	\
-	tar xvf $(JLFS-TARBALLS)/$(XINE-UI).tar.gz && \
+	xz -dc $(JLFS-TARBALLS)/$(XINE-UI).tar.xz| tar xvf - && \
 	chmod 755 $(XINE-UI) && \
 	chown -R 0:0 $(XINE-UI) && \
 	cd $(XINE-UI) && \
 	\
-	./configure --prefix=/usr && \
+	sed -i -e 's/info_ptr->//' \
+		-e '/RGB/icolor_type = png_get_color_type(png_ptr, info_ptr);' \
+			src/xitk/Imlib-light/load.c && \
+	sed -i -e '/#include.*curl.types.h*/d' src/xitk/download.c && \
+	\
+	./configure --prefix=/usr --disable-lirc && \
 	make -j2 && \
-	make install && \
+	make docsdir=/usr/share/doc/$(XINE-UI) install && \
 	\
 	cd .. && \
 	rm -rf $(XINE-UI)/* && \
