@@ -764,7 +764,7 @@ MPLAYER-CODECS-XANIMDLLS = MPlayer-xanimdlls-20040626
 MPLAYER-BLUE-SKIN = MPlayer-Blue-1.7
 MPLAYER-FONT = MPlayer-font-arial-iso-8859-1
 XINE-UI = xine-ui-0.99.6
-TRANSCODE = transcode-1.1.4
+TRANSCODE = transcode-1.1.5
 
 #
 # CDDVD Utilities
