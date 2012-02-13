@@ -10779,6 +10779,34 @@ $(FFMPEG):  $(A52DEC) $(XVIDCORE) $(FAAC) $(FAAD2) $(FREETYPE) $(LAME) \
 		rm -rf $(FFMPEG)/.libs $(FFMPEG)/.depend $(FFMPEG)/* && \
 	make P=$(FFMPEG) log-package
 
+$(FFMPEG-OLD):  $(A52DEC) $(XVIDCORE) $(FAAC) $(FAAD2) $(FREETYPE) $(LAME) \
+	$(LIBVORBIS) $(SDL) $(LIBOGG) $(X264) $(DIVX4LINUX)
+
+	set +h && \
+	\
+	tar jxvf $(JLFS-TARBALLS)/$(FFMPEG-OLD).tar.bz2 && \
+	chmod 755 $(FFMPEG-OLD) && \
+	chown -R 0:0 $(FFMPEG-OLD) && \
+	cd $(FFMPEG-OLD) && \
+	\
+	./configure --prefix=$(LFS)/usr/src/$(FFMPEG-OLD)/usr \
+		--enable-gpl \
+		--enable-shared \
+		--enable-postproc \
+		--enable-pthreads \
+		--enable-libmp3lame \
+		--enable-libfaac \
+		--enable-libxvid \
+		--enable-libfaad \
+		--enable-libx264 \
+		\
+		--enable-nonfree \
+		--enable-swscale && \
+	\
+	make -j2 && \
+	make install-libs && \
+	make install-headers && \
+	make distclean
 
 $(AVIFILE):  $(QT3) $(SDL) $(LIBVORBIS) $(A52DEC) $(LAME) $(LIBMAD) \
 	$(XVIDCORE) $(FAAD2) $(DIVX4LINUX)
@@ -10903,7 +10931,7 @@ $(XINE-UI):  $(AALIB)
 	rm -rf $(XINE-UI)/* && \
 	make P=$(XINE-UI) log-package
 
-$(TRANSCODE):  $(LIBXML2) $(FREETYPE) $(FFMPEG) $(MPEG2DEC) $(LAME) \
+$(TRANSCODE):  $(LIBXML2) $(FREETYPE) $(FFMPEG-OLD) $(MPEG2DEC) $(LAME) \
 	$(PKG-CONFIG) $(XORG7) $(XVIDCORE) $(FREETYPE) \
 	$(AVIFILE) $(LIBOGG) $(LIBVORBIS) $(LIBDVDREAD) $(LIBDV) \
 	$(LIBQUICKTIME) $(A52DEC) $(LIBXML2) $(SDL) $(GTK) $(LIBFAME) \
@@ -10916,6 +10944,7 @@ $(TRANSCODE):  $(LIBXML2) $(FREETYPE) $(FFMPEG) $(MPEG2DEC) $(LAME) \
 	chown -R 0:0 $(TRANSCODE) && \
 	cd $(TRANSCODE) && \
 	\
+	PKG_CONFIG_PATH=$(LFS)/usr/src/$(FFMPEG-OLD)/usr/lib/pkgconfig \
 	./configure --prefix=/usr \
 		--enable-imagemagick \
 		--enable-x264 \

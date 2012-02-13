@@ -745,6 +745,7 @@ AUDACIOUS-PLUGINS = audacious-plugins-3.1-fedora
 #
 
 FFMPEG = ffmpeg-0.10
+FFMPEG-OLD = ffmpeg-0.6.1
 #j#AVIFILE = avifile-0.7-0.7.45
 AVIFILE-BINS = avifile-binaries-011002
 MPLAYER = MPlayer-1.0rc4
