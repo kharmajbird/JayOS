@@ -5,6 +5,7 @@
 #
 
 HEAD=/lfs/build/JayOS
+ALERT=/lfs/build/JayOS/skel/jlfs/root/bin/tos-redalert
 
 echo "Building LFS base" && \
 cd /tools/src && make && make un-prep && \
@@ -12,7 +13,7 @@ cd /tools/src && make && make un-prep && \
 \
 echo "Finished building LFS base" || \
     ( echo "Problem building LFS base... you have a long road ahead of you :(" && \
-    play /root/bin/tos-redalert && read val && \
+    play $ALERT && read val && \
     make un-prep && \
     exit 1 )
 
@@ -29,3 +30,5 @@ make && \
 make un-prep && \
 make strip-man
 make livecd
+
+play $ALERT
