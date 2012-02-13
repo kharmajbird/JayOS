@@ -10924,7 +10924,6 @@ $(TRANSCODE):  $(LIBXML2) $(FREETYPE) $(FFMPEG) $(MPEG2DEC) $(LAME) \
 		--enable-faac \
 		--enable-a52-default-decoder \
 		--enable-libmpeg3 \
-		--enable-libavcodec \
 		--enable-libpostproc \
 		--enable-sdl \
 		--enable-gtk \
