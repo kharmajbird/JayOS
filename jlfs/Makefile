@@ -9726,7 +9726,7 @@ $(TOTEM):  $(GNOME-ICON-THEME) $(GNOME-DESKTOP) $(ISO-CODES) \
 
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(TOTEM).tar.bz2 && \
+	xz -dc $(JLFS-TARBALLS)/$(TOTEM).tar.xz| tar xvf - && \
 	chmod 755 $(TOTEM) && \
 	chown -R 0:0 $(TOTEM) && \
 	cd $(TOTEM) && \

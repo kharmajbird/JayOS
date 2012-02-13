@@ -238,7 +238,7 @@ QEMU-EFI = qemu-efi-bios
 VIRTUALBRICKS = virtualbricks-0.6.352
 PARTIMAGE = partimage-0.6.9
 DVDRIP = dvdrip-0.98.10
-VLC = vlc-1.1.7
+VLC = vlc-1.1.13
 VLC-SKINS = vlc-skins
 KISMET = kismet-2007-10-R1
 ESVN = esvn-0.6.12-1
@@ -673,7 +673,7 @@ LIBGNOME-KEYRING = libgnome-keyring-2.30.1
 #
 
 GEDIT = gedit-2.30.3
-TOTEM = totem-2.30.2
+TOTEM = totem-3.3.4
 TOTEM-PL-PARSER = totem-pl-parser-2.32.6
 ZENITY = zenity-3.2.0
 GNOME-UTILITIES = gnome-utils-3.2.1
