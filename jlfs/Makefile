@@ -10495,8 +10495,7 @@ $(X264):
 	cd $(X264) && \
 	\
 	./configure --prefix=/usr --enable-shared \
-		--disable-asm \
-		--enable-gtk --enable-pthread && \
+		--disable-asm && \
 	make -j2 && \
 	make install && \
 	\
@@ -10655,7 +10654,7 @@ $(AUDACIOUS-PLUGINS):  $(AUDACIOUS)
 #
 
 $(FFMPEG):  $(A52DEC) $(XVIDCORE) $(FAAC) $(FAAD2) $(FREETYPE) $(LAME) \
-	$(LIBVORBIS) $(SDL) $(LIBOGG) $(X264) $(DIVX4LINUX)
+	$(LIBVORBIS) $(SDL) $(LIBOGG) $(X264) $(DIVX4LINUX) $(YASM)
 
 	set +h && \
 	\
@@ -10666,26 +10665,27 @@ $(FFMPEG):  $(A52DEC) $(XVIDCORE) $(FAAC) $(FAAD2) $(FREETYPE) $(LAME) \
 	\
 	./configure --prefix=/usr \
 		--enable-gpl \
+		--disable-static \
 		--enable-shared \
 		--enable-postproc \
 		--enable-pthreads \
 		--enable-libmp3lame \
 		--enable-libfaac \
 		--enable-libxvid \
-		--enable-libfaad \
 		--enable-libx264 \
 		\
 		--enable-nonfree \
 		--enable-swscale && \
 	\
-	sed -i 's|/man|/share/man|' config.mak && \
 	make -j2 && \
-	texi2html --version >/dev/null 2>&1 || \
-		make doc/ff{mpeg,play,server}.1 && \
+	\
+	gcc tools/qt-faststart.c -o qt-faststart && \
+	\
 	make install && \
-	install -v -m755 -d /usr/share/doc/$(FFMPEG) && \
-	install -v -m644 doc/*.txt /usr/share/doc/$(FFMPEG) && \
-	texi2html --version >/dev/null 2>&1 || make install-man && \
+	make install-man && \
+	mkdir -p /usr/share/doc/$(FFMPEG) && \
+	cp -av doc/*.txt /usr/share/doc/$(FFMPEG) && \
+	cp -av qt-faststart /usr/bin && \
 	\
 	cd .. && \
 	echo source wait for VLC \

@@ -719,7 +719,7 @@ GST-PLUGINS-GOOD = gst-plugins-good-0.10.30
 GST-PLUGINS-UGLY = gst-plugins-ugly-0.10.18
 LIBMUSICBRAINZ = libmusicbrainz-2.1.5
 MPEG2DEC = mpeg2dec-0.4.1
-X264 = x264-snapshot-20110131-2245
+X264 = x264-snapshot-20120212-2245
 LIBTHEORA = libtheora-1.1.1
 
 #
@@ -738,7 +738,7 @@ AUDACIOUS-PLUGINS = audacious-plugins-3.1-fedora
 # Video Utilities
 #
 
-FFMPEG = ffmpeg-0.6.1
+FFMPEG = ffmpeg-0.10
 #j#AVIFILE = avifile-0.7-0.7.45
 AVIFILE-BINS = avifile-binaries-011002
 MPLAYER = MPlayer-1.0rc4
