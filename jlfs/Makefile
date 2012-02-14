@@ -163,7 +163,7 @@ $(EJECT):
 $(SYSLINUX):  $(NASM) $(MTOOLS)
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(SYSLINUX).tar.bz2 && \
+	xz -dc $(JLFS-TARBALLS)/$(SYSLINUX).tar.xz| tar xvf - && \
 	chmod 755 $(SYSLINUX) && \
 	chown -R 0:0 $(SYSLINUX) && \
 	cd $(SYSLINUX) && \
@@ -7315,7 +7315,6 @@ $(NASM):
 	chown -R 0:0 $(NASM) && \
 	cd $(NASM) && \
 	\
-	patch -Np1 -i $(JLFS-PATCHES)/$(NASM)-security_fix-1.patch && \
 	./configure --prefix=/usr && \
 	make -j2 && \
 	make -C rdoff/doc && \

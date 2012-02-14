@@ -421,7 +421,7 @@ jlfs/mutagen-1.18.tar.gz
 jlfs/mx-1.2.1.tar.bz2
 jlfs/mysql-5.1.52.tar.gz
 jlfs/nas-1.9.src.tar.gz
-jlfs/nasm-0.98.39.tar.bz2
+jlfs/nasm-2.09.10.tar.bz2
 jlfs/nautilus-3.3.1.tar.bz2
 jlfs/ncftp-3.2.1-src.tar.bz2
 jlfs/neon-0.29.5.tar.gz
@@ -518,7 +518,7 @@ jlfs/strace-4.5.20.tar.bz2
 jlfs/subversion-1.7.1.tar.bz2
 jlfs/swig-2.0.4.tar.gz
 jlfs/sysfsutils-2.1.0.tar.gz
-jlfs/syslinux-3.63.tar.bz2
+jlfs/syslinux-4.05.tar.xz
 jlfs/sysstat-7.0.4.tar.bz2
 jlfs/system-tools-backends-2.10.2.tar.bz2
 jlfs/taglib-1.5.tar.gz

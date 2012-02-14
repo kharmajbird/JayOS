@@ -38,7 +38,7 @@ UNIONFS = unionfs-2.3.3_for_$(KERNEL-VER)
 #
 
 EJECT = eject-2.1.5
-SYSLINUX = syslinux-3.63
+SYSLINUX = syslinux-4.05
 #j#BUSYBOX = busybox-1.8.2
 HFSUTILS = hfsutils-3.2.6
 HFSPLUS = hfsplus-1.0.4
@@ -496,7 +496,7 @@ GCC3 = gcc-3.3.6
 GCC3-VER = 3.3.6
 GCC4-OLD = gcc-4.1.2
 GCC4-OLD-VER = 4.1.2
-NASM = nasm-0.98.39
+NASM = nasm-2.09.10
 PHP5 = php-5.3.7
 PYTHON = Python-2.6.4
 PYTHON-VER=python2.6
