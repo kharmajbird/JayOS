@@ -3155,7 +3155,7 @@ $(LIBDVDNAV):
 $(LIBCDIO):
 	set +h && \
 	\
-	tar xvf $(JLFS-TARBALLS)/$(LIBCDIO).tar.gz && \
+	tar jxvf $(JLFS-TARBALLS)/$(LIBCDIO).tar.bz2 && \
 	chmod 755 $(LIBCDIO) && \
 	chown -R 0:0 $(LIBCDIO) && \
 	cd $(LIBCDIO) && \

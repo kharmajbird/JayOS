@@ -89,9 +89,7 @@ jlfs/aspell6-en-7.1-0.tar.bz2
 jlfs/asunder-1.5.tar.bz2
 jlfs/atk-2.2.0.tar.bz2
 jlfs/atkmm-2.22.2.tar.bz2
-jlfs/audacious-3.1.tar.bz2
 jlfs/audacious-3.2.tar.bz2
-jlfs/audacious-plugins-3.1-fedora.tar.bz2
 jlfs/audacious-plugins-3.2.tar.bz2
 jlfs/audiofile-0.2.6.tar.gz
 jlfs/autofs-5.0.3.tar.bz2
@@ -307,8 +305,8 @@ jlfs/libassuan-1.0.2.tar.bz2
 jlfs/libbonobo-2.24.3.tar.bz2
 jlfs/libbonoboui-2.24.3.tar.bz2
 jlfs/libcanberra-0.28.tar.gz
-jlfs/libcddb-1.3.0.tar.bz2
-jlfs/libcdio-0.80.tar.gz
+jlfs/libcddb-1.3.2.tar.bz2
+jlfs/libcdio-0.83.tar.bz2
 jlfs/libcroco-0.6.1.tar.bz2
 jlfs/libdaemon-0.12.tar.gz
 jlfs/libdnet-1.11.tar.gz
