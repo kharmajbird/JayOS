@@ -171,7 +171,7 @@ $(SYSLINUX):  $(NASM) $(MTOOLS)
 	make -j2 && \
 	make install && \
 	mkdir -p /boot && \
-	cp -av mbr/mbr.bin isolinux.bin /boot && \
+	cp -av mbr/mbr.bin core/isolinux.bin /boot && \
 	\
 	cd .. && \
 	rm -rf $(SYSLINUX)/* && \

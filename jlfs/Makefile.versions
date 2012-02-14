@@ -738,8 +738,8 @@ VORBIS-TOOLS = vorbis-tools-1.2.0
 XMMS = xmms-1.2.11
 LAME = lame-398-2
 CDPARANOIA = cdparanoia-III-10.2
-AUDACIOUS = audacious-3.1
-AUDACIOUS-PLUGINS = audacious-plugins-3.1-fedora
+AUDACIOUS = audacious-3.2
+AUDACIOUS-PLUGINS = audacious-plugins-3.2-fedora
 
 #
 # Video Utilities
