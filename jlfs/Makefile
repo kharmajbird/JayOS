@@ -1308,6 +1308,20 @@ $(TUNCTL):
 	rm -rf $(TUNCTL)/* && \
 	make P=$(TUNCTL) log-package
 
+$(DOCUTILS):
+	set +h && \
+	\
+	tar xvf $(JLFS-TARBALLS)/$(DOCUTILS).tar.gz && \
+	chmod 755 $(DOCUTILS) && \
+	chown -R 0:0 $(DOCUTILS) && \
+	cd $(DOCUTILS) && \
+	\
+	python setup.py build && \
+	python setup.py install && \
+	\
+	cd .. && \
+	rm -rf $(DOCUTILS)/* && \
+	make P=$(DOCUTILS) log-package
 #
 # End JLFS Custom-CLI
 # Begin JLFS Custom-GUI
@@ -3681,7 +3695,7 @@ $(SEND2TRASH):  $(PYTHON3)
 	rm -rf $(SEND2TRASH)/* && \
 	make P=$(SEND2TRASH) log-package
 
-$(SPHINX):  $(SETUPTOOLS) $(GNOME-DOC-UTILS) $(JINJA2) $(PYGMENTS)
+$(SPHINX):  $(SETUPTOOLS) $(GNOME-DOC-UTILS) $(JINJA2) $(PYGMENTS) $(DOCUTILS)
 	set +h && \
 	\
 	tar xvf $(JLFS-TARBALLS)/$(SPHINX).tar.gz && \

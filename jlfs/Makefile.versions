@@ -109,6 +109,7 @@ DVDAUTHOR = dvdauthor-0.7.0
 IPVSADM = ipvsadm-1.26
 S3CMD = s3cmd-1.0.1
 TUNCTL = tunctl-1.5
+DOCUTILS = docutils-0.8.1
 
 #
 # End JLFS Custom-CLI
@@ -186,7 +187,7 @@ SIP = sip-4.12.4
 PY = py-1.4.5
 PYTEST = pytest-2.1.2
 SEND2TRASH = send2trash-1.2.0
-SPHINX = Sphinx-1.0.8
+SPHINX = Sphinx-1.1.2
 PYQT = PyQt-x11-gpl-4.8.5
 SETUPTOOLS = setuptools-0.6c11
 JINJA2 = Jinja2-2.6
