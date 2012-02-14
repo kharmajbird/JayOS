@@ -739,7 +739,7 @@ XMMS = xmms-1.2.11
 LAME = lame-398-2
 CDPARANOIA = cdparanoia-III-10.2
 AUDACIOUS = audacious-3.2
-AUDACIOUS-PLUGINS = audacious-plugins-3.2-fedora
+AUDACIOUS-PLUGINS = audacious-plugins-3.2
 
 #
 # Video Utilities
