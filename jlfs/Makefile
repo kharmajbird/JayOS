@@ -10378,6 +10378,7 @@ $(A52DEC):
 $(XVIDCORE):  $(NASM)
 	set +h && \
 	\
+	rm -rf $(XVIDCORE) && \
 	tar zxvf $(JLFS-TARBALLS)/$(XVIDCORE).tar.gz && \
 	mv xvidcore $(XVIDCORE) && \
 	chmod 755 $(XVIDCORE) && \
