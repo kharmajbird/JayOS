@@ -61,7 +61,7 @@ jlfs/Python-2.6.4.tar.bz2
 jlfs/Python-3.2.2.tar.bz2
 jlfs/SDL-1.2.13.tar.gz
 jlfs/SDL_image-1.2.6.tar.gz
-jlfs/Sphinx-1.0.8.tar.gz
+jlfs/Sphinx-1.1.2.tar.gz
 jlfs/TermReadKey-2.14.tar.gz
 jlfs/Tie-IxHash-1.21.tar.gz
 jlfs/Tk-804.030.tar.gz
@@ -510,6 +510,7 @@ jlfs/slang-2.1.1.tar.bz2
 jlfs/sleuthkit-3.2.0.tar.gz
 jlfs/sox-14.3.2.tar.bz2
 jlfs/speex-1.0.5.tar.gz
+jlfs/sphinx-2.0.3-release.tar.gz
 jlfs/sqlite-3.7.9.tar.bz2
 jlfs/squashfs4.0.tar.gz
 jlfs/startup-notification-0.9.tar.bz2
