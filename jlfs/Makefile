@@ -353,6 +353,8 @@ $(LSOF):
 	chown -R 0:0 $(LSOF) && \
 	cd $(LSOF) && \
 	\
+	patch -Np1 -i $(JLFS-PATCHES)/$(LSOF)-no-rpc.patch && \
+	\
 	touch .neverInv && \
 	./Configure -n linux && \
 	make -j2 && \
