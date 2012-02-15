@@ -300,6 +300,7 @@ CELESTIA = celestia-1.6.1
 #
 #j#GTKPOD = gtkpod-2.0.0
 BALSA = balsa-2.3.28
+UNETBOOTIN = unetbootin-568
 
 #
 # End JLFS Custom-GUI

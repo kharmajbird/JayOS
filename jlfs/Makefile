@@ -2515,6 +2515,27 @@ $(BALSA):  $(GMIME-OLD) $(ASPELL)
 	rm -rf $(BALSA)/* && \
 	make P=$(BALSA) log-package
 
+$(UNETBOOTIN):  $(QT4)
+	set +h && \
+	\
+	tar jxvf $(JLFS-TARBALLS)/$(UNETBOOTIN).tar.bz2 && \
+	chmod 755 $(UNETBOOTIN) && \
+	chown -R 0:0 $(UNETBOOTIN) && \
+	cd $(UNETBOOTIN) && \
+	\
+	sed -i '/^RESOURCES/d' unetbootin.pro && \
+	lupdate unetbootin.pro && \
+	lrelease unetbootin.pro && \
+	QTDIR=/opt/qt \
+		/opt/qt/bin/qmake \
+			"DEFINES += NOSTATIC" "RESOURCES -= unetbootin.qrc" && \
+	\
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(UNETBOOTIN)/* && \
+	make P=$(UNETBOOTIN) log-package
+
 #
 # End JLFS Custom-GUI
 # Begin JLFS Custom-Lib
