@@ -661,9 +661,10 @@ $(GDB):
 	chown -R 0:0 $(GDB) && \
 	cd $(GDB) && \
 	\
-	./configure --prefix=/usr --sysconfdir=/etc && \
+	./configure --prefix=/usr --sysconfdir=/etc \
+		-disable-werror && \
 	make -j2 && \
-	make install && \
+	make -C gdb install && \
 	cd .. && \
 	\
 	rm -rf $(GDB)/* && \
