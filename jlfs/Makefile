@@ -833,7 +833,7 @@ $(MINGETTY):
 	rm -rf $(MINGETTY)/* && \
 	make P=$(MINGETTY) log-package
 
-$(SOX):
+$(SOX):  $(FFMPEG-OLD)
 	set +h && \
 	\
 	tar jxf $(JLFS-TARBALLS)/$(SOX).tar.bz2 && \
@@ -841,7 +841,8 @@ $(SOX):
 	chown -R 0:0 $(SOX) && \
 	cd $(SOX) && \
 	\
-	./configure --prefix=/usr --sysconfdir=/etc && \
+	PKG_CONFIG_PATH=$(LFS)/usr/src/$(FFMPEG-OLD)/usr/lib/pkgconfig \
+		./configure --prefix=/usr --sysconfdir=/etc && \
 	make -j2 && \
 	make install && \
 	\
