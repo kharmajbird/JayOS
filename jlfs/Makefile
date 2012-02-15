@@ -2201,6 +2201,8 @@ $(GWHERE):  $(XORG7) $(GTK2)
 	chown -R 0:0 $(GWHERE) && \
 	cd $(GWHERE) && \
 	\
+	patch -Np1 -i $(JLFS-PATCHES)/$(GWHERE)-no-intl.patch && \
+	\
 	./configure --prefix=/usr \
 		--sysconfdir=/etc \
 		--enable-gtk20 \
