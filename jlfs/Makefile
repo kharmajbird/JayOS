@@ -3768,22 +3768,6 @@ $(SETUPTOOLS):
 	rm -rf $(SETUPTOOLS)/* && \
 	make P=$(SETUPTOOLS) log-package
 
-$(GNOME-DOC-UTILS):  $(INTLTOOL) $(LIBXSLT) $(PYTHON2)
-	set +h && \
-	\
-	tar jxvf $(JLFS-TARBALLS)/$(GNOME-DOC-UTILS).tar.bz2 && \
-	chmod 755 $(GNOME-DOC-UTILS) && \
-	chown -R 0:0 $(GNOME-DOC-UTILS) && \
-	cd $(GNOME-DOC-UTILS) && \
-	\
-	./configure --prefix /usr && \
-	make && \
-	make install && \
-	\
-	cd .. && \
-	rm -rf $(GNOME-DOC-UTILS)/* && \
-	make P=$(GNOME-DOC-UTILS) log-package
-
 $(JINJA2):  $(PYTHON3) $(SETUPTOOLS) $(DISTRIBUTE)
 	set +h && \
 	\
