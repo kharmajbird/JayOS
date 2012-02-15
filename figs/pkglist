@@ -820,6 +820,7 @@ xorg/proto/xf86driproto-2.1.1.tar.bz2
 xorg/proto/xf86vidmodeproto-2.3.1.tar.bz2
 xorg/proto/xineramaproto-1.2.1.tar.bz2
 xorg/proto/xproto-7.0.22.tar.bz2
+xorg/util/gccmakedep-1.0.2.tar.bz2
 xorg/util/imake-1.0.4.tar.bz2
 xorg/util/makedepend-1.0.3.tar.bz2
 xorg/util/util-macros-1.11.0.tar.bz2
