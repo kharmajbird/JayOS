@@ -92,7 +92,7 @@ BRIDGE-UTILS = bridge-utils-1.4
 #j#MADWIFI = madwifi-0.9.4
 #j#MADWIFI-VER = r4136-20110304
 #
-DMIDECODE = dmidecode-2.9
+DMIDECODE = dmidecode-2.11
 UNRAR = unrarsrc-3.7.8
 GPART = gpart-0.1f
 MULTIPATH-TOOLS = multipath-tools-0.4.9
