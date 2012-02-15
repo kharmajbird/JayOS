@@ -1584,21 +1584,21 @@ $(QEMU):  $(SDL)
 	make install && \
 	(cd $(LFS)/usr/bin && ln -sfn qemu-system-i386 qemu) && \
 	\
-	cd $(KQEMU) && \
+	echo NOKQEMU cd $(KQEMU) && \
 	\
-	patch -Np1 -i $(JLFS-PATCHES)/$(KQEMU)-init_MUTEX.patch && \
+	echo NOKQEMU patch -Np1 -i $(JLFS-PATCHES)/$(KQEMU)-init_MUTEX.patch && \
 	\
-	./configure --prefix=/usr \
+	echo NOKQEMU ./configure --prefix=/usr \
 		--kernel-path=/usr/src/$(KERNEL)-$(ARCH) && \
-	make -j2 && \
+	echo NOKQEMU make -j2 && \
 	\
-	mkdir -p $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/misc && \
-	cp -av kqemu.ko $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/misc && \
+	echo NOKQEMU mkdir -p $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/misc && \
+	echo NOKQEMU cp -av kqemu.ko $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/misc && \
 	\
-	cd ../.. && \
+	cd .. && \
 	\
-	mkdir -p $(LFS)/usr/share/qemu/efi-bios && \
-	cp -av $(QEMU)/efi-bios/README $(QEMU)/efi-bios/bios.bin \
+	echo NOKQEMU mkdir -p $(LFS)/usr/share/qemu/efi-bios && \
+	echo NOKQEMU cp -av $(QEMU)/efi-bios/README $(QEMU)/efi-bios/bios.bin \
 		$(LFS)/usr/share/qemu/efi-bios && \
 	\
 	echo wait for kernel modules installs \
