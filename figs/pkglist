@@ -823,6 +823,7 @@ xorg/proto/xproto-7.0.22.tar.bz2
 xorg/util/imake-1.0.4.tar.bz2
 xorg/util/makedepend-1.0.3.tar.bz2
 xorg/util/util-macros-1.11.0.tar.bz2
+xorg/util/xorg-cf-files-1.0.4.tar.bz2
 xorg/xserver/xorg-server-1.11.2.tar.bz2
 xorg/misc/MesaLib-7.11.2.tar.bz2
 xorg/misc/libXau-1.0.6.tar.bz2
