@@ -115,9 +115,6 @@ fs umount_command umount /fs
 fs "lfs" "/lfs" 0 0 0 0 0
 fs mount_command mount -o loop /fs/fs/lfs.fs /lfs
 fs umount_command umount /lfs
-fs "src" "/lfs/build/src" 0 0 0 0 0
-fs mount_command mount -o loop /fs/fs/lfs-src.fs /lfs/build/src
-fs umount_command umount /lfs/build/src
 fs "opt" "/opt" 0 0 0 0 0
 fs mount_command mount -o loop /cd/fs/opt.fs /opt
 fs umount_command umount /opt
