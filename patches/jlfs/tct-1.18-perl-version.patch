@@ -1,0 +1,32 @@
+diff -Naur tct-1.18.orig/reconfig tct-1.18/reconfig
+--- tct-1.18.orig/reconfig	2001-09-15 13:48:51.000000000 -0700
++++ tct-1.18/reconfig	2012-02-15 18:31:52.735528128 -0800
+@@ -51,27 +51,7 @@
+ 	}
+ 
+ # find perl5!
+-print "Ok, trying to find perl5 now... hang on a bit...\n";
+-for $dir (@all_dirs) {
+-	# first, find where it might be; oftentimes you'll see perl,
+-	# perl4, perl5, etc. in the same dir
+-	next if (! -d $dir);
+-	while (<$dir/perl5* $dir/perl*>) {
+-		if (-x $_) {
+-			$perl_version=`($_ -v 2> /dev/null) |
+-				awk '/This is perl, v.*5/ { print $NF }'`;
+-			if ($perl_version) {
+-				$PERL=$_;
+-				$pflag="1";
+-				last;
+-				}
+-			}
+-			last if $pflag;
+-		}
+-	last if $pflag;
+-	}
+-
+-die "\nCan't find perl5!  Bailing out...\n" unless $PERL;
++$PERL=
+ print "\nPerl5 is in $PERL\n";
+ 
+ # we need version 5.003 or better... or do we?  Nuke this for now
