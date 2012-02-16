@@ -2010,23 +2010,24 @@ $(DDD):  $(GCC4-OLD)
 	rm -rf $(DDD)/* && \
 	make P=$(DDD) log-package
 
-$(ETTERCAP-NG):  $(LIBPCAP) $(LIBNET) $(LIBPTHREAD-STUBS) $(GLIB2) $(GTK2) \
+$(ETTERCAP):  $(LIBPCAP) $(LIBNET) $(LIBPTHREAD-STUBS) $(GLIB2) $(GTK2) \
 	$(OPENSSL) $(PCRE) $(ATK) $(PANGO)
 
 	set +h && \
 	\
-	tar xvf $(JLFS-TARBALLS)/$(ETTERCAP-NG).tar.gz && \
-	chmod 755 $(ETTERCAP-NG) && \
-	chown -R 0:0 $(ETTERCAP-NG) && \
-	cd $(ETTERCAP-NG) && \
+	tar xvf $(JLFS-TARBALLS)/$(ETTERCAP).tar.gz && \
+	mv ettercap $(ETTERCAP) && \
+	chmod 755 $(ETTERCAP) && \
+	chown -R 0:0 $(ETTERCAP) && \
+	cd $(ETTERCAP) && \
 	\
 	./configure --prefix=/usr --sysconfdir=/etc && \
 	make -j2 && \
 	make install && \
 	\
 	cd .. && \
-	rm -rf $(ETTERCAP-NG)/* && \
-	make P=$(ETTERCAP-NG) log-package
+	rm -rf $(ETTERCAP)/* && \
+	make P=$(ETTERCAP) log-package
 
 $(FWBUILDER):  $(LIBFWBUILDER)
 	set +h && \
