@@ -23,7 +23,7 @@ KERNEL-VANILLA-MOD-VER = $(KERNEL-VANILLA-VER).5
 SQUASHFS = squashfs4.0
 LOOP-AES = loop-AES-v3.6e
 LOOP-AES-XEN = loop-AES-v3.2a
-UTIL-LINUX = util-linux-2.12r
+UTIL-LINUX = util-linux-2.20
 UNIONFS = unionfs-2.3.3_for_$(KERNEL-VER)
 # need userland tools for full unionfs support?
 
