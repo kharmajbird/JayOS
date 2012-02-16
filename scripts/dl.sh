@@ -9,7 +9,7 @@ S3=http://jayosrc.s3-website-us-west-1.amazonaws.com/tarballs
 PKGLIST=/lfs/build/JayOS/figs/pkglist
 HEAD=/lfs/build/JayOS/tarballs
 DIRS="jlfs lfs usb"
-XDIRS="xorg/app xorg/driver xorg/font xorg/lib xorg/proto xorg/util xorg/xserver"
+XDIRS="xorg/app xorg/driver xorg/font xorg/lib xorg/proto xorg/util xorg/xserver xorg/misc"
 
 STICK1=jlfs-USB-stick1.img.gz
 STICK2=jlfs-USB-stick2.img.gz
