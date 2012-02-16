@@ -58,8 +58,7 @@ all:
 	if [ -f $(LFS)/tmp/sallgood ]; then \
 		rm -f $(LFS)/tmp/sallgood && \
 		make strip; \
-	else \
-		/usr/bin/play $(SKEL-JLFS)/root/bin/tos-redalert
+	fi
 
 include Makefile.targets
 
@@ -8147,10 +8146,8 @@ $(LIBTIRPC):
 	chown -R 0:0 $(LIBTIRPC) && \
 	cd $(LIBTIRPC) && \
 	\
-	if [ ! -r /usr/include/rpc/rpc.h ]; then \
-		tar -xvf $(JLFS-TARBALLS)/rpcnis-headers.tar.bz2 \
-			-C /usr/include; \
-	fi && \
+	tar -xvf $(JLFS-TARBALLS)/rpcnis-headers.tar.bz2 \
+		-C /usr/include && \
 	\
 	patch -Np1 -i $(JLFS-PATCHES)/$(LIBTIRPC)-remove-nis-2.patch && \
 	\
