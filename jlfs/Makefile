@@ -5143,7 +5143,7 @@ $(LIBPNG):
 	make install && \
 	\
 	install -v -m755 -d /usr/share/doc/$(LIBPNG) && \
-	install -v -m644 README $(LIBPNG).txt /usr/share/doc/$(LIBPNG) && \
+	install -v -m644 README /usr/share/doc/$(LIBPNG) && \
 	\
 	cd .. && \
 	rm -rf $(LIBPNG)/.libs $(LIBPNG)/.deps $(LIBPNG)/* && \
