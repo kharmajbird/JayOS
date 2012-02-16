@@ -129,7 +129,6 @@ jlfs/dbus-python-0.84.0.tar.gz
 jlfs/dbus-qt3-0.62.tar.bz2
 jlfs/ddd-3.3.11.tar.gz
 jlfs/ddrescue-1.0-pre1.tar.gz
-jlfs/dejagnu-1.4.4.tar.gz
 jlfs/desktop-file-utils-0.17.tar.bz2
 jlfs/dhcp-4.2.3.tar.gz
 jlfs/dhcpcd-5.2.12.tar.bz2
@@ -191,7 +190,6 @@ jlfs/fwbuilder-4.1.3.tar.gz
 jlfs/gail-1.22.3.tar.bz2
 jlfs/gcc-3.3.6.tar.bz2
 jlfs/gcc-4.1.2.tar.bz2
-jlfs/gconf-editor-2.28.0.tar.bz2
 jlfs/gdb-7.3.1.tar.bz2
 jlfs/gdk-pixbuf-0.22.0.tar.bz2
 jlfs/gdk-pixbuf-2.24.0.tar.bz2
@@ -260,7 +258,6 @@ jlfs/gtkmm-2.8.12.tar.bz2
 jlfs/gtkmm-3.3.2.tar.bz2
 jlfs/gtkpod-2.0.0.tar.gz
 jlfs/gtksourceview-2.10.4.tar.bz2
-jlfs/guile-1.8.2.tar.gz
 jlfs/gutenprint-5.0.1.tar.bz2
 jlfs/gwhere-0.2.3.tar.gz
 jlfs/gxine-0.5.905.tar.bz2
@@ -420,7 +417,6 @@ jlfs/multipath-tools-0.4.9.tar.bz2
 jlfs/mutagen-1.18.tar.gz
 jlfs/mx-1.2.1.tar.bz2
 jlfs/mysql-5.1.52.tar.gz
-jlfs/nas-1.9.src.tar.gz
 jlfs/nasm-2.09.10.tar.bz2
 jlfs/nautilus-3.3.1.tar.bz2
 jlfs/ncftp-3.2.1-src.tar.bz2
@@ -511,7 +507,6 @@ jlfs/slang-2.1.1.tar.bz2
 jlfs/sleuthkit-3.2.0.tar.gz
 jlfs/sox-14.3.2.tar.bz2
 jlfs/speex-1.0.5.tar.gz
-jlfs/sphinx-2.0.3-release.tar.gz
 jlfs/sqlite-3.7.9.tar.bz2
 jlfs/squashfs4.0.tar.gz
 jlfs/startup-notification-0.9.tar.bz2
@@ -532,7 +527,6 @@ jlfs/tiff-3.9.4.tar.gz
 jlfs/tightvnc-1.3.10_unixsrc.tar.bz2
 jlfs/tk8.5.8-src.tar.gz
 jlfs/tmake-1.13.tar.gz
-jlfs/totem-2.30.2.tar.bz2
 jlfs/totem-3.3.4.tar.xz
 jlfs/totem-pl-parser-2.32.6.tar.bz2
 jlfs/traceroute-1.4a12.tar.gz

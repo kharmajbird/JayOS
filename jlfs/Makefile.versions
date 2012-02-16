@@ -713,7 +713,6 @@ LIBOGG = libogg-1.1.4
 LIBVORBIS = libvorbis-1.2.3
 FAAC = faac-1.26
 FAAD2 = faad2-2.7
-NAS = nas-1.9
 LIBMPEG2 = libmpeg2-0.5.1
 LIBMPEG3 = libmpeg3-1.7
 LIBMAD = libmad-0.15.1b
