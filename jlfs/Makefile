@@ -2528,6 +2528,7 @@ $(UNETBOOTIN):  $(QT4)
 	chown -R 0:0 $(UNETBOOTIN) && \
 	cd $(UNETBOOTIN) && \
 	\
+	cp -av unetbootin.pro unetbootin-pro.bak && \
 	sed -i '/^RESOURCES/d' unetbootin.pro && \
 	lupdate unetbootin.pro && \
 	lrelease unetbootin.pro && \
@@ -2535,7 +2536,10 @@ $(UNETBOOTIN):  $(QT4)
 		/opt/qt/bin/qmake \
 			"DEFINES += NOSTATIC" "RESOURCES -= unetbootin.qrc" && \
 	\
+	make && \
 	make install && \
+	strip unetbootin && \
+	cp -av unetbootin /usr/bin && \
 	\
 	cd .. && \
 	rm -rf $(UNETBOOTIN)/* && \

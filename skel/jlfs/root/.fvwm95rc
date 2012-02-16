@@ -491,6 +491,7 @@ AddToMenu "Devices" \
 DestroyMenu "System"
 AddToMenu "System" \
   "Emulator%mini-rball.xpm%"		Popup Emulation
++ "Create boot disk%mini-rball.xpm%"	Exec unetbootin
 + ""					Nop
 + "Backup/Restore Partitions%mini-diskette.xpm%"		Exec xterm -font 9x15 -bg \#c0c0c0 -fg black -T partimage -n partimage -e partimage
 + "Disk Analysis%mini-rball.xpm%"	Exec baobab
