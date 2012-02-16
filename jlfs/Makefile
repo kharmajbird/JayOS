@@ -39,6 +39,7 @@ include Makefile.versions
 include Makefile.vars
 include Makefile.depends
 STUB=stub-ver
+PERL-VER = 5.14.2
 
 ##########################################################################
 
@@ -4377,6 +4378,8 @@ $(TCT):
 	cd $(TCT) && \
 	\
 	patch -Np1 -i $(JLFS-PATCHES)/$(TCT)-fs-1.patch && \
+	patch -Np1 -i $(JLFS-PATCHES)/$(TCT)-perl-version.patch && \
+	sed -i -e 's@PERL=@PERL="/usr/bin/perl$(PERL-VER)";@' reconfig && \
 	\
 	make -j2 && \
 	mkdir -p /usr/tct && cp -a * /usr/tct && \
