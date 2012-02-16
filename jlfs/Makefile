@@ -8575,6 +8575,34 @@ $(NFS-UTILS):  $(RPCBIND) $(TCP-WRAPPER)
 	rm -rf $(NFS-UTILS)/* && \
 	make P=$(NFS-UTILS) log-package
 
+$(NFS-UTILS-BIN):  $(RPCBIND) $(TCP-WRAPPER)
+	set +h && \
+	\
+	echo && \
+	echo "****  CHEAT ****" && \
+	echo && \
+	sleep 10 && \
+	\
+	tar jxvf $(JLFS-TARBALLS)/$(NFS-UTILS-BIN)-binary.tbz && \
+	chmod 755 $(NFS-UTILS-BIN) && \
+	chown -R 0:0 $(NFS-UTILS-BIN) && \
+	cd $(NFS-UTILS-BIN) && \
+	\
+	groupadd -g 99 nogroup; \
+	useradd -c "Unprivileged Nobody" -d /dev/null -g nogroup \
+		-s /bin/false -u 99 nobody; \
+	\
+	make install && \
+	\
+	echo 'PORT="2049"' > /etc/sysconfig/nfs-server && \
+	echo 'PROCESSES="8"' >> /etc/sysconfig/nfs-server && \
+	echo 'QUOTAS="no"' >> /etc/sysconfig/nfs-server && \
+	echo 'KILLDELAY="10"' >> /etc/sysconfig/nfs-server && \
+	\
+	cd .. && \
+	rm -rf $(NFS-UTILS-BIN)/* && \
+	make P=$(NFS-UTILS-BIN) log-package
+
 $(WIRESHARK):  $(GLIB2) $(GTK2) $(LIBPCAP)
 	set +h && \
 	\
