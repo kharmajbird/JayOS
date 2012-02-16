@@ -731,6 +731,7 @@ GST-PLUGINS-UGLY = gst-plugins-ugly-0.10.18
 LIBMUSICBRAINZ = libmusicbrainz-2.1.5
 MPEG2DEC = mpeg2dec-0.4.1
 X264 = x264-snapshot-20120212-2245
+X264-OLD = x264-snapshot-20110131-2245
 LIBTHEORA = libtheora-1.1.1
 
 #

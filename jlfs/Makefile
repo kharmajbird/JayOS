@@ -2396,6 +2396,8 @@ $(AVIDEMUX):  $(CMAKE) $(YASM) $(MPLAYER)
 	cd $(AVIDEMUX) && \
 	\
 	perl -p -i -e 's/sudo //' bootStrap.sh && \
+	patch -Np1 -i $(JLFS-PATCHES)/$(AVIDEMUX)-x264.patch && \
+	\
 	sh ./bootStrap.sh && \
 	\
 	cd .. && \
