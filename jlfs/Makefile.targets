@@ -210,16 +210,16 @@ $(LOOP-AES):
 	tar jxf $(LFS-TARBALLS)/$(UTIL-LINUX).tar.bz2 && \
 	cd $(UTIL-LINUX) && \
 	\
-	patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-loop_AES-3.1d.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-nopassword.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-missing_header-2.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-mkswap-no-page.h.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-cramfs-no-page.h.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-lseek-1.patch && \
+	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-loop_AES-3.1d.patch && \
+	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-nopassword.patch && \
+	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-missing_header-2.patch && \
+	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-mkswap-no-page.h.patch && \
+	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-cramfs-no-page.h.patch && \
+	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-lseek-1.patch && \
 	\
 	./configure CFLAGS=-O2 --prefix=/usr && \
 	\
-	patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-swapon-no-page.h.patch && \
+	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-swapon-no-page.h.patch && \
 	perl -p -i -e \
 		's/sh swap\.configure/echo this breaks my patch sh swap\.configure/' mount/Makefile && \
 	echo "#define SWAPON_HAS_TWO_ARGS" > mount/swapargs.h && \
