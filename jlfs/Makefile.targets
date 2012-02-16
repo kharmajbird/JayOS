@@ -438,7 +438,7 @@ root-prereqs:
 		/bin/bash -c ' \
 			SHELL=/bin/bash \
 			cd /usr/src && make root-modules && \
-		make root-qemu'
+		echo nokqemu make root-qemu'
 
 root-modules:
 	@if [ ! -d $(KERNEL)-$(ARCH) ]; then \
