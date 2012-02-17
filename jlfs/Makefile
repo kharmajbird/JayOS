@@ -1326,6 +1326,22 @@ $(DOCUTILS):
 	cd .. && \
 	rm -rf $(DOCUTILS)/* && \
 	make P=$(DOCUTILS) log-package
+
+$(TREE):
+	set +h && \
+	\
+	tar xvf $(JLFS-TARBALLS)/$(TREE).tgz && \
+	chmod 755 $(TREE) && \
+	chown -R 0:0 $(TREE) && \
+	cd $(TREE) && \
+	\
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(TREE)/* && \
+	make P=$(TREE) log-package
+
 #
 # End JLFS Custom-CLI
 # Begin JLFS Custom-GUI

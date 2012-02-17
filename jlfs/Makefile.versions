@@ -113,6 +113,7 @@ IPVSADM = ipvsadm-1.26
 S3CMD = s3cmd-1.0.1
 TUNCTL = tunctl-1.5
 DOCUTILS = docutils-0.8.1
+TREE = tree-1.5.3
 
 #
 # End JLFS Custom-CLI
