@@ -438,6 +438,7 @@ LIBXCB = libxcb-1.7
 
 LIBJPEG = jpeg-8b
 LIBPNG = libpng-1.5.8
+LIBPNG-OLD = libpng-1.2.44
 LIBTIFF = tiff-3.9.4
 GIFLIB = giflib-4.1.6
 LCMS = lcms-1.18

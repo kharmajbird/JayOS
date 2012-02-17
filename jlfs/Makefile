@@ -5165,6 +5165,24 @@ $(LIBPNG):
 	rm -rf $(LIBPNG)/.libs $(LIBPNG)/.deps $(LIBPNG)/* && \
 	make P=$(LIBPNG) log-package
 
+$(LIBPNG-OLD):
+	set +h && \
+	\
+	tar jxvf $(JLFS-TARBALLS)/$(LIBPNG-OLD).tar.bz2 && \
+	chmod 755 $(LIBPNG-OLD) && \
+	chown -R 0:0 $(LIBPNG-OLD) && \
+	cd $(LIBPNG-OLD) && \
+	\
+	./configure --sysconfdir=/etc \
+		--prefix=$(LFS)/usr/src/$(LIBPNG-OLD)/usr && \
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	echo save for MPlayer rm -rf $(LIBPNG-OLD)/.libs \
+		$(LIBPNG-OLD)/.deps $(LIBPNG-OLD)/* && \
+	make P=$(LIBPNG-OLD) log-package
+
 $(FONTCONFIG): $(FREETYPE) $(EXPAT)
 	set +h && \
 	\
@@ -10913,9 +10931,9 @@ $(AVIFILE):  $(QT3) $(SDL) $(LIBVORBIS) $(A52DEC) $(LAME) $(LIBMAD) \
 
 $(MPLAYER):  $(XORG7) $(GTK2) $(CDPARANOIA) $(LIBDV) $(LIBDVREAD) $(ALSA) \
 	$(ARTS) $(ESOUND) $(SDL) $(AALIB) $(FONTCONFIG) $(FREETYPE) \
-	$(FRIBIDI) $(GIFLIB) $(LIBJPEG) $(LIBPNG) $(FAAC) $(FAAD2) $(FFMPEG) \
+	$(FRIBIDI) $(GIFLIB) $(LIBJPEG) $(LIBPNG-OLD) $(FAAC) $(FAAD2) \
 	$(LAME) $(LIBFAME) $(LIBMAD) $(LIBVORBIS) $(LZO) $(X264) $(XVIDCORE) \
-	$(LIBDVDNAV) $(DIVX4LINUX)
+	$(LIBDVDNAV) $(DIVX4LINUX) $(FFMPEG)
 
 	set +h && \
 	\
@@ -10953,6 +10971,7 @@ $(MPLAYER):  $(XORG7) $(GTK2) $(CDPARANOIA) $(LIBDV) $(LIBDVREAD) $(ALSA) \
 	chmod -v 755 /usr/share/mplayer/Skin/Blue{,/icons} && \
 	ln -sfv Blue /usr/share/mplayer/Skin/default && \
 	\
+	PKG_CONFIG_PATH=$(LFS)/usr/src/$(LIBPNG-OLD)/usr/lib/pkgconfig \
 	./configure --prefix=/usr --confdir=/etc/mplayer \
 		--disable-ivtv \
 		--enable-largefiles \
