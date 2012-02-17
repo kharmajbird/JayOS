@@ -6640,7 +6640,7 @@ $(AALIB):  $(SLANG)
 $(IMLIB2): $(FREETYPE) $(LIBPNG) $(LIBJPEG)
 	set +h && \
 	\
-	tar xvf $(JLFS-TARBALLS)/$(IMLIB2).tar.gz && \
+	tar jxvf $(JLFS-TARBALLS)/$(IMLIB2).tar.bz2 && \
 	chmod 755 $(IMLIB2) && \
 	chown -R 0:0 $(IMLIB2) && \
 	cd $(IMLIB2) && \
