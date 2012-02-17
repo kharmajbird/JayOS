@@ -8,11 +8,19 @@ live system. In the source, it is /lfs/build/JayOS/scripts/build.sh. Within
 it are a few variables you may wish to change.
 
 
+FS
+Set FS=0 if you already have the sources in /lfs/build/JayOS.  This will 
+skip the creation of the loopback filesystem, the git clone, and the
+downloading of tarballs from S3 storage. Pretty much only useful during
+testing.
+
 LFS
 I would leave this one alone. No harm, no foul.
 
 SCRATCH
 This is the directory that holds the loopback filesystem mounted on /lfs.
+
+
 
 You will need at least 12 GB available for a successful build. Feel free
 to adjust the dd count values in the script for a more roomy environment.
@@ -22,24 +30,26 @@ total 12595216
 -rw-r--r-- 1 root root 12884901888 Jan  4 17:14 lfs.fs
 
 
+
 If you have a 1 GB of RAM or less, you may also want to configure a swap
 space at this time. SeaMonkey is known to want *tons* of RAM during it's
 linking stage.
 
-
 Now the system is ready to build!
 
 
-It is safe to run build.sh from your home directory; it will not write
-to anywhere but /lfs.  When it completes (in seconds) it will ask for
-a shell source command to be run in the terminal.
 
-After running the command, the shell prompt will change from # to $. This
-means that the environment has been properly cleared and set up for
+It is safe to run build.sh from your home directory; it will not write
+to anywhere but /lfs.  When it completes (in seconds) it will ask you to
+run a shell source command to reset root's profile, and the script mkjlfs.sh.
+
+After loading root's new profile, the shell prompt will change from # to $. 
+This means that the environment has been properly cleared and set up for
 cross compilation.
 
-Finally, run build.sh *again* to launch the automated build of LFS,
-BLFS, and JLFS. Images for ISOs and USB sticks will also be built.
+Lastly, run /lfs/build/JayOS/scripts/mkjlfs.sh to launch the automated build 
+of LFS, BLFS, and JLFS. Images for ISOs and USB sticks will also be built.
+
 
 Total compile time is hovering around 16 hours on a core duo 1.66 Ghz
 box with 2GB of RAM and 1GB swap. Time enough for several sandwiches :)
