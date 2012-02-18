@@ -806,7 +806,7 @@ GUTENPRINT = gutenprint-5.0.1
 #
 
 SANE-BACKENDS = sane-backends-1.0.19
-XSANE = xsane-0.998
+#j#XSANE = xsane-0.998
 
 #
 # Typesetting
