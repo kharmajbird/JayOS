@@ -2063,25 +2063,6 @@ $(FWBUILDER):  $(LIBFWBUILDER)
 	rm -rf $(FWBUILDER)/* && \
 	make P=$(FWBUILDER) log-package
 
-$(XCDROAST):  $(GDK-PIXBUF1) $(GTK) $(GLIB) $(XORG7)
-	set +h && \
-	\
-	tar xvf $(JLFS-TARBALLS)/$(XCDROAST).tar.gz && \
-	chmod 755 $(XCDROAST) && \
-	chown -R 0:0 $(XCDROAST) && \
-	cd $(XCDROAST) && \
-	\
-	tar xvf $(JLFS-TARBALLS)/$(XCDROAST)-new_configure.tar.gz && \
-	patch -Np1 -i $(JLFS-PATCHES)/$(XCDROAST)-wav.patch && \
-	\
-	./configure --prefix=/usr --sysconfdir=/etc && \
-	make -j2 && \
-	make install && \
-	\
-	cd .. && \
-	rm -rf $(XCDROAST)/* && \
-	make P=$(XCDROAST) log-package
-
 $(ETHERAPE):  $(XORG7) $(BLFS-GNOME-CORE) $(LIBPCAP) $(GTK2) $(LIBGLADE)
 	set +h && \
 	\
@@ -3048,23 +3029,6 @@ $(DIETLIBC):
 	cd .. && \
 	rm -rf $(DIETLIBC)/* && \
 	make P=$(DIETLIBC) log-package
-
-$(GDK-PIXBUF1):
-	set +h && \
-	\
-	tar jxvf $(JLFS-TARBALLS)/$(GDK-PIXBUF1).tar.bz2 && \
-	chmod 755 $(GDK-PIXBUF1) && \
-	chown -R 0:0 $(GDK-PIXBUF1) && \
-	cd $(GDK-PIXBUF1) && \
-	\
-	./configure --prefix=/usr --sysconfdir=/etc \
-		--disable-gtk-doc && \
-	make -j2 && \
-	make install && \
-	\
-	cd .. && \
-	rm -rf $(GDK-PIXBUF1)/* && \
-	make P=$(GDK-PIXBUF1) log-package
 
 $(GDK-PIXBUF):
 	set +h && \
