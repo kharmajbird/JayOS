@@ -156,7 +156,6 @@ jlfs/eggdbus-0.6.tar.gz
 jlfs/eject-2.1.5.tar.gz
 jlfs/enchant-1.6.0.tar.gz
 jlfs/esound-0.2.37.tar.bz2
-jlfs/espgs-8.15.4-source.tar.bz2
 jlfs/esvn-0.6.12-1.tar.gz
 jlfs/etherape-0.9.9.tar.gz
 jlfs/ettercap-0.7.4.1.tar.gz
@@ -196,9 +195,10 @@ jlfs/gdk-pixbuf-2.24.0.tar.bz2
 jlfs/gedit-2.30.3.tar.bz2
 jlfs/gegl-0.1.8.tar.bz2
 jlfs/gettext-1.05.tar.gz
+jlfs/ghostscript-9.05.tar.bz2
 jlfs/ghostscript-fonts-std-8.11.tar.gz
 jlfs/giflib-4.1.6.tar.bz2
-jlfs/gimp-2.6.8.tar.bz2
+jlfs/gimp-2.6.12.tar.bz2
 jlfs/gir-repository-0.6.5.tar.bz2
 jlfs/git-1.7.7.5.tar.gz
 jlfs/gkrellm-2.3.2.tar.gz
@@ -293,6 +293,7 @@ jlfs/lame-398-2.tar.gz
 jlfs/latencytop-0.4.tar.gz
 jlfs/lavaps-2.7.tar.gz
 jlfs/lcms-1.18.tar.gz
+jlfs/lcms2-2.3.tar.gz
 jlfs/lesstif-0.95.2.tar.bz2
 jlfs/libIDL-0.8.14.tar.bz2
 jlfs/libaio-0.3.107.orig.tar.gz

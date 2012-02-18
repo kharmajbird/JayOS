@@ -228,7 +228,7 @@ BOTO = boto-r1595
 
 SEAMONKEY = seamonkey-2.5
 #FIREFOX = firefox-8.0.1
-GIMP = gimp-2.6.8
+GIMP = gimp-2.6.12
 FVWM95 = fvwm95-2.0.43f
 XWC = xwc-0.91.5a
 XV = xv-3.10a
