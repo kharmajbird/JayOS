@@ -2341,7 +2341,7 @@ $(TRANSMISSION):  $(LIBEVENT)
 	rm -rf $(TRANSMISSION)/* && \
 	make P=$(TRANSMISSION) log-package
 
-$(GXINE):  $(XINE-LIB)
+$(GXINE):  $(LIBXINE)
 	set +h && \
 	\
 	tar jxvf $(JLFS-TARBALLS)/$(GXINE).tar.bz2 && \
@@ -6602,6 +6602,22 @@ $(LCMS):  $(LIBTIFF) $(PYTHON) $(LIBJPEG)
 	rm -rf $(LCMS)/* && \
 	make P=$(LCMS) log-package
 
+$(LCMS2):  $(LIBTIFF) $(PYTHON) $(LIBJPEG)
+	set +h && \
+	\
+	tar xvf $(JLFS-TARBALLS)/$(LCMS2).tar.gz && \
+	chmod 755 $(LCMS2) && \
+	chown -R 0:0 $(LCMS2) && \
+	cd $(LCMS2) && \
+	\
+	./configure --prefix=/usr --disable-static && \
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(LCMS2)/* && \
+	make P=$(LCMS2) log-package
+
 $(LIBMNG):  $(LCMS) $(LIBJPEG)
 	set +h && \
 	\
@@ -9922,7 +9938,7 @@ $(GEDIT):  $(LIBGNOMEUI) $(LIBGNOMEPRINTUI) $(GNOME-DOC-UTILS) \
 	make P=$(GEDIT) log-package
 
 $(TOTEM):  $(GNOME-ICON-THEME) $(GNOME-DESKTOP) $(ISO-CODES) \
-	$(GST-PLUGINS-GOOD) $(XINE-LIB) $(TOTEM-PL-PARSER) \
+	$(GST-PLUGINS-GOOD) $(LIBXINE) $(TOTEM-PL-PARSER) \
 	$(LIBUNIQUE) $(LIBGDATA) $(GNOME-DOC-UTILS) $(CLUTTER) $(MX) \
 	$(CLUTTER-GTK) $(CLUTTER-GST) $(LIBPEAS)
 
@@ -10484,16 +10500,16 @@ $(XVIDCORE):  $(NASM)
 	rm -rf $(XVIDCORE)/* && \
 	make P=$(XVIDCORE) log-package
 
-$(XINE-LIB):  $(XORG7) $(ESOUND) $(ALSA-LIB) $(ARTS) $(PKG-CONFIG) \
+$(LIBXINE):  $(XORG7) $(ESOUND) $(ALSA-LIB) $(ARTS) $(PKG-CONFIG) \
 	$(AALIB) $(LIBVORBIS) $(LIBFAME) $(LIBMNG) $(FLAC) $(SDL) \
 	$(SPEEX) $(IMAGEMAGICK) $(FFMPEG)
 
 	set +h && \
 	\
-	xz -dc $(JLFS-TARBALLS)/$(XINE-LIB).tar.xz| tar xvf - && \
-	chmod 755 $(XINE-LIB) && \
-	chown -R 0:0 $(XINE-LIB) && \
-	cd $(XINE-LIB) && \
+	xz -dc $(JLFS-TARBALLS)/$(LIBXINE).tar.xz| tar xvf - && \
+	chmod 755 $(LIBXINE) && \
+	chown -R 0:0 $(LIBXINE) && \
+	cd $(LIBXINE) && \
 	\
 	echo for zlib-1.2.6 sed -i 's#gzgetc(#gzgetc_(#' src/xine-engine/osd.c && \
 	\
@@ -10501,13 +10517,13 @@ $(XINE-LIB):  $(XORG7) $(ESOUND) $(ALSA-LIB) $(ARTS) $(PKG-CONFIG) \
 		--disable-musepack \
 		--disable-vcd \
 		--enable-static \
-		--docdir=/usr/share/doc/$(XINE-LIB) && \
+		--docdir=/usr/share/doc/$(LIBXINE) && \
 	make -j2 && \
 	make install && \
 	\
 	cd .. && \
-	rm -rf $(XINE-LIB)/* && \
-	make P=$(XINE-LIB) log-package
+	rm -rf $(LIBXINE)/* && \
+	make P=$(LIBXINE) log-package
 
 $(LIBMIKMOD):  $(ALSA-LIB) $(ESOUND)
 	set +h && \
@@ -11225,30 +11241,26 @@ $(LPRNG):  $(OPENSSL) $(TCP-WRAPPER)
 	rm -rf $(LPRNG)/* && \
 	make P=$(LPRNG) log-package
 
-$(ESPGS):  $(CUPS) $(GTK2) $(LIBPNG) $(XORG7)
+$(GHOSTSCRIPT):  $(CUPS) $(GTK2) $(LIBPNG) $(XORG7) $(LCMS2)
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(ESPGS)-source.tar.bz2 && \
-	chmod 755 $(ESPGS) && \
-	chown -R 0:0 $(ESPGS) && \
-	cd $(ESPGS) && \
+	tar jxvf $(JLFS-TARBALLS)/$(GHOSTSCRIPT).tar.bz2 && \
+	chmod 755 $(GHOSTSCRIPT) && \
+	chown -R 0:0 $(GHOSTSCRIPT) && \
+	cd $(GHOSTSCRIPT) && \
 	\
-	patch -Np1 -i $(JLFS-PATCHES)/$(ESPGS)-bov_fix-1.patch && \
-	\
-	sed -i "s/bbox.dev/x11.dev/" Makefile.in && \
-	./configure --prefix=/usr --enable-threads --without-omni && \
-	echo no make -j2 && \
+	rm -rf expat freetype jpeg lcms2 libpng tiff && \
+	rm -rf jasper lcms zlib && \
+	./configure --prefix=/usr --enable-dynamic \
+		--with-system-libtiff LIBS=-lz && \
 	make && \
 	make so && \
 	make install && \
-	\
-	install -d /usr/share/doc/$(ESPGS) && \
-	ln -v -sfn ../../ghostscript/8.15/doc /usr/share/doc/$(ESPGS) && \
-	\
 	make soinstall && \
-	install -v -d -m755 /usr/include/ps && \
-	install -v -m644 src/*.h /usr/include/ps && \
-	ln -v -sfn ps /usr/include/ghostscript && \
+	install -v -m644 base/*.h /usr/include/ghostscript && \
+	\
+	ln -v -s ghostscript /usr/include/ps && \
+	ln -sfv ../ghostscript/9.05/doc /usr/share/doc/ghostscript-9.05 && \
 	\
 	tar xvf $(JLFS-TARBALLS)/$(GNU-GS-FONTS-OTHER).tar.gz \
 		-C /usr/share/ghostscript && \
@@ -11257,8 +11269,8 @@ $(ESPGS):  $(CUPS) $(GTK2) $(LIBPNG) $(XORG7)
 	chown -v root:root /usr/share/ghostscript/fonts/* && \
 	\
 	cd .. && \
-	rm -rf $(ESPGS)/* && \
-	make P=$(ESPGS) log-package
+	rm -rf $(GHOSTSCRIPT)/* && \
+	make P=$(GHOSTSCRIPT) log-package
 
 $(GUTENPRINT):  $(CUPS) $(GTK2) $(GIMP)
 	set +h && \
@@ -11367,7 +11379,7 @@ $(PSUTILS):
 	rm -rf $(PSUTILS)/* && \
 	make P=$(PSUTILS) log-package
 
-$(GSVIEW):  $(GTK) $(ESPGS) $(A2PS)
+$(GSVIEW):  $(GTK) $(GHOSTSCRIPT) $(A2PS)
 	set +h && \
 	\
 	tar xvf $(JLFS-TARBALLS)/$(GSVIEW).tar.gz && \
@@ -11386,7 +11398,7 @@ $(GSVIEW):  $(GTK) $(ESPGS) $(A2PS)
 	rm -rf $(GSVIEW)/* && \
 	make P=$(GSVIEW) log-package
 
-$(XPDF):  $(LESSTIF) $(FREETYPE) $(ESPGS)
+$(XPDF):  $(LESSTIF) $(FREETYPE) $(GHOSTSCRIPT)
 	set +h && \
 	\
 	tar xvf $(JLFS-TARBALLS)/$(XPDF).tar.gz && \
