@@ -10844,6 +10844,15 @@ $(FFMPEG):  $(A52DEC) $(XVIDCORE) $(FAAC) $(FAAD2) $(FREETYPE) $(LAME) \
 	chown -R 0:0 $(FFMPEG) && \
 	cd $(FFMPEG) && \
 	\
+	echo "Blowing away old ffmpeg version..." && \
+	sleep 5 && \
+	\
+	for i in libavformat libavcodec libavdevice libavutil \
+		libpostproc libswscale; do \
+			rm -rf $(LFS)/usr/include/$${i}; \
+			rm -rf $(LFS)/usr/lib/pkgconfig/$${i}.pc; \
+	done && \
+	\
 	./configure --prefix=/usr \
 		--enable-gpl \
 		--disable-static \
@@ -10883,7 +10892,8 @@ $(FFMPEG-OLD):  $(A52DEC) $(XVIDCORE) $(FAAC) $(FAAD2) $(FREETYPE) $(LAME) \
 	chown -R 0:0 $(FFMPEG-OLD) && \
 	cd $(FFMPEG-OLD) && \
 	\
-	./configure --prefix=$(LFS)/usr/src/$(FFMPEG-OLD)/usr \
+	echo ./configure --prefix=$(LFS)/usr/src/$(FFMPEG-OLD)/usr && \
+	./configure --prefix=/usr \
 		--enable-gpl \
 		--enable-shared \
 		--enable-postproc \
@@ -11039,7 +11049,6 @@ $(TRANSCODE):  $(LIBXML2) $(FREETYPE) $(FFMPEG-OLD) $(MPEG2DEC) $(LAME) \
 	chown -R 0:0 $(TRANSCODE) && \
 	cd $(TRANSCODE) && \
 	\
-	PKG_CONFIG_PATH=$(LFS)/usr/src/$(FFMPEG-OLD)/usr/lib/pkgconfig \
 	./configure --prefix=/usr \
 		--enable-imagemagick \
 		--enable-x264 \
