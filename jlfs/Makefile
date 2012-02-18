@@ -836,7 +836,7 @@ $(MINGETTY):
 $(SOX):  $(FFMPEG-OLD)
 	set +h && \
 	\
-	tar jxf $(JLFS-TARBALLS)/$(SOX).tar.bz2 && \
+	tar jvxf $(JLFS-TARBALLS)/$(SOX).tar.bz2 && \
 	chmod 755 $(SOX) && \
 	chown -R 0:0 $(SOX) && \
 	cd $(SOX) && \
@@ -9922,7 +9922,7 @@ $(GEDIT):  $(LIBGNOMEUI) $(LIBGNOMEPRINTUI) $(GNOME-DOC-UTILS) \
 	make P=$(GEDIT) log-package
 
 $(TOTEM):  $(GNOME-ICON-THEME) $(GNOME-DESKTOP) $(ISO-CODES) \
-	$(GST-PLUGINS-GOOD) $(XINE-LIB) $(VLC) $(TOTEM-PL-PARSER) \
+	$(GST-PLUGINS-GOOD) $(XINE-LIB) $(TOTEM-PL-PARSER) \
 	$(LIBUNIQUE) $(LIBGDATA) $(GNOME-DOC-UTILS) $(CLUTTER) $(MX) \
 	$(CLUTTER-GTK) $(CLUTTER-GST) $(LIBPEAS)
 
