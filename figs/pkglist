@@ -496,7 +496,7 @@ jlfs/ruby-1.9.1-p376.tar.bz2
 jlfs/runefs.tar.gz
 jlfs/s3cmd-1.0.1.tar.gz
 jlfs/samba-3.5.1.tar.gz
-jlfs/sane-backends-1.0.17.tar.gz
+jlfs/sane-backends-1.0.19.tar.gz
 jlfs/screen-4.0.3.tar.gz
 jlfs/seamonkey-2.5.source.tar.bz2
 jlfs/send2trash-1.2.0.tar.bz2
@@ -570,7 +570,7 @@ jlfs/xine-ui-0.99.5.tar.gz
 jlfs/xine-ui-0.99.6.tar.xz
 jlfs/xmms-1.2.11.tar.bz2
 jlfs/xpdf-3.02.tar.gz
-jlfs/xsane-0.994.tar.gz
+jlfs/xsane-0.998.tar.gz
 jlfs/xscreensaver-5.10.tar.gz
 jlfs/xterm-267.tgz
 jlfs/xv-3.10a.tar.gz
