@@ -1247,7 +1247,7 @@ $(YASM):
 	rm -rf $(YASM)/* $(YASM)/.deps && \
 	make P=$(YASM) log-package
 
-$(DVDAUTHOR):  
+$(DVDAUTHOR):  $(LIBPNG-OLD)
 	set +h && \
 	\
 	tar zxf $(JLFS-TARBALLS)/$(DVDAUTHOR).tar.gz && \
@@ -1256,6 +1256,7 @@ $(DVDAUTHOR):
 	chown -R 0:0 $(DVDAUTHOR) && \
 	cd $(DVDAUTHOR) && \
 	\
+	PKG_CONFIG_PATH=$(LFS)/usr/src/$(LIBPNG-OLD)/usr/lib/pkgconfig \
 	./configure --prefix=/usr --sysconfdir=/etc && \
 	make -j2 && \
 	make install && \
