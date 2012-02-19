@@ -1,0 +1,31 @@
+diff -Naur celestia-1.6.1.orig/src/celengine/frametree.h celestia-1.6.1/src/celengine/frametree.h
+--- celestia-1.6.1.orig/src/celengine/frametree.h	2011-06-05 09:11:09.000000000 -0700
++++ celestia-1.6.1/src/celengine/frametree.h	2012-02-18 18:33:50.695529174 -0800
+@@ -14,6 +14,7 @@
+ #define _CELENGINE_FRAMETREE_H_
+ 
+ #include <vector>
++#include <cstddef>
+ 
+ class Star;
+ class Body;
+@@ -29,7 +30,7 @@
+     ~FrameTree();
+ 
+     /*! Return the star that this tree is associated with; it will be
+-     *  NULL for frame trees associated with solar system bodies.
++     *  N U L L for frame trees associated with solar system bodies.
+      */
+     Star* getStar() const
+     {
+diff -Naur celestia-1.6.1.orig/src/celestia/imagecapture.cpp celestia-1.6.1/src/celestia/imagecapture.cpp
+--- celestia-1.6.1.orig/src/celestia/imagecapture.cpp	2011-06-05 09:11:13.000000000 -0700
++++ celestia-1.6.1/src/celestia/imagecapture.cpp	2012-02-18 18:39:34.566529028 -0800
+@@ -12,6 +12,7 @@
+ #include "../celengine/gl.h"
+ #include <celengine/celestia.h>
+ #include "imagecapture.h"
++#include <zlib.h>
+ 
+ extern "C" {
+ #ifdef _WIN32
