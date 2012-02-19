@@ -2490,6 +2490,8 @@ $(CELESTIA):  $(GTKGLEXT)
 	chown -R 0:0 $(CELESTIA) && \
 	cd $(CELESTIA) && \
 	\
+	patch -Np1 -i $(JLFS-PATCHES)/$(CELESTIA)-no_NULL.patch && \
+	\
 	./configure --prefix=/usr --sysconfdir=/etc \
 		--enable-cairo \
 		--with-gtk && \
