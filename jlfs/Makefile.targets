@@ -512,9 +512,6 @@ root-generic:
 	\
 	if [ $(OPENVZ) ]; then cp -a vz $(MNT); fi && \
 	\
-	( cd $(MNT)/etc/rc.d/init.d && \
-		patch -Np0 -i $(JLFS-PATCHES)/mountfs-uproot.patch ) && \
-	\
 	for i in 0 1 2 3 4 5 6 7; do \
 		mknod $(MNT)/dev/loop$${i} b 7 $${i}; \
 	done && \
