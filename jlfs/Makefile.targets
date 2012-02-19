@@ -527,7 +527,7 @@ root-generic:
 	cp -a $(LFS)/usr/bin/{awk,gawk,wc,vi,vim,id,tty} $(MNT)/bin && \
 	cp -a $(LFS)/usr/bin/{mcookie,expr,setterm,setsid} $(MNT)/bin && \
 	cp -a $(LFS)/usr/bin/{logger,env,cut} $(MNT)/bin && \
-	cp -a $(LFS)/usr/sbin/{syslogd,klogd,chroot} $(MNT)/sbin && \
+	cp -a $(LFS)/usr/sbin/chroot $(MNT)/sbin && \
 	cp -a $(LFS)/usr/lib/libcrypto.so* $(MNT)/lib && \
 	\
 	rm -f $(MNT)/etc/rc.d/rc3.d/S24nfs-server && \
