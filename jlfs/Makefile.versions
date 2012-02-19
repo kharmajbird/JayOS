@@ -283,7 +283,10 @@ DUPEGURU = dupeguru-5.7.2
 PHPMYADMIN = phpMyAdmin-3.4.6-english
 AVIDEMUX = avidemux_2.5.5
 GRAPHVIZ = graphviz-2.28.0
-QDVDAUTHOR = qdvdauthor-2.2.2
+#
+# depends on commented dvdauthor
+#j#QDVDAUTHOR = qdvdauthor-2.2.2
+#
 CELESTIA = celestia-1.6.1
 #
 # no online for you!!!
