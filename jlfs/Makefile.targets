@@ -313,7 +313,6 @@ strip-man:
 	\
 	tar jcf usr/src/manpages.tar.bz2 \
 		usr/share/gtk-doc \
-		usr/share/ghostscript/8.15/doc \
 		usr/share/graphviz/doc \
 		usr/share/gutenprint/doc \
 		usr/share/vim/vim73/doc \
@@ -324,7 +323,6 @@ strip-man:
 	rm -rf usr/share/{info,doc,man}/* \
 		srv/www/manual/* \
 		usr/share/gtk-doc/* \
-		usr/share/ghostscript/8.15/doc/* \
 		usr/share/graphviz/doc/* \
 		usr/share/gutenprint/doc/* \
 		usr/share/vim/vim73/doc/* \

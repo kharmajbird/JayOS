@@ -1945,7 +1945,7 @@ $(PINENTRY):
 	rm -rf $(PINENTRY)/* && \
 	make P=$(PINENTRY) log-package
 
-$(DIA):  $(PKG-CONFIG) $(GTK2) $(LIBXML2) $(INTLTOOL) $(FREETYPE) $(LIBPNG) \
+$(DIA):  $(PKG-CONFIG) $(GTK2) $(LIBXML2) $(INTLTOOL) $(FREETYPE) $(LIBPNG-OLD) \
 	$(BLFS-GNOME-LIB) $(LIBART) $(PYTHON) $(PYGTK2) $(LIBXSLT)
 
 	set +h && \
@@ -1957,6 +1957,7 @@ $(DIA):  $(PKG-CONFIG) $(GTK2) $(LIBXML2) $(INTLTOOL) $(FREETYPE) $(LIBPNG) \
 	\
 	patch -Np1 -i $(JLFS-PATCHES)/$(DIA)-no-glib.patch && \
 	\
+	PKG_CONFIG_PATH=$(LFS)/usr/src/$(LIBPNG-OLD)/usr/lib/pkgconfig \
 	./configure --prefix=/opt --enable-gnome --with-python \
 		--enable-db2html && \
 	\
