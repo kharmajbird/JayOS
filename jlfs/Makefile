@@ -11000,7 +11000,7 @@ $(MPLAYER):  $(XORG7) $(GTK2) $(CDPARANOIA) $(LIBDV) $(LIBDVREAD) $(ALSA) \
 	rm -rf $(MPLAYER)/* && \
 	make P=$(MPLAYER) log-package
 
-$(XINE-UI):  $(AALIB)
+$(XINE-UI):  $(AALIB) $(LIBXINE)
 	set +h && \
 	\
 	xz -dc $(JLFS-TARBALLS)/$(XINE-UI).tar.xz| tar xvf - && \
