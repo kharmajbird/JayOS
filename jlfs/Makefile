@@ -58,7 +58,8 @@ all:
 
 	if [ -f $(LFS)/tmp/sallgood ]; then \
 		rm -f $(LFS)/tmp/sallgood && \
-		make strip; \
+		echo "Stripping binaries and libraries..." && \
+		make strip >/dev/null 2>&1; \
 	fi
 
 include Makefile.targets
