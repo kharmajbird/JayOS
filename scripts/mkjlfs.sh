@@ -32,3 +32,5 @@ make strip-man
 make livecd
 
 play $ALERT
+sleep 1
+play $ALERT
