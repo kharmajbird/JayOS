@@ -5,8 +5,7 @@ JayOS TODO list, in no particular order:
 1) Disk probing from within linuxrc needs enhancing. This is why
 linuxrc.orig is still hanging around in the source.
 
-3) Upgrade to Linux-3.2.
-
+2) Replace qtparted with DeviceKit and friends.
 
 
 ** older stuff **
