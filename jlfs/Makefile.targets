@@ -209,14 +209,16 @@ $(LOOP-AES):
 	\
 	tar jxf $(LFS-TARBALLS)/$(UTIL-LINUX).tar.bz2 && \
 	cd $(UTIL-LINUX) && \
-	patch -p1 < ../util-linux-2.20.1.diff && \
+	echo patch -Np1 -i $(JLFS-PATCHES)/$(UTIL-LINUX-OLD)-libtirpc.patch && \
+	patch -p1 < ../$(UTIL-LINUX).1.diff && \
 	\
-	CFLAGS="-O2 -Wall" ./configure --prefix=/usr && \
+	CFLAGS="-O2 -Wall" \
+		./configure --prefix=/usr && \
 	make && \
 	\
 	cd mount && \
-	install -m 4755 -o root mount umount /bin && \
-	install -m 755 losetup swapon /sbin && \
+	install -m 4755 -o root .libs/mount .libs/umount /bin && \
+	install -m 755 losetup .libs/swapon /sbin && \
 	rm -f /sbin/swapoff && ( cd /sbin && ln -s swapon swapoff ) && \
 	cd ../.. && \
 	\
