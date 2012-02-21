@@ -703,7 +703,6 @@ initrd:
 	done
 
 	@if [ $(OPENVZ) ]; then \
-		cp -av $(LFS)/lib/modules/$(OPENVZ-VER)/kernel/crypto/aes_generic.ko $(MNT)/lib; \
 		cp -av $(LFS)/lib/modules/$(OPENVZ-VER)/kernel/arch/x86/crypto/aes-i586.ko $(MNT)/lib; \
 		cp -av $(LFS)/lib/modules/$(OPENVZ-VER)/kernel/lib/crc-itu-t.ko $(MNT)/lib; \
 		cp -av $(LFS)/lib/modules/$(OPENVZ-VER)/kernel/drivers/firewire/firewire-core.ko $(MNT)/lib; \
@@ -711,7 +710,6 @@ initrd:
 		cp -av $(LFS)/lib/modules/$(OPENVZ-VER)/kernel/drivers/firewire/firewire-sbp2.ko $(MNT)/lib; \
 		cp -av $(LFS)/lib/modules/$(OPENVZ-VER)/extra/loop.ko $(MNT)/lib; \
 	else \
-		cp -av $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/kernel/crypto/aes_generic.ko $(MNT)/lib; \
 		cp -av $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/kernel/arch/x86/crypto/aes-i586.ko $(MNT)/lib; \
 		cp -av $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/kernel/lib/crc-itu-t.ko $(MNT)/lib; \
 		cp -av $(LFS)/lib/modules/$(KERNEL-VER)-$(ARCH)/kernel/drivers/firewire/firewire-core.ko $(MNT)/lib; \
