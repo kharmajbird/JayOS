@@ -172,7 +172,7 @@ $(KERNEL)-$(ARCH): $(RSYNC)
 	cp -v $(JLFS-CONFIGS)/$(KERNEL)-$(ARCH).config .config && \
 	\
 	make oldconfig && \
-	make -j4 bzImage && \
+	make -j2 bzImage && \
 	make modules && \
 	\
 	cd .. && \
@@ -209,31 +209,15 @@ $(LOOP-AES):
 	\
 	tar jxf $(LFS-TARBALLS)/$(UTIL-LINUX).tar.bz2 && \
 	cd $(UTIL-LINUX) && \
+	patch -p1 < ../util-linux-2.20.1.diff && \
 	\
-	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-loop_AES-3.1d.patch && \
-	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-nopassword.patch && \
-	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-missing_header-2.patch && \
-	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-mkswap-no-page.h.patch && \
-	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-cramfs-no-page.h.patch && \
-	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-lseek-1.patch && \
-	\
-	./configure CFLAGS=-O2 --prefix=/usr && \
-	\
-	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(UTIL-LINUX)-swapon-no-page.h.patch && \
-	perl -p -i -e \
-		's/sh swap\.configure/echo this breaks my patch sh swap\.configure/' mount/Makefile && \
-	echo "#define SWAPON_HAS_TWO_ARGS" > mount/swapargs.h && \
-	echo "" >> mount/swapargs.h && \
-	echo "#include <sys/swap.h>" >> mount/swapargs.h && \
-	echo "#define PAGE_SIZE 4096" >> mount/swapargs.h && \
-	\
-	echo obsolete make SUBDIRS="mount" && \
+	CFLAGS="-O2 -Wall" ./configure --prefix=/usr && \
 	make && \
+	\
 	cd mount && \
 	install -m 4755 -o root mount umount /bin && \
 	install -m 755 losetup swapon /sbin && \
-	rm -f /sbin/swapoff && \
-	( cd /sbin && ln -s swapon swapoff ) && \
+	rm -f /sbin/swapoff && ( cd /sbin && ln -s swapon swapoff ) && \
 	cd ../.. && \
 	\
 	cd .. && \
