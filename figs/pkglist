@@ -602,6 +602,7 @@ lfs/gcc-4.6.1.tar.bz2
 lfs/gdbm-1.9.1.tar.gz
 lfs/gettext-0.18.1.1.tar.gz
 lfs/glibc-2.14.1.tar.bz2
+lfs/glibc-2.15.tar.bz2
 lfs/gmp-5.0.2.tar.bz2
 lfs/grep-2.9.tar.gz
 lfs/groff-1.21.tar.gz

@@ -29,7 +29,8 @@ GAWK = gawk-4.0.0
 GCC4 = gcc-4.6.1
 GCC4-VER = 4.6.1
 GETTEXT = gettext-0.18.1.1
-GLIBC = glibc-2.14.1
+#GLIBC = glibc-2.14.1
+GLIBC = glibc-2.15
 GREP = grep-2.9
 GROFF = groff-1.21
 #
