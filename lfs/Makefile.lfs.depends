@@ -101,37 +101,39 @@ REDO-LFS-TEMPSYS := \
 
 	#linux-headers \
 	#$(MAN-PAGES) \
+	#$(GLIBC) \
+	#readjust-toolchain \
+	#$(ZLIB) \
+	#$(BINUTILS) \
+	#$(M4) $(GMP) \
+	#$(MPFR) $(MPC) \
+	#$(FILE) \
+	#$(GCC4) \
+	#$(SED) \
+	#$(NCURSES) \
+	#$(UTIL-LINUX) $(E2FSPROGS) \
+	#$(COREUTILS) \
+	#$(IANA-ETC) $(BISON) $(PROCPS) $(GREP) $(READLINE) $(BASH) \
+	#$(LIBTOOL) \
+	#$(GDBM) $(INETUTILS) \
+	#$(PERL) $(AUTOCONF) \
+	#$(AUTOMAKE) \
+	#$(BZIP2) $(DIFFUTILS) $(GAWK) $(FINDUTILS) \
+	#$(FLEX) $(GETTEXT) \
+	#$(GROFF) $(GRUB) \
+	#$(GZIP) \
+	#$(LIBNL) \
+	#$(IPROUTE) \
+	#$(KBD) $(LESS) $(LIBPIPELINE) $(MAKE) $(MAN-DB) \
+	#$(MODULE-INIT-TOOLS) \
+	#$(PATCH) \
+	#$(PSMISC) \
+	#$(SHADOW) \
+	#$(SYSKLOGD) $(SYSVINIT) $(TAR) $(TEXINFO) \
+	#$(UDEV) \
 
 # ditto when doing a "make redo-lfs-basicsystem"
 
 REDO-LFS-BASICSYS := \
-	$(GLIBC) \
-	readjust-toolchain \
-	$(ZLIB) \
-	$(BINUTILS) \
-	$(M4) $(GMP) \
-	$(MPFR) $(MPC) \
-	$(FILE) \
-	$(GCC4) \
-	$(SED) \
-	$(NCURSES) \
-	$(UTIL-LINUX) $(E2FSPROGS) \
-	$(COREUTILS) \
-	$(IANA-ETC) $(BISON) $(PROCPS) $(GREP) $(READLINE) $(BASH) \
-	$(LIBTOOL) \
-	$(GDBM) $(INETUTILS) \
-	$(PERL) $(AUTOCONF) \
-	$(AUTOMAKE) \
-	$(BZIP2) $(DIFFUTILS) $(GAWK) $(FINDUTILS) \
-	$(FLEX) $(GETTEXT) \
-	$(GROFF) $(GRUB) \
-	$(GZIP) \
-	$(LIBNL) \
-	$(IPROUTE) \
-	$(KBD) $(LESS) $(LIBPIPELINE) $(MAKE) $(MAN-DB) \
-	$(MODULE-INIT-TOOLS) \
-	$(PATCH) \
-	$(PSMISC) \
-	$(SHADOW) \
-	$(SYSKLOGD) $(SYSVINIT) $(TAR) $(TEXINFO) $(UDEV) $(VIM) \
+	$(VIM) \
 	$(LFS-BOOTSCRIPTS)

@@ -2063,7 +2063,7 @@ $(PSMISC):
 	make install && \
 	\
 	mv -v /bin/pstree* /usr/bin && \
-	ln -sv killall /bin/pidof && \
+	ln -sfv killall /bin/pidof && \
 	\
 	cd .. && \
 	rm -rf $(PSMISC)/* && \
@@ -2224,23 +2224,17 @@ $(UDEV):
 	tar jxvf $(LFS-TARBALLS)/$(UDEV-CONFIG).tar.bz2 && \
 	\
 	install -dv /lib/{firmware,udev/devices/{pts,shm}} && \
-	mknod -m0666 /lib/udev/devices/null c 1 3 && \
 	\
 	./configure --prefix=/usr \
 		--sysconfdir=/etc --sbindir=/sbin \
 		--with-rootlibdir=/lib --libexecdir=/lib/udev \
 		--docdir=/usr/share/doc/$(UDEV) \
 		--disable-gtk-doc \
-		--disable-extras --disable-introspection \
+		--disable-introspection \
 		--disable-hwdb --disable-keymap --disable-gudev && \
 	make && \
 	make install && \
 	ldconfig && \
-	\
-	echo obsolete install -m644 -v rules/packages/64-*.rules \
-		/etc/udev/rules.d/ && \
-	echo obsolete install -m644 -v rules/packages/40-pilot-links.rules \
-		/etc/udev/rules.d/40-pilot-links.rules && \
 	\
 	cd $(UDEV-CONFIG) && \
 	make install && \
@@ -2267,9 +2261,6 @@ $(VIM):
 	./configure --prefix=/usr --enable-multibyte && \
 	make && \
 	make install && \
-	\
-	ln -sv vim /usr/bin/vi && \
-	ln -sv vim.1 /usr/share/man/man1/vi.1 && \
 	\
 	echo "set nocompatible" > /etc/vimrc && \
 	echo "set backspace=2" >> /etc/vimrc && \
