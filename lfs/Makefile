@@ -355,6 +355,7 @@ PASS1-$(GCC4):
 	mv -v $(MPC) mpc && \
 	\
 	patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-cross_compile-1.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-startfiles_fix-1.patch && \
 	\
 	mkdir -v ../$(GCC4)-build && \
 	cd ../$(GCC4)-build && \
@@ -416,6 +417,7 @@ TEMP-$(GLIBC):
 		--build=$(shell ../$(GLIBC)/scripts/config.guess) \
  		--disable-profile --enable-add-ons \
  		--enable-kernel=2.6.25 --with-headers=/tools/include \
+		libc_cv_ctors_header=yes \
  		libc_cv_forced_unwind=yes libc_cv_c_cleanup=yes && \
 	\
 	make && \
@@ -472,7 +474,7 @@ PASS2-$(GCC4):
 	cd $(GCC4) && \
 	\
 	patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-startfiles_fix-1.patch && \
-	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-cross_compile-1.patch && \
+	patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-cross_compile-1.patch && \
 	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-locale-1.patch && \
 	\
 	cp -v gcc/Makefile.in{,.orig} && \
@@ -984,8 +986,8 @@ $(GLIBC):
 	\
 	sed -i 's|@BASH@|/bin/bash|' elf/ldd.bash.in && \
 	\
-	patch -Np1 -i $(LFS-PATCHES)/$(GLIBC)-fixes-1.patch && \
-	patch -Np1 -i $(LFS-PATCHES)/$(GLIBC)-gcc_fix-1.patch && \
+	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(GLIBC)-fixes-1.patch && \
+	echo obsolete patch -Np1 -i $(LFS-PATCHES)/$(GLIBC)-gcc_fix-1.patch && \
 	\
 	sed -i '195,213 s/PRIVATE_FUTEX/FUTEX_CLOCK_REALTIME/' \
 		nptl/sysdeps/unix/sysv/linux/x86_64/pthread_rwlock_timed{rd,wr}lock.S && \
@@ -1231,8 +1233,6 @@ $(GCC4):  $(GMP) $(MPFR) $(MPC)
 	\
 	sed -i 's@\./fixinc\.sh@-c true@' gcc/Makefile.in && \
 	sed -i 's/getline/get_line/' libiberty/testsuite/test-demangle.c && \
-	\
-	patch -Np1 -i $(LFS-PATCHES)/$(GCC4)-locale-1.patch && \
 	\
 	mkdir -v ../$(GCC4)-build && \
 	cd ../$(GCC4)-build && \

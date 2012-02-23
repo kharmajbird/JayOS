@@ -390,7 +390,7 @@ jlfs/libxslt-1.1.26.tar.gz
 jlfs/linux-2.6.18-xen-3.3.0.tar.gz
 jlfs/linux-2.6.26-openvz-20091121.tar.bz2
 jlfs/linux-2.6.34.tar.bz2
-jlfs/linux-3.2.2.tar.bz2
+jlfs/linux-3.2.7.tar.bz2
 jlfs/loop-AES-v3.6e.tar.bz2
 jlfs/lsdvd-0.16.tar.gz
 jlfs/lshw-B.02.12.01.tar.gz
@@ -601,7 +601,6 @@ lfs/gawk-4.0.0.tar.bz2
 lfs/gcc-4.6.1.tar.bz2
 lfs/gdbm-1.9.1.tar.gz
 lfs/gettext-0.18.1.1.tar.gz
-lfs/glibc-2.14.1.tar.bz2
 lfs/glibc-2.15.tar.bz2
 lfs/gmp-5.0.2.tar.bz2
 lfs/grep-2.9.tar.gz
