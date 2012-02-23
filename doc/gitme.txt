@@ -1,0 +1,5 @@
+If you have cloned this project via https://github.com/kharmajbird/JayOS.git
+and are experiencing compilation issues due to missing files, mea maxima culpa!!
+
+Since I store only the currently-used tarballs on S3 storage, older tags
+might fail to build because of version upgrades.  
