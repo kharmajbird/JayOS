@@ -2262,6 +2262,8 @@ $(VIM):
 	make && \
 	make install && \
 	\
+	ln -sfn /usr/bin/vim /usr/bin/vi && \
+	\
 	echo "set nocompatible" > /etc/vimrc && \
 	echo "set backspace=2" >> /etc/vimrc && \
 	echo "syntax off" >> /etc/vimrc && \
