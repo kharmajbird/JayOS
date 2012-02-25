@@ -612,8 +612,9 @@ lfs/iana-etc-2.30.tar.bz2
 lfs/inetutils-1.8.tar.gz
 lfs/iproute2-3.2.0.tar.xz
 lfs/kbd-1.15.2.tar.gz
+lfs/kmod-5.tar.xz
 lfs/less-444.tar.gz
-lfs/lfs-bootscripts-20111017.tar.bz2
+lfs/lfs-bootscripts-20120219.tar.bz2
 lfs/libnl-2.0.tar.gz
 lfs/libpipeline-1.2.0.tar.gz
 lfs/libtool-2.4.tar.gz
@@ -637,7 +638,7 @@ lfs/sysvinit-2.88dsf.tar.bz2
 lfs/tar-1.26.tar.bz2
 lfs/tcl8.5.10-src.tar.gz
 lfs/texinfo-4.13.tar.gz
-lfs/udev-173.tar.bz2
+lfs/udev-181.tar.xz
 lfs/udev-config-20100128.tar.bz2
 lfs/util-linux-2.20.tar.bz2
 lfs/vim-7.3.tar.bz2

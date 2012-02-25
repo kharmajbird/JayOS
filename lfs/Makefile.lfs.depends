@@ -40,10 +40,9 @@ LFS-BASICSYS := linux-headers $(MAN-PAGES) $(GLIBC) \
 		$(GREP) $(READLINE) $(BASH) $(LIBTOOL) $(GDBM) $(INETUTILS) \
 		$(PERL) $(AUTOCONF) $(AUTOMAKE) $(BZIP2) $(DIFFUTILS) $(GAWK) \
 		$(FINDUTILS) $(FLEX) $(GETTEXT) $(GROFF) $(GRUB) $(GZIP) \
-		$(LIBNL) $(IPROUTE) $(KBD) $(LESS) $(LIBPIPELINE) $(MAKE) \
-		$(MAN-DB) $(MODULE-INIT-TOOLS) $(PATCH) $(PSMISC) $(SHADOW) \
-		$(SYSKLOGD) $(SYSVINIT) $(TAR) $(TEXINFO) $(UDEV) \
-		$(VIM) $(LFS-BOOTSCRIPTS)
+		$(LIBNL) $(IPROUTE) $(KBD) $(KMOD) $(LESS) $(LIBPIPELINE) \
+		$(MAKE) $(MAN-DB) $(PATCH) $(PSMISC) $(SHADOW) $(SYSKLOGD) \
+		$(SYSVINIT) $(TAR) $(TEXINFO) $(UDEV) $(VIM) $(LFS-BOOTSCRIPTS)
 
 ########################################################################
 ########################################################################
@@ -124,16 +123,15 @@ REDO-LFS-TEMPSYS := \
 	#$(GZIP) \
 	#$(LIBNL) \
 	#$(IPROUTE) \
-	#$(KBD) $(LESS) $(LIBPIPELINE) $(MAKE) $(MAN-DB) \
-	#$(MODULE-INIT-TOOLS) \
+	#$(KBD) $(KMOD) $(LESS) $(LIBPIPELINE) $(MAKE) $(MAN-DB) \
 	#$(PATCH) \
 	#$(PSMISC) \
 	#$(SHADOW) \
 	#$(SYSKLOGD) $(SYSVINIT) $(TAR) $(TEXINFO) \
-	#$(UDEV) \
 
 # ditto when doing a "make redo-lfs-basicsystem"
 
 REDO-LFS-BASICSYS := \
+	$(UDEV) \
 	$(VIM) \
 	$(LFS-BOOTSCRIPTS)

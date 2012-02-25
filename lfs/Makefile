@@ -1918,6 +1918,36 @@ $(KBD):
 	rm -rf $(KBD)/* && \
 	make P=$(KBD) log-package
 
+$(KMOD):
+	set +h && \
+	\
+	xz -dc $(LFS-TARBALLS)/$(KMOD).tar.xz| tar xvf - && \
+	chmod 755 $(KMOD) && \
+	chown -R 0:0 $(KMOD) && \
+	cd $(KMOD) && \
+	\
+	liblzma_CFLAGS="-I/usr/include" \
+	liblzma_LIBS="-L/lib -llzma" \
+	zlib_CFLAGS="-I/usr/include" \
+	zlib_LIBS="-L/lib -lz" \
+	./configure --prefix=/usr \
+		--bindir=/bin \
+		--libdir=/lib \
+		--sysconfdir=/etc \
+		--with-xz \
+		--with-zlib && \
+	make && \
+	make pkgconfigdir=/usr/lib/pkgconfig install && \
+	for target in depmod insmod modinfo modprobe rmmod; do \
+		ln -sv ../bin/kmod /sbin/$${target}; \
+	done && \
+	\
+	ln -sfv kmod /bin/lsmod && \
+	\
+	cd .. && \
+	rm -rf $(KMOD)/* && \
+	make P=$(KMOD) log-package
+
 $(LESS):
 	set +h && \
 	\
@@ -2005,32 +2035,6 @@ $(MAN-DB):
 	cd .. && \
 	rm -rf $(MAN-DB)/* && \
 	make P=$(MAN-DB) log-package
-
-$(MODULE-INIT-TOOLS):
-	set +h && \
-	\
-	tar jxvf $(LFS-TARBALLS)/$(MODULE-INIT-TOOLS).tar.bz2 && \
-	chmod 755 $(MODULE-INIT-TOOLS) && \
-	chown -R 0:0 $(MODULE-INIT-TOOLS) && \
-	cd $(MODULE-INIT-TOOLS) && \
-	\
-	patch -Np1 -i $(LFS-PATCHES)/$(MODULE-INIT-TOOLS)-man_pages-1.patch && \
-	\
-	DOCBOOKTOMAN=/bin/true ./configure && \
-	make check && \
-	sed -i -e 's@../../configure@DOCBOOKTOMAN=/bin/true &@' \
-		tests/runtests && \
-	./tests/runtests && \
-	make clean && \
-	DOCBOOKTOMAN=/bin/true ./configure --prefix=/ \
-		--enable-zlib-dynamic --mandir=/usr/share/man && \
-	\
-	make && \
-	make INSTALL=install install && \
-	\
-	cd .. && \
-	rm -rf $(MODULE-INIT-TOOLS)/* && \
-	make P=$(MODULE-INIT-TOOLS) log-package
 
 $(PATCH):
 	set +h && \
@@ -2214,26 +2218,36 @@ $(TEXINFO):
 $(UDEV):
 	set +h && \
 	\
-	tar jxvf $(LFS-TARBALLS)/$(UDEV).tar.bz2 && \
+	xz -dc $(LFS-TARBALLS)/$(UDEV).tar.xz| tar xvf - && \
 	chmod 755 $(UDEV) && \
 	chown -R 0:0 $(UDEV) && \
 	cd $(UDEV) && \
 	\
-	sed -i -e '/deprecated/d' udev/udevadm-trigger.c && \
-	\
 	tar jxvf $(LFS-TARBALLS)/$(UDEV-CONFIG).tar.bz2 && \
 	\
-	install -dv /lib/{firmware,udev/devices/{pts,shm}} && \
+	install -dv /lib/{firmware,udev/devices/pts} && \
+	mknod -m0666 /lib/udev/devices/null c 1 3 && \
 	\
+	BLKID_CFLAGS="-I/usr/include/blkid" \
+	BLKID_LIBS="-L/lib -lblkid" \
+	KMOD_CFLAGS="-I/usr/include" \
+	KMOD_LIBS="-L/lib -lkmod" \
 	./configure --prefix=/usr \
-		--sysconfdir=/etc --sbindir=/sbin \
-		--with-rootlibdir=/lib --libexecdir=/lib/udev \
-		--docdir=/usr/share/doc/$(UDEV) \
-		--disable-gtk-doc \
+		--with-rootprefix='' \
+		--bindir=/sbin \
+		--sysconfdir=/etc \
+		--libexecdir=/lib \
+		--enable-rule_generator \
 		--disable-introspection \
-		--disable-hwdb --disable-keymap --disable-gudev && \
+		--disable-keymap \
+		--disable-gudev \
+		--with-usb-ids-path=no \
+		--with-pci-ids-path=no \
+		--with-systemdsystemunitdir=no && \
+	\
 	make && \
 	make install && \
+	rmdir -v /usr/share/doc/udev && \
 	ldconfig && \
 	\
 	cd $(UDEV-CONFIG) && \
