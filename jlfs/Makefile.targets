@@ -10,7 +10,7 @@
 # make log-package
 # make strip
 # make strip-man
-# make clean-lfs
+# make clean
 # make root
 # make usr
 # make opt
@@ -982,3 +982,15 @@ usb:
 	\
 	echo "Creating checksum for $(STICK2)..." && \
 	md5sum /lfs/build/iso/$(STICK2) > /lfs/build/iso/$(STICK2).md5
+
+clean:
+	@echo "About to clean /lfs, preserving only /lfs/build/JayOS" && \
+	echo "Ctrl-C within 7 seconds to abort..." && \
+	sleep 7 && \
+	echo "Making clean..." && \
+	\
+	cd $(LFS) && \
+	mv build BUILD && \
+	rm -rf $(LFS)/[a-z]* && \
+	mv BUILD build && \
+	rm -rf build/livecd build/iso
