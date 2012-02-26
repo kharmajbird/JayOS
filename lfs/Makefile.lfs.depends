@@ -32,7 +32,7 @@ LFS-TEMPSYS := PASS1-$(BINUTILS) PASS1-$(GCC4) \
 #
 ########################################################################
 
-LFS-BASICSYS := linux-headers $(MAN-PAGES) $(GLIBC) \
+LFS-BASICSYS := linux-headers $(MAN-PAGES) $(XZ) $(GLIBC) \
 		readjust-toolchain \
 		$(ZLIB) $(FILE) $(BINUTILS) $(M4) $(GMP) $(MPFR) $(MPC) \
 		$(GCC4) $(SED) $(NCURSES) $(UTIL-LINUX) \
@@ -100,6 +100,7 @@ REDO-LFS-TEMPSYS := \
 
 	#linux-headers \
 	#$(MAN-PAGES) \
+	#$(XZ) \
 	#$(GLIBC) \
 	#readjust-toolchain \
 	#$(ZLIB) \
@@ -123,15 +124,17 @@ REDO-LFS-TEMPSYS := \
 	#$(GZIP) \
 	#$(LIBNL) \
 	#$(IPROUTE) \
-	#$(KBD) $(KMOD) $(LESS) $(LIBPIPELINE) $(MAKE) $(MAN-DB) \
-	#$(PATCH) \
-	#$(PSMISC) \
-	#$(SHADOW) \
-	#$(SYSKLOGD) $(SYSVINIT) $(TAR) $(TEXINFO) \
+	#$(KBD) \
 
 # ditto when doing a "make redo-lfs-basicsystem"
 
 REDO-LFS-BASICSYS := \
+	$(XZ) \
+	$(KMOD) $(LESS) $(LIBPIPELINE) $(MAKE) $(MAN-DB) \
+	$(PATCH) \
+	$(PSMISC) \
+	$(SHADOW) \
+	$(SYSKLOGD) $(SYSVINIT) $(TAR) $(TEXINFO) \
 	$(UDEV) \
 	$(VIM) \
 	$(LFS-BOOTSCRIPTS)
