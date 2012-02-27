@@ -4657,22 +4657,6 @@ $(XEN-KERNEL):
 	echo obsolete rm -rf $(XEN-KERNEL)/* && \
 	make P=$(XEN-KERNEL) log-package
 
-$(XZ):
-	set +h && \
-	\
-	tar xvf $(LFS-TARBALLS)/$(XZ).tar.bz2 && \
-	chmod 755 $(XZ) && \
-	chown -R 0:0 $(XZ) && \
-	cd $(XZ) && \
-	\
-	./configure --prefix=/usr && \
-	make && \
-	make install && \
-	\
-	cd .. && \
-	rm -rf $(XZ)/* && \
-	make P=$(XZ) log-package
-
 $(AUTOFS): $(OPENLDAP)
 	echo obsolete mount -vt proc proc /proc && \
 	\
