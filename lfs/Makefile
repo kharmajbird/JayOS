@@ -173,6 +173,7 @@ redo-lfs-temp-system:
 
 lfs-basic-system:
 	mkdir -pv $(LFS)/{dev,proc,sys} && \
+	mknod -m 600 $(LFS)/dev/console c 5 1 && \
 	mount -v --bind /dev $(LFS)/dev && \
 	mount -vt devpts devpts $(LFS)/dev/pts && \
 	mount -vt tmpfs shm $(LFS)/dev/shm && \
@@ -247,6 +248,7 @@ lfs-basic-system-chroot:
 	mkdir -pv /usr/{,local/}share/{doc,info,locale,man} && \
 	mkdir -pv  /usr/{,local/}share/{misc,terminfo,zoneinfo} && \
 	mkdir -pv /usr/{,local/}share/man/man{1..8} && \
+	mkdir -pv /run/var && \
 	\
 	for DIR in /usr /usr/local; do \
 		ln -sfv share/{man,doc,info} $${DIR}; \
