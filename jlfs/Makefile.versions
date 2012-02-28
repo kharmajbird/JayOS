@@ -73,10 +73,6 @@ XVID4CONF = xvid4conf-1.12
 IFTOP = iftop-0.17
 MP3GAIN = mp3gain-1_4_6
 MADPLAY = madplay-0.15.2b
-#
-# requires HAL
-#j#IVMAN = ivman-0.6.14
-#
 FETCHYAHOO = fetchyahoo-2.10.9
 NTFSPROGS = ntfsprogs-2.0.0
 GDB = gdb-7.3.1
@@ -498,9 +494,7 @@ PCIUTILS = pciutils-3.1.7
 USBUTILS = usbutils-0.86
 CPIO = cpio-2.11
 SYSSTAT = sysstat-7.0.4
-#j#HAL = hal-0.5.14
-#j#HAL-INFO = hal-info-20091130
-DEVICE-MAPPER = LVM2.2.02.62
+DEVICE-MAPPER = LVM2.2.02.88
 
 
 #

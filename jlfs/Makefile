@@ -7179,49 +7179,6 @@ $(SYSSTAT):
 	rm -rf $(SYSSTAT)/* && \
 	make P=$(SYSSTAT) log-package
 
-#$(HAL):  $(DBUS-GLIB) $(XML-PARSER) $(PYTHON) $(PCIUTILS) $(USBUTILS)
-#	set +h && \
-#	\
-#	tar zxvf $(JLFS-TARBALLS)/$(HAL).tar.gz && \
-#	chmod 755 $(HAL) && \
-#	chown -R 0:0 $(HAL) && \
-#	cd $(HAL) && \
-#	\
-#	groupadd -g 19 haldaemon; \
-#	useradd -c "HAL Daemon User" -d /dev/null -u 19 \
-#		-g haldaemon -s /bin/false haldaemon; \
-#	\
-#	patch -Np1 -i $(JLFS-PATCHES)/$(HAL)-no-glib-dot-h-for-you.patch && \
-#	\
-#	./configure --prefix=/usr \
-#		--sysconfdir=/etc \
-#		--libexecdir=/usr/lib/hal \
-#		--docdir=/usr/share/$(HAL) \
-#		--localstatedir=/var \
-#		--enable-policy-kit=no && \
-#	\
-#	make -j2 && \
-#	make install && \
-#	\
-#	cd .. && \
-#	rm -rf $(HAL)/* && \
-#	make P=$(HAL) log-package
-#
-#$(HAL-INFO):  $(HAL)
-#	set +h && \
-#	\
-#	tar xvf $(JLFS-TARBALLS)/$(HAL-INFO).tar.gz && \
-#	chmod 755 $(HAL-INFO) && \
-#	chown -R 0:0 $(HAL-INFO) && \
-#	cd $(HAL-INFO) && \
-#	\
-#	./configure --prefix=/usr --sysconfdir=/etc && \
-#	make install && \
-#	\
-#	cd .. && \
-#	rm -rf $(HAL-INFO)/* && \
-#	make P=$(HAL-INFO) log-package
-
 $(DEVICE-MAPPER):
 	set +h && \
 	\
