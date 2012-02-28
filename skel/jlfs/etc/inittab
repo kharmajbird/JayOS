@@ -1,4 +1,3 @@
-# Straight from the book
 # Begin /etc/inittab
 
 id:3:initdefault:
@@ -17,11 +16,9 @@ ca:12345:ctrlaltdel:/sbin/shutdown -t1 -a -r now
 
 su:S016:once:/sbin/sulogin
 
-1:2345:respawn:/sbin/agetty --noclear tty1 9600
-2:2345:respawn:/sbin/agetty tty2 9600
+1:2345:respawn:/sbin/agetty -n -l /root/bin/autologin 38400 tty1
 3:2345:respawn:/sbin/agetty tty3 9600
 4:2345:respawn:/sbin/agetty tty4 9600
-5:2345:respawn:/sbin/agetty tty5 9600
-6:2345:respawn:/sbin/agetty tty6 9600
+5:2345:respawn:/sbin/agetty ttyS0 9600
 
 # End /etc/inittab

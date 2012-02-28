@@ -2152,34 +2152,6 @@ $(SYSVINIT):
 	make -C src && \
 	make -C src install && \
 	\
-	echo "# Begin /etc/inittab" > /etc/inittab && \
-	echo "" >> /etc/inittab && \
-	echo "id:3:initdefault:" >> /etc/inittab && \
-	echo "" >> /etc/inittab && \
-	echo "si::sysinit:/etc/rc.d/init.d/rc sysinit" >> /etc/inittab && \
-	echo "" >> /etc/inittab && \
-	echo "l0:0:wait:/etc/rc.d/init.d/rc 0" >> /etc/inittab && \
-	echo "l1:S1:wait:/etc/rc.d/init.d/rc 1" >> /etc/inittab && \
-	echo "l2:2:wait:/etc/rc.d/init.d/rc 2" >> /etc/inittab && \
-	echo "l3:3:wait:/etc/rc.d/init.d/rc 3" >> /etc/inittab && \
-	echo "l4:4:wait:/etc/rc.d/init.d/rc 4" >> /etc/inittab && \
-	echo "l5:5:wait:/etc/rc.d/init.d/rc 5" >> /etc/inittab && \
-	echo "l6:6:wait:/etc/rc.d/init.d/rc 6" >> /etc/inittab && \
-	echo "" >> /etc/inittab && \
-	echo "ca:12345:ctrlaltdel:/sbin/shutdown -t1 -a -r now" \
-		>> /etc/inittab && \
-	echo "" >> /etc/inittab && \
-	echo "su:S016:once:/sbin/sulogin" >> /etc/inittab && \
-	echo "" >> /etc/inittab && \
-	echo "1:2345:respawn:/sbin/agetty tty1 9600" >> /etc/inittab && \
-	echo "2:2345:respawn:/sbin/agetty tty2 9600" >> /etc/inittab && \
-	echo "3:2345:respawn:/sbin/agetty tty3 9600" >> /etc/inittab && \
-	echo "4:2345:respawn:/sbin/agetty tty4 9600" >> /etc/inittab && \
-	echo "5:2345:respawn:/sbin/agetty tty5 9600" >> /etc/inittab && \
-	echo "6:2345:respawn:/sbin/agetty tty6 9600" >> /etc/inittab && \
-	echo "" >> /etc/inittab && \
-	echo "# End /etc/inittab" >> /etc/inittab && \
-	\
 	cd .. && \
 	rm -rf $(SYSVINIT)/* && \
 	make P=$(SYSVINIT) log-package
