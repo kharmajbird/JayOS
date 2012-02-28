@@ -507,7 +507,7 @@ root-generic:
 	mknod $(MNT)/dev/sda6 b 8 6 && mknod $(MNT)/dev/sda7 b 8 7 && \
 	\
 	mkdir -p $(MNT)/{cd,lfs,fs,mnt,opt,initrd,usr/lib,usr/share,proc,sys,tmp} && \
-	mkdir -p $(MNT)/run/var && \
+	mkdir -p $(MNT)/dev/pts && \
 	\
 	cp -a $(LFS)/usr/bin/{awk,gawk,wc,vi,vim,id,tty} $(MNT)/bin && \
 	cp -a $(LFS)/usr/bin/{mcookie,expr,setterm,setsid} $(MNT)/bin && \
