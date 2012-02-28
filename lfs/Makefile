@@ -1920,7 +1920,7 @@ $(KBD):
 	rm -rf $(KBD)/* && \
 	make P=$(KBD) log-package
 
-$(KMOD):  $(XZ)
+$(KMOD):
 	set +h && \
 	\
 	xz -dc $(LFS-TARBALLS)/$(KMOD).tar.xz| tar xvf - && \
@@ -2007,7 +2007,8 @@ $(XZ):
 	chown -R 0:0 $(XZ) && \
 	cd $(XZ) && \
 	\
-	./configure --prefix=/usr && \
+	./configure --prefix=/usr \
+		--libdir=/lib && \
 	make && \
 	make pkgconfigdir=/usr/lib/pkgconfig install && \
 	\
