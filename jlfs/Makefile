@@ -4721,7 +4721,6 @@ $(BLFSBOOT):
 	make install-gpm && \
 	make install-fcron && \
 	make install-sysstat && \
-	make install-haldaemon && \
 	make install-sshd && \
 	make install-random && \
 	make install-alsa && \
