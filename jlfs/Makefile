@@ -4719,6 +4719,10 @@ $(BLFSBOOT):
 	make install-fcron && \
 	make install-sysstat && \
 	make install-sshd && \
+	\
+	echo "supplied init.d/sshd is broken" && \
+	cp -av contrib/lsb-v3/blfs/init.d/sshd $(LFS)/etc/rc.d/init.d && \
+	\
 	make install-random && \
 	make install-alsa && \
 	echo make install-sendmail && \
