@@ -405,7 +405,7 @@ inside-opt-chroot:
 ##########################################################################
 
 root:  root-prereqs root-generic
-	@echo "Creating /filesystem in $(ROOTFS)"
+	@echo "Creating / filesystem in $(ROOTFS)"
 
 root-prereqs:
 	@/usr/sbin/chroot $(LFS) /bin/env -i \
