@@ -4675,9 +4675,6 @@ $(AUTOFS): $(OPENLDAP)
 	make -j2 && \
 	make install && \
 	\
-	mkdir -p /etc/rc.d/rcsysinit.d && \
-	ln -sfn  ../init.d/autofs /etc/rc.d/rcsysinit.d/S52autofs && \
-	\
 	mv /etc/auto.master /etc/auto.master.bak && \
 	echo "# Begin /etc/auto.master" > /etc/auto.master && \
 	echo "" >> /etc/auto.master && \
