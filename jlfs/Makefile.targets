@@ -281,9 +281,6 @@ strip:
 	@find $(LFS)/{,usr/}{bin,sbin} -type f \
    		-exec /usr/bin/strip --strip-all '{}' ';'
 
-	@find $(LFS)/opt/sbin -type f \
-   		-exec /usr/bin/strip --strip-all '{}' ';'
-
 	@find $(LFS)/opt/bin -type f \
    		-exec /usr/bin/strip --strip-all '{}' ';'
 
