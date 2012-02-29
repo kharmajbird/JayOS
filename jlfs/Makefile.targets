@@ -497,7 +497,7 @@ root-generic:
 	if [ $(OPENVZ) ]; then cp -a vz $(MNT); fi && \
 	\
 	mkdir -p $(MNT)/dev/pts && \
-	mkdir -p $(MNT)/{cd,lfs,fs,mnt,opt,initrd,usr/lib,usr/share,proc,sys,tmp} && \
+	mkdir -p $(MNT)/{cd,lfs,fs,mnt,opt,initrd,usr/lib,usr/share,proc,sys} && \
 	\
 	cp -a $(LFS)/usr/bin/{awk,gawk,wc,vi,vim,id,tty} $(MNT)/bin && \
 	cp -a $(LFS)/usr/bin/{mcookie,expr,setterm,setsid} $(MNT)/bin && \
@@ -542,7 +542,7 @@ root-generic:
 		ln -sfn ../init.d/fs S42fs ) && \
 	\
 	( cd $(MNT)/etc/rc.d/rcS.d && \
-		ln -sfn ../init.d/mktmp S45mktmp ) && \
+		ln -sfn ../init.d/mktmp S43mktmp ) && \
 	\
 	( cd $(MNT)/etc/rc.d/rcS.d && \
 		ln -sfn ../init.d/netcheck S50netcheck ) && \
