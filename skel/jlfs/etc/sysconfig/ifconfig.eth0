@@ -1,0 +1,3 @@
+ONBOOT=yes
+IFACE=eth0
+SERVICE=dhclient

@@ -25,7 +25,7 @@ REDO-BASIC=0
 #
 # System config files/directories created:
 #     /etc/passwd, /etc/group, /etc/nsswitch.conf, /etc/syslog.conf,
-#     /etc/inittab, /etc/udev, /etc/sysconfig, /etc/vimrc, /etc/inputrc
+#     /etc/udev, /etc/sysconfig, /etc/vimrc, /etc/inputrc
 #     /etc/hosts
 #    
 #
@@ -52,7 +52,6 @@ all:
 	make config-inputrc && \
 	make config-localnet && \
 	make config-hosts && \
-	make config-network && \
 	make config-shadow && \
 	make config-initd
 
@@ -2352,36 +2351,6 @@ config-localnet:
 
 config-hosts:
 	echo "127.0.0.1 localhost" > $(LFS)/etc/hosts
-
-config-network:
-	echo DangerWillRogers /lib/udev/write_net_rules all_interfaces && \
-	\
-	mkdir -p $(LFS)/etc/sysconfig/network-devices/ifconfig.eth0 && \
-	\
-	echo 'ONBOOT="no"' > \
-		$(LFS)/etc/sysconfig/network-devices/ifconfig.eth0/dhclient && \
-	echo 'SERVICE="dhclient"' >> \
-		$(LFS)/etc/sysconfig/network-devices/ifconfig.eth0/dhclient && \
-	echo 'DHCP_START="-q"' >> \
-		$(LFS)/etc/sysconfig/network-devices/ifconfig.eth0/dhclient && \
-	echo 'DHCP_STOP="-q -r"' >> \
-		$(LFS)/etc/sysconfig/network-devices/ifconfig.eth0/dhclient && \
-	echo '' >> \
-		$(LFS)/etc/sysconfig/network-devices/ifconfig.eth0/dhclient && \
-	echo '# Set PRINTIP="yes" to have the script print' >> \
-		$(LFS)/etc/sysconfig/network-devices/ifconfig.eth0/dhclient && \
-	echo '# the DHCP assigned IP address' >> \
-		$(LFS)/etc/sysconfig/network-devices/ifconfig.eth0/dhclient && \
-	echo 'PRINTIP="no"' >> \
-		$(LFS)/etc/sysconfig/network-devices/ifconfig.eth0/dhclient && \
-	echo '' >> \
-		 $(LFS)/etc/sysconfig/network-devices/ifconfig.eth0/dhclient && \
-	echo '# Set PRINTALL="yes" to print the DHCP assigned values for' \
-		>> $(LFS)/etc/sysconfig/network-devices/ifconfig.eth0/dhclient && \
-	echo '# IP, SM, DG, and 1st NS. This requires PRINTIP="yes".' >> \
-		$(LFS)/etc/sysconfig/network-devices/ifconfig.eth0/dhclient && \
-	echo 'PRINTALL="no"' >> \
-		$(LFS)/etc/sysconfig/network-devices/ifconfig.eth0/dhclient
 
 config-shadow:
 	sed -i \
