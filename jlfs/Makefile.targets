@@ -468,6 +468,8 @@ root-generic:
 			$(RUNEWR-BIN) $(ROOTFS); \
 	fi
 
+	@if [ $(FUDGE) ]; then \
+		echo comment; \
 		#echo && \
 		#echo "You fat-fingered the password!! Try again." && \
 		#echo && \
@@ -479,6 +481,7 @@ root-generic:
 		#echo "Still no luck, ABENDing,,," && \
 		#echo && \
 		#exit 1; \
+	fi
 
 	@rm -rf $(LFS)/usr/src/{addons.orig,addons,$(ADDFS)}
 
