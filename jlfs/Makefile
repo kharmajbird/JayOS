@@ -4720,7 +4720,9 @@ $(BLFSBOOT):
 	make install-sshd && \
 	\
 	echo "supplied init.d/sshd is broken" && \
-	cp -av contrib/lsb-v3/blfs/init.d/sshd $(LFS)/etc/rc.d/init.d && \
+	cp -v contrib/lsb-v3/blfs/init.d/sshd $(LFS)/etc/rc.d/init.d && \
+	chmod 755 $(LFS)/etc/rc.d/init.d/sshd && \
+	chown 0:0 $(LFS)/etc/rc.d/init.d/sshd && \
 	\
 	make install-random && \
 	make install-alsa && \
