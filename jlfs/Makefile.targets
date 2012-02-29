@@ -542,6 +542,9 @@ root-generic:
 		ln -sfn ../init.d/fs S42fs ) && \
 	\
 	( cd $(MNT)/etc/rc.d/rcS.d && \
+		ln -sfn ../init.d/mktmp S45mktmp ) && \
+	\
+	( cd $(MNT)/etc/rc.d/rcS.d && \
 		ln -sfn ../init.d/netcheck S50netcheck ) && \
 	\
 	( cd $(MNT)/etc/rc.d/rc2.d && ln -sfn ../init.d/fs K50fs ) && \

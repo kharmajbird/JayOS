@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mkdir -p /run/tmp
+ln -sfn /run/tmp /
