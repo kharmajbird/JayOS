@@ -556,7 +556,7 @@ GNOME-PYTHON = gnome-python-2.28.1
 #
 
 PPP = ppp-2.4.4
-DHCP = dhcp-4.2.3
+DHCP = dhcp-4.2.3-P2
 DHCPCD = dhcpcd-5.2.12
 RP-PPPOE = rp-pppoe-3.8
 CURL = curl-7.22.0

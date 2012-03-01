@@ -8802,6 +8802,7 @@ $(DHCP):  $(NET-TOOLS)
 	chown -R 0:0 $(DHCP) && \
 	cd $(DHCP) && \
 	\
+	patch -Np1 -i $(JLFS-PATCHES)/$(DHCP)-missing_ipv6-1.patch && \
 	patch -Np1 -i $(JLFS-PATCHES)/$(DHCP)-iproute2-1.patch && \
 	\
 	sed -i 's%\(^sbindir =\).*%\1 @prefix@@sbindir@%' \
