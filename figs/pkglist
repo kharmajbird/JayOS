@@ -78,10 +78,13 @@ jlfs/afflib-3.6.6.tar.gz
 jlfs/afio-2.4.7.tgz
 jlfs/aircrack-ng-1.0-rc1.tar.gz
 jlfs/alsa-lib-1.0.24.1.tar.bz2
+jlfs/alsa-lib-1.0.25.tar.bz2
 jlfs/alsa-oss-1.0.17.tar.bz2
+jlfs/alsa-oss-1.0.25.tar.bz2
 jlfs/alsa-plugins-1.0.24.tar.bz2
-jlfs/alsa-tools-1.0.24.1.tar.bz2
+jlfs/alsa-plugins-1.0.25.tar.bz2
 jlfs/alsa-utils-1.0.24.2.tar.bz2
+jlfs/alsa-utils-1.0.25.tar.bz2
 jlfs/anyfs-tools-0.85.1c.tar.bz2
 jlfs/arts-1.5.10.tar.bz2
 jlfs/aspell-0.60.6.tar.gz

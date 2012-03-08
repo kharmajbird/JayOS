@@ -8820,6 +8820,8 @@ $(DHCP):  $(NET-TOOLS)
 	make install && \
 	mkdir -p /var/state/dhcp/ && \
 	\
+	cp -av client/scripts/linux /sbin/dhclient-script && \
+	\
 	cd .. && \
 	rm -rf $(DHCP)/* && \
 	make P=$(DHCP) log-package
@@ -9940,7 +9942,7 @@ $(ALSA-LIB):
 	chown -R 0:0 $(ALSA-LIB) && \
 	cd $(ALSA-LIB) && \
 	\
-	./configure --prefix=/usr --enable-static && \
+	./configure --prefix=/usr && \
 	make -j2 && \
 	make install && \
 	install -v -m644 -D doc/asoundrc.txt \
@@ -9978,11 +9980,12 @@ $(ALSA-UTILS):  $(ALSA-LIB)
 	cd $(ALSA-UTILS) && \
 	\
 	./configure --prefix=/usr \
+		--with-systemdsystemunitdir=no \
 		--disable-xmlto && \
 	make -j2 && \
 	make install && \
 	\
-	touch /etc/asound.state && \
+	touch /var/lib/alsa/asound.state && \
 	\
 	cd .. && \
 	rm -rf $(ALSA-UTILS)/* && \
@@ -10868,7 +10871,7 @@ $(AVIFILE):  $(QT3) $(SDL) $(LIBVORBIS) $(A52DEC) $(LAME) $(LIBMAD) \
 	rm -rf $(AVIFILE)/* && \
 	make P=$(AVIFILE) log-package
 
-$(MPLAYER):  $(XORG7) $(GTK2) $(CDPARANOIA) $(LIBDV) $(LIBDVREAD) $(ALSA) \
+$(MPLAYER):  $(XORG7) $(GTK2) $(CDPARANOIA) $(LIBDV) $(LIBDVREAD) $(ALSA-LIB) \
 	$(ARTS) $(ESOUND) $(SDL) $(AALIB) $(FONTCONFIG) $(FREETYPE) \
 	$(FRIBIDI) $(GIFLIB) $(LIBJPEG) $(LIBPNG-OLD) $(FAAC) $(FAAD2) \
 	$(LAME) $(LIBFAME) $(LIBMAD) $(LIBVORBIS) $(LZO) $(X264) $(XVIDCORE) \

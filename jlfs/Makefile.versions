@@ -706,10 +706,10 @@ GNOME-UTILITIES = gnome-utils-3.2.1
 # Multimedia Libraries
 #
 
-ALSA-LIB = alsa-lib-1.0.24.1
-ALSA-PLUGINS = alsa-plugins-1.0.24
-ALSA-UTILS = alsa-utils-1.0.24.2
-ALSA-OSS = alsa-oss-1.0.17
+ALSA-LIB = alsa-lib-1.0.25
+ALSA-PLUGINS = alsa-plugins-1.0.25
+ALSA-UTILS = alsa-utils-1.0.25
+ALSA-OSS = alsa-oss-1.0.25
 ARTS = arts-1.5.10
 AUDIOFILE = audiofile-0.2.6
 ESOUND = esound-0.2.37
