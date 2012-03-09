@@ -171,6 +171,10 @@ $(KERNEL)-$(ARCH): $(RSYNC)
 	\
 	cp -v $(JLFS-CONFIGS)/$(KERNEL)-$(ARCH).config .config && \
 	\
+	if [ "$(KERNEL-VER)" = "$(OLDKERNEL-VER)" ]; then \
+		patch -Np1 -i $(JLFS-PATCHES)/$(OLDKERNEL-VER)-percpu-1.patch; \
+	fi && \
+	\
 	make oldconfig && \
 	make -j2 bzImage && \
 	make modules && \
