@@ -172,12 +172,16 @@ $(KERNEL)-$(ARCH): $(RSYNC)
 	cp -v $(JLFS-CONFIGS)/$(KERNEL)-$(ARCH).config .config && \
 	\
 	if [ "$(KERNEL-VER)" = "$(OLDKERNEL-VER)" ]; then \
-		patch -Np1 -i $(JLFS-PATCHES)/$(OLDKERNEL-VER)-percpu-1.patch; \
+		echo "Using $(GCC4-OLD)..." && sleep 5 && \
+		PATH=/opt/$(GCC4-OLD)/bin:$(PATH) make oldconfig && \
+		PATH=/opt/$(GCC4-OLD)/bin:$(PATH) make -j2 bzImage && \
+		PATH=/opt/$(GCC4-OLD)/bin:$(PATH) make modules; \
+	else \
+		echo "Using $(GCC4)..." && sleep 5 && \
+		make oldconfig && \
+		make -j2 bzImage && \
+		make modules; \
 	fi && \
-	\
-	make oldconfig && \
-	make -j2 bzImage && \
-	make modules && \
 	\
 	cd .. && \
 	\

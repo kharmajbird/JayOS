@@ -17,6 +17,8 @@ KERNEL = linux-3.2.7
 KERNEL-VER = 3.2.7
 KERNEL-MOD-VER = $(KERNEL-VER)
 #
+# uncomment to build/install kernel 2.6
+#
 #KERNEL = $(OLDKERNEL)
 #KERNEL-VER = $(OLDKERNEL-VER)
 #KERNEL-MOD-VER = $(OLDKERNEL-VER)
