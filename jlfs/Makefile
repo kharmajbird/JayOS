@@ -7111,10 +7111,12 @@ $(ZIP):
 $(PCIUTILS):
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(PCIUTILS).tar.bz2 && \
+	tar xvf $(JLFS-TARBALLS)/$(PCIUTILS).tar.gz && \
 	chmod 755 $(PCIUTILS) && \
 	chown -R 0:0 $(PCIUTILS) && \
 	cd $(PCIUTILS) && \
+	\
+	sed -i -e 's/^PCI_COMPRESSED_IDS=/&0/' update-pciids.sh && \
 	\
 	make PREFIX=/usr ZLIB=no && \
 	make PREFIX=/usr ZLIB=no install && \
