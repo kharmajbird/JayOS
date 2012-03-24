@@ -9935,6 +9935,22 @@ $(GNOME-UTILITIES):  $(LIBCANBERRA) $(LIBGTOP)
 # Begin BLFS Multimedia Libraries & Drivers
 #
 
+$(OSS):
+	set +h && \
+	\
+	tar jxvf $(JLFS-TARBALLS)/$(OSS).tar.bz2 && \
+	mkdir $(OSS)-build && \
+	chmod 755 $(OSS)-build && \
+	chown -R 0:0 $(OSS)-build && \
+	cd $(OSS)-build && \
+	\
+	$(LFS)/usr/src/$(OSS)/configure && \
+	make install ; \
+	\
+	cd .. && \
+	rm -rf $(OSS)/* $(OSS)-build && \
+	make P=$(OSS) log-package
+
 $(ALSA-LIB):
 	set +h && \
 	\

@@ -708,6 +708,7 @@ GNOME-UTILITIES = gnome-utils-3.2.1
 # Multimedia Libraries
 #
 
+OSS = oss-v4.2-build2006-src-gpl
 ALSA-LIB = alsa-lib-1.0.25
 ALSA-PLUGINS = alsa-plugins-1.0.25
 ALSA-UTILS = alsa-utils-1.0.25
