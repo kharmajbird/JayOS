@@ -1,5 +1,5 @@
 The list package list below includes the base LinuxFromScratch system
-(version 6.7), probably 85% of the development BeyondLinuxFromScratch
+(version 7.0, probably 85% of the development BeyondLinuxFromScratch
 project (no KDE, only GNOME), and maybe a hundred or so of other Open
 Source projects that I have taken a liking to over the years.
 
@@ -17,4 +17,5 @@ Total count as of 20110225 is around 740.
 
 
 JayOS/figs/pkglist
-http://kharmajbird.github.com/JayOS/figs/pkglist
+       or
+https://github.com/kharmajbird/JayOS/blob/master/figs/pkglist
