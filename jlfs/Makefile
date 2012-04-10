@@ -5,7 +5,7 @@
 #
 ##########################################################################
 #
-VERSION=20120305
+VERSION=20120409
 LFSVERSION=LFS-7.0
 #
 ##########################################################################
@@ -2498,6 +2498,15 @@ $(CELESTIA):  $(GTKGLEXT)
 		--with-gtk && \
 	make -j2 && \
 	make install && \
+	\
+	mydir=/usr/share/celestia/extras/Addons && \
+	\
+	mkdir -p $${mydir} && \
+	tar xvf $(JLFS-TARBALLS)/$(CELESTIA)-addons.tar -C $${mydir} && \
+	cd $${mydir} && \
+	for i in *zip; do unzip $${i}; done && \
+	rm $${mydir}/*zip && \
+	cd - && \
 	\
 	cd .. && \
 	rm -rf $(CELESTIA)/* && \
