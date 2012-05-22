@@ -1343,6 +1343,25 @@ $(TREE):
 	rm -rf $(TREE)/* && \
 	make P=$(TREE) log-package
 
+$(RPM):
+	set +h && \
+	\
+	tar xvf $(JLFS-TARBALLS)/$(RPM).tar.bz2 && \
+	chmod 755 $(RPM) && \
+	chown -R 0:0 $(RPM) && \
+	cd $(RPM) && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--with-external-db \
+		--without-lua \
+		CPPFLAGS="-I/usr/include/nspr -I/usr/include/nss" && \
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(RPM)/* && \
+	make P=$(RPM) log-package
+
 #
 # End JLFS Custom-CLI
 # Begin JLFS Custom-GUI
