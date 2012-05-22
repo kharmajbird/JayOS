@@ -1362,6 +1362,22 @@ $(RPM):
 	rm -rf $(RPM)/* && \
 	make P=$(RPM) log-package
 
+$(MEMCACHED):
+	set +h && \
+	\
+	tar xvf $(JLFS-TARBALLS)/$(MEMCACHED).tar.gz && \
+	chmod 755 $(MEMCACHED) && \
+	chown -R 0:0 $(MEMCACHED) && \
+	cd $(MEMCACHED) && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(MEMCACHED)/* && \
+	make P=$(MEMCACHED) log-package
+
 #
 # End JLFS Custom-CLI
 # Begin JLFS Custom-GUI
