@@ -4,6 +4,7 @@
 #
 jlfs/Archive-Zip-1.20.tar.gz
 jlfs/BLFS-ca-bundle-3.12.9.0.tar.bz2
+jlfs/Cache-Memcached-1.30.tar.gz
 jlfs/Cairo-1.045.tar.gz
 jlfs/Compress-Raw-Bzip2-2.005.tar.gz
 jlfs/Compress-Raw-Zlib-2.005.tar.gz

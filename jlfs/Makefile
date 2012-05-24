@@ -1378,6 +1378,22 @@ $(MEMCACHED):
 	rm -rf $(MEMCACHED)/* && \
 	make P=$(MEMCACHED) log-package
 
+$(PERL-MEMCACHED):
+	set +h && \
+	\
+	tar xvf $(JLFS-TARBALLS)/$(PERL-MEMCACHED).tar.gz && \
+	chmod 755 $(PERL-MEMCACHED) && \
+	chown -R 0:0 $(PERL-MEMCACHED) && \
+	cd $(PERL-MEMCACHED) && \
+	\
+	perl Makefile.PL && \
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(PERL-MEMCACHED)/* && \
+	make P=$(PERL-MEMCACHED) log-package
+
 #
 # End JLFS Custom-CLI
 # Begin JLFS Custom-GUI
