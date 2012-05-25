@@ -5,7 +5,7 @@
 #
 ##########################################################################
 #
-VERSION=20120409
+VERSION=20120525
 LFSVERSION=LFS-7.0
 #
 ##########################################################################
@@ -1412,7 +1412,8 @@ $(SEAMONKEY):  $(NSS) $(GTK2) $(LIBIDL) $(ZIP) $(CAIRO) $(LIBNOTIFY) $(SQLITE) \
 	\
 	cp -av $(JLFS-CONFIGS)/seamonkey.mozconfig .mozconfig && \
 	\
-	make -j2 -f client.mk && \
+	make -f client.mk && \
+	no make -j2 -f client.mk && \
 	make -C moz-build-dir/suite/installer && \
 	mkdir -p /usr/lib/$(SEAMONKEY) && \
 	\
@@ -5999,7 +6000,7 @@ $(GLIB):
 $(GLIB2):  $(PKG-CONFIG) $(LIBFFI) $(PYTHON) $(PYTHON3) $(PKG-CONFIG)
 	set +h && \
 	\
-	tar jxvf $(JLFS-TARBALLS)/$(GLIB2).tar.bz2 && \
+	xz -dc $(JLFS-TARBALLS)/$(GLIB2).tar.xz| tar xvf - && \
 	chmod 755 $(GLIB2) && \
 	chown -R 0:0 $(GLIB2) && \
 	cd $(GLIB2) && \
@@ -6500,7 +6501,7 @@ $(LIBSOUP):  $(GLIB2) $(LIBXML2) $(LIBPROXY) $(SQLITE) $(GNOME-KEYRING) \
 $(SQLITE):
 	set +h && \
 	\
-	tar xvf $(JLFS-TARBALLS)/$(SQLITE).tar.bz2 && \
+	tar xvf $(JLFS-TARBALLS)/$(SQLITE).tar.gz && \
 	chmod 755 $(SQLITE) && \
 	chown -R 0:0 $(SQLITE) && \
 	cd $(SQLITE) && \
@@ -9092,7 +9093,7 @@ $(GTK):  $(XORG7) $(GLIB)
 $(CAIRO):  $(XORG7) $(PKG-CONFIG) $(PIXMAN)
 	set +h && \
 	\
-	tar xvf $(JLFS-TARBALLS)/$(CAIRO).tar.gz && \
+	xz -dc $(JLFS-TARBALLS)/$(CAIRO).tar.xz| tar xvf - && \
 	chmod 755 $(CAIRO) && \
 	chown -R 0:0 $(CAIRO) && \
 	cd $(CAIRO) && \
