@@ -5114,6 +5114,8 @@ $(LIBFFI):
 	chown -R 0:0 $(LIBFFI) && \
 	cd $(LIBFFI) && \
 	\
+	patch -Np1 -i $(JLFS-PATCHES)/$(LIBFFI)-includedir-1.patch && \
+	\
 	./configure --prefix=/usr --sysconfdir=/etc && \
 	make -j2 && \
 	make install && \
@@ -5262,7 +5264,7 @@ $(EXPAT):
 	rm -rf $(EXPAT)/.libs $(EXPAT)/* && \
 	make P=$(EXPAT) log-package
 
-$(PKG-CONFIG):
+$(PKG-CONFIG):  $(GLIB2)
 	set +h && \
 	\
 	tar xvf $(JLFS-TARBALLS)/$(PKG-CONFIG).tar.gz && \
@@ -5270,7 +5272,11 @@ $(PKG-CONFIG):
 	chown -R 0:0 $(PKG-CONFIG) && \
 	cd $(PKG-CONFIG) && \
 	\
-	./configure --sysconfdir=/etc --prefix=/usr && \
+	sed -i -e '21s/EXPECT_RETURN=1/EXPECT_RETURN=0/' \
+		check/check-cmd-options && \
+	\
+	GLIB_LIBS=-lglib-2.0  GLIB_CFLAGS=-I/usr/include/glib-2.0 \
+		./configure --sysconfdir=/etc --prefix=/usr && \
 	make -j2 && \
 	make install && \
 	\
@@ -5815,12 +5821,17 @@ $(PCRE):
 	cd $(PCRE) && \
 	\
 	./configure --prefix=/usr \
+		--disable-static --libdir=/lib \
 		--docdir=/usr/share/doc/$(PCRE) \
+		--enable-unicode-properties \
+		--enable-pcregrep-libz \
+		--enable-pcregrep-libbz2 \
 		--enable-utf8 && \
 	make -j2 && \
 	make install && \
-	mv -v /usr/lib/libpcre.so.* /lib/ && \
-	ln -v -sf ../../lib/libpcre.so.0 /usr/lib/libpcre.so && \
+	\
+	mv /lib/pkgconfig/libpcre*.pc /usr/lib/pkgconfig && \
+	echo obsolete ln -v -sf ../../lib/libpcre.so.0 /usr/lib/libpcre.so && \
 	\
 	cd .. && \
 	rm -rf $(PCRE)/.libs $(PCRE)/.deps $(PCRE)/* && \
@@ -5997,7 +6008,7 @@ $(GLIB):
 	rm -rf $(GLIB)/.libs $(GLIB)/* && \
 	make P=$(GLIB) log-package
 
-$(GLIB2):  $(PKG-CONFIG) $(LIBFFI) $(PYTHON) $(PYTHON3) $(PKG-CONFIG)
+$(GLIB2):  $(LIBFFI) $(PYTHON) $(PYTHON3) $(PCRE)
 	set +h && \
 	\
 	xz -dc $(JLFS-TARBALLS)/$(GLIB2).tar.xz| tar xvf - && \
@@ -6005,15 +6016,16 @@ $(GLIB2):  $(PKG-CONFIG) $(LIBFFI) $(PYTHON) $(PYTHON3) $(PKG-CONFIG)
 	chown -R 0:0 $(GLIB2) && \
 	cd $(GLIB2) && \
 	\
-	./configure --prefix=/usr --sysconfdir=/etc && \
-	\
-	for i in `grep -rl "^PYTHON =" *`; do \
-		echo perl -p -i -e 's/^PYTHON =.*$$/PYTHON = \/usr\/bin\/python/' \
-			$${i}; \
-	done && \
+	PCRE_LIBS=-lpcre PCRE_CFLAGS=" " \
+	LIBFFI_LIBS=-lffi LIBFFI_CFLAGS=" " \
+		./configure --prefix=/usr --sysconfdir=/etc \
+			--with-pcre=system && \
 	\
 	make -j2 && \
 	make install && \
+	\
+	ln -v -sfn ../../lib/glib-2.0/include/glibconfig.h \
+		/usr/include/glib-2.0/glibconfig.h && \
 	\
 	if [ ! -d /etc/profile.d ]; then mkdir /etc/profile.d; fi && \
 	\
@@ -8492,7 +8504,6 @@ $(APACHE):  $(OPENSSL) $(OPENLDAP) $(PCRE)
 	./configure \
 		--enable-layout=FHS \
 		--enable-mods-shared=all \
-		--with-pcre \
 		--with-z \
 		--enable-authnz-ldap \
 		--enable-ssl --with-ssl=/etc/ssl \
@@ -11182,7 +11193,9 @@ $(DVD-RW-TOOLS):
 # Begin BLFS Printing
 #
 
-$(CUPS):  $(LIBJPEG) $(LIBPNG) $(LIBTIFF) $(OPENLDAP) $(OPENSSL) $(PAM) $(DBUS) $(PKG-CONFIG)
+$(CUPS):  $(LIBJPEG) $(LIBPNG) $(LIBTIFF) $(OPENLDAP) $(OPENSSL) $(PAM) \
+	$(DBUS) $(PKG-CONFIG)
+
 	set +h && \
 	\
 	tar jxvf $(JLFS-TARBALLS)/$(CUPS)-source.tar.bz2 && \

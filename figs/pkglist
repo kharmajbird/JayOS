@@ -106,7 +106,7 @@ jlfs/bluez-hcidump-2.1.tar.bz2
 jlfs/boto-r1595.tar.bz2
 jlfs/bridge-utils-1.4.tar.gz
 jlfs/busybox-1.8.2.tar.bz2
-jlfs/cairo-1.10.2.tar.gz
+jlfs/cairo-1.12.2.tar.xz
 jlfs/cairomm-1.10.0.tar.gz
 jlfs/cdparanoia-III-10.2.src.tgz
 jlfs/cdrdao-1.2.2.tar.bz2
@@ -205,7 +205,7 @@ jlfs/git-1.7.7.5.tar.gz
 jlfs/gkrellm-2.3.2.tar.gz
 jlfs/glade3-3.8.1.tar.bz2
 jlfs/glib-1.2.10.tar.gz
-jlfs/glib-2.31.2.tar.bz2
+jlfs/glib-2.32.3.tar.xz
 jlfs/glibmm-2.31.0.tar.bz2
 jlfs/glibmm-2.31.2.tar.xz
 jlfs/gmime-2.1.9.tar.bz2
@@ -320,7 +320,7 @@ jlfs/libevent-2.0.10-stable.tar.gz
 jlfs/libexif-0.6.19.tar.bz2
 jlfs/libexif-gtk-0.3.5.orig.tar.gz
 jlfs/libfame-0.9.1.tar.gz
-jlfs/libffi-3.0.10.tar.gz
+jlfs/libffi-3.0.11.tar.gz
 jlfs/libfwbuilder-4.1.3.tar.gz
 jlfs/libgcrypt-1.4.6.tar.bz2
 jlfs/libgdata-0.5.1.tar.bz2
@@ -450,14 +450,14 @@ jlfs/parted-2.2.tar.gz
 jlfs/partimage-0.6.9.tar.bz2
 jlfs/pciutils-3.1.9.tar.gz
 jlfs/pcmciautils-015.tar.bz2
-jlfs/pcre-8.10.tar.bz2
+jlfs/pcre-8.30.tar.bz2
 jlfs/php-5.3.7.tar.bz2
 jlfs/phpMyAdmin-3.4.6-english.tar.bz2
 jlfs/pidgin-2.10.0.tar.bz2
 jlfs/pidgin-2.3.1.tar.bz2
 jlfs/pinentry-0.7.6.tar.gz
-jlfs/pixman-0.24.0.tar.gz
-jlfs/pkg-config-0.25.tar.gz
+jlfs/pixman-0.24.4.tar.gz
+jlfs/pkg-config-0.26.tar.gz
 jlfs/polkit-0.102.tar.gz
 jlfs/polkit-gnome-0.105.tar.bz2
 jlfs/popt-1.16.tar.gz

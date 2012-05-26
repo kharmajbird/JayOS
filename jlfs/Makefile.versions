@@ -392,7 +392,7 @@ GNUPG = gnupg-1.4.8
 NSS = nss-3.13.4
 NSPR = nspr-4.9
 POLKIT = polkit-0.102
-LIBFFI = libffi-3.0.10
+LIBFFI = libffi-3.0.11
 GNUTLS = gnutls-2.10.2
 POLKIT-GNOME = polkit-gnome-0.105
 
@@ -400,7 +400,7 @@ POLKIT-GNOME = polkit-gnome-0.105
 # General Libraries
 #
 
-PCRE = pcre-8.10
+PCRE = pcre-8.30
 POPT = popt-1.16
 SLANG = slang-2.1.1
 LIBXML = libxml-1.8.17
