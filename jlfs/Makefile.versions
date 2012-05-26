@@ -576,7 +576,13 @@ LIBTIRPC = libtirpc-0.2.2
 RPCBIND = rpcbind-0.2.0
 RSYNC = rsync-3.0.7
 SAMBA = samba-3.5.1
-SUBVERSION = subversion-1.7.1
+#
+#subversion/libsvn_fs_base/bdb/bdb-err.c:47:17: error: 'DB_LOCK_DEADLOCK'
+#undeclared (first use in this function)
+#subversion/libsvn_fs_base/bdb/bdb-err.c:47:17: note: each undeclared
+#identifier is reported only once for each function it appears in
+#
+#j#SUBVERSION = subversion-1.7.4
 TCP-WRAPPER = tcp_wrappers_7.6
 TCPDUMP = tcpdump-4.1.1
 WGET = wget-1.12
@@ -607,6 +613,7 @@ APR-UTIL = apr-util-1.4.1
 OPENSSH = openssh-5.6p1
 SENDMAIL = sendmail-8.14.4
 BDB4 = db-4.8.26
+BDB5 = db-5.3.15
 MYSQL = mysql-5.1.52
 OPENLDAP = openldap-2.4.23
 

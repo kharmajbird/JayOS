@@ -8336,7 +8336,7 @@ $(SAMBA):
 	rm -rf $(SAMBA)/* && \
 	make P=$(SAMBA) log-package
 
-$(SUBVERSION):  $(NEON) $(BDB4) $(APACHE)
+$(SUBVERSION):  $(NEON) $(BDB5) $(APACHE) $(APR)
 	set +h && \
 	\
 	tar jxvf $(JLFS-TARBALLS)/$(SUBVERSION).tar.bz2 && \
@@ -8344,9 +8344,13 @@ $(SUBVERSION):  $(NEON) $(BDB4) $(APACHE)
 	chown -R 0:0 $(SUBVERSION) && \
 	cd $(SUBVERSION) && \
 	\
+	sed -i 's#save_errno#aprerr#' subversion/mod_dav_svn/util.c && \
+	\
 	./configure --prefix=/usr \
 		--with-apxs \
+		--disable-static \
 		--disable-neon-version-check && \
+	\
 	make -j2 && \
 	make swig-pl && \
 	make swig-pl-lib && \
@@ -8534,7 +8538,7 @@ $(APACHE):  $(OPENSSL) $(OPENLDAP) $(PCRE) $(APR) $(APR-UTIL)
 		$(APACHE)/.deps $(APACHE)/* && \
 	make P=$(APACHE) log-package
 
-$(APR):
+$(APR):  $(BDB5)
 	set +h && \
 	\
 	tar jxvf $(JLFS-TARBALLS)/$(APR).tar.bz2 && \
@@ -8852,6 +8856,32 @@ $(BDB4):
 	cd ../.. && \
 	rm -rf $(BDB4)/* && \
 	make P=$(BDB4) log-package
+
+$(BDB5):
+	set +h && \
+	\
+	tar xvf $(JLFS-TARBALLS)/$(BDB5).tar.gz && \
+	chmod 755 $(BDB5) && \
+	chown -R 0:0 $(BDB5) && \
+	touch $(BDB5) && \
+	cd $(BDB5) && \
+	\
+	cd build_unix && \
+	../dist/configure --prefix=/usr \
+		--enable-compat185 \
+		--enable-dbm \
+		--disable-static \
+		--enable-cxx && \
+	make -j2 && \
+	make docdir=/usr/share/doc/$(BDB5) install && \
+	chown -v root:root \
+		/usr/bin/db_* /usr/lib/libdb* /usr/include/db{,_185,_cxx}.h && \
+	\
+	chown -v -R root:root /usr/share/doc/$(BDB5) && \
+	\
+	cd ../.. && \
+	rm -rf $(BDB5)/* && \
+	make P=$(BDB5) log-package
 
 $(MYSQL):  $(OPENSSL) $(TCP-WRAPPER)
 	set +h && \
@@ -10860,9 +10890,11 @@ $(AUDACIOUS):  $(GLADE) $(LIBMCS) $(PCRE) $(LIBMAD) $(LAME) \
 	chown -R 0:0 $(AUDACIOUS) && \
 	cd $(AUDACIOUS) && \
 	\
-	./configure --prefix=/usr \
-		--enable-one-plugin-dir \
-		--enable-samplerate && \
+	TPUT=/bin/true LIBS=-lgmodule-2.0 \
+		./configure --prefix=/usr \
+			--enable-one-plugin-dir \
+			--enable-samplerate && \
+	\
 	make -j2 && \
 	make install && \
 	install -v -m644 -D README /usr/share/doc/$(AUDACIOUS)/README && \
@@ -10879,7 +10911,9 @@ $(AUDACIOUS-PLUGINS):  $(AUDACIOUS)
 	chown -R 0:0 $(AUDACIOUS-PLUGINS) && \
 	cd $(AUDACIOUS-PLUGINS) && \
 	\
-	./configure --prefix=/usr && \
+	TPUT=/bin/true LIBS=-lgmodule-2.0 \
+		./configure --prefix=/usr && \
+	\
 	make -j2 && \
 	make install && \
 	\
