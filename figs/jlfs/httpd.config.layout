@@ -1,0 +1,23 @@
+# BLFS FHS layout
+<Layout FHS>
+    prefix:          /usr
+    exec_prefix:     ${prefix}
+    bindir:          ${exec_prefix}/bin
+    sbindir:         ${exec_prefix}/sbin
+    libdir:          ${exec_prefix}/lib
+    libexecdir:      ${exec_prefix}/libexec/apache
+    mandir:          ${prefix}/share/man
+    sysconfdir:      /etc/apache
+    datadir:         /srv/www
+    installbuilddir: ${libexecdir}/build
+    errordir:        ${datadir}/error
+    iconsdir:        ${datadir}/icons
+    htdocsdir:       ${datadir}/htdocs
+    manualdir:       ${datadir}/manual
+    cgidir:          ${datadir}/cgi-bin
+    includedir:      ${prefix}/include/apache
+    localstatedir:   ${datadir}
+    runtimedir:      /var/run
+    logfiledir:      /var/log/apache
+    proxycachedir:   /var/cache/apache/proxy
+</Layout>

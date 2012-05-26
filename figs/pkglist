@@ -83,6 +83,8 @@ jlfs/alsa-oss-1.0.25.tar.bz2
 jlfs/alsa-plugins-1.0.25.tar.bz2
 jlfs/alsa-utils-1.0.25.tar.bz2
 jlfs/anyfs-tools-0.85.1c.tar.bz2
+jlfs/apr-1.4.6.tar.bz2
+jlfs/apr-util-1.4.1.tar.bz2
 jlfs/arts-1.5.10.tar.bz2
 jlfs/aspell-0.60.6.tar.gz
 jlfs/aspell6-en-7.1-0.tar.bz2
@@ -270,7 +272,7 @@ jlfs/hfsplus-1.0.4.src.tar.bz2
 jlfs/hfsutils-3.2.6.tar.gz
 jlfs/hicolor-icon-theme-0.12.tar.gz
 jlfs/hsaudiotag-1.1.2.tar.bz2
-jlfs/httpd-2.2.17.tar.bz2
+jlfs/httpd-2.4.1.tar.bz2
 jlfs/hydra-5.4-src.tar.gz
 jlfs/i18n-fonts-0.1.tar.gz
 jlfs/icon-naming-utils-0.8.90.tar.bz2

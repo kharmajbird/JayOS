@@ -8486,7 +8486,7 @@ $(WHOIS):
 	rm -rf $(WHOIS)/* && \
 	make P=$(WHOIS) log-package
 
-$(APACHE):  $(OPENSSL) $(OPENLDAP) $(PCRE)
+$(APACHE):  $(OPENSSL) $(OPENLDAP) $(PCRE) $(APR) $(APR-UTIL)
 	set +h && \
 	\
 	tar jxvf $(JLFS-TARBALLS)/$(APACHE).tar.bz2 && \
@@ -8498,16 +8498,16 @@ $(APACHE):  $(OPENSSL) $(OPENLDAP) $(PCRE)
 	useradd -c "Apache Server" -d /dev/null -g apache \
 		-s /bin/false -u 25 apache; \
 	\
-	patch -Np1 -i $(JLFS-PATCHES)/$(APACHE)-config-1.patch && \
-	patch -Np1 -i $(JLFS-PATCHES)/$(APACHE)-bdb51-1.patch && \
+	echo obsolete patch -Np1 -i $(JLFS-PATCHES)/$(APACHE)-config-1.patch && \
+	echo obsolete patch -Np1 -i $(JLFS-PATCHES)/$(APACHE)-bdb51-1.patch && \
+	\
+	cp -av $(JLFS-CONFIGS)/httpd.config.layout config.layout && \
 	\
 	./configure \
 		--enable-layout=FHS \
 		--enable-mods-shared=all \
 		--with-z \
-		--enable-authnz-ldap \
 		--enable-ssl --with-ssl=/etc/ssl \
-		--with-ldap --enable-ldap \
 		--with-egd --with-devrandom \
 		--with-dbm=db4 --with-berkeley-db && \
 	\
@@ -8517,23 +8517,59 @@ $(APACHE):  $(OPENSSL) $(OPENLDAP) $(PCRE)
 	make -j2 && \
 	make install && \
 	\
-	chown -v root:root \
-		/usr/lib/apache/httpd.exp \
-		/usr/sbin/{apxs,apachectl,dbmmanage,envvars{,-std}} \
-		/usr/share/man/man1/{dbmmanage,ht{dbm,digest,passwd}}.1 \
-		/usr/share/man/man8/{ab,apachectl,apxs,htcacheclean,httpd}.8 \
-		/usr/share/man/man8/{logresolve,rotatelogs,suexec}.8 && \
+	chown -v root:root /usr/bin/{apxs,dbmmanage} \
+		/usr/sbin/{apachectl,envvars{,-std}} \
+		/usr/libexec/apache/httpd.exp \
+		/usr/share/man/man1/{ab,apxs,dbmmanage,ht{dbm,digest,passwd,txt2dbm},logresolve}.1 \
+		/usr/share/man/man8/{apachectl,htcacheclean,httpd,rotatelogs,suexec}.8 && \
 	\
 	chown -v -R apache:apache /srv/www && \
 	touch /srv/www/htdocs/favicon.ico && \
 	\
 	( cd /etc/apache && \
-	patch -Np4 -i $(JLFS-PATCHES)/$(APACHE)-configuration.patch ) && \
+	echo obsolete patch -Np4 -i $(JLFS-PATCHES)/httpd-configuration.patch ) && \
 	\
 	cd .. && \
 	rm -rf $(APACHE)/.gdbinit $(APACHE)/.libs \
 		$(APACHE)/.deps $(APACHE)/* && \
 	make P=$(APACHE) log-package
+
+$(APR):
+	set +h && \
+	\
+	tar jxvf $(JLFS-TARBALLS)/$(APR).tar.bz2 && \
+	chmod 755 $(APR) && \
+	chown -R 0:0 $(APR) && \
+	cd $(APR) && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		--disable-static \
+		--with-installbuilddir=/usr/libexec/apache/build && \
+	\
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(APR)/* && \
+	make P=$(APR) log-package
+
+$(APR-UTIL):  $(APR)
+	set +h && \
+	\
+	tar jxvf $(JLFS-TARBALLS)/$(APR-UTIL).tar.bz2 && \
+	chmod 755 $(APR-UTIL) && \
+	chown -R 0:0 $(APR-UTIL) && \
+	cd $(APR-UTIL) && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc \
+		-with-apr=/usr --with-gdbm=/usr && \
+	\
+	make -j2 && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(APR-UTIL)/* && \
+	make P=$(APR-UTIL) log-package
 
 $(BIND):  $(OPENSSL)
 	set +h && \
