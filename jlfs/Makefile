@@ -1412,8 +1412,12 @@ $(SEAMONKEY):  $(NSS) $(GTK2) $(LIBIDL) $(ZIP) $(CAIRO) $(LIBNOTIFY) $(SQLITE) \
 	\
 	cp -av $(JLFS-CONFIGS)/seamonkey.mozconfig .mozconfig && \
 	\
-	make -f client.mk && \
-	no make -j2 -f client.mk && \
+	(cd mozilla && \
+		patch -Np1 -i \
+		$(JLFS-PATCHES)/$(SEAMONKEY)-system_cairo.patch \
+	) && \
+	\
+	make -j2 -f client.mk && \
 	make -C moz-build-dir/suite/installer && \
 	mkdir -p /usr/lib/$(SEAMONKEY) && \
 	\
