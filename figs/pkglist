@@ -386,7 +386,6 @@ jlfs/libunique-3.0.2.tar.bz2
 jlfs/libusb-1.0.8.tar.bz2
 jlfs/libusb-compat-0.1.3.tar.bz2
 jlfs/libvorbis-1.2.3.tar.bz2
-jlfs/libvpx-v0.9.7.tar.bz2
 jlfs/libvpx-v1.0.0.tar.bz2
 jlfs/libwww-perl-5.806.tar.gz
 jlfs/libxml-1.8.17.tar.bz2
@@ -506,7 +505,6 @@ jlfs/s3cmd-1.0.1.tar.gz
 jlfs/samba-3.5.1.tar.gz
 jlfs/sane-backends-1.0.19.tar.gz
 jlfs/screen-4.0.3.tar.gz
-jlfs/seamonkey-2.9.1.source.tar.bz2
 jlfs/send2trash-1.2.0.tar.bz2
 jlfs/sendmail-8.14.4.tar.gz
 jlfs/setuptools-0.6c11.tar.gz

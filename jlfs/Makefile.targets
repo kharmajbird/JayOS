@@ -255,7 +255,7 @@ prep:
 	mount -v --bind /proc $(LFS)/proc
 	mount -v --bind /dev $(LFS)/dev
 
-un-prep:
+un-prep: strip
 	-umount /lfs/proc
 	-umount /lfs/dev
 
