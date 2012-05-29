@@ -31,6 +31,6 @@ make un-prep && \
 make strip-man
 make livecd
 
-play $ALERT
+play $ALERT >/dev/null 2>&1
 sleep 1
-play $ALERT
+play $ALERT >/dev/null 2>&1

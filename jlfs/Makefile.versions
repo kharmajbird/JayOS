@@ -582,7 +582,7 @@ SAMBA = samba-3.5.1
 #subversion/libsvn_fs_base/bdb/bdb-err.c:47:17: note: each undeclared
 #identifier is reported only once for each function it appears in
 #
-#j#SUBVERSION = subversion-1.7.4
+SUBVERSION = subversion-1.7.4
 TCP-WRAPPER = tcp_wrappers_7.6
 TCPDUMP = tcpdump-4.1.1
 WGET = wget-1.12
