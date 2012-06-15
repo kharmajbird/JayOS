@@ -8570,7 +8570,9 @@ $(APR-UTIL):  $(APR)
 	cd $(APR-UTIL) && \
 	\
 	./configure --prefix=/usr --sysconfdir=/etc \
-		-with-apr=/usr --with-gdbm=/usr && \
+		-with-apr=/usr \
+		--with-berkeley-db=/usr \
+		--with-gdbm=/usr && \
 	\
 	make -j2 && \
 	make install && \
