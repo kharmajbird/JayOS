@@ -5,7 +5,7 @@
 #
 ##########################################################################
 #
-VERSION=20120525
+VERSION=201206014
 LFSVERSION=LFS-7.0
 #
 ##########################################################################
@@ -8340,7 +8340,7 @@ $(SAMBA):
 	rm -rf $(SAMBA)/* && \
 	make P=$(SAMBA) log-package
 
-$(SUBVERSION):  $(NEON) $(BDB5) $(APACHE) $(APR)
+$(SUBVERSION):  $(NEON) $(BDB4) $(APACHE) $(APR)
 	set +h && \
 	\
 	tar jxvf $(JLFS-TARBALLS)/$(SUBVERSION).tar.bz2 && \
