@@ -10109,6 +10109,12 @@ $(ALSA-LIB):
 	install -v -m644 -D doc/asoundrc.txt \
 		/usr/share/doc/$(ALSA-LIB)/asoundrc.txt && \
 	\
+	make clean && \
+	./configure --prefix=/usr --disable-shared --enable-static && \
+	make -j2 && \
+	\
+	install -m644 src/.libs/libasound.a /usr/lib && \
+	\
 	cd .. && \
 	rm -rf $(ALSA-LIB)/* && \
 	make P=$(ALSA-LIB) log-package
@@ -10120,6 +10126,8 @@ $(ALSA-PLUGINS):  $(PKG-CONFIG) $(ALSA-LIB)
 	chmod 755 $(ALSA-PLUGINS) && \
 	chown -R 0:0 $(ALSA-PLUGINS) && \
 	cd $(ALSA-PLUGINS) && \
+	\
+	patch -Np1 -i $(JLFS-PATCHES)/$(ALSA-PLUGINS)-ffmpeg-1.patch && \
 	\
 	./configure && \
 	make -j2 && \
@@ -10140,6 +10148,8 @@ $(ALSA-UTILS):  $(ALSA-LIB)
 	chown -R 0:0 $(ALSA-UTILS) && \
 	cd $(ALSA-UTILS) && \
 	\
+	patch -Np1 -i $(JLFS-PATCHES)/$(ALSA-UTILS)-no_xmlto-1.patch && \
+	\
 	./configure --prefix=/usr \
 		--with-systemdsystemunitdir=no \
 		--disable-xmlto && \
@@ -10147,6 +10157,7 @@ $(ALSA-UTILS):  $(ALSA-LIB)
 	make install && \
 	\
 	touch /var/lib/alsa/asound.state && \
+	echo not during chroot alsactl store && \
 	\
 	cd .. && \
 	rm -rf $(ALSA-UTILS)/* && \
