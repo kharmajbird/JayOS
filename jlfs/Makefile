@@ -1394,6 +1394,22 @@ $(PERL-MEMCACHED):
 	rm -rf $(PERL-MEMCACHED)/* && \
 	make P=$(PERL-MEMCACHED) log-package
 
+$(STRONGSWAN):
+	set +h && \
+	\
+	tar jxvf $(JLFS-TARBALLS)/$(STRONGSWAN).tar.bz2 && \
+	chmod 755 $(STRONGSWAN) && \
+	chown -R 0:0 $(STRONGSWAN) && \
+	cd $(STRONGSWAN) && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(STRONGSWAN)/* && \
+	make P=$(STRONGSWAN) log-package
+
 #
 # End JLFS Custom-CLI
 # Begin JLFS Custom-GUI
