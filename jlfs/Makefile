@@ -1247,23 +1247,23 @@ $(YASM):
 	rm -rf $(YASM)/* $(YASM)/.deps && \
 	make P=$(YASM) log-package
 
-$(DVDAUTHOR):  $(LIBPNG-OLD)
-	set +h && \
-	\
-	tar zxf $(JLFS-TARBALLS)/$(DVDAUTHOR).tar.gz && \
-	mv dvdauthor $(DVDAUTHOR) && \
-	chmod 755 $(DVDAUTHOR) && \
-	chown -R 0:0 $(DVDAUTHOR) && \
-	cd $(DVDAUTHOR) && \
-	\
-	PKG_CONFIG_PATH=$(LFS)/usr/src/$(LIBPNG-OLD)/usr/lib/pkgconfig \
-	./configure --prefix=/usr --sysconfdir=/etc && \
-	make -j2 && \
-	make install && \
-	\
-	cd .. && \
-	rm -rf $(DVDAUTHOR)/* && \
-	make P=$(DVDAUTHOR) log-package
+#$(DVDAUTHOR):  $(LIBPNG-OLD)
+#	set +h && \
+#	\
+#	tar zxf $(JLFS-TARBALLS)/$(DVDAUTHOR).tar.gz && \
+#	mv dvdauthor $(DVDAUTHOR) && \
+#	chmod 755 $(DVDAUTHOR) && \
+#	chown -R 0:0 $(DVDAUTHOR) && \
+#	cd $(DVDAUTHOR) && \
+#	\
+#	PKG_CONFIG_PATH=$(LFS)/usr/src/$(LIBPNG-OLD)/usr/lib/pkgconfig \
+#	./configure --prefix=/usr --sysconfdir=/etc && \
+#	make -j2 && \
+#	make install && \
+#	\
+#	cd .. && \
+#	rm -rf $(DVDAUTHOR)/* && \
+#	make P=$(DVDAUTHOR) log-package
 
 $(IPVSADM):  $(LIBNL)
 	set +h && \
@@ -1409,6 +1409,38 @@ $(STRONGSWAN):
 	cd .. && \
 	rm -rf $(STRONGSWAN)/* && \
 	make P=$(STRONGSWAN) log-package
+
+$(PPTP):
+	set +h && \
+	\
+	tar xvf $(JLFS-TARBALLS)/$(PPTP).tar.gz && \
+	chmod 755 $(PPTP) && \
+	chown -R 0:0 $(PPTP) && \
+	cd $(PPTP) && \
+	\
+	make && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(PPTP)/* && \
+	make P=$(PPTP) log-package
+
+$(DVDAUTHOR):
+	set +h && \
+	\
+	tar xvf $(JLFS-TARBALLS)/$(DVDAUTHOR).tar.gz && \
+	mv dvdauthor $(DVDAUTHOR) && \
+	chmod 755 $(DVDAUTHOR) && \
+	chown -R 0:0 $(DVDAUTHOR) && \
+	cd $(DVDAUTHOR) && \
+	\
+	./configure --prefix=/usr --sysconfdir=/etc && \
+	make && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(DVDAUTHOR)/* && \
+	make P=$(DVDAUTHOR) log-package
 
 #
 # End JLFS Custom-CLI
@@ -2627,6 +2659,20 @@ $(UNETBOOTIN):  $(QT4)
 	cd .. && \
 	rm -rf $(UNETBOOTIN)/* && \
 	make P=$(UNETBOOTIN) log-package
+
+$(DEVEDE):
+	set +h && \
+	\
+	tar jxvf $(JLFS-TARBALLS)/$(DEVEDE).tar.bz2 && \
+	chmod 755 $(DEVEDE) && \
+	chown -R 0:0 $(DEVEDE) && \
+	cd $(DEVEDE) && \
+	\
+	./install.sh prefix=/usr && \
+	\
+	cd .. && \
+	rm -rf $(DEVEDE)/* && \
+	make P=$(DEVEDE) log-package
 
 #
 # End JLFS Custom-GUI
