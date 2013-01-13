@@ -115,7 +115,6 @@ KEYFUZZ = keyfuzz-0.2
 MCRYPT = mcrypt-2.6.8
 CMAKE = cmake-2.8.6
 YASM = yasm-1.2.0
-#j#DVDAUTHOR = dvdauthor-0.7.0
 IPVSADM = ipvsadm-1.26
 S3CMD = s3cmd-1.0.1
 TUNCTL = tunctl-1.5
@@ -126,7 +125,13 @@ MEMCACHED = memcached-1.4.13
 PERL-MEMCACHED = Cache-Memcached-1.30
 STRONGSWAN = strongswan-5.0.1
 PPTP = pptp-1.7.2
-DVDAUTHOR = dvdauthor-0.7.1
+#j#DVDAUTHOR = dvdauthor-0.7.1
+#gcc -DHAVE_CONFIG_H -I.  -DSYSCONFDIR="\"/etc\"" -I/usr/include/libxml2 -fopenmp -I/usr/include/ImageMagick   -I/usr/include/freetype2 -I/usr/include/fribidi      -Wall -g -O2 -MT subreader.o -MD -MP -MF .deps/subreader.Tpo -c -o subreader.o subreader.c
+#subreader.c: In function 'sub_fribidi':
+#subreader.c:474:5: error: unknown type name 'FriBidiParType'
+#subreader.c: In function 'sub_read_file':
+#subreader.c:2145:7: warning: suggest parentheses around '&&' within '||' [-Wparentheses]
+#
 
 #
 # End JLFS Custom-CLI
