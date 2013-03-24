@@ -4351,6 +4351,12 @@ $(BOTO):
 	rm -rf $(BOTO)/* && \
 	make P=$(BOTO) log-package
 
+$(RTL-FIRMWARE):
+	set +h && \
+	\
+	tar jxvf $(JLFS-TARBALLS)/$(RTL-FIRMWARE).tar.bz2 -C / && \
+	make P=$(RTL-FIRMWARE) log-package
+
 # End JLFS Custom-Lib
 # Begin JLFS-Blackhat-Tools
 #

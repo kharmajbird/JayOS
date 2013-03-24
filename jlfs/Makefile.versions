@@ -9,6 +9,8 @@
 # Kernel
 #
 
+RTL-FIRMWARE = rtl-toshiba-firmware
+
 OLDKERNEL = linux-2.6.34
 OLDKERNEL-VER = 2.6.34
 OLDKERNEL-MOD-VER = $(KERNEL-VER)
