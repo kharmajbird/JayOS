@@ -1410,6 +1410,38 @@ $(STRONGSWAN):
 	rm -rf $(STRONGSWAN)/* && \
 	make P=$(STRONGSWAN) log-package
 
+$(PPTP):
+	set +h && \
+	\
+	tar xvf $(JLFS-TARBALLS)/$(PPTP).tar.gz && \
+	chmod 755 $(PPTP) && \
+	chown -R 0:0 $(PPTP) && \
+	cd $(PPTP) && \
+	\
+	make && \
+	make install && \
+	\
+	cd .. && \
+	rm -rf $(PPTP)/* && \
+	make P=$(PPTP) log-package
+
+##$(DVDAUTHOR):
+##	set +h && \
+##	\
+##	tar xvf $(JLFS-TARBALLS)/$(DVDAUTHOR).tar.gz && \
+##	mv dvdauthor $(DVDAUTHOR) && \
+##	chmod 755 $(DVDAUTHOR) && \
+##	chown -R 0:0 $(DVDAUTHOR) && \
+##	cd $(DVDAUTHOR) && \
+##	\
+##	./configure --prefix=/usr --sysconfdir=/etc && \
+##	make && \
+##	make install && \
+##	\
+##	cd .. && \
+##	rm -rf $(DVDAUTHOR)/* && \
+##	make P=$(DVDAUTHOR) log-package
+
 #
 # End JLFS Custom-CLI
 # Begin JLFS Custom-GUI
@@ -2628,6 +2660,20 @@ $(UNETBOOTIN):  $(QT4)
 	cd .. && \
 	rm -rf $(UNETBOOTIN)/* && \
 	make P=$(UNETBOOTIN) log-package
+
+$(DEVEDE):
+	set +h && \
+	\
+	tar jxvf $(JLFS-TARBALLS)/$(DEVEDE).tar.bz2 && \
+	chmod 755 $(DEVEDE) && \
+	chown -R 0:0 $(DEVEDE) && \
+	cd $(DEVEDE) && \
+	\
+	./install.sh prefix=/usr && \
+	\
+	cd .. && \
+	rm -rf $(DEVEDE)/* && \
+	make P=$(DEVEDE) log-package
 
 #
 # End JLFS Custom-GUI
@@ -4305,6 +4351,12 @@ $(BOTO):
 	cd .. && \
 	rm -rf $(BOTO)/* && \
 	make P=$(BOTO) log-package
+
+$(RTL-FIRMWARE):
+	set +h && \
+	\
+	tar jxvf $(JLFS-TARBALLS)/$(RTL-FIRMWARE).tar.bz2 -C / && \
+	make P=$(RTL-FIRMWARE) log-package
 
 # End JLFS Custom-Lib
 # Begin JLFS-Blackhat-Tools
