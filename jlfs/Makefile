@@ -2040,6 +2040,7 @@ $(DIA):  $(PKG-CONFIG) $(GTK2) $(LIBXML2) $(INTLTOOL) $(FREETYPE) $(LIBPNG-OLD) 
 	make install && \
 	\
 	(cd /usr/bin; ln -sfn /opt/bin/dia .) && \
+        strip /lfs/opt/bin/dia && \
 	\
 	cd .. && \
 	rm -rf $(DIA)/* && \
